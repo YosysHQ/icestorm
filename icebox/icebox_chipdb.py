@@ -40,10 +40,22 @@ print("""#
 # Quick File Format Reference:
 # ----------------------------
 #
+# .device DEVICE
+#
+#    declares the device type (e.g. "1k")
+#
+#
+# .pins PACKAGE
+# PIN_NUM TILE_X TILE_Y PIO_NUM PADIN_NUM
+# ...
+#
+#    associates a package pin with an IO tile and block
+#
 #
 # .io_tile X Y
 # .logic_tile X Y
-# .ram_tile X Y
+# .ramb_tile X Y
+# .ramt_tile X Y
 #
 #    declares the existence of a IO/LOGIC/RAM tile with the given coordinates
 #
@@ -73,6 +85,18 @@ print("""#
 #
 """)
 
+print(".device 1k")
+print()
+
+print(".pins tq144")
+pio_to_padin = dict()
+for padin, pio in enumerate(ic.padin_pio_db()):
+    pio_to_padin[pio] = padin
+for entry in sorted(ic.pinloc_db()):
+    pio = (entry[1], entry[2], entry[3])
+    print("%d %d %d %d %d" % tuple(entry + [pio_to_padin[pio] if pio in pio_to_padin else -1]))
+print()
+
 for idx in sorted(ic.io_tiles):
     print(".io_tile %d %d" % idx)
 print()
@@ -81,8 +105,12 @@ for idx in sorted(ic.logic_tiles):
     print(".logic_tile %d %d" % idx)
 print()
 
-for idx in sorted(ic.ram_tiles):
-    print(".ram_tile %d %d" % idx)
+for idx in sorted(ic.ramb_tiles):
+    print(".ramb_tile %d %d" % idx)
+print()
+
+for idx in sorted(ic.ramt_tiles):
+    print(".ramt_tile %d %d" % idx)
 print()
 
 for group in sorted(ic.group_segments(all_tiles)):

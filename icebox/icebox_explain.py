@@ -24,10 +24,11 @@ import getopt, sys, re
 print_bits = False
 print_map = False
 single_tile = None
+print_all = False
 
 def usage():
     print("""
-Usage: icebox_explain [options] <bitmap.txt>
+Usage: icebox_explain [options] [bitmap.txt]
 
     -b
         print config bit names for each config statement
@@ -35,13 +36,16 @@ Usage: icebox_explain [options] <bitmap.txt>
     -m
         print tile config bitmaps
 
+    -A
+        don't skip uninteresting tiles
+
     -t '<x-coordinate> <y-coordinate>'
         print only the specified tile
 """)
     sys.exit(0)
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "bmt:")
+    opts, args = getopt.getopt(sys.argv[1:], "bmAt:")
 except:
     usage()
 
@@ -50,10 +54,18 @@ for o, a in opts:
         print_bits = True
     elif o == "-m":
         print_map = True
+    elif o == "-A":
+        print_all = True
     elif o == "-t":
         single_tile = tuple([int(s) for s in a.split()])
     else:
         usage()
+
+if len(args) == 0:
+    args.append("/dev/stdin")
+
+if len(args) != 1:
+    usage()
 
 print("Reading file '%s'.." % args[0])
 ic = icebox.iceconfig()
@@ -96,7 +108,7 @@ def print_tile(stmt, ic, x, y, tile, db):
                 text_default_mask |= 1
             if entry[1] == "IoCtrl" and entry[2] == "IE_1":
                 text_default_mask |= 2
-            if entry[1] == "RamConfig" and entry[2] == "MEMB_Power_Up_Control":
+            if entry[1] == "RamConfig" and entry[2] == "PowerUp":
                 text_default_mask |= 4
             if print_bits:
                 text.add("<%s> %s" % (" ".join(entry[0]), " ".join(entry[1:])))
@@ -130,12 +142,12 @@ def print_tile(stmt, ic, x, y, tile, db):
         if lutff_options[2] == "1": lutff_options += " Set_NoReset"
         if lutff_options[3] == "1": lutff_options += " AsyncSetReset"
         text.add("LC_%d %s %s" % (lcidx, "".join(icebox.get_lutff_lut_bits(tile, lcidx)), lutff_options))
-    if not print_bitinfo:
+    if not print_bitinfo and not print_all:
         if text_default_mask == 3 and len(text) == 2:
             return
         if text_default_mask == 4 and len(text) == 1:
             return
-    if len(text) or print_bitinfo:
+    if len(text) or print_bitinfo or print_all:
         print("\n%s" % stmt)
         if print_bitinfo:
             print("Warning: No DB entries for some bits:")
@@ -151,8 +163,11 @@ for idx in ic.io_tiles:
 for idx in ic.logic_tiles:
     print_tile(".logic_tile %d %d" % idx, ic, idx[0], idx[1], ic.logic_tiles[idx], ic.tile_db(idx[0], idx[1]))
 
-for idx in ic.ram_tiles:
-    print_tile(".ram_tile %d %d" % idx, ic, idx[0], idx[1], ic.ram_tiles[idx], ic.tile_db(idx[0], idx[1]))
+for idx in ic.ramb_tiles:
+    print_tile(".ramb_tile %d %d" % idx, ic, idx[0], idx[1], ic.ramb_tiles[idx], ic.tile_db(idx[0], idx[1]))
+
+for idx in ic.ramt_tiles:
+    print_tile(".ramt_tile %d %d" % idx, ic, idx[0], idx[1], ic.ramt_tiles[idx], ic.tile_db(idx[0], idx[1]))
 
 for bit in ic.extra_bits:
     print()

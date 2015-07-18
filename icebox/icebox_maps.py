@@ -31,7 +31,8 @@ def usage():
     print("  icebox_maps -m io_tile_nets_t")
     print("  icebox_maps -m io_tile_nets_b")
     print("  icebox_maps -m logic_tile_nets")
-    print("  icebox_maps -m ram_tile_nets")
+    print("  icebox_maps -m ramb_tile_nets")
+    print("  icebox_maps -m ramt_tile_nets")
     sys.exit(0)
 
 try:
@@ -44,6 +45,9 @@ for o, a in opts:
         mode = a.strip()
     else:
         usage()
+
+if len(args) != 0:
+    usage()
 
 def get_bit_group(x, y, db):
     bit = "B%d[%d]" % (y, x)
@@ -113,7 +117,8 @@ if mode == "bitmaps":
     print_tilemap(".io_tile_bitmap_t", icebox.iotile_t_db, 18)
     print_tilemap(".io_tile_bitmap_b", icebox.iotile_b_db, 18)
     print_tilemap(".logic_tile_bitmap", icebox.logictile_db, 54)
-    print_tilemap(".ram_tile_bitmap", icebox.ramtile_db, 42)
+    print_tilemap(".ramb_tile_bitmap", icebox.rambtile_db, 42)
+    print_tilemap(".ramt_tile_bitmap", icebox.ramttile_db, 42)
     print()
     print(".bitmap_legend")
     print("- ... unknown bit")
@@ -144,8 +149,11 @@ elif mode == "io_tile_nets_b":
 elif mode == "logic_tile_nets":
     print_db_nets(".logic_tile_nets", icebox.logictile_db, "c")
 
-elif mode == "ram_tile_nets":
-    print_db_nets(".ram_tile_nets", icebox.ramtile_db, "c")
+elif mode == "ramb_tile_nets":
+    print_db_nets(".ramb_tile_nets", icebox.ramtile_db, "c")
+
+elif mode == "ramt_tile_nets":
+    print_db_nets(".ramt_tile_nets", icebox.ramtile_db, "c")
 
 else:
     usage()

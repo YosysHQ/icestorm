@@ -599,7 +599,7 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 			continue;
 		}
 
-		if (command == ".io_tile" || command == ".logic_tile" || command == ".ram_tile")
+		if (command == ".io_tile" || command == ".logic_tile" || command == ".ramb_tile" || command == ".ramt_tile")
 		{
 			if (!got_device)
 				error("Missing .device statement before %s.\n", command.c_str());
@@ -766,7 +766,7 @@ string FpgaConfig::tile_type(int x, int y) const
 	if (this->device == "1k") {
 		if ((x == 0 || x == this->chip_width()+1) && (y == 0 || y == this->chip_height()+1)) return "corner";
 		if ((x == 0 || x == this->chip_width()+1) || (y == 0 || y == this->chip_height()+1)) return "io";
-		if (x == 3 || x == 10) return "ram";
+		if (x == 3 || x == 10) return y % 2 == 1 ? "ramb" : "ramt";
 		return "logic";
 	}
 	panic("Unkown chip type '%s'.\n", this->device.c_str());
@@ -776,7 +776,8 @@ int FpgaConfig::tile_width(const string &type) const
 {
 	if (type == "corner") return 0;
 	if (type == "logic")  return 54;
-	if (type == "ram")    return 42;
+	if (type == "ramb")   return 42;
+	if (type == "ramt")   return 42;
 	if (type == "io")     return 18;
 	panic("Unkown tile type '%s'.\n", type.c_str());
 }

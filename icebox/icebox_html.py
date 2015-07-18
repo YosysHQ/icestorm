@@ -47,12 +47,15 @@ for o, a in opts:
     else:
         usage()
 
+if len(args) != 0:
+    usage()
+
 ic = icebox.iceconfig()
 ic.setup_empty_1k()
 
 mktiles = set()
 
-for x in range(1, 6) + range(8, 13):
+for x in range(1, 13):
     mktiles.add((x, 0))
     mktiles.add((x, 17))
 
@@ -63,6 +66,10 @@ for x in range(0, 6) + range(8, 14):
 for x in range(0, 5) + range(9, 14):
     mktiles.add((x, 2))
     mktiles.add((x, 15))
+
+for y in range(7, 11):
+    mktiles.add((0, y))
+    mktiles.add((13, y))
 
 for x in range(6, 8):
     for y in range(8, 10):
@@ -94,7 +101,7 @@ A machine-readable form of the database can be downloaded <a href="chipdb.txt">h
     print("""<p>The iCE40 FPGA fabric is organized into tiles. The configuration bits
 themself have the same meaning in all tiles of the same type. But the way the tiles
 are connected to each other depends on the types of neighbouring cells. Furthermore,
-some wire names are different for (e.g.) a IO tile on the left border and an IO tile on
+some wire names are different for e.g. an IO tile on the left border and an IO tile on
 the top border.</p>""")
 
     print("""<p>Click on a highlighted tile below to view the bitstream details for the
@@ -111,12 +118,14 @@ in iCE40 FPGAs.</p>""")
             elif (x, y) in mktiles:
                 if ic.tile_type(x, y) == "IO": color = "#aee"
                 if ic.tile_type(x, y) == "LOGIC": color = "#eae"
-                if ic.tile_type(x, y) == "RAM": color = "#eea"
+                if ic.tile_type(x, y) == "RAMB": color = "#eea"
+                if ic.tile_type(x, y) == "RAMT": color = "#eea"
                 print('bgcolor="%s"><small><a style="color:#000; text-decoration:none" href="tile_%d_%d.html"><b>%s<br/>(%d %d)</b></a></small></td>' % (color, x, y, ic.tile_type(x, y), x, y))
             else:
                 if ic.tile_type(x, y) == "IO": color = "#8aa"
                 if ic.tile_type(x, y) == "LOGIC": color = "#a8a"
-                if ic.tile_type(x, y) == "RAM": color = "#aa8"
+                if ic.tile_type(x, y) == "RAMB": color = "#aa8"
+                if ic.tile_type(x, y) == "RAMT": color = "#aa8"
                 print('bgcolor="%s"><small>%s<br/>(%d %d)</small></td>' % (color, ic.tile_type(x, y), x, y))
         print("</tr>")
     print("</table></p>")
@@ -147,12 +156,14 @@ configuration bits it has and how it is connected to its neighbourhood.</p>""" %
                 if (x, y) in mktiles:
                     if ic.tile_type(x, y) == "IO": color = "#aee"
                     if ic.tile_type(x, y) == "LOGIC": color = "#eae"
-                    if ic.tile_type(x, y) == "RAM": color = "#eea"
+                    if ic.tile_type(x, y) == "RAMB": color = "#eea"
+                    if ic.tile_type(x, y) == "RAMT": color = "#eea"
                     print('bgcolor="%s"><a style="color:#000; text-decoration:none" href="tile_%d_%d.html"><b>%s Tile<br/>(%d %d)</b></a></td>' % (color, x, y, ic.tile_type(x, y), x, y))
                 else:
                     if ic.tile_type(x, y) == "IO": color = "#8aa"
                     if ic.tile_type(x, y) == "LOGIC": color = "#a8a"
-                    if ic.tile_type(x, y) == "RAM": color = "#aa8"
+                    if ic.tile_type(x, y) == "RAMB": color = "#aa8"
+                    if ic.tile_type(x, y) == "RAMT": color = "#aa8"
                     print('bgcolor="%s">%s Tile<br/>(%d %d)</td>' % (color, ic.tile_type(x, y), x, y))
                 visible_tiles.add((x, y))
         print("</tr>")
@@ -200,11 +211,13 @@ configuration bits it has and how it is connected to its neighbourhood.</p>""" %
                 elif entry[1].startswith("IOB_"):
                     bitmap_cells[idx1][idx2]["label"] = "I"
                 elif entry[1].startswith("IoCtrl"):
-                    bitmap_cells[idx1][idx2]["label"] = "I"
+                    bitmap_cells[idx1][idx2]["label"] = "T"
+                elif entry[1] == "Icegate":
+                    bitmap_cells[idx1][idx2]["label"] = "G"
                 elif entry[1].startswith("Cascade"):
                     bitmap_cells[idx1][idx2]["label"] = "A"
                 elif entry[1].startswith("RamConfig"):
-                    bitmap_cells[idx1][idx2]["label"] = "R"
+                    bitmap_cells[idx1][idx2]["label"] = "M"
                 else:
                     assert False
             bitmap_cells[idx1][idx2]["label"] = '<a style="color:#666; text-decoration:none" href="#B.%d.%d">%s</a>' % (idx1, idx2, bitmap_cells[idx1][idx2]["label"])
@@ -264,6 +277,7 @@ nets are connected with nets from cells in its neighbourhood.</p>""")
         if netname.startswith("local_"): cat = (20, "Local Tracks")
         if netname.startswith("carry_in"): cat = (25, "Logic Block")
         if netname.startswith("io_"): cat = (25, "IO Block")
+        if netname.startswith("ram"): cat = (25, "RAM Block")
         if netname.startswith("lutff_"): cat = (25, "Logic Block")
         if netname.startswith("lutff_0"): cat = (30, "Logic Unit 0")
         if netname.startswith("lutff_1"): cat = (30, "Logic Unit 1")
