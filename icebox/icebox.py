@@ -27,10 +27,12 @@ class iceconfig:
     def clear(self):
         self.max_x = 0
         self.max_y = 0
+        self.device = ""
         self.logic_tiles = dict()
         self.io_tiles = dict()
         self.ram_tiles = dict()
         self.ram_init = dict()
+        self.extra_bits = set()
 
     def setup_empty_1k(self):
         self.clear()
@@ -51,6 +53,12 @@ class iceconfig:
         for y in range(1, self.max_y):
             self.io_tiles[(0, y)] = ["0" * 18 for i in range(16)]
             self.io_tiles[(self.max_x, y)] = ["0" * 18 for i in range(16)]
+
+    def lookup_extra_bit(self, bit):
+        assert self.device in extra_bits_db
+        if bit in extra_bits_db[self.device]:
+            return extra_bits_db[self.device][bit]
+        return ("UNKNOWN_FUNCTION",)
 
     def tile(self, x, y):
         if (x, y) in self.io_tiles: return self.io_tiles[(x, y)]
@@ -354,6 +362,8 @@ class iceconfig:
                     assert expected_data_lines == 0
                     continue
                 if line[0][0] != ".":
+                    if expected_data_lines == -1:
+                        continue
                     if line[0][0] != "0" and line[0][0] != "1":
                         print("%sWarning: ignoring data block in line %d: %s" % (logprefix, linenum, linetext.strip()))
                         expected_data_lines = 0
@@ -362,7 +372,7 @@ class iceconfig:
                     current_data.append(line[0])
                     expected_data_lines -= 1
                     continue
-                assert expected_data_lines == 0
+                assert expected_data_lines <= 0
                 if line[0] in (".io_tile", ".logic_tile", ".ram_tile"):
                     current_data = list()
                     expected_data_lines = 16
@@ -377,8 +387,15 @@ class iceconfig:
                 if line[0] == ".ram_tile":
                     self.ram_tiles[(int(line[1]), int(line[2]))] = current_data
                     continue
+                if line[0] == ".extra_bit":
+                    self.extra_bits.add((int(line[1]), int(line[2]), int(line[3])))
+                    continue
                 if line[0] == ".device":
-                    assert line[1] == "1k"
+                    assert line[1] in ["1k"]
+                    self.device = line[1]
+                    continue
+                if line[0] == ".comment":
+                    expected_data_lines = -1
                     continue
                 print("%sWarning: ignoring line %d: %s" % (logprefix, linenum, linetext.strip()))
 
@@ -769,6 +786,12 @@ def parse_db(text):
         line[0] = line[0].split(",")
         db.append(line)
     return db
+
+extra_bits_db = {
+    "1k": {
+        (0, 331, 142): ("routing", "padin_1", "glb_netwk_1")
+    }
+}
 
 iotile_full_db = parse_db(iceboxdb.database_io_txt)
 logictile_db = parse_db(iceboxdb.database_logic_txt)

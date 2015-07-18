@@ -1,25 +1,29 @@
 
-CC = clang
 CXX = clang
-LDFLAGS = -lm -lstdc++
-CFLAGS = -MD -Os -Wall -std=c99
-CXXFLAGS = -MD -Os -Wall -std=c99
+LDLIBS = -lm -lstdc++
+CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11
 
-all: iceunpack
+all: icepack iceunpack
 
-iceunpack: iceunpack.o
+icepack: icepack.o
+
+iceunpack: icepack
+	ln -sf icepack iceunpack
 
 install: all
-	cp iceunpack /usr/local/bin/iceunpack
+	cp icepack /usr/local/bin/icepack
+	ln -s icepack /usr/local/bin/iceunpack
 
 uninstall:
+	rm -f /usr/local/bin/icepack
 	rm -f /usr/local/bin/iceunpack
 
 clean:
+	rm -f icepack
 	rm -f iceunpack
 	rm -f *.o *.d
 
 -include *.d
 
-.PHONY: install uninstall clean
+.PHONY: all install uninstall clean
 

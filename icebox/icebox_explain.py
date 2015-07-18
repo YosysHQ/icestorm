@@ -153,5 +153,11 @@ for idx in ic.logic_tiles:
 
 for idx in ic.ram_tiles:
     print_tile(".ram_tile %d %d" % idx, ic, idx[0], idx[1], ic.ram_tiles[idx], ic.tile_db(idx[0], idx[1]))
+
+for bit in ic.extra_bits:
+    print()
+    print(".extra_bit %d %d %d" % bit)
+    print(" ".join(ic.lookup_extra_bit(bit)))
+
 print()
 
