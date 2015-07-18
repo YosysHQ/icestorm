@@ -1,6 +1,7 @@
 # CXX = clang
 LDLIBS = -lm -lstdc++
 CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11
+CC = $(CXX)
 
 all: icepack iceunpack
 
