@@ -664,16 +664,16 @@ for tile in ic.ramb_tiles:
             return ramt_config.match(ram_config_bitidx[name][1])
         else:
             assert False
-    def get_ram_wire(name, msb, lsb):
+    def get_ram_wire(name, msb, lsb, default="1'b0"):
         wire_bits = []
         for i in range(msb, lsb-1, -1):
             if msb != lsb:
                 n = "ram/%s_%d" % (name, i)
             else:
                 n = "ram/" + name
-            b = seg_to_net((tile[0], tile[1], n), "1'b0")
+            b = seg_to_net((tile[0], tile[1], n), default)
             b = seg_to_net((tile[0], tile[1]+1, n), b)
-            if len(wire_bits) != 0 or b != "1'b0" or i == lsb:
+            if len(wire_bits) != 0 or b != default or i == lsb:
                 wire_bits.append(b)
         if len(wire_bits) > 1:
             return "{%s}" % ", ".join(wire_bits)
@@ -691,10 +691,10 @@ for tile in ic.ramb_tiles:
         text_func.append("  .WDATA(%s),"  % get_ram_wire('WDATA', 15, 0))
         text_func.append("  .RDATA(%s),"  % get_ram_wire('RDATA', 15, 0))
         text_func.append("  .WE(%s),"  % get_ram_wire('WE', 0, 0))
-        text_func.append("  .WCLKE(%s),"  % get_ram_wire('WCLKE', 0, 0))
+        text_func.append("  .WCLKE(%s),"  % get_ram_wire('WCLKE', 0, 0, "1'b1"))
         text_func.append("  .WCLK(%s),"  % get_ram_wire('WCLK', 0, 0))
         text_func.append("  .RE(%s),"  % get_ram_wire('RE', 0, 0))
-        text_func.append("  .RCLKE(%s),"  % get_ram_wire('RCLKE', 0, 0))
+        text_func.append("  .RCLKE(%s),"  % get_ram_wire('RCLKE', 0, 0, "1'b1"))
         text_func.append("  .RCLK(%s)"  % get_ram_wire('RCLK', 0, 0))
         text_func.append(");")
         text_func.append("")
