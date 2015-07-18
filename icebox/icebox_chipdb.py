@@ -40,16 +40,44 @@ print("""#
 # Quick File Format Reference:
 # ----------------------------
 #
-# .device DEVICE
+# .device DEVICE WIDTH HEIGHT NUM_NETS
 #
 #    declares the device type (e.g. "1k")
 #
 #
 # .pins PACKAGE
-# PIN_NUM TILE_X TILE_Y PIO_NUM PADIN_NUM
+# PIN_NUM TILE_X TILE_Y PIO_NUM GLB_NUM
 # ...
 #
-#    associates a package pin with an IO tile and block
+#    associates a package pin with an IO tile and block, and global network
+#
+#
+# .gbufin
+# TILE_X TILE_Y GLB_NUM
+# ...
+#
+#    associates an IO tile with the global network it drives via wire_gbuf/in
+#
+#
+# .iolatch
+# TILE_X TILE_Y
+# ...
+#
+#    specifies the IO tiles that drive the latch signal for the bank via wire_gbuf/in
+#
+#
+# .ieren
+# PIO_TILE_X PIO_TILE_Y PIO_NUM IEREN_TILE_X IEREN_TILE_Y IEREN_NUM
+# ...
+#
+#    associates an IO block with an IeRen-block
+#
+#
+# .colbuf
+# SOURCE_TILE_X SOURCE_TILE_Y DEST_TILE_X DEST_TILE_Y
+# ...
+#
+#    declares the positions of the column buffers
 #
 #
 # .io_tile X Y
@@ -58,6 +86,24 @@ print("""#
 # .ramt_tile X Y
 #
 #    declares the existence of a IO/LOGIC/RAM tile with the given coordinates
+#
+#
+# .io_tile_bits COLUMNS ROWS
+# .logic_tile_bits COLUMNS ROWS
+# .ramb_tile_bits COLUMNS ROWS
+# .ramt_tile_bits COLUMNS ROWS
+# FUNCTION_1 CONFIG_BITS_NAMES_1
+# FUNCTION_2 CONFIG_BITS_NAMES_2
+# ...
+#
+#    declares non-routing configuration bits of IO/LOGIC/RAM tiles
+#
+#
+# .extra_bits
+# FUNCTION BANK_NUM ADDR_X ADDR_Y
+# ...
+#
+#    declares non-routing global configuration bits
 #
 #
 # .net NET_INDEX
@@ -85,7 +131,9 @@ print("""#
 #
 """)
 
-print(".device 1k")
+all_group_segments = ic.group_segments(all_tiles, connect_gb=False)
+
+print(".device 1k %d %d %d" % (ic.max_x+1, ic.max_y+1, len(all_group_segments)))
 print()
 
 print(".pins tq144")
@@ -95,6 +143,26 @@ for padin, pio in enumerate(ic.padin_pio_db()):
 for entry in sorted(ic.pinloc_db()):
     pio = (entry[1], entry[2], entry[3])
     print("%d %d %d %d %d" % tuple(entry + [pio_to_padin[pio] if pio in pio_to_padin else -1]))
+print()
+
+print(".gbufin")
+for entry in sorted(ic.gbufin_db()):
+    print(" ".join(["%d" % k for k in entry]))
+print()
+
+print(".iolatch")
+for entry in sorted(ic.iolatch_db()):
+    print(" ".join(["%d" % k for k in entry]))
+print()
+
+print(".ieren")
+for entry in sorted(ic.ieren_db()):
+    print(" ".join(["%d" % k for k in entry]))
+print()
+
+print(".colbuf")
+for entry in sorted(ic.colbuf_db()):
+    print(" ".join(["%d" % k for k in entry]))
 print()
 
 for idx in sorted(ic.io_tiles):
@@ -113,7 +181,42 @@ for idx in sorted(ic.ramt_tiles):
     print(".ramt_tile %d %d" % idx)
 print()
 
-for group in sorted(ic.group_segments(all_tiles)):
+def print_tile_nonrouting_bits(tile_type, idx):
+    tx = idx[0]
+    ty = idx[1]
+    
+    tile = ic.tile(tx, ty)
+    
+    print(".%s_tile_bits %d %d" % (tile_type, len(tile[0]), len(tile)))
+    
+    function_bits = dict()
+    for entry in ic.tile_db(tx, ty):
+        if not ic.tile_has_entry(tx, ty, entry):
+            continue
+        if entry[1] in ("routing", "buffer"):
+            continue
+        
+        func = ".".join(entry[1:])
+        function_bits[func] = entry[0]
+    
+    for x in sorted(function_bits):
+        print(" ".join([x] + function_bits[x]))
+    print()
+
+print_tile_nonrouting_bits("logic", ic.logic_tiles.keys()[0])
+print_tile_nonrouting_bits("io", ic.io_tiles.keys()[0])
+print_tile_nonrouting_bits("ramb", ic.ramb_tiles.keys()[0])
+print_tile_nonrouting_bits("ramt", ic.ramt_tiles.keys()[0])
+
+print(".extra_bits")
+extra_bits = dict()
+for idx in sorted(ic.extra_bits_db()):
+    extra_bits[".".join(ic.extra_bits_db()[idx])] = " ".join(["%d" % k for k in idx])
+for idx in sorted(extra_bits):
+    print("%s %s" % (idx, extra_bits[idx]))
+print()
+
+for group in sorted(all_group_segments):
     netidx = len(net_to_segs)
     net_to_segs.append(group)
     print(".net %d" % netidx)

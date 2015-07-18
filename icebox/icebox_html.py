@@ -218,6 +218,8 @@ configuration bits it has and how it is connected to its neighbourhood.</p>""" %
                     bitmap_cells[idx1][idx2]["label"] = "A"
                 elif entry[1].startswith("RamConfig"):
                     bitmap_cells[idx1][idx2]["label"] = "M"
+                elif entry[1].startswith("PLL"):
+                    bitmap_cells[idx1][idx2]["label"] = "P"
                 else:
                     assert False
             bitmap_cells[idx1][idx2]["label"] = '<a style="color:#666; text-decoration:none" href="#B.%d.%d">%s</a>' % (idx1, idx2, bitmap_cells[idx1][idx2]["label"])

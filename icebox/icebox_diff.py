@@ -29,6 +29,17 @@ print("Reading file '%s'.." % sys.argv[2])
 ic2 = icebox.iceconfig()
 ic2.read_file(sys.argv[2])
 
+def format_bits(line_nr, this_line, other_line):
+    text = ""
+    for i in range(len(this_line)):
+        if this_line[i] != other_line[i]:
+            if this_line[i] == "1":
+                text += "%8s" % ("B%d[%d]" % (line_nr, i))
+            else:
+                text += "%8s" % ""
+    return text
+        
+
 def diff_tiles(stmt, tiles1, tiles2):
     for i in sorted(set(tiles1.keys() + tiles2.keys())):
         if not i in tiles1:
@@ -48,8 +59,8 @@ def diff_tiles(stmt, tiles1, tiles2):
             if tiles1[i][c] == tiles2[i][c]:
                 print("  %s" % tiles1[i][c])
             else:
-                print("- %s" % tiles1[i][c])
-                print("+ %s" % tiles2[i][c])
+                print("- %s%s" % (tiles1[i][c], format_bits(c, tiles1[i][c], tiles2[i][c])))
+                print("+ %s%s" % (tiles2[i][c], format_bits(c, tiles2[i][c], tiles1[i][c])))
 
 diff_tiles(".io_tile", ic1.io_tiles, ic2.io_tiles)
 diff_tiles(".logic_tile", ic1.logic_tiles, ic2.logic_tiles)

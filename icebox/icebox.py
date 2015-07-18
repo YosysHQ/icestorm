@@ -32,6 +32,7 @@ class iceconfig:
         self.io_tiles = dict()
         self.ramb_tiles = dict()
         self.ramt_tiles = dict()
+        self.ram_data = dict()
         self.extra_bits = set()
 
     def setup_empty_1k(self):
@@ -78,8 +79,8 @@ class iceconfig:
     def gbufin_db(self):
         return gbufin_db[self.device]
 
-    def icegate_db(self):
-        return icegate_db[self.device]
+    def iolatch_db(self):
+        return iolatch_db[self.device]
 
     def padin_pio_db(self):
         return padin_pio_db[self.device]
@@ -89,6 +90,21 @@ class iceconfig:
 
     def ieren_db(self):
         return ieren_db[self.device]
+
+    def colbuf_db(self):
+        assert self.device == "1k"
+        entries = list()
+        for x in range(self.max_x+1):
+            for y in range(self.max_y+1):
+                src_y = None
+                if  0 <= y <=  4: src_y =  4
+                if  5 <= y <=  8: src_y =  5
+                if  9 <= y <= 12: src_y = 12
+                if 13 <= y <= 17: src_y = 13
+                if x in [3, 10] and src_y ==  4: src_y =  3
+                if x in [3, 10] and src_y == 12: src_y = 11
+                entries.append((x, src_y, x, y))
+        return entries
 
     def tile_db(self, x, y):
         if x == 0: return iotile_l_db
@@ -307,7 +323,7 @@ class iceconfig:
                     neighbours.add((s[0], s[1], s[2]))
         return neighbours
 
-    def group_segments(self, all_from_tiles=set(), extra_connections=list(), extra_segments=list()):
+    def group_segments(self, all_from_tiles=set(), extra_connections=list(), extra_segments=list(), connect_gb=True):
         seed_segments = set()
         seen_segments = set()
         connected_segments = dict()
@@ -373,7 +389,7 @@ class iceconfig:
                 seed_segments.add(s1)
                 seed_segments.add(s2)
 
-        for entry in self.icegate_db():
+        for entry in self.iolatch_db():
             if entry[0] == 0 or entry[0] == self.max_x:
                 iocells = [(entry[0], i) for i in range(1, self.max_y)]
             if entry[1] == 0 or entry[1] == self.max_y:
@@ -388,14 +404,15 @@ class iceconfig:
                     seed_segments.add(s1)
                     seed_segments.add(s2)
 
-        for entry in self.gbufin_db():
-            s1 = (entry[0], entry[1], "wire_gbuf/in")
-            s2 = (entry[0], entry[1], "glb_netwk_%d" % entry[2])
-            if s1 in seed_segments or (pio[0], pio[1]) in all_from_tiles:
-                connected_segments.setdefault(s1, set()).add(s2)
-                connected_segments.setdefault(s2, set()).add(s1)
-                seed_segments.add(s1)
-                seed_segments.add(s2)
+        if connect_gb:
+            for entry in self.gbufin_db():
+                s1 = (entry[0], entry[1], "wire_gbuf/in")
+                s2 = (entry[0], entry[1], "glb_netwk_%d" % entry[2])
+                if s1 in seed_segments or (pio[0], pio[1]) in all_from_tiles:
+                    connected_segments.setdefault(s1, set()).add(s2)
+                    connected_segments.setdefault(s2, set()).add(s1)
+                    seed_segments.add(s1)
+                    seed_segments.add(s2)
 
         while seed_segments:
             queue = set()
@@ -444,7 +461,7 @@ class iceconfig:
                 if line[0][0] != ".":
                     if expected_data_lines == -1:
                         continue
-                    if line[0][0] != "0" and line[0][0] != "1":
+                    if line[0][0] not in "0123456789abcdef":
                         print("%sWarning: ignoring data block in line %d: %s" % (logprefix, linenum, linetext.strip()))
                         expected_data_lines = 0
                         continue
@@ -453,7 +470,7 @@ class iceconfig:
                     expected_data_lines -= 1
                     continue
                 assert expected_data_lines <= 0
-                if line[0] in (".io_tile", ".logic_tile", ".ramb_tile", ".ramt_tile"):
+                if line[0] in (".io_tile", ".logic_tile", ".ramb_tile", ".ramt_tile", ".ram_data"):
                     current_data = list()
                     expected_data_lines = 16
                     self.max_x = max(self.max_x, int(line[1]))
@@ -470,6 +487,9 @@ class iceconfig:
                 if line[0] == ".ramt_tile":
                     self.ramt_tiles[(int(line[1]), int(line[2]))] = current_data
                     continue
+                if line[0] == ".ram_data":
+                    self.ram_data[(int(line[1]), int(line[2]))] = current_data
+                    continue
                 if line[0] == ".extra_bit":
                     self.extra_bits.add((int(line[1]), int(line[2]), int(line[3])))
                     continue
@@ -481,6 +501,7 @@ class iceconfig:
                     expected_data_lines = -1
                     continue
                 print("%sWarning: ignoring line %d: %s" % (logprefix, linenum, linetext.strip()))
+                expected_data_lines = -1
 
 class tileconfig:
     def __init__(self, tile):
@@ -905,13 +926,46 @@ gbufin_db = {
     ]
 }
 
-icegate_db = {
+iolatch_db = {
     "1k": [
         ( 0,  7),
         (13, 10),
         ( 5,  0),
         ( 8, 17)
     ]
+}
+
+pllinfo_db = {
+    "1k": {
+        "SHIFTREG_DIV_MODE": (0, 3, "B2[2]"),
+        "FDA_FEEDBACK_0": (0, 3, "B7[3]"),
+        "FDA_FEEDBACK_1": (0, 4, "B0[2]"),
+        "FDA_FEEDBACK_2": (0, 4, "B0[3]"),
+        "FDA_FEEDBACK_3": (0, 4, "B3[3]"),
+        "FDA_RELATIVE_0": (0, 4, "B2[3]"),
+        "FDA_RELATIVE_1": (0, 4, "B5[3]"),
+        "FDA_RELATIVE_2": (0, 4, "B4[2]"),
+        "FDA_RELATIVE_3": (0, 4, "B4[3]"),
+        "DIVR_0": (0, 1, "B0[2]"),
+        "DIVR_1": (0, 1, "B0[3]"),
+        "DIVR_2": (0, 1, "B3[3]"),
+        "DIVR_3": (0, 1, "B2[2]"),
+        "DIVF_0": (0, 1, "B2[3]"),
+        "DIVF_1": (0, 1, "B5[3]"),
+        "DIVF_2": (0, 1, "B4[2]"),
+        "DIVF_3": (0, 1, "B4[3]"),
+        "DIVF_4": (0, 1, "B7[3]"),
+        "DIVF_5": (0, 2, "B0[2]"),
+        "DIVF_6": (0, 2, "B0[3]"),
+        "DIVQ_0": (0, 0, "?"),
+        "DIVQ_1": (0, 0, "?"),
+        "DIVQ_2": (0, 0, "?"),
+        "FILTER_RANGE_0": (0, 2, "B5[3]"),
+        "FILTER_RANGE_1": (0, 2, "B4[2]"),
+        "FILTER_RANGE_2": (0, 2, "B4[3]"),
+        "ENABLE_ICEGATE": (0, 0, "?"),
+        "TEST_MODE": (0, 3, "B4[3]"),
+    }
 }
 
 padin_pio_db = {
@@ -941,6 +995,8 @@ ieren_db = {
         ( 0, 10,  1,  0, 10,  0),
         ( 0, 10,  0,  0, 10,  1),
         ( 0,  9,  1,  0,  9,  0),
+        ( 0,  9,  0,  0,  9,  1),
+        ( 0,  8,  1,  0,  8,  0),
         ( 0,  8,  0,  0,  8,  1),
         ( 0,  6,  1,  0,  6,  0),
         ( 0,  6,  0,  0,  6,  1),
@@ -954,6 +1010,7 @@ ieren_db = {
         ( 0,  2,  0,  0,  2,  1),
         ( 1,  0,  0,  1,  0,  0),
         ( 1,  0,  1,  1,  0,  1),
+        ( 2,  0,  0,  2,  0,  0),
         ( 2,  0,  1,  2,  0,  1),
         ( 3,  0,  0,  3,  0,  0),
         ( 3,  0,  1,  3,  0,  1),
@@ -961,6 +1018,8 @@ ieren_db = {
         ( 4,  0,  1,  4,  0,  1),
         ( 5,  0,  0,  5,  0,  0),
         ( 5,  0,  1,  5,  0,  1),
+        ( 6,  0,  1,  6,  0,  0),
+        ( 7,  0,  0,  6,  0,  1),
         ( 6,  0,  0,  7,  0,  0),
         ( 7,  0,  1,  7,  0,  1),
         ( 8,  0,  0,  8,  0,  0),
@@ -969,6 +1028,10 @@ ieren_db = {
         ( 9,  0,  1,  9,  0,  1),
         (10,  0,  0, 10,  0,  0),
         (10,  0,  1, 10,  0,  1),
+        (11,  0,  0, 11,  0,  0),
+        (11,  0,  1, 11,  0,  1),
+        (12,  0,  0, 12,  0,  0),
+        (12,  0,  1, 12,  0,  1),
         (13,  1,  0, 13,  1,  0),
         (13,  1,  1, 13,  1,  1),
         (13,  2,  0, 13,  2,  0),
@@ -981,10 +1044,13 @@ ieren_db = {
         (13,  7,  0, 13,  7,  0),
         (13,  7,  1, 13,  7,  1),
         (13,  8,  0, 13,  8,  0),
+        (13,  8,  1, 13,  8,  1),
+        (13,  9,  0, 13,  9,  0),
         (13,  9,  1, 13,  9,  1),
         (13, 11,  0, 13, 10,  0),
         (13, 11,  1, 13, 10,  1),
         (13, 12,  0, 13, 11,  0),
+        (13, 12,  1, 13, 11,  1),
         (13, 13,  0, 13, 13,  0),
         (13, 13,  1, 13, 13,  1),
         (13, 14,  0, 13, 14,  0),
@@ -1002,6 +1068,8 @@ ieren_db = {
         ( 8, 17,  1,  8, 17,  1),
         ( 8, 17,  0,  8, 17,  0),
         ( 7, 17,  1,  7, 17,  1),
+        ( 7, 17,  0,  7, 17,  0),
+        ( 6, 17,  1,  6, 17,  1),
         ( 5, 17,  1,  5, 17,  1),
         ( 5, 17,  0,  5, 17,  0),
         ( 4, 17,  1,  4, 17,  1),

@@ -26,6 +26,15 @@ B8[2]	IoCtrl	LVDS
 B6[2]	IoCtrl	REN_0
 B1[3]	IoCtrl	REN_1
 B9[13],B15[13]	NegClk
+B0[2]	PLL	pll_cf_bit_1
+B0[3]	PLL	pll_cf_bit_2
+B3[3]	PLL	pll_cf_bit_3
+B2[2]	PLL	pll_cf_bit_4
+B2[3]	PLL	pll_cf_bit_5
+B5[3]	PLL	pll_cf_bit_6
+B4[2]	PLL	pll_cf_bit_7
+B4[3]	PLL	pll_cf_bit_8
+B7[3]	PLL	pll_cf_bit_9
 B0[4],!B1[4],!B1[5],!B1[6],B1[7]	buffer	IO_B.logic_op_tnl_0	lc_trk_g0_0
 B8[4],!B9[4],!B9[5],!B9[6],B9[7]	buffer	IO_B.logic_op_tnl_0	lc_trk_g1_0
 !B0[5],!B0[6],B0[7],B0[8],!B1[8]	buffer	IO_B.logic_op_tnl_1	lc_trk_g0_1

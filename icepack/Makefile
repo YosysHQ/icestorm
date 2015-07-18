@@ -1,5 +1,4 @@
-
-CXX = clang
+# CXX = clang
 LDLIBS = -lm -lstdc++
 CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11
 
@@ -12,7 +11,7 @@ iceunpack: icepack
 
 install: all
 	cp icepack /usr/local/bin/icepack
-	ln -s icepack /usr/local/bin/iceunpack
+	ln -sf icepack /usr/local/bin/iceunpack
 
 uninstall:
 	rm -f /usr/local/bin/icepack

@@ -110,6 +110,7 @@ struct FpgaConfig
 
 	// netpbm i/o
 	void write_cram_pbm(std::ostream &ofs, int bank_num = -1) const;
+	void write_bram_pbm(std::ostream &ofs, int bank_num = -1) const;
 
 	// query chip type metadata
 	int chip_width() const;
@@ -149,11 +150,23 @@ struct CramIndexConverter
 	void get_cram_index(int bit_x, int bit_y, int &cram_bank, int &cram_x, int &cram_y) const;
 };
 
+struct BramIndexConverter
+{
+	const FpgaConfig *fpga;
+	int tile_x, tile_y;
+
+	int bank_num;
+	int bank_off;
+
+	BramIndexConverter(const FpgaConfig *fpga, int tile_x, int tile_y);
+	void get_bram_index(int bit_x, int bit_y, int &bram_bank, int &bram_x, int &bram_y) const;
+};
+
 static void update_crc16(uint16_t &crc, uint8_t byte)
 {
 	// CRC-16-CCITT, Initialize to 0xFFFF, No zero padding
 	for (int i = 7; i >= 0; i--) {
-		uint16_t xor_value = ((crc >> 15) ^ (byte >> i) & 1) ? 0x1021 : 0;
+		uint16_t xor_value = ((crc >> 15) ^ ((byte >> i) & 1)) ? 0x1021 : 0;
 		crc = (crc << 1) ^ xor_value;
 	}
 }
@@ -450,7 +463,7 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 		debug("CRAM: Writing bank %d data.\n", cram_bank);
 		write_byte(ofs, crc_value, file_offset, 0x01);
 		write_byte(ofs, crc_value, file_offset, 0x01);
-		for (int i = 0; i < cram_bits.size(); i += 8) {
+		for (int i = 0; i < int(cram_bits.size()); i += 8) {
 			uint8_t byte = 0;
 			for (int j = 0; j < 8; j++)
 				byte = (byte << 1) | (cram_bits[i+j] ? 1 : 0);
@@ -494,7 +507,7 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 			debug("BRAM: Writing bank %d data.\n", bram_bank);
 			write_byte(ofs, crc_value, file_offset, 0x01);
 			write_byte(ofs, crc_value, file_offset, 0x03);
-			for (int i = 0; i < bram_bits.size(); i += 8) {
+			for (int i = 0; i < int(bram_bits.size()); i += 8) {
 				uint8_t byte = 0;
 				for (int j = 0; j < 8; j++)
 					byte = (byte << 1) | (bram_bits[i+j] ? 1 : 0);
@@ -571,6 +584,9 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 
 		if (command == ".device")
 		{
+			if (got_device)
+				error("More than one .device statement.\n");
+
 			is >> this->device;
 
 			if (this->device == "1k") {
@@ -620,12 +636,53 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 					break;
 				}
 
-				for (int bit_x = 0; bit_x < line.size() && bit_x < cic.tile_width; bit_x++)
+				for (int bit_x = 0; bit_x < int(line.size()) && bit_x < cic.tile_width; bit_x++)
 					if (line[bit_x] == '1') {
 						int cram_bank, cram_x, cram_y;
 						cic.get_cram_index(bit_x, bit_y, cram_bank, cram_x, cram_y);
 						this->cram[cram_bank][cram_x][cram_y] = true;
 					}
+			}
+
+			continue;
+		}
+
+		if (command == ".ram_data")
+		{
+			if (!got_device)
+				error("Missing .device statement before %s.\n", command.c_str());
+
+			int tile_x, tile_y;
+			is >> tile_x >> tile_y;
+
+			BramIndexConverter bic(this, tile_x, tile_y);
+
+			for (int bit_y = 0; bit_y < 16 && getline(ifs, line); bit_y++)
+			{
+				if (line.substr(0, 1) == ".") {
+					reuse_line = true;
+					break;
+				}
+
+				for (int bit_x = 256-4, ch_idx = 0; ch_idx < int(line.size()) && bit_x >= 0; bit_x -= 4, ch_idx++)
+				{
+					int value = -1;
+					if ('0' <= line[ch_idx] && line[ch_idx] <= '9')
+						value = line[ch_idx] - '0';
+					if ('a' <= line[ch_idx] && line[ch_idx] <= 'f')
+						value = line[ch_idx] - 'a' + 10;
+					if ('A' <= line[ch_idx] && line[ch_idx] <= 'F')
+						value = line[ch_idx] - 'A' + 10;
+					if (value < 0)
+						error("Not a hex character: '%c' (in line '%s')\n", line[ch_idx], line.c_str());
+
+					for (int i = 0; i < 4; i++)
+						if ((value & (1 << i)) != 0) {
+							int bram_bank, bram_x, bram_y;
+							bic.get_bram_index(bit_x+i, bit_y, bram_bank, bram_x, bram_y);
+							this->bram[bram_bank][bram_x][bram_y] = true;
+						}
+				}
 			}
 
 			continue;
@@ -642,7 +699,10 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 
 			continue;
 		}
-
+		
+		if (command == ".sym")
+		  continue;
+		
 		if (command.substr(0, 1) == ".")
 			error("Unknown statement: %s\n", command.c_str());
 		error("Unexpected data line: %s\n", line.c_str());
@@ -693,6 +753,26 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 			}
 			ofs << '\n';
 		}
+
+		if (cic.tile_type == "ramb")
+		{
+			BramIndexConverter bic(this, x, y);
+			ofs << stringf(".ram_data %d %d\n", x, y);
+
+			for (int bit_y = 0; bit_y < 16; bit_y++) {
+				for (int bit_x = 256-4; bit_x >= 0; bit_x -= 4) {
+					int value = 0;
+					for (int i = 0; i < 4; i++) {
+						int bram_bank, bram_x, bram_y;
+						bic.get_bram_index(bit_x+i, bit_y, bram_bank, bram_x, bram_y);
+						if (this->bram[bram_bank][bram_x][bram_y])
+							value += 1 << i;
+					}
+					ofs << "0123456789abcdef"[value];
+				}
+				ofs << '\n';
+			}
+		}
 	}
 
 	for (int i = 0; i < 4; i++)
@@ -717,7 +797,7 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 void FpgaConfig::write_cram_pbm(std::ostream &ofs, int bank_num) const
 {
 	debug("## %s\n", __PRETTY_FUNCTION__);
-	info("Writing pbm file..\n");
+	info("Writing cram pbm file..\n");
 
 	ofs << "P1\n";
 	ofs << stringf("%d %d\n", 2*this->cram_width, 2*this->cram_height);
@@ -732,6 +812,29 @@ void FpgaConfig::write_cram_pbm(std::ostream &ofs, int bank_num) const
 				ofs << " 0";
 			else
 				ofs << (this->cram[bank][bank_x][bank_y] ? " 1" : " 0");
+		}
+		ofs << '\n';
+	}
+}
+
+void FpgaConfig::write_bram_pbm(std::ostream &ofs, int bank_num) const
+{
+	debug("## %s\n", __PRETTY_FUNCTION__);
+	info("Writing bram pbm file..\n");
+
+	ofs << "P1\n";
+	ofs << stringf("%d %d\n", 2*this->bram_width, 2*this->bram_height);
+	for (int y = 2*this->bram_height-1; y >= 0; y--) {
+		for (int x = 0; x < 2*this->bram_width; x++) {
+			int bank = 0, bank_x = x, bank_y = y;
+			if (bank_x >= this->bram_width)
+				bank |= 1, bank_x = 2*this->bram_width - bank_x - 1;
+			if (bank_y >= this->bram_height)
+				bank |= 2, bank_y = 2*this->bram_height - bank_y - 1;
+			if (bank_num >= 0 && bank != bank_num)
+				ofs << " 0";
+			else
+				ofs << (this->bram[bank][bank_x][bank_y] ? " 1" : " 0");
 		}
 		ofs << '\n';
 	}
@@ -901,6 +1004,33 @@ void CramIndexConverter::get_cram_index(int bit_x, int bit_y, int &cram_bank, in
 	}
 }
 
+BramIndexConverter::BramIndexConverter(const FpgaConfig *fpga, int tile_x, int tile_y)
+{
+	this->fpga = fpga;
+	this->tile_x = tile_x;
+	this->tile_y = tile_y;
+
+	auto chip_width = fpga->chip_width();
+	auto chip_height = fpga->chip_height();
+
+	bool right_half = this->tile_x > chip_width / 2;
+	bool top_half = this->tile_y > chip_height / 2;
+
+	this->bank_num = 0;
+	if (top_half) this->bank_num |= 1;
+	if (right_half) this->bank_num |= 2;
+
+	this->bank_off = 16 * ((top_half ? this->tile_y - chip_height / 2 : this->tile_y - 1) / 2);
+}
+
+void BramIndexConverter::get_bram_index(int bit_x, int bit_y, int &bram_bank, int &bram_x, int &bram_y) const
+{
+	int index = 256 * bit_y + (16*(bit_x/16) + 15 - bit_x%16);
+	bram_bank = bank_num;
+	bram_x = bank_off + index % 16;
+	bram_y = index / 16;
+}
+
 
 // ==================================================================
 // Main program
@@ -926,6 +1056,9 @@ void usage()
 	log("        write cram bitmap (checkerboard) as netpbm file\n");
 	log("        repeat to flip the selection of tiles\n");
 	log("\n");
+	log("    -r\n");
+	log("        write bram data, not cram, to the netpbm file\n");
+	log("\n");
 	log("    -B0, -B1, -B2, -B3\n");
 	log("        only include the specified bank in the netpbm file\n");
 	log("\n");
@@ -937,6 +1070,7 @@ int main(int argc, char **argv)
 	vector<string> parameters;
 	bool unpack_mode = false;
 	bool netpbm_mode = false;
+	bool netpbm_bram = false;
 	bool netpbm_fill_tiles = false;
 	bool netpbm_checkerboard = false;
 	int netpbm_banknum = -1;
@@ -951,11 +1085,14 @@ int main(int argc, char **argv)
 		string arg(argv[i]);
 
 		if (arg[0] == '-' && arg.size() > 1) {
-			for (int i = 1; i < arg.size(); i++)
+			for (int i = 1; i < int(arg.size()); i++)
 				if (arg[i] == 'u') {
 					unpack_mode = true;
 				} else if (arg[i] == 'b') {
 					netpbm_mode = true;
+				} else if (arg[i] == 'r') {
+					netpbm_mode = true;
+					netpbm_bram = true;
 				} else if (arg[i] == 'f') {
 					netpbm_mode = true;
 					netpbm_fill_tiles = true;
@@ -1023,8 +1160,12 @@ int main(int argc, char **argv)
 	if (netpbm_fill_tiles)
 		fpga_config.cram_fill_tiles();
 
-	if (netpbm_mode)
-		fpga_config.write_cram_pbm(*osp, netpbm_banknum);
+	if (netpbm_mode) {
+		if (netpbm_bram)
+			fpga_config.write_bram_pbm(*osp, netpbm_banknum);
+		else
+			fpga_config.write_cram_pbm(*osp, netpbm_banknum);
+	}
 
 	info("Done.\n");
 	return 0;
