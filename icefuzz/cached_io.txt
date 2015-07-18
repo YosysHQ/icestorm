@@ -1,0 +1,2270 @@
+(0 0) Enable bit of Mux _out_links/OutMux2_0 => wire_io_cluster/io_0/D_IN_0 span4_horz_16
+(0 0) Enable bit of Mux _out_links/OutMux2_0 => wire_io_cluster/io_0/D_IN_0 span4_vert_16
+(0 1) Enable bit of Mux _out_links/OutMux0_0 => wire_io_cluster/io_0/D_IN_0 span4_horz_0
+(0 1) Enable bit of Mux _out_links/OutMux0_0 => wire_io_cluster/io_0/D_IN_0 span4_vert_0
+(0 10) Enable bit of Mux _out_links/OutMux7_2 => wire_io_cluster/io_1/D_IN_0 span4_horz_r_6
+(0 10) Enable bit of Mux _out_links/OutMux7_2 => wire_io_cluster/io_1/D_IN_0 span4_vert_b_6
+(0 11) Enable bit of Mux _out_links/OutMux5_2 => wire_io_cluster/io_1/D_IN_0 span4_horz_44
+(0 11) Enable bit of Mux _out_links/OutMux5_2 => wire_io_cluster/io_1/D_IN_0 span4_vert_44
+(0 12) Enable bit of Mux _out_links/OutMux2_3 => wire_io_cluster/io_1/D_IN_1 span4_horz_22
+(0 12) Enable bit of Mux _out_links/OutMux2_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_22
+(0 13) Enable bit of Mux _out_links/OutMux0_3 => wire_io_cluster/io_1/D_IN_1 span4_horz_6
+(0 13) Enable bit of Mux _out_links/OutMux0_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_6
+(0 14) Enable bit of Mux _out_links/OutMux7_3 => wire_io_cluster/io_1/D_IN_1 span4_horz_r_7
+(0 14) Enable bit of Mux _out_links/OutMux7_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_b_7
+(0 15) Enable bit of Mux _out_links/OutMux5_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_46
+(0 2) Enable bit of Mux _out_links/OutMux7_0 => wire_io_cluster/io_0/D_IN_0 span4_horz_r_4
+(0 2) Enable bit of Mux _out_links/OutMux7_0 => wire_io_cluster/io_0/D_IN_0 span4_vert_b_4
+(0 3) Enable bit of Mux _out_links/OutMux5_0 => wire_io_cluster/io_0/D_IN_0 span4_horz_40
+(0 3) Enable bit of Mux _out_links/OutMux5_0 => wire_io_cluster/io_0/D_IN_0 span4_vert_40
+(0 4) Enable bit of Mux _out_links/OutMux2_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_18
+(0 4) Enable bit of Mux _out_links/OutMux2_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_18
+(0 5) Enable bit of Mux _out_links/OutMux0_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_2
+(0 5) Enable bit of Mux _out_links/OutMux0_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_2
+(0 6) Enable bit of Mux _out_links/OutMux7_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_r_5
+(0 6) Enable bit of Mux _out_links/OutMux7_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_b_5
+(0 7) Enable bit of Mux _out_links/OutMux5_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_42
+(0 7) Enable bit of Mux _out_links/OutMux5_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_42
+(0 8) Enable bit of Mux _out_links/OutMux2_2 => wire_io_cluster/io_1/D_IN_0 span4_horz_20
+(0 8) Enable bit of Mux _out_links/OutMux2_2 => wire_io_cluster/io_1/D_IN_0 span4_vert_20
+(0 9) Enable bit of Mux _out_links/OutMux0_2 => wire_io_cluster/io_1/D_IN_0 span4_horz_4
+(0 9) Enable bit of Mux _out_links/OutMux0_2 => wire_io_cluster/io_1/D_IN_0 span4_vert_4
+(1 0) Enable bit of Mux _out_links/OutMux3_0 => wire_io_cluster/io_0/D_IN_0 span4_horz_24
+(1 0) Enable bit of Mux _out_links/OutMux3_0 => wire_io_cluster/io_0/D_IN_0 span4_vert_24
+(1 1) Enable bit of Mux _out_links/OutMux1_0 => wire_io_cluster/io_0/D_IN_0 span4_horz_8
+(1 1) Enable bit of Mux _out_links/OutMux1_0 => wire_io_cluster/io_0/D_IN_0 span4_vert_8
+(1 10) Enable bit of Mux _out_links/OutMux8_2 => wire_io_cluster/io_1/D_IN_0 span4_horz_r_10
+(1 10) Enable bit of Mux _out_links/OutMux8_2 => wire_io_cluster/io_1/D_IN_0 span4_vert_b_10
+(1 11) Enable bit of Mux _out_links/OutMux6_2 => wire_io_cluster/io_1/D_IN_0 span4_horz_r_2
+(1 11) Enable bit of Mux _out_links/OutMux6_2 => wire_io_cluster/io_1/D_IN_0 span4_vert_b_2
+(1 12) Enable bit of Mux _out_links/OutMux3_3 => wire_io_cluster/io_1/D_IN_1 span4_horz_30
+(1 12) Enable bit of Mux _out_links/OutMux3_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_30
+(1 13) Enable bit of Mux _out_links/OutMux1_3 => wire_io_cluster/io_1/D_IN_1 span4_horz_14
+(1 13) Enable bit of Mux _out_links/OutMux1_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_14
+(1 14) Enable bit of Mux _out_links/OutMux8_3 => wire_io_cluster/io_1/D_IN_1 span4_horz_r_11
+(1 14) Enable bit of Mux _out_links/OutMux8_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_b_11
+(1 15) Enable bit of Mux _out_links/OutMux6_3 => wire_io_cluster/io_1/D_IN_1 span4_horz_r_3
+(1 15) Enable bit of Mux _out_links/OutMux6_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_b_3
+(1 2) Enable bit of Mux _out_links/OutMux8_0 => wire_io_cluster/io_0/D_IN_0 span4_horz_r_8
+(1 2) Enable bit of Mux _out_links/OutMux8_0 => wire_io_cluster/io_0/D_IN_0 span4_vert_b_8
+(1 3) Enable bit of Mux _out_links/OutMux6_0 => wire_io_cluster/io_0/D_IN_0 span4_horz_r_0
+(1 3) Enable bit of Mux _out_links/OutMux6_0 => wire_io_cluster/io_0/D_IN_0 span4_vert_b_0
+(1 4) Enable bit of Mux _out_links/OutMux3_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_26
+(1 4) Enable bit of Mux _out_links/OutMux3_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_26
+(1 5) Enable bit of Mux _out_links/OutMux1_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_10
+(1 6) Enable bit of Mux _out_links/OutMux8_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_r_9
+(1 6) Enable bit of Mux _out_links/OutMux8_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_b_9
+(1 7) Enable bit of Mux _out_links/OutMux6_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_r_1
+(1 7) Enable bit of Mux _out_links/OutMux6_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_b_1
+(1 8) Enable bit of Mux _out_links/OutMux3_2 => wire_io_cluster/io_1/D_IN_0 span4_horz_28
+(1 8) Enable bit of Mux _out_links/OutMux3_2 => wire_io_cluster/io_1/D_IN_0 span4_vert_28
+(1 9) Enable bit of Mux _out_links/OutMux1_2 => wire_io_cluster/io_1/D_IN_0 span4_horz_12
+(1 9) Enable bit of Mux _out_links/OutMux1_2 => wire_io_cluster/io_1/D_IN_0 span4_vert_12
+(10 10) routing lc_trk_g0_4 <X> wire_io_cluster/io_1/OUT_ENB
+(10 10) routing lc_trk_g0_6 <X> wire_io_cluster/io_1/OUT_ENB
+(10 10) routing lc_trk_g1_5 <X> wire_io_cluster/io_1/OUT_ENB
+(10 10) routing lc_trk_g1_7 <X> wire_io_cluster/io_1/OUT_ENB
+(10 11) routing lc_trk_g0_2 <X> wire_io_cluster/io_1/OUT_ENB
+(10 11) routing lc_trk_g0_6 <X> wire_io_cluster/io_1/OUT_ENB
+(10 11) routing lc_trk_g1_3 <X> wire_io_cluster/io_1/OUT_ENB
+(10 11) routing lc_trk_g1_7 <X> wire_io_cluster/io_1/OUT_ENB
+(10 14) routing lc_trk_g0_4 <X> wire_io_cluster/io_1/D_OUT_1
+(10 14) routing lc_trk_g0_6 <X> wire_io_cluster/io_1/D_OUT_1
+(10 14) routing lc_trk_g1_5 <X> wire_io_cluster/io_1/D_OUT_1
+(10 14) routing lc_trk_g1_7 <X> wire_io_cluster/io_1/D_OUT_1
+(10 15) routing lc_trk_g0_2 <X> wire_io_cluster/io_1/D_OUT_1
+(10 15) routing lc_trk_g0_6 <X> wire_io_cluster/io_1/D_OUT_1
+(10 15) routing lc_trk_g1_3 <X> wire_io_cluster/io_1/D_OUT_1
+(10 15) routing lc_trk_g1_7 <X> wire_io_cluster/io_1/D_OUT_1
+(10 4) routing lc_trk_g0_5 <X> wire_io_cluster/io_0/OUT_ENB
+(10 4) routing lc_trk_g0_7 <X> wire_io_cluster/io_0/OUT_ENB
+(10 4) routing lc_trk_g1_4 <X> wire_io_cluster/io_0/OUT_ENB
+(10 4) routing lc_trk_g1_6 <X> wire_io_cluster/io_0/OUT_ENB
+(10 5) routing lc_trk_g0_3 <X> wire_io_cluster/io_0/OUT_ENB
+(10 5) routing lc_trk_g0_7 <X> wire_io_cluster/io_0/OUT_ENB
+(10 5) routing lc_trk_g1_2 <X> wire_io_cluster/io_0/OUT_ENB
+(10 5) routing lc_trk_g1_6 <X> wire_io_cluster/io_0/OUT_ENB
+(10 8) routing lc_trk_g0_5 <X> wire_io_cluster/io_0/D_OUT_1
+(10 8) routing lc_trk_g0_7 <X> wire_io_cluster/io_0/D_OUT_1
+(10 8) routing lc_trk_g1_4 <X> wire_io_cluster/io_0/D_OUT_1
+(10 8) routing lc_trk_g1_6 <X> wire_io_cluster/io_0/D_OUT_1
+(10 9) routing lc_trk_g0_3 <X> wire_io_cluster/io_0/D_OUT_1
+(10 9) routing lc_trk_g0_7 <X> wire_io_cluster/io_0/D_OUT_1
+(10 9) routing lc_trk_g1_2 <X> wire_io_cluster/io_0/D_OUT_1
+(10 9) routing lc_trk_g1_6 <X> wire_io_cluster/io_0/D_OUT_1
+(11 0) routing span4_horz_1 <X> span4_vert_t_12
+(11 0) routing span4_horz_r_0 <X> span4_horz_l_12
+(11 0) routing span4_vert_1 <X> span4_horz_l_12
+(11 0) routing span4_vert_b_0 <X> span4_vert_t_12
+(11 1) routing span4_horz_1 <X> span4_horz_25
+(11 1) routing span4_horz_l_12 <X> span4_vert_25
+(11 1) routing span4_vert_1 <X> span4_vert_25
+(11 1) routing span4_vert_t_12 <X> span4_horz_25
+(11 10) routing lc_trk_g1_1 <X> wire_io_cluster/io_1/OUT_ENB
+(11 10) routing lc_trk_g1_3 <X> wire_io_cluster/io_1/OUT_ENB
+(11 10) routing lc_trk_g1_5 <X> wire_io_cluster/io_1/OUT_ENB
+(11 10) routing lc_trk_g1_7 <X> wire_io_cluster/io_1/OUT_ENB
+(11 11) Enable bit of Mux _io_cluster/in_mux1_0 => lc_trk_g0_0 wire_io_cluster/io_1/OUT_ENB
+(11 11) Enable bit of Mux _io_cluster/in_mux1_0 => lc_trk_g0_2 wire_io_cluster/io_1/OUT_ENB
+(11 11) Enable bit of Mux _io_cluster/in_mux1_0 => lc_trk_g0_4 wire_io_cluster/io_1/OUT_ENB
+(11 11) Enable bit of Mux _io_cluster/in_mux1_0 => lc_trk_g0_6 wire_io_cluster/io_1/OUT_ENB
+(11 11) Enable bit of Mux _io_cluster/in_mux1_0 => lc_trk_g1_1 wire_io_cluster/io_1/OUT_ENB
+(11 11) Enable bit of Mux _io_cluster/in_mux1_0 => lc_trk_g1_3 wire_io_cluster/io_1/OUT_ENB
+(11 11) Enable bit of Mux _io_cluster/in_mux1_0 => lc_trk_g1_5 wire_io_cluster/io_1/OUT_ENB
+(11 11) Enable bit of Mux _io_cluster/in_mux1_0 => lc_trk_g1_7 wire_io_cluster/io_1/OUT_ENB
+(11 12) routing span4_horz_19 <X> span4_vert_t_15
+(11 12) routing span4_horz_r_3 <X> span4_horz_l_15
+(11 12) routing span4_vert_19 <X> span4_horz_l_15
+(11 12) routing span4_vert_b_3 <X> span4_vert_t_15
+(11 13) routing span4_horz_19 <X> span4_horz_43
+(11 13) routing span4_horz_l_15 <X> span4_vert_43
+(11 13) routing span4_vert_19 <X> span4_vert_43
+(11 13) routing span4_vert_t_15 <X> span4_horz_43
+(11 14) routing lc_trk_g1_1 <X> wire_io_cluster/io_1/D_OUT_1
+(11 14) routing lc_trk_g1_3 <X> wire_io_cluster/io_1/D_OUT_1
+(11 14) routing lc_trk_g1_5 <X> wire_io_cluster/io_1/D_OUT_1
+(11 14) routing lc_trk_g1_7 <X> wire_io_cluster/io_1/D_OUT_1
+(11 15) Enable bit of Mux _io_cluster/in_mux1_2 => lc_trk_g0_0 wire_io_cluster/io_1/D_OUT_1
+(11 15) Enable bit of Mux _io_cluster/in_mux1_2 => lc_trk_g0_2 wire_io_cluster/io_1/D_OUT_1
+(11 15) Enable bit of Mux _io_cluster/in_mux1_2 => lc_trk_g0_4 wire_io_cluster/io_1/D_OUT_1
+(11 15) Enable bit of Mux _io_cluster/in_mux1_2 => lc_trk_g0_6 wire_io_cluster/io_1/D_OUT_1
+(11 15) Enable bit of Mux _io_cluster/in_mux1_2 => lc_trk_g1_1 wire_io_cluster/io_1/D_OUT_1
+(11 15) Enable bit of Mux _io_cluster/in_mux1_2 => lc_trk_g1_3 wire_io_cluster/io_1/D_OUT_1
+(11 15) Enable bit of Mux _io_cluster/in_mux1_2 => lc_trk_g1_5 wire_io_cluster/io_1/D_OUT_1
+(11 15) Enable bit of Mux _io_cluster/in_mux1_2 => lc_trk_g1_7 wire_io_cluster/io_1/D_OUT_1
+(11 2) routing span4_horz_7 <X> span4_vert_t_13
+(11 2) routing span4_horz_r_1 <X> span4_horz_l_13
+(11 2) routing span4_vert_7 <X> span4_horz_l_13
+(11 2) routing span4_vert_b_1 <X> span4_vert_t_13
+(11 3) routing span4_horz_7 <X> span4_horz_31
+(11 3) routing span4_horz_l_13 <X> span4_vert_31
+(11 3) routing span4_vert_7 <X> span4_vert_31
+(11 3) routing span4_vert_t_13 <X> span4_horz_31
+(11 4) routing lc_trk_g1_0 <X> wire_io_cluster/io_0/OUT_ENB
+(11 4) routing lc_trk_g1_2 <X> wire_io_cluster/io_0/OUT_ENB
+(11 4) routing lc_trk_g1_4 <X> wire_io_cluster/io_0/OUT_ENB
+(11 4) routing lc_trk_g1_6 <X> wire_io_cluster/io_0/OUT_ENB
+(11 5) Enable bit of Mux _io_cluster/in_mux0_0 => lc_trk_g0_1 wire_io_cluster/io_0/OUT_ENB
+(11 5) Enable bit of Mux _io_cluster/in_mux0_0 => lc_trk_g0_3 wire_io_cluster/io_0/OUT_ENB
+(11 5) Enable bit of Mux _io_cluster/in_mux0_0 => lc_trk_g0_5 wire_io_cluster/io_0/OUT_ENB
+(11 5) Enable bit of Mux _io_cluster/in_mux0_0 => lc_trk_g0_7 wire_io_cluster/io_0/OUT_ENB
+(11 5) Enable bit of Mux _io_cluster/in_mux0_0 => lc_trk_g1_0 wire_io_cluster/io_0/OUT_ENB
+(11 5) Enable bit of Mux _io_cluster/in_mux0_0 => lc_trk_g1_2 wire_io_cluster/io_0/OUT_ENB
+(11 5) Enable bit of Mux _io_cluster/in_mux0_0 => lc_trk_g1_4 wire_io_cluster/io_0/OUT_ENB
+(11 5) Enable bit of Mux _io_cluster/in_mux0_0 => lc_trk_g1_6 wire_io_cluster/io_0/OUT_ENB
+(11 6) routing span4_horz_13 <X> span4_vert_t_14
+(11 6) routing span4_horz_r_2 <X> span4_horz_l_14
+(11 6) routing span4_vert_13 <X> span4_horz_l_14
+(11 6) routing span4_vert_b_2 <X> span4_vert_t_14
+(11 7) routing span4_horz_13 <X> span4_horz_37
+(11 7) routing span4_horz_l_14 <X> span4_vert_37
+(11 7) routing span4_vert_13 <X> span4_vert_37
+(11 7) routing span4_vert_t_14 <X> span4_horz_37
+(11 8) routing lc_trk_g1_0 <X> wire_io_cluster/io_0/D_OUT_1
+(11 8) routing lc_trk_g1_2 <X> wire_io_cluster/io_0/D_OUT_1
+(11 8) routing lc_trk_g1_4 <X> wire_io_cluster/io_0/D_OUT_1
+(11 8) routing lc_trk_g1_6 <X> wire_io_cluster/io_0/D_OUT_1
+(11 9) Enable bit of Mux _io_cluster/in_mux0_2 => lc_trk_g0_1 wire_io_cluster/io_0/D_OUT_1
+(11 9) Enable bit of Mux _io_cluster/in_mux0_2 => lc_trk_g0_3 wire_io_cluster/io_0/D_OUT_1
+(11 9) Enable bit of Mux _io_cluster/in_mux0_2 => lc_trk_g0_5 wire_io_cluster/io_0/D_OUT_1
+(11 9) Enable bit of Mux _io_cluster/in_mux0_2 => lc_trk_g0_7 wire_io_cluster/io_0/D_OUT_1
+(11 9) Enable bit of Mux _io_cluster/in_mux0_2 => lc_trk_g1_0 wire_io_cluster/io_0/D_OUT_1
+(11 9) Enable bit of Mux _io_cluster/in_mux0_2 => lc_trk_g1_2 wire_io_cluster/io_0/D_OUT_1
+(11 9) Enable bit of Mux _io_cluster/in_mux0_2 => lc_trk_g1_4 wire_io_cluster/io_0/D_OUT_1
+(11 9) Enable bit of Mux _io_cluster/in_mux0_2 => lc_trk_g1_6 wire_io_cluster/io_0/D_OUT_1
+(12 0) routing span4_horz_1 <X> span4_vert_t_12
+(12 0) routing span4_horz_25 <X> span4_vert_t_12
+(12 0) routing span4_vert_1 <X> span4_horz_l_12
+(12 0) routing span4_vert_25 <X> span4_horz_l_12
+(12 1) routing span4_horz_1 <X> span4_horz_25
+(12 1) routing span4_horz_r_0 <X> span4_vert_25
+(12 1) routing span4_vert_1 <X> span4_vert_25
+(12 1) routing span4_vert_b_0 <X> span4_horz_25
+(12 10) routing lc_trk_g1_0 <X> wire_io_cluster/io_1/D_OUT_0
+(12 10) routing lc_trk_g1_2 <X> wire_io_cluster/io_1/D_OUT_0
+(12 10) routing lc_trk_g1_4 <X> wire_io_cluster/io_1/D_OUT_0
+(12 10) routing lc_trk_g1_6 <X> wire_io_cluster/io_1/D_OUT_0
+(12 11) routing lc_trk_g0_3 <X> wire_io_cluster/io_1/D_OUT_0
+(12 11) routing lc_trk_g0_7 <X> wire_io_cluster/io_1/D_OUT_0
+(12 11) routing lc_trk_g1_2 <X> wire_io_cluster/io_1/D_OUT_0
+(12 11) routing lc_trk_g1_6 <X> wire_io_cluster/io_1/D_OUT_0
+(12 12) routing span4_horz_19 <X> span4_vert_t_15
+(12 12) routing span4_horz_43 <X> span4_vert_t_15
+(12 12) routing span4_vert_19 <X> span4_horz_l_15
+(12 12) routing span4_vert_43 <X> span4_horz_l_15
+(12 13) routing span4_horz_19 <X> span4_horz_43
+(12 13) routing span4_horz_r_3 <X> span4_vert_43
+(12 13) routing span4_vert_19 <X> span4_vert_43
+(12 13) routing span4_vert_b_3 <X> span4_horz_43
+(12 14) routing glb_netwk_2 <X> wire_io_cluster/io_1/outclk
+(12 14) routing glb_netwk_3 <X> wire_io_cluster/io_1/outclk
+(12 14) routing glb_netwk_6 <X> wire_io_cluster/io_1/outclk
+(12 14) routing glb_netwk_7 <X> wire_io_cluster/io_1/outclk
+(12 14) routing lc_trk_g1_1 <X> wire_io_cluster/io_1/outclk
+(12 14) routing lc_trk_g1_4 <X> wire_io_cluster/io_1/outclk
+(12 15) routing glb_netwk_1 <X> wire_io_cluster/io_1/outclk
+(12 15) routing glb_netwk_3 <X> wire_io_cluster/io_1/outclk
+(12 15) routing glb_netwk_5 <X> wire_io_cluster/io_1/outclk
+(12 15) routing glb_netwk_7 <X> wire_io_cluster/io_1/outclk
+(12 15) routing lc_trk_g0_4 <X> wire_io_cluster/io_1/outclk
+(12 15) routing lc_trk_g1_4 <X> wire_io_cluster/io_1/outclk
+(12 2) routing span4_horz_31 <X> span4_vert_t_13
+(12 2) routing span4_horz_7 <X> span4_vert_t_13
+(12 2) routing span4_vert_31 <X> span4_horz_l_13
+(12 2) routing span4_vert_7 <X> span4_horz_l_13
+(12 3) routing span4_horz_7 <X> span4_horz_31
+(12 3) routing span4_horz_r_1 <X> span4_vert_31
+(12 3) routing span4_vert_7 <X> span4_vert_31
+(12 3) routing span4_vert_b_1 <X> span4_horz_31
+(12 4) routing lc_trk_g1_1 <X> wire_io_cluster/io_0/D_OUT_0
+(12 4) routing lc_trk_g1_3 <X> wire_io_cluster/io_0/D_OUT_0
+(12 4) routing lc_trk_g1_5 <X> wire_io_cluster/io_0/D_OUT_0
+(12 4) routing lc_trk_g1_7 <X> wire_io_cluster/io_0/D_OUT_0
+(12 5) routing lc_trk_g0_2 <X> wire_io_cluster/io_0/D_OUT_0
+(12 5) routing lc_trk_g0_6 <X> wire_io_cluster/io_0/D_OUT_0
+(12 5) routing lc_trk_g1_3 <X> wire_io_cluster/io_0/D_OUT_0
+(12 5) routing lc_trk_g1_7 <X> wire_io_cluster/io_0/D_OUT_0
+(12 6) routing span4_horz_13 <X> span4_vert_t_14
+(12 6) routing span4_horz_37 <X> span4_vert_t_14
+(12 6) routing span4_vert_13 <X> span4_horz_l_14
+(12 6) routing span4_vert_37 <X> span4_horz_l_14
+(12 7) routing span4_horz_13 <X> span4_horz_37
+(12 7) routing span4_horz_r_2 <X> span4_vert_37
+(12 7) routing span4_vert_13 <X> span4_vert_37
+(12 7) routing span4_vert_b_2 <X> span4_horz_37
+(12 8) routing glb_netwk_2 <X> wire_io_cluster/io_1/inclk
+(12 8) routing glb_netwk_3 <X> wire_io_cluster/io_1/inclk
+(12 8) routing glb_netwk_6 <X> wire_io_cluster/io_1/inclk
+(12 8) routing glb_netwk_7 <X> wire_io_cluster/io_1/inclk
+(12 8) routing lc_trk_g1_0 <X> wire_io_cluster/io_1/inclk
+(12 8) routing lc_trk_g1_3 <X> wire_io_cluster/io_1/inclk
+(12 9) routing glb_netwk_1 <X> wire_io_cluster/io_1/inclk
+(12 9) routing glb_netwk_3 <X> wire_io_cluster/io_1/inclk
+(12 9) routing glb_netwk_5 <X> wire_io_cluster/io_1/inclk
+(12 9) routing glb_netwk_7 <X> wire_io_cluster/io_1/inclk
+(12 9) routing lc_trk_g0_3 <X> wire_io_cluster/io_1/inclk
+(12 9) routing lc_trk_g1_3 <X> wire_io_cluster/io_1/inclk
+(13 0) routing span4_horz_25 <X> span4_horz_1
+(13 0) routing span4_horz_r_0 <X> span4_vert_1
+(13 0) routing span4_vert_25 <X> span4_vert_1
+(13 0) routing span4_vert_b_0 <X> span4_horz_1
+(13 1) routing span4_horz_1 <X> span4_vert_b_0
+(13 1) routing span4_horz_25 <X> span4_vert_b_0
+(13 1) routing span4_vert_1 <X> span4_horz_r_0
+(13 1) routing span4_vert_25 <X> span4_horz_r_0
+(13 10) routing lc_trk_g0_5 <X> wire_io_cluster/io_1/D_OUT_0
+(13 10) routing lc_trk_g0_7 <X> wire_io_cluster/io_1/D_OUT_0
+(13 10) routing lc_trk_g1_4 <X> wire_io_cluster/io_1/D_OUT_0
+(13 10) routing lc_trk_g1_6 <X> wire_io_cluster/io_1/D_OUT_0
+(13 11) Enable bit of Mux _io_cluster/in_mux1_1 => lc_trk_g0_1 wire_io_cluster/io_1/D_OUT_0
+(13 11) Enable bit of Mux _io_cluster/in_mux1_1 => lc_trk_g0_3 wire_io_cluster/io_1/D_OUT_0
+(13 11) Enable bit of Mux _io_cluster/in_mux1_1 => lc_trk_g0_5 wire_io_cluster/io_1/D_OUT_0
+(13 11) Enable bit of Mux _io_cluster/in_mux1_1 => lc_trk_g0_7 wire_io_cluster/io_1/D_OUT_0
+(13 11) Enable bit of Mux _io_cluster/in_mux1_1 => lc_trk_g1_0 wire_io_cluster/io_1/D_OUT_0
+(13 11) Enable bit of Mux _io_cluster/in_mux1_1 => lc_trk_g1_2 wire_io_cluster/io_1/D_OUT_0
+(13 11) Enable bit of Mux _io_cluster/in_mux1_1 => lc_trk_g1_4 wire_io_cluster/io_1/D_OUT_0
+(13 11) Enable bit of Mux _io_cluster/in_mux1_1 => lc_trk_g1_6 wire_io_cluster/io_1/D_OUT_0
+(13 12) routing span4_horz_43 <X> span4_horz_19
+(13 12) routing span4_horz_r_3 <X> span4_vert_19
+(13 12) routing span4_vert_43 <X> span4_vert_19
+(13 12) routing span4_vert_b_3 <X> span4_horz_19
+(13 13) routing span4_horz_19 <X> span4_vert_b_3
+(13 13) routing span4_horz_43 <X> span4_vert_b_3
+(13 13) routing span4_vert_19 <X> span4_horz_r_3
+(13 13) routing span4_vert_43 <X> span4_horz_r_3
+(13 14) routing lc_trk_g0_1 <X> wire_io_cluster/io_1/outclk
+(13 14) routing lc_trk_g0_4 <X> wire_io_cluster/io_1/outclk
+(13 14) routing lc_trk_g1_1 <X> wire_io_cluster/io_1/outclk
+(13 14) routing lc_trk_g1_4 <X> wire_io_cluster/io_1/outclk
+(13 15) Negative Clock bit
+(13 2) routing span4_horz_31 <X> span4_horz_7
+(13 2) routing span4_horz_r_1 <X> span4_vert_7
+(13 2) routing span4_vert_31 <X> span4_vert_7
+(13 2) routing span4_vert_b_1 <X> span4_horz_7
+(13 3) routing span4_horz_31 <X> span4_vert_b_1
+(13 3) routing span4_horz_7 <X> span4_vert_b_1
+(13 3) routing span4_vert_31 <X> span4_horz_r_1
+(13 3) routing span4_vert_7 <X> span4_horz_r_1
+(13 4) routing lc_trk_g0_4 <X> wire_io_cluster/io_0/D_OUT_0
+(13 4) routing lc_trk_g0_6 <X> wire_io_cluster/io_0/D_OUT_0
+(13 4) routing lc_trk_g1_5 <X> wire_io_cluster/io_0/D_OUT_0
+(13 4) routing lc_trk_g1_7 <X> wire_io_cluster/io_0/D_OUT_0
+(13 5) Enable bit of Mux _io_cluster/in_mux0_1 => lc_trk_g0_0 wire_io_cluster/io_0/D_OUT_0
+(13 5) Enable bit of Mux _io_cluster/in_mux0_1 => lc_trk_g0_2 wire_io_cluster/io_0/D_OUT_0
+(13 5) Enable bit of Mux _io_cluster/in_mux0_1 => lc_trk_g0_4 wire_io_cluster/io_0/D_OUT_0
+(13 5) Enable bit of Mux _io_cluster/in_mux0_1 => lc_trk_g0_6 wire_io_cluster/io_0/D_OUT_0
+(13 5) Enable bit of Mux _io_cluster/in_mux0_1 => lc_trk_g1_1 wire_io_cluster/io_0/D_OUT_0
+(13 5) Enable bit of Mux _io_cluster/in_mux0_1 => lc_trk_g1_3 wire_io_cluster/io_0/D_OUT_0
+(13 5) Enable bit of Mux _io_cluster/in_mux0_1 => lc_trk_g1_5 wire_io_cluster/io_0/D_OUT_0
+(13 5) Enable bit of Mux _io_cluster/in_mux0_1 => lc_trk_g1_7 wire_io_cluster/io_0/D_OUT_0
+(13 6) routing span4_horz_37 <X> span4_horz_13
+(13 6) routing span4_horz_r_2 <X> span4_vert_13
+(13 6) routing span4_vert_37 <X> span4_vert_13
+(13 6) routing span4_vert_b_2 <X> span4_horz_13
+(13 7) routing span4_horz_13 <X> span4_vert_b_2
+(13 7) routing span4_horz_37 <X> span4_vert_b_2
+(13 7) routing span4_vert_13 <X> span4_horz_r_2
+(13 7) routing span4_vert_37 <X> span4_horz_r_2
+(13 8) routing lc_trk_g0_0 <X> wire_io_cluster/io_1/inclk
+(13 8) routing lc_trk_g0_3 <X> wire_io_cluster/io_1/inclk
+(13 8) routing lc_trk_g1_0 <X> wire_io_cluster/io_1/inclk
+(13 8) routing lc_trk_g1_3 <X> wire_io_cluster/io_1/inclk
+(13 9) Negative Clock bit
+(14 0) routing span4_horz_l_12 <X> span4_vert_1
+(14 0) routing span4_horz_r_0 <X> span4_vert_1
+(14 0) routing span4_vert_b_0 <X> span4_horz_1
+(14 0) routing span4_vert_t_12 <X> span4_horz_1
+(14 1) routing span4_horz_1 <X> span4_vert_b_0
+(14 1) routing span4_horz_l_12 <X> span4_horz_r_0
+(14 1) routing span4_vert_1 <X> span4_horz_r_0
+(14 1) routing span4_vert_t_12 <X> span4_vert_b_0
+(14 10) routing lc_trk_g0_5 <X> wire_io_cluster/io_1/cen
+(14 10) routing lc_trk_g1_5 <X> wire_io_cluster/io_1/cen
+(14 11) routing lc_trk_g0_2 <X> wire_io_cluster/io_1/cen
+(14 11) routing lc_trk_g0_5 <X> wire_io_cluster/io_1/cen
+(14 11) routing lc_trk_g1_2 <X> wire_io_cluster/io_1/cen
+(14 11) routing lc_trk_g1_5 <X> wire_io_cluster/io_1/cen
+(14 12) routing span4_horz_l_15 <X> span4_vert_19
+(14 12) routing span4_horz_r_3 <X> span4_vert_19
+(14 12) routing span4_vert_b_3 <X> span4_horz_19
+(14 12) routing span4_vert_t_15 <X> span4_horz_19
+(14 13) routing span4_horz_19 <X> span4_vert_b_3
+(14 13) routing span4_horz_l_15 <X> span4_horz_r_3
+(14 13) routing span4_vert_19 <X> span4_horz_r_3
+(14 13) routing span4_vert_t_15 <X> span4_vert_b_3
+(14 14) routing glb_netwk_4 <X> wire_io_cluster/io_1/outclk
+(14 14) routing glb_netwk_5 <X> wire_io_cluster/io_1/outclk
+(14 14) routing glb_netwk_6 <X> wire_io_cluster/io_1/outclk
+(14 14) routing glb_netwk_7 <X> wire_io_cluster/io_1/outclk
+(14 2) routing span4_horz_l_13 <X> span4_vert_7
+(14 2) routing span4_horz_r_1 <X> span4_vert_7
+(14 2) routing span4_vert_b_1 <X> span4_horz_7
+(14 2) routing span4_vert_t_13 <X> span4_horz_7
+(14 3) routing span4_horz_7 <X> span4_vert_b_1
+(14 3) routing span4_horz_l_13 <X> span4_horz_r_1
+(14 3) routing span4_vert_7 <X> span4_horz_r_1
+(14 3) routing span4_vert_t_13 <X> span4_vert_b_1
+(14 4) routing lc_trk_g0_3 <X> fabout
+(14 4) routing lc_trk_g0_3 <X> wire_gbuf/in
+(14 4) routing lc_trk_g0_7 <X> fabout
+(14 4) routing lc_trk_g0_7 <X> wire_gbuf/in
+(14 4) routing lc_trk_g1_2 <X> fabout
+(14 4) routing lc_trk_g1_2 <X> wire_gbuf/in
+(14 4) routing lc_trk_g1_6 <X> fabout
+(14 4) routing lc_trk_g1_6 <X> wire_gbuf/in
+(14 5) routing lc_trk_g1_0 <X> fabout
+(14 5) routing lc_trk_g1_0 <X> wire_gbuf/in
+(14 5) routing lc_trk_g1_2 <X> fabout
+(14 5) routing lc_trk_g1_2 <X> wire_gbuf/in
+(14 5) routing lc_trk_g1_4 <X> fabout
+(14 5) routing lc_trk_g1_4 <X> wire_gbuf/in
+(14 5) routing lc_trk_g1_6 <X> fabout
+(14 5) routing lc_trk_g1_6 <X> wire_gbuf/in
+(14 6) routing span4_horz_l_14 <X> span4_vert_13
+(14 6) routing span4_horz_r_2 <X> span4_vert_13
+(14 6) routing span4_vert_b_2 <X> span4_horz_13
+(14 6) routing span4_vert_t_14 <X> span4_horz_13
+(14 7) routing span4_horz_13 <X> span4_vert_b_2
+(14 7) routing span4_horz_l_14 <X> span4_horz_r_2
+(14 7) routing span4_vert_13 <X> span4_horz_r_2
+(14 7) routing span4_vert_t_14 <X> span4_vert_b_2
+(14 8) routing glb_netwk_4 <X> wire_io_cluster/io_1/inclk
+(14 8) routing glb_netwk_5 <X> wire_io_cluster/io_1/inclk
+(14 8) routing glb_netwk_6 <X> wire_io_cluster/io_1/inclk
+(14 8) routing glb_netwk_7 <X> wire_io_cluster/io_1/inclk
+(15 10) Enable bit of Mux _clock_links/ceb_mux => lc_trk_g0_2 wire_io_cluster/io_1/cen
+(15 10) Enable bit of Mux _clock_links/ceb_mux => lc_trk_g0_5 wire_io_cluster/io_1/cen
+(15 10) Enable bit of Mux _clock_links/ceb_mux => lc_trk_g1_2 wire_io_cluster/io_1/cen
+(15 10) Enable bit of Mux _clock_links/ceb_mux => lc_trk_g1_5 wire_io_cluster/io_1/cen
+(15 11) routing lc_trk_g1_2 <X> wire_io_cluster/io_1/cen
+(15 11) routing lc_trk_g1_5 <X> wire_io_cluster/io_1/cen
+(15 15) Enable bit of Mux _clock_links/clk_mux => glb_netwk_0 wire_io_cluster/io_1/outclk
+(15 15) Enable bit of Mux _clock_links/clk_mux => glb_netwk_1 wire_io_cluster/io_1/outclk
+(15 15) Enable bit of Mux _clock_links/clk_mux => glb_netwk_2 wire_io_cluster/io_1/outclk
+(15 15) Enable bit of Mux _clock_links/clk_mux => glb_netwk_3 wire_io_cluster/io_1/outclk
+(15 15) Enable bit of Mux _clock_links/clk_mux => glb_netwk_4 wire_io_cluster/io_1/outclk
+(15 15) Enable bit of Mux _clock_links/clk_mux => glb_netwk_5 wire_io_cluster/io_1/outclk
+(15 15) Enable bit of Mux _clock_links/clk_mux => glb_netwk_6 wire_io_cluster/io_1/outclk
+(15 15) Enable bit of Mux _clock_links/clk_mux => glb_netwk_7 wire_io_cluster/io_1/outclk
+(15 15) Enable bit of Mux _clock_links/clk_mux => lc_trk_g0_1 wire_io_cluster/io_1/outclk
+(15 15) Enable bit of Mux _clock_links/clk_mux => lc_trk_g0_4 wire_io_cluster/io_1/outclk
+(15 15) Enable bit of Mux _clock_links/clk_mux => lc_trk_g1_1 wire_io_cluster/io_1/outclk
+(15 15) Enable bit of Mux _clock_links/clk_mux => lc_trk_g1_4 wire_io_cluster/io_1/outclk
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g0_1 fabout
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g0_1 wire_gbuf/in
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g0_3 fabout
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g0_3 wire_gbuf/in
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g0_5 fabout
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g0_5 wire_gbuf/in
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g0_7 fabout
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g0_7 wire_gbuf/in
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g1_0 fabout
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g1_0 wire_gbuf/in
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g1_2 fabout
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g1_2 wire_gbuf/in
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g1_4 fabout
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g1_4 wire_gbuf/in
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g1_6 fabout
+(15 4) Enable bit of Mux _fablink/Mux => lc_trk_g1_6 wire_gbuf/in
+(15 5) routing lc_trk_g0_5 <X> fabout
+(15 5) routing lc_trk_g0_5 <X> wire_gbuf/in
+(15 5) routing lc_trk_g0_7 <X> fabout
+(15 5) routing lc_trk_g0_7 <X> wire_gbuf/in
+(15 5) routing lc_trk_g1_4 <X> fabout
+(15 5) routing lc_trk_g1_4 <X> wire_gbuf/in
+(15 5) routing lc_trk_g1_6 <X> fabout
+(15 5) routing lc_trk_g1_6 <X> wire_gbuf/in
+(15 9) Enable bit of Mux _clock_links/inclk_mux => glb_netwk_0 wire_io_cluster/io_1/inclk
+(15 9) Enable bit of Mux _clock_links/inclk_mux => glb_netwk_1 wire_io_cluster/io_1/inclk
+(15 9) Enable bit of Mux _clock_links/inclk_mux => glb_netwk_2 wire_io_cluster/io_1/inclk
+(15 9) Enable bit of Mux _clock_links/inclk_mux => glb_netwk_3 wire_io_cluster/io_1/inclk
+(15 9) Enable bit of Mux _clock_links/inclk_mux => glb_netwk_4 wire_io_cluster/io_1/inclk
+(15 9) Enable bit of Mux _clock_links/inclk_mux => glb_netwk_5 wire_io_cluster/io_1/inclk
+(15 9) Enable bit of Mux _clock_links/inclk_mux => glb_netwk_6 wire_io_cluster/io_1/inclk
+(15 9) Enable bit of Mux _clock_links/inclk_mux => glb_netwk_7 wire_io_cluster/io_1/inclk
+(15 9) Enable bit of Mux _clock_links/inclk_mux => lc_trk_g0_0 wire_io_cluster/io_1/inclk
+(15 9) Enable bit of Mux _clock_links/inclk_mux => lc_trk_g0_3 wire_io_cluster/io_1/inclk
+(15 9) Enable bit of Mux _clock_links/inclk_mux => lc_trk_g1_0 wire_io_cluster/io_1/inclk
+(15 9) Enable bit of Mux _clock_links/inclk_mux => lc_trk_g1_3 wire_io_cluster/io_1/inclk
+(16 0) IOB_0 IO Functioning bit
+(16 0) IOB_0 PINTYPE_3
+(16 10) IOB_1 IO Functioning bit
+(16 10) IOB_1 PINTYPE_3
+(16 13) IOB_1 IO Functioning bit
+(16 13) IOB_1 PINTYPE_1
+(16 14) IOB_1 IO Functioning bit
+(16 14) IOB_1 PINTYPE_4
+(16 3) IOB_0 IO Functioning bit
+(16 3) IOB_0 PINTYPE_1
+(16 4) IOB_0 IO Functioning bit
+(16 4) IOB_0 PINTYPE_4
+(16 6) Enable bit of Mux _out_links/OutMuxc_1 => wire_io_cluster/io_0/D_IN_1 span12_horz_18
+(16 6) Enable bit of Mux _out_links/OutMuxc_1 => wire_io_cluster/io_0/D_IN_1 span12_vert_18
+(16 7) Enable bit of Mux _out_links/OutMuxa_1 => wire_io_cluster/io_0/D_IN_1 span12_horz_2
+(16 7) Enable bit of Mux _out_links/OutMuxa_1 => wire_io_cluster/io_0/D_IN_1 span12_vert_2
+(16 8) Enable bit of Mux _out_links/OutMuxc_2 => wire_io_cluster/io_1/D_IN_0 span12_horz_20
+(16 8) Enable bit of Mux _out_links/OutMuxc_2 => wire_io_cluster/io_1/D_IN_0 span12_vert_20
+(16 9) Enable bit of Mux _out_links/OutMuxa_2 => wire_io_cluster/io_1/D_IN_0 span12_horz_4
+(16 9) Enable bit of Mux _out_links/OutMuxa_2 => wire_io_cluster/io_1/D_IN_0 span12_vert_4
+(17 0) IOB_0 IO Functioning bit
+(17 0) IOB_0 PINTYPE_2
+(17 1) Enable bit of Mux _out_links/OutMuxa_0 => wire_io_cluster/io_0/D_IN_0 span12_horz_0
+(17 1) Enable bit of Mux _out_links/OutMuxa_0 => wire_io_cluster/io_0/D_IN_0 span12_vert_0
+(17 10) IOB_1 IO Functioning bit
+(17 10) IOB_1 PINTYPE_2
+(17 11) Enable bit of Mux _out_links/OutMuxa_3 => wire_io_cluster/io_1/D_IN_1 span12_horz_6
+(17 11) Enable bit of Mux _out_links/OutMuxa_3 => wire_io_cluster/io_1/D_IN_1 span12_vert_6
+(17 12) Enable bit of Mux _out_links/OutMuxb_3 => wire_io_cluster/io_1/D_IN_1 span12_horz_14
+(17 12) Enable bit of Mux _out_links/OutMuxb_3 => wire_io_cluster/io_1/D_IN_1 span12_vert_14
+(17 13) IOB_1 IO Functioning bit
+(17 13) IOB_1 PINTYPE_0
+(17 14) IOB_1 IO Functioning bit
+(17 14) IOB_1 PINTYPE_5
+(17 15) Enable bit of Mux _out_links/OutMuxc_3 => wire_io_cluster/io_1/D_IN_1 span12_horz_22
+(17 15) Enable bit of Mux _out_links/OutMuxc_3 => wire_io_cluster/io_1/D_IN_1 span12_vert_22
+(17 2) Enable bit of Mux _out_links/OutMuxb_0 => wire_io_cluster/io_0/D_IN_0 span12_horz_8
+(17 2) Enable bit of Mux _out_links/OutMuxb_0 => wire_io_cluster/io_0/D_IN_0 span12_vert_8
+(17 3) IOB_0 IO Functioning bit
+(17 3) IOB_0 PINTYPE_0
+(17 4) IOB_0 IO Functioning bit
+(17 4) IOB_0 PINTYPE_5
+(17 5) Enable bit of Mux _out_links/OutMuxc_0 => wire_io_cluster/io_0/D_IN_0 span12_horz_16
+(17 5) Enable bit of Mux _out_links/OutMuxc_0 => wire_io_cluster/io_0/D_IN_0 span12_vert_16
+(17 7) Enable bit of Mux _out_links/OutMuxb_1 => wire_io_cluster/io_0/D_IN_1 span12_horz_10
+(17 7) Enable bit of Mux _out_links/OutMuxb_1 => wire_io_cluster/io_0/D_IN_1 span12_vert_10
+(17 9) Enable bit of Mux _out_links/OutMuxb_2 => wire_io_cluster/io_1/D_IN_0 span12_horz_12
+(17 9) Enable bit of Mux _out_links/OutMuxb_2 => wire_io_cluster/io_1/D_IN_0 span12_vert_12
+(2 0) PLL config bit: CLOCK_T_0_1_IOLEFT_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_0_5_IOLEFT_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_18_0_IODOWN_cf_bit_1
+(2 1) Enable bit of Mux _out_links/OutMux4_0 => wire_io_cluster/io_0/D_IN_0 span4_horz_32
+(2 1) Enable bit of Mux _out_links/OutMux4_0 => wire_io_cluster/io_0/D_IN_0 span4_vert_32
+(2 11) Enable bit of Mux _out_links/OutMux9_2 => wire_io_cluster/io_1/D_IN_0 span4_horz_r_14
+(2 11) Enable bit of Mux _out_links/OutMux9_2 => wire_io_cluster/io_1/D_IN_0 span4_vert_b_14
+(2 13) Enable bit of Mux _out_links/OutMux4_3 => wire_io_cluster/io_1/D_IN_1 span4_horz_38
+(2 13) Enable bit of Mux _out_links/OutMux4_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_38
+(2 15) Enable bit of Mux _out_links/OutMux9_3 => wire_io_cluster/io_1/D_IN_1 span4_horz_r_15
+(2 15) Enable bit of Mux _out_links/OutMux9_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_b_15
+(2 2) PLL config bit: CLOCK_T_0_1_IOLEFT_cf_bit_4
+(2 2) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_4
+(2 2) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_4
+(2 2) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_4
+(2 2) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_4
+(2 2) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_4
+(2 2) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_4
+(2 2) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_4
+(2 2) PLL config bit: CLOCK_T_18_0_IODOWN_cf_bit_4
+(2 2) PLL config bit: CLOCK_T_18_33_IOUP_cf_bit_4
+(2 3) Enable bit of Mux _out_links/OutMux9_0 => wire_io_cluster/io_0/D_IN_0 span4_horz_r_12
+(2 3) Enable bit of Mux _out_links/OutMux9_0 => wire_io_cluster/io_0/D_IN_0 span4_vert_b_12
+(2 4) PLL config bit: CLOCK_T_0_1_IOLEFT_cf_bit_7
+(2 4) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_7
+(2 4) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_7
+(2 4) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_7
+(2 4) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_7
+(2 4) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_7
+(2 4) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_7
+(2 4) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_7
+(2 5) Enable bit of Mux _out_links/OutMux4_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_34
+(2 5) Enable bit of Mux _out_links/OutMux4_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_34
+(2 6) IO control bit: BIODOWN_REN_0
+(2 6) IO control bit: BIOLEFT_REN_0
+(2 6) IO control bit: BIORIGHT_REN_0
+(2 6) IO control bit: BIOUP_REN_0
+(2 6) IO control bit: GIODOWN0_REN_0
+(2 6) IO control bit: GIODOWN1_REN_0
+(2 6) IO control bit: GIOLEFT0_REN_0
+(2 6) IO control bit: GIOLEFT1_REN_0
+(2 6) IO control bit: GIORIGHT0_REN_0
+(2 6) IO control bit: GIORIGHT1_REN_0
+(2 6) IO control bit: GIOUP0_REN_0
+(2 6) IO control bit: GIOUP1_REN_0
+(2 6) IO control bit: IODOWN_REN_0
+(2 6) IO control bit: IOLEFT_REN_0
+(2 6) IO control bit: IORIGHT_REN_0
+(2 6) IO control bit: IOUP_REN_0
+(2 7) Enable bit of Mux _out_links/OutMux9_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_r_13
+(2 7) Enable bit of Mux _out_links/OutMux9_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_b_13
+(2 8) IO control bit: BIOLEFT_LVDS_en
+(2 9) Enable bit of Mux _out_links/OutMux4_2 => wire_io_cluster/io_1/D_IN_0 span4_horz_36
+(2 9) Enable bit of Mux _out_links/OutMux4_2 => wire_io_cluster/io_1/D_IN_0 span4_vert_36
+(3 0) PLL config bit: CLOCK_T_0_1_IOLEFT_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_18_0_IODOWN_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_18_33_IOUP_cf_bit_2
+(3 1) IO control bit: BIODOWN_REN_1
+(3 1) IO control bit: BIOLEFT_REN_1
+(3 1) IO control bit: BIORIGHT_REN_1
+(3 1) IO control bit: BIOUP_REN_1
+(3 1) IO control bit: GIODOWN0_REN_1
+(3 1) IO control bit: GIODOWN1_REN_1
+(3 1) IO control bit: GIOLEFT0_REN_1
+(3 1) IO control bit: GIOLEFT1_REN_1
+(3 1) IO control bit: GIORIGHT0_REN_1
+(3 1) IO control bit: GIORIGHT1_REN_1
+(3 1) IO control bit: GIOUP0_REN_1
+(3 1) IO control bit: GIOUP1_REN_1
+(3 1) IO control bit: IODOWN_REN_1
+(3 1) IO control bit: IOLEFT_REN_1
+(3 1) IO control bit: IORIGHT_REN_1
+(3 1) IO control bit: IOUP_REN_1
+(3 11) Icegate Enable bit: GIODOWN0_padin_latch_enable
+(3 11) Icegate Enable bit: GIODOWN1_padin_latch_enable
+(3 11) Icegate Enable bit: GIOLEFT0_padin_latch_enable
+(3 11) Icegate Enable bit: GIOLEFT1_padin_latch_enable
+(3 11) Icegate Enable bit: GIORIGHT0_padin_latch_enable
+(3 11) Icegate Enable bit: GIORIGHT1_padin_latch_enable
+(3 11) Icegate Enable bit: GIOUP0_padin_latch_enable
+(3 11) Icegate Enable bit: GIOUP1_padin_latch_enable
+(3 2) PLL config bit: CLOCK_T_0_1_IOLEFT_cf_bit_5
+(3 2) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_5
+(3 2) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_5
+(3 2) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_5
+(3 2) PLL config bit: CLOCK_T_0_5_IOLEFT_cf_bit_5
+(3 2) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_5
+(3 2) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_5
+(3 2) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_5
+(3 2) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_5
+(3 2) PLL config bit: CLOCK_T_18_0_IODOWN_cf_bit_5
+(3 3) PLL config bit: CLOCK_T_0_1_IOLEFT_cf_bit_3
+(3 3) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_3
+(3 3) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_3
+(3 3) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_3
+(3 3) PLL config bit: CLOCK_T_0_5_IOLEFT_cf_bit_3
+(3 3) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_3
+(3 3) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_3
+(3 3) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_3
+(3 3) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_3
+(3 3) PLL config bit: CLOCK_T_18_0_IODOWN_cf_bit_3
+(3 4) PLL config bit: CLOCK_T_0_1_IOLEFT_cf_bit_8
+(3 4) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_8
+(3 4) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_8
+(3 4) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_8
+(3 4) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_8
+(3 4) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_8
+(3 4) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_8
+(3 5) PLL config bit: CLOCK_T_0_1_IOLEFT_cf_bit_6
+(3 5) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_6
+(3 5) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_6
+(3 5) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_6
+(3 5) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_6
+(3 5) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_6
+(3 5) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_6
+(3 5) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_6
+(3 6) IO control bit: BIODOWN_IE_1
+(3 6) IO control bit: BIOLEFT_IE_1
+(3 6) IO control bit: BIORIGHT_IE_1
+(3 6) IO control bit: BIOUP_IE_1
+(3 6) IO control bit: GIODOWN0_IE_1
+(3 6) IO control bit: GIODOWN1_IE_1
+(3 6) IO control bit: GIOLEFT0_IE_1
+(3 6) IO control bit: GIOLEFT1_IE_1
+(3 6) IO control bit: GIORIGHT0_IE_1
+(3 6) IO control bit: GIORIGHT1_IE_1
+(3 6) IO control bit: GIOUP0_IE_1
+(3 6) IO control bit: GIOUP1_IE_1
+(3 6) IO control bit: IODOWN_IE_1
+(3 6) IO control bit: IOLEFT_IE_1
+(3 6) IO control bit: IORIGHT_IE_1
+(3 6) IO control bit: IOUP_IE_1
+(3 7) PLL config bit: CLOCK_T_0_1_IOLEFT_cf_bit_9
+(3 7) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_9
+(3 7) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_9
+(3 7) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_9
+(3 7) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_9
+(3 7) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_9
+(3 7) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_9
+(3 7) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_9
+(3 9) IO control bit: BIODOWN_IE_0
+(3 9) IO control bit: BIOLEFT_IE_0
+(3 9) IO control bit: BIORIGHT_IE_0
+(3 9) IO control bit: BIOUP_IE_0
+(3 9) IO control bit: GIODOWN0_IE_0
+(3 9) IO control bit: GIODOWN1_IE_0
+(3 9) IO control bit: GIOLEFT0_IE_0
+(3 9) IO control bit: GIOLEFT1_IE_0
+(3 9) IO control bit: GIORIGHT0_IE_0
+(3 9) IO control bit: GIORIGHT1_IE_0
+(3 9) IO control bit: GIOUP0_IE_0
+(3 9) IO control bit: GIOUP1_IE_0
+(3 9) IO control bit: IODOWN_IE_0
+(3 9) IO control bit: IOLEFT_IE_0
+(3 9) IO control bit: IORIGHT_IE_0
+(3 9) IO control bit: IOUP_IE_0
+(4 0) routing IO_B.logic_op_tnl_0 <X> lc_trk_g0_0
+(4 0) routing IO_B.logic_op_top_0 <X> lc_trk_g0_0
+(4 0) routing IO_L.logic_op_rgt_0 <X> lc_trk_g0_0
+(4 0) routing IO_L.logic_op_tnr_0 <X> lc_trk_g0_0
+(4 0) routing IO_R.logic_op_lft_0 <X> lc_trk_g0_0
+(4 0) routing IO_R.logic_op_tnl_0 <X> lc_trk_g0_0
+(4 0) routing IO_T.logic_op_bnl_0 <X> lc_trk_g0_0
+(4 0) routing IO_T.logic_op_bot_0 <X> lc_trk_g0_0
+(4 0) routing span12_horz_0 <X> lc_trk_g0_0
+(4 0) routing span12_vert_0 <X> lc_trk_g0_0
+(4 0) routing span4_horz_0 <X> lc_trk_g0_0
+(4 0) routing span4_horz_32 <X> lc_trk_g0_0
+(4 0) routing span4_horz_40 <X> lc_trk_g0_0
+(4 0) routing span4_horz_8 <X> lc_trk_g0_0
+(4 0) routing span4_horz_r_8 <X> lc_trk_g0_0
+(4 0) routing span4_vert_0 <X> lc_trk_g0_0
+(4 0) routing span4_vert_32 <X> lc_trk_g0_0
+(4 0) routing span4_vert_40 <X> lc_trk_g0_0
+(4 0) routing span4_vert_8 <X> lc_trk_g0_0
+(4 0) routing span4_vert_b_8 <X> lc_trk_g0_0
+(4 1) routing IO_B.logic_op_top_0 <X> lc_trk_g0_0
+(4 1) routing IO_L.logic_op_rgt_0 <X> lc_trk_g0_0
+(4 1) routing IO_R.logic_op_lft_0 <X> lc_trk_g0_0
+(4 1) routing IO_T.logic_op_bot_0 <X> lc_trk_g0_0
+(4 1) routing span12_horz_0 <X> lc_trk_g0_0
+(4 1) routing span12_horz_16 <X> lc_trk_g0_0
+(4 1) routing span12_vert_0 <X> lc_trk_g0_0
+(4 1) routing span12_vert_16 <X> lc_trk_g0_0
+(4 1) routing span4_horz_24 <X> lc_trk_g0_0
+(4 1) routing span4_horz_40 <X> lc_trk_g0_0
+(4 1) routing span4_horz_8 <X> lc_trk_g0_0
+(4 1) routing span4_horz_r_0 <X> lc_trk_g0_0
+(4 1) routing span4_vert_24 <X> lc_trk_g0_0
+(4 1) routing span4_vert_40 <X> lc_trk_g0_0
+(4 1) routing span4_vert_8 <X> lc_trk_g0_0
+(4 1) routing span4_vert_b_0 <X> lc_trk_g0_0
+(4 10) routing IO_B.logic_op_tnl_2 <X> lc_trk_g1_2
+(4 10) routing IO_B.logic_op_top_2 <X> lc_trk_g1_2
+(4 10) routing IO_L.logic_op_rgt_2 <X> lc_trk_g1_2
+(4 10) routing IO_L.logic_op_tnr_2 <X> lc_trk_g1_2
+(4 10) routing IO_R.logic_op_lft_2 <X> lc_trk_g1_2
+(4 10) routing IO_R.logic_op_tnl_2 <X> lc_trk_g1_2
+(4 10) routing IO_T.logic_op_bnl_2 <X> lc_trk_g1_2
+(4 10) routing IO_T.logic_op_bot_2 <X> lc_trk_g1_2
+(4 10) routing span12_horz_2 <X> lc_trk_g1_2
+(4 10) routing span12_vert_2 <X> lc_trk_g1_2
+(4 10) routing span4_horz_10 <X> lc_trk_g1_2
+(4 10) routing span4_horz_2 <X> lc_trk_g1_2
+(4 10) routing span4_horz_34 <X> lc_trk_g1_2
+(4 10) routing span4_horz_42 <X> lc_trk_g1_2
+(4 10) routing span4_horz_r_10 <X> lc_trk_g1_2
+(4 10) routing span4_vert_10 <X> lc_trk_g1_2
+(4 10) routing span4_vert_2 <X> lc_trk_g1_2
+(4 10) routing span4_vert_34 <X> lc_trk_g1_2
+(4 10) routing span4_vert_42 <X> lc_trk_g1_2
+(4 10) routing span4_vert_b_10 <X> lc_trk_g1_2
+(4 11) routing IO_B.logic_op_top_2 <X> lc_trk_g1_2
+(4 11) routing IO_L.logic_op_rgt_2 <X> lc_trk_g1_2
+(4 11) routing IO_R.logic_op_lft_2 <X> lc_trk_g1_2
+(4 11) routing IO_T.logic_op_bot_2 <X> lc_trk_g1_2
+(4 11) routing span12_horz_18 <X> lc_trk_g1_2
+(4 11) routing span12_horz_2 <X> lc_trk_g1_2
+(4 11) routing span12_vert_18 <X> lc_trk_g1_2
+(4 11) routing span12_vert_2 <X> lc_trk_g1_2
+(4 11) routing span4_horz_10 <X> lc_trk_g1_2
+(4 11) routing span4_horz_26 <X> lc_trk_g1_2
+(4 11) routing span4_horz_42 <X> lc_trk_g1_2
+(4 11) routing span4_horz_r_2 <X> lc_trk_g1_2
+(4 11) routing span4_vert_10 <X> lc_trk_g1_2
+(4 11) routing span4_vert_26 <X> lc_trk_g1_2
+(4 11) routing span4_vert_42 <X> lc_trk_g1_2
+(4 11) routing span4_vert_b_2 <X> lc_trk_g1_2
+(4 12) routing IO_B.logic_op_tnl_4 <X> lc_trk_g1_4
+(4 12) routing IO_B.logic_op_top_4 <X> lc_trk_g1_4
+(4 12) routing IO_L.logic_op_rgt_4 <X> lc_trk_g1_4
+(4 12) routing IO_L.logic_op_tnr_4 <X> lc_trk_g1_4
+(4 12) routing IO_R.logic_op_lft_4 <X> lc_trk_g1_4
+(4 12) routing IO_R.logic_op_tnl_4 <X> lc_trk_g1_4
+(4 12) routing IO_T.logic_op_bnl_4 <X> lc_trk_g1_4
+(4 12) routing IO_T.logic_op_bot_4 <X> lc_trk_g1_4
+(4 12) routing span12_horz_4 <X> lc_trk_g1_4
+(4 12) routing span12_vert_4 <X> lc_trk_g1_4
+(4 12) routing span4_horz_12 <X> lc_trk_g1_4
+(4 12) routing span4_horz_36 <X> lc_trk_g1_4
+(4 12) routing span4_horz_4 <X> lc_trk_g1_4
+(4 12) routing span4_horz_44 <X> lc_trk_g1_4
+(4 12) routing span4_horz_r_12 <X> lc_trk_g1_4
+(4 12) routing span4_vert_12 <X> lc_trk_g1_4
+(4 12) routing span4_vert_36 <X> lc_trk_g1_4
+(4 12) routing span4_vert_4 <X> lc_trk_g1_4
+(4 12) routing span4_vert_44 <X> lc_trk_g1_4
+(4 12) routing span4_vert_b_12 <X> lc_trk_g1_4
+(4 13) routing IO_B.logic_op_top_4 <X> lc_trk_g1_4
+(4 13) routing IO_L.logic_op_rgt_4 <X> lc_trk_g1_4
+(4 13) routing IO_R.logic_op_lft_4 <X> lc_trk_g1_4
+(4 13) routing IO_T.logic_op_bot_4 <X> lc_trk_g1_4
+(4 13) routing span12_horz_20 <X> lc_trk_g1_4
+(4 13) routing span12_horz_4 <X> lc_trk_g1_4
+(4 13) routing span12_vert_20 <X> lc_trk_g1_4
+(4 13) routing span12_vert_4 <X> lc_trk_g1_4
+(4 13) routing span4_horz_12 <X> lc_trk_g1_4
+(4 13) routing span4_horz_28 <X> lc_trk_g1_4
+(4 13) routing span4_horz_44 <X> lc_trk_g1_4
+(4 13) routing span4_horz_r_4 <X> lc_trk_g1_4
+(4 13) routing span4_vert_12 <X> lc_trk_g1_4
+(4 13) routing span4_vert_28 <X> lc_trk_g1_4
+(4 13) routing span4_vert_44 <X> lc_trk_g1_4
+(4 13) routing span4_vert_b_4 <X> lc_trk_g1_4
+(4 14) routing IO_B.logic_op_tnl_6 <X> lc_trk_g1_6
+(4 14) routing IO_B.logic_op_top_6 <X> lc_trk_g1_6
+(4 14) routing IO_L.logic_op_rgt_6 <X> lc_trk_g1_6
+(4 14) routing IO_L.logic_op_tnr_6 <X> lc_trk_g1_6
+(4 14) routing IO_R.logic_op_lft_6 <X> lc_trk_g1_6
+(4 14) routing IO_R.logic_op_tnl_6 <X> lc_trk_g1_6
+(4 14) routing IO_T.logic_op_bnl_6 <X> lc_trk_g1_6
+(4 14) routing IO_T.logic_op_bot_6 <X> lc_trk_g1_6
+(4 14) routing span12_horz_6 <X> lc_trk_g1_6
+(4 14) routing span12_vert_6 <X> lc_trk_g1_6
+(4 14) routing span4_horz_14 <X> lc_trk_g1_6
+(4 14) routing span4_horz_38 <X> lc_trk_g1_6
+(4 14) routing span4_horz_46 <X> lc_trk_g1_6
+(4 14) routing span4_horz_6 <X> lc_trk_g1_6
+(4 14) routing span4_horz_r_14 <X> lc_trk_g1_6
+(4 14) routing span4_vert_14 <X> lc_trk_g1_6
+(4 14) routing span4_vert_38 <X> lc_trk_g1_6
+(4 14) routing span4_vert_46 <X> lc_trk_g1_6
+(4 14) routing span4_vert_6 <X> lc_trk_g1_6
+(4 14) routing span4_vert_b_14 <X> lc_trk_g1_6
+(4 15) routing IO_B.logic_op_top_6 <X> lc_trk_g1_6
+(4 15) routing IO_L.logic_op_rgt_6 <X> lc_trk_g1_6
+(4 15) routing IO_R.logic_op_lft_6 <X> lc_trk_g1_6
+(4 15) routing IO_T.logic_op_bot_6 <X> lc_trk_g1_6
+(4 15) routing span12_horz_22 <X> lc_trk_g1_6
+(4 15) routing span12_horz_6 <X> lc_trk_g1_6
+(4 15) routing span12_vert_22 <X> lc_trk_g1_6
+(4 15) routing span12_vert_6 <X> lc_trk_g1_6
+(4 15) routing span4_horz_14 <X> lc_trk_g1_6
+(4 15) routing span4_horz_30 <X> lc_trk_g1_6
+(4 15) routing span4_horz_46 <X> lc_trk_g1_6
+(4 15) routing span4_horz_r_6 <X> lc_trk_g1_6
+(4 15) routing span4_vert_14 <X> lc_trk_g1_6
+(4 15) routing span4_vert_30 <X> lc_trk_g1_6
+(4 15) routing span4_vert_46 <X> lc_trk_g1_6
+(4 15) routing span4_vert_b_6 <X> lc_trk_g1_6
+(4 2) routing IO_B.logic_op_tnl_2 <X> lc_trk_g0_2
+(4 2) routing IO_B.logic_op_top_2 <X> lc_trk_g0_2
+(4 2) routing IO_L.logic_op_rgt_2 <X> lc_trk_g0_2
+(4 2) routing IO_L.logic_op_tnr_2 <X> lc_trk_g0_2
+(4 2) routing IO_R.logic_op_lft_2 <X> lc_trk_g0_2
+(4 2) routing IO_R.logic_op_tnl_2 <X> lc_trk_g0_2
+(4 2) routing IO_T.logic_op_bnl_2 <X> lc_trk_g0_2
+(4 2) routing IO_T.logic_op_bot_2 <X> lc_trk_g0_2
+(4 2) routing span12_horz_2 <X> lc_trk_g0_2
+(4 2) routing span12_vert_2 <X> lc_trk_g0_2
+(4 2) routing span4_horz_10 <X> lc_trk_g0_2
+(4 2) routing span4_horz_2 <X> lc_trk_g0_2
+(4 2) routing span4_horz_34 <X> lc_trk_g0_2
+(4 2) routing span4_horz_42 <X> lc_trk_g0_2
+(4 2) routing span4_horz_r_10 <X> lc_trk_g0_2
+(4 2) routing span4_vert_10 <X> lc_trk_g0_2
+(4 2) routing span4_vert_2 <X> lc_trk_g0_2
+(4 2) routing span4_vert_34 <X> lc_trk_g0_2
+(4 2) routing span4_vert_42 <X> lc_trk_g0_2
+(4 2) routing span4_vert_b_10 <X> lc_trk_g0_2
+(4 3) routing IO_B.logic_op_top_2 <X> lc_trk_g0_2
+(4 3) routing IO_L.logic_op_rgt_2 <X> lc_trk_g0_2
+(4 3) routing IO_R.logic_op_lft_2 <X> lc_trk_g0_2
+(4 3) routing IO_T.logic_op_bot_2 <X> lc_trk_g0_2
+(4 3) routing span12_horz_18 <X> lc_trk_g0_2
+(4 3) routing span12_horz_2 <X> lc_trk_g0_2
+(4 3) routing span12_vert_18 <X> lc_trk_g0_2
+(4 3) routing span12_vert_2 <X> lc_trk_g0_2
+(4 3) routing span4_horz_10 <X> lc_trk_g0_2
+(4 3) routing span4_horz_26 <X> lc_trk_g0_2
+(4 3) routing span4_horz_42 <X> lc_trk_g0_2
+(4 3) routing span4_horz_r_2 <X> lc_trk_g0_2
+(4 3) routing span4_vert_10 <X> lc_trk_g0_2
+(4 3) routing span4_vert_26 <X> lc_trk_g0_2
+(4 3) routing span4_vert_42 <X> lc_trk_g0_2
+(4 3) routing span4_vert_b_2 <X> lc_trk_g0_2
+(4 4) routing IO_B.logic_op_tnl_4 <X> lc_trk_g0_4
+(4 4) routing IO_B.logic_op_top_4 <X> lc_trk_g0_4
+(4 4) routing IO_L.logic_op_rgt_4 <X> lc_trk_g0_4
+(4 4) routing IO_L.logic_op_tnr_4 <X> lc_trk_g0_4
+(4 4) routing IO_R.logic_op_lft_4 <X> lc_trk_g0_4
+(4 4) routing IO_R.logic_op_tnl_4 <X> lc_trk_g0_4
+(4 4) routing IO_T.logic_op_bnl_4 <X> lc_trk_g0_4
+(4 4) routing IO_T.logic_op_bot_4 <X> lc_trk_g0_4
+(4 4) routing span12_horz_4 <X> lc_trk_g0_4
+(4 4) routing span12_vert_4 <X> lc_trk_g0_4
+(4 4) routing span4_horz_12 <X> lc_trk_g0_4
+(4 4) routing span4_horz_36 <X> lc_trk_g0_4
+(4 4) routing span4_horz_4 <X> lc_trk_g0_4
+(4 4) routing span4_horz_44 <X> lc_trk_g0_4
+(4 4) routing span4_horz_r_12 <X> lc_trk_g0_4
+(4 4) routing span4_vert_12 <X> lc_trk_g0_4
+(4 4) routing span4_vert_36 <X> lc_trk_g0_4
+(4 4) routing span4_vert_4 <X> lc_trk_g0_4
+(4 4) routing span4_vert_44 <X> lc_trk_g0_4
+(4 4) routing span4_vert_b_12 <X> lc_trk_g0_4
+(4 5) routing IO_B.logic_op_top_4 <X> lc_trk_g0_4
+(4 5) routing IO_L.logic_op_rgt_4 <X> lc_trk_g0_4
+(4 5) routing IO_R.logic_op_lft_4 <X> lc_trk_g0_4
+(4 5) routing IO_T.logic_op_bot_4 <X> lc_trk_g0_4
+(4 5) routing span12_horz_20 <X> lc_trk_g0_4
+(4 5) routing span12_horz_4 <X> lc_trk_g0_4
+(4 5) routing span12_vert_20 <X> lc_trk_g0_4
+(4 5) routing span12_vert_4 <X> lc_trk_g0_4
+(4 5) routing span4_horz_12 <X> lc_trk_g0_4
+(4 5) routing span4_horz_28 <X> lc_trk_g0_4
+(4 5) routing span4_horz_44 <X> lc_trk_g0_4
+(4 5) routing span4_horz_r_4 <X> lc_trk_g0_4
+(4 5) routing span4_vert_12 <X> lc_trk_g0_4
+(4 5) routing span4_vert_28 <X> lc_trk_g0_4
+(4 5) routing span4_vert_44 <X> lc_trk_g0_4
+(4 5) routing span4_vert_b_4 <X> lc_trk_g0_4
+(4 6) routing IO_B.logic_op_tnl_6 <X> lc_trk_g0_6
+(4 6) routing IO_B.logic_op_top_6 <X> lc_trk_g0_6
+(4 6) routing IO_L.logic_op_rgt_6 <X> lc_trk_g0_6
+(4 6) routing IO_L.logic_op_tnr_6 <X> lc_trk_g0_6
+(4 6) routing IO_R.logic_op_lft_6 <X> lc_trk_g0_6
+(4 6) routing IO_R.logic_op_tnl_6 <X> lc_trk_g0_6
+(4 6) routing IO_T.logic_op_bnl_6 <X> lc_trk_g0_6
+(4 6) routing IO_T.logic_op_bot_6 <X> lc_trk_g0_6
+(4 6) routing span12_horz_6 <X> lc_trk_g0_6
+(4 6) routing span12_vert_6 <X> lc_trk_g0_6
+(4 6) routing span4_horz_14 <X> lc_trk_g0_6
+(4 6) routing span4_horz_38 <X> lc_trk_g0_6
+(4 6) routing span4_horz_46 <X> lc_trk_g0_6
+(4 6) routing span4_horz_6 <X> lc_trk_g0_6
+(4 6) routing span4_horz_r_14 <X> lc_trk_g0_6
+(4 6) routing span4_vert_14 <X> lc_trk_g0_6
+(4 6) routing span4_vert_38 <X> lc_trk_g0_6
+(4 6) routing span4_vert_46 <X> lc_trk_g0_6
+(4 6) routing span4_vert_6 <X> lc_trk_g0_6
+(4 6) routing span4_vert_b_14 <X> lc_trk_g0_6
+(4 7) routing IO_B.logic_op_top_6 <X> lc_trk_g0_6
+(4 7) routing IO_L.logic_op_rgt_6 <X> lc_trk_g0_6
+(4 7) routing IO_R.logic_op_lft_6 <X> lc_trk_g0_6
+(4 7) routing IO_T.logic_op_bot_6 <X> lc_trk_g0_6
+(4 7) routing span12_horz_22 <X> lc_trk_g0_6
+(4 7) routing span12_horz_6 <X> lc_trk_g0_6
+(4 7) routing span12_vert_22 <X> lc_trk_g0_6
+(4 7) routing span12_vert_6 <X> lc_trk_g0_6
+(4 7) routing span4_horz_14 <X> lc_trk_g0_6
+(4 7) routing span4_horz_30 <X> lc_trk_g0_6
+(4 7) routing span4_horz_46 <X> lc_trk_g0_6
+(4 7) routing span4_horz_r_6 <X> lc_trk_g0_6
+(4 7) routing span4_vert_14 <X> lc_trk_g0_6
+(4 7) routing span4_vert_30 <X> lc_trk_g0_6
+(4 7) routing span4_vert_46 <X> lc_trk_g0_6
+(4 7) routing span4_vert_b_6 <X> lc_trk_g0_6
+(4 8) routing IO_B.logic_op_tnl_0 <X> lc_trk_g1_0
+(4 8) routing IO_B.logic_op_top_0 <X> lc_trk_g1_0
+(4 8) routing IO_L.logic_op_rgt_0 <X> lc_trk_g1_0
+(4 8) routing IO_L.logic_op_tnr_0 <X> lc_trk_g1_0
+(4 8) routing IO_R.logic_op_lft_0 <X> lc_trk_g1_0
+(4 8) routing IO_R.logic_op_tnl_0 <X> lc_trk_g1_0
+(4 8) routing IO_T.logic_op_bnl_0 <X> lc_trk_g1_0
+(4 8) routing IO_T.logic_op_bot_0 <X> lc_trk_g1_0
+(4 8) routing span12_horz_0 <X> lc_trk_g1_0
+(4 8) routing span12_vert_0 <X> lc_trk_g1_0
+(4 8) routing span4_horz_0 <X> lc_trk_g1_0
+(4 8) routing span4_horz_32 <X> lc_trk_g1_0
+(4 8) routing span4_horz_40 <X> lc_trk_g1_0
+(4 8) routing span4_horz_8 <X> lc_trk_g1_0
+(4 8) routing span4_horz_r_8 <X> lc_trk_g1_0
+(4 8) routing span4_vert_0 <X> lc_trk_g1_0
+(4 8) routing span4_vert_32 <X> lc_trk_g1_0
+(4 8) routing span4_vert_40 <X> lc_trk_g1_0
+(4 8) routing span4_vert_8 <X> lc_trk_g1_0
+(4 8) routing span4_vert_b_8 <X> lc_trk_g1_0
+(4 9) routing IO_B.logic_op_top_0 <X> lc_trk_g1_0
+(4 9) routing IO_L.logic_op_rgt_0 <X> lc_trk_g1_0
+(4 9) routing IO_R.logic_op_lft_0 <X> lc_trk_g1_0
+(4 9) routing IO_T.logic_op_bot_0 <X> lc_trk_g1_0
+(4 9) routing span12_horz_0 <X> lc_trk_g1_0
+(4 9) routing span12_horz_16 <X> lc_trk_g1_0
+(4 9) routing span12_vert_0 <X> lc_trk_g1_0
+(4 9) routing span12_vert_16 <X> lc_trk_g1_0
+(4 9) routing span4_horz_24 <X> lc_trk_g1_0
+(4 9) routing span4_horz_40 <X> lc_trk_g1_0
+(4 9) routing span4_horz_8 <X> lc_trk_g1_0
+(4 9) routing span4_horz_r_0 <X> lc_trk_g1_0
+(4 9) routing span4_vert_24 <X> lc_trk_g1_0
+(4 9) routing span4_vert_40 <X> lc_trk_g1_0
+(4 9) routing span4_vert_8 <X> lc_trk_g1_0
+(4 9) routing span4_vert_b_0 <X> lc_trk_g1_0
+(5 0) routing IO_B.logic_op_tnr_1 <X> lc_trk_g0_1
+(5 0) routing IO_L.logic_op_bnr_1 <X> lc_trk_g0_1
+(5 0) routing IO_R.logic_op_bnl_1 <X> lc_trk_g0_1
+(5 0) routing IO_T.logic_op_bnr_1 <X> lc_trk_g0_1
+(5 0) routing span12_horz_1 <X> lc_trk_g0_1
+(5 0) routing span12_vert_1 <X> lc_trk_g0_1
+(5 0) routing span4_horz_17 <X> lc_trk_g0_1
+(5 0) routing span4_horz_25 <X> lc_trk_g0_1
+(5 0) routing span4_horz_33 <X> lc_trk_g0_1
+(5 0) routing span4_horz_41 <X> lc_trk_g0_1
+(5 0) routing span4_horz_r_1 <X> lc_trk_g0_1
+(5 0) routing span4_horz_r_9 <X> lc_trk_g0_1
+(5 0) routing span4_vert_17 <X> lc_trk_g0_1
+(5 0) routing span4_vert_25 <X> lc_trk_g0_1
+(5 0) routing span4_vert_33 <X> lc_trk_g0_1
+(5 0) routing span4_vert_41 <X> lc_trk_g0_1
+(5 0) routing span4_vert_b_1 <X> lc_trk_g0_1
+(5 0) routing span4_vert_b_9 <X> lc_trk_g0_1
+(5 1) routing IO_B.logic_op_tnr_0 <X> lc_trk_g0_0
+(5 1) routing IO_L.logic_op_bnr_0 <X> lc_trk_g0_0
+(5 1) routing IO_R.logic_op_bnl_0 <X> lc_trk_g0_0
+(5 1) routing IO_T.logic_op_bnr_0 <X> lc_trk_g0_0
+(5 1) routing span12_horz_0 <X> lc_trk_g0_0
+(5 1) routing span12_vert_0 <X> lc_trk_g0_0
+(5 1) routing span4_horz_16 <X> lc_trk_g0_0
+(5 1) routing span4_horz_24 <X> lc_trk_g0_0
+(5 1) routing span4_horz_32 <X> lc_trk_g0_0
+(5 1) routing span4_horz_40 <X> lc_trk_g0_0
+(5 1) routing span4_horz_r_0 <X> lc_trk_g0_0
+(5 1) routing span4_horz_r_8 <X> lc_trk_g0_0
+(5 1) routing span4_vert_16 <X> lc_trk_g0_0
+(5 1) routing span4_vert_24 <X> lc_trk_g0_0
+(5 1) routing span4_vert_32 <X> lc_trk_g0_0
+(5 1) routing span4_vert_40 <X> lc_trk_g0_0
+(5 1) routing span4_vert_b_0 <X> lc_trk_g0_0
+(5 1) routing span4_vert_b_8 <X> lc_trk_g0_0
+(5 10) routing IO_B.logic_op_tnr_3 <X> lc_trk_g1_3
+(5 10) routing IO_L.logic_op_bnr_3 <X> lc_trk_g1_3
+(5 10) routing IO_R.logic_op_bnl_3 <X> lc_trk_g1_3
+(5 10) routing IO_T.logic_op_bnr_3 <X> lc_trk_g1_3
+(5 10) routing span12_horz_3 <X> lc_trk_g1_3
+(5 10) routing span12_vert_3 <X> lc_trk_g1_3
+(5 10) routing span4_horz_19 <X> lc_trk_g1_3
+(5 10) routing span4_horz_27 <X> lc_trk_g1_3
+(5 10) routing span4_horz_35 <X> lc_trk_g1_3
+(5 10) routing span4_horz_43 <X> lc_trk_g1_3
+(5 10) routing span4_horz_r_11 <X> lc_trk_g1_3
+(5 10) routing span4_horz_r_3 <X> lc_trk_g1_3
+(5 10) routing span4_vert_19 <X> lc_trk_g1_3
+(5 10) routing span4_vert_27 <X> lc_trk_g1_3
+(5 10) routing span4_vert_35 <X> lc_trk_g1_3
+(5 10) routing span4_vert_43 <X> lc_trk_g1_3
+(5 10) routing span4_vert_b_11 <X> lc_trk_g1_3
+(5 10) routing span4_vert_b_3 <X> lc_trk_g1_3
+(5 11) routing IO_B.logic_op_tnr_2 <X> lc_trk_g1_2
+(5 11) routing IO_L.logic_op_bnr_2 <X> lc_trk_g1_2
+(5 11) routing IO_R.logic_op_bnl_2 <X> lc_trk_g1_2
+(5 11) routing IO_T.logic_op_bnr_2 <X> lc_trk_g1_2
+(5 11) routing span12_horz_2 <X> lc_trk_g1_2
+(5 11) routing span12_vert_2 <X> lc_trk_g1_2
+(5 11) routing span4_horz_18 <X> lc_trk_g1_2
+(5 11) routing span4_horz_26 <X> lc_trk_g1_2
+(5 11) routing span4_horz_34 <X> lc_trk_g1_2
+(5 11) routing span4_horz_42 <X> lc_trk_g1_2
+(5 11) routing span4_horz_r_10 <X> lc_trk_g1_2
+(5 11) routing span4_horz_r_2 <X> lc_trk_g1_2
+(5 11) routing span4_vert_18 <X> lc_trk_g1_2
+(5 11) routing span4_vert_26 <X> lc_trk_g1_2
+(5 11) routing span4_vert_34 <X> lc_trk_g1_2
+(5 11) routing span4_vert_42 <X> lc_trk_g1_2
+(5 11) routing span4_vert_b_10 <X> lc_trk_g1_2
+(5 11) routing span4_vert_b_2 <X> lc_trk_g1_2
+(5 12) routing IO_B.logic_op_tnr_5 <X> lc_trk_g1_5
+(5 12) routing IO_L.logic_op_bnr_5 <X> lc_trk_g1_5
+(5 12) routing IO_R.logic_op_bnl_5 <X> lc_trk_g1_5
+(5 12) routing IO_T.logic_op_bnr_5 <X> lc_trk_g1_5
+(5 12) routing span12_horz_5 <X> lc_trk_g1_5
+(5 12) routing span12_vert_5 <X> lc_trk_g1_5
+(5 12) routing span4_horz_21 <X> lc_trk_g1_5
+(5 12) routing span4_horz_29 <X> lc_trk_g1_5
+(5 12) routing span4_horz_37 <X> lc_trk_g1_5
+(5 12) routing span4_horz_45 <X> lc_trk_g1_5
+(5 12) routing span4_horz_r_13 <X> lc_trk_g1_5
+(5 12) routing span4_horz_r_5 <X> lc_trk_g1_5
+(5 12) routing span4_vert_21 <X> lc_trk_g1_5
+(5 12) routing span4_vert_29 <X> lc_trk_g1_5
+(5 12) routing span4_vert_37 <X> lc_trk_g1_5
+(5 12) routing span4_vert_45 <X> lc_trk_g1_5
+(5 12) routing span4_vert_b_13 <X> lc_trk_g1_5
+(5 12) routing span4_vert_b_5 <X> lc_trk_g1_5
+(5 13) routing IO_B.logic_op_tnr_4 <X> lc_trk_g1_4
+(5 13) routing IO_L.logic_op_bnr_4 <X> lc_trk_g1_4
+(5 13) routing IO_R.logic_op_bnl_4 <X> lc_trk_g1_4
+(5 13) routing IO_T.logic_op_bnr_4 <X> lc_trk_g1_4
+(5 13) routing span12_horz_4 <X> lc_trk_g1_4
+(5 13) routing span12_vert_4 <X> lc_trk_g1_4
+(5 13) routing span4_horz_20 <X> lc_trk_g1_4
+(5 13) routing span4_horz_28 <X> lc_trk_g1_4
+(5 13) routing span4_horz_36 <X> lc_trk_g1_4
+(5 13) routing span4_horz_44 <X> lc_trk_g1_4
+(5 13) routing span4_horz_r_12 <X> lc_trk_g1_4
+(5 13) routing span4_horz_r_4 <X> lc_trk_g1_4
+(5 13) routing span4_vert_20 <X> lc_trk_g1_4
+(5 13) routing span4_vert_28 <X> lc_trk_g1_4
+(5 13) routing span4_vert_36 <X> lc_trk_g1_4
+(5 13) routing span4_vert_44 <X> lc_trk_g1_4
+(5 13) routing span4_vert_b_12 <X> lc_trk_g1_4
+(5 13) routing span4_vert_b_4 <X> lc_trk_g1_4
+(5 14) routing IO_B.logic_op_tnr_7 <X> lc_trk_g1_7
+(5 14) routing IO_L.logic_op_bnr_7 <X> lc_trk_g1_7
+(5 14) routing IO_R.logic_op_bnl_7 <X> lc_trk_g1_7
+(5 14) routing IO_T.logic_op_bnr_7 <X> lc_trk_g1_7
+(5 14) routing span12_horz_7 <X> lc_trk_g1_7
+(5 14) routing span12_vert_7 <X> lc_trk_g1_7
+(5 14) routing span4_horz_23 <X> lc_trk_g1_7
+(5 14) routing span4_horz_31 <X> lc_trk_g1_7
+(5 14) routing span4_horz_39 <X> lc_trk_g1_7
+(5 14) routing span4_horz_47 <X> lc_trk_g1_7
+(5 14) routing span4_horz_r_15 <X> lc_trk_g1_7
+(5 14) routing span4_horz_r_7 <X> lc_trk_g1_7
+(5 14) routing span4_vert_23 <X> lc_trk_g1_7
+(5 14) routing span4_vert_31 <X> lc_trk_g1_7
+(5 14) routing span4_vert_39 <X> lc_trk_g1_7
+(5 14) routing span4_vert_47 <X> lc_trk_g1_7
+(5 14) routing span4_vert_b_15 <X> lc_trk_g1_7
+(5 14) routing span4_vert_b_7 <X> lc_trk_g1_7
+(5 15) routing IO_B.logic_op_tnr_6 <X> lc_trk_g1_6
+(5 15) routing IO_L.logic_op_bnr_6 <X> lc_trk_g1_6
+(5 15) routing IO_R.logic_op_bnl_6 <X> lc_trk_g1_6
+(5 15) routing IO_T.logic_op_bnr_6 <X> lc_trk_g1_6
+(5 15) routing span12_horz_6 <X> lc_trk_g1_6
+(5 15) routing span12_vert_6 <X> lc_trk_g1_6
+(5 15) routing span4_horz_22 <X> lc_trk_g1_6
+(5 15) routing span4_horz_30 <X> lc_trk_g1_6
+(5 15) routing span4_horz_38 <X> lc_trk_g1_6
+(5 15) routing span4_horz_46 <X> lc_trk_g1_6
+(5 15) routing span4_horz_r_14 <X> lc_trk_g1_6
+(5 15) routing span4_horz_r_6 <X> lc_trk_g1_6
+(5 15) routing span4_vert_22 <X> lc_trk_g1_6
+(5 15) routing span4_vert_30 <X> lc_trk_g1_6
+(5 15) routing span4_vert_38 <X> lc_trk_g1_6
+(5 15) routing span4_vert_46 <X> lc_trk_g1_6
+(5 15) routing span4_vert_b_14 <X> lc_trk_g1_6
+(5 15) routing span4_vert_b_6 <X> lc_trk_g1_6
+(5 2) routing IO_B.logic_op_tnr_3 <X> lc_trk_g0_3
+(5 2) routing IO_L.logic_op_bnr_3 <X> lc_trk_g0_3
+(5 2) routing IO_R.logic_op_bnl_3 <X> lc_trk_g0_3
+(5 2) routing IO_T.logic_op_bnr_3 <X> lc_trk_g0_3
+(5 2) routing span12_horz_3 <X> lc_trk_g0_3
+(5 2) routing span12_vert_3 <X> lc_trk_g0_3
+(5 2) routing span4_horz_19 <X> lc_trk_g0_3
+(5 2) routing span4_horz_27 <X> lc_trk_g0_3
+(5 2) routing span4_horz_35 <X> lc_trk_g0_3
+(5 2) routing span4_horz_43 <X> lc_trk_g0_3
+(5 2) routing span4_horz_r_11 <X> lc_trk_g0_3
+(5 2) routing span4_horz_r_3 <X> lc_trk_g0_3
+(5 2) routing span4_vert_19 <X> lc_trk_g0_3
+(5 2) routing span4_vert_27 <X> lc_trk_g0_3
+(5 2) routing span4_vert_35 <X> lc_trk_g0_3
+(5 2) routing span4_vert_43 <X> lc_trk_g0_3
+(5 2) routing span4_vert_b_11 <X> lc_trk_g0_3
+(5 2) routing span4_vert_b_3 <X> lc_trk_g0_3
+(5 3) routing IO_B.logic_op_tnr_2 <X> lc_trk_g0_2
+(5 3) routing IO_L.logic_op_bnr_2 <X> lc_trk_g0_2
+(5 3) routing IO_R.logic_op_bnl_2 <X> lc_trk_g0_2
+(5 3) routing IO_T.logic_op_bnr_2 <X> lc_trk_g0_2
+(5 3) routing span12_horz_2 <X> lc_trk_g0_2
+(5 3) routing span12_vert_2 <X> lc_trk_g0_2
+(5 3) routing span4_horz_18 <X> lc_trk_g0_2
+(5 3) routing span4_horz_26 <X> lc_trk_g0_2
+(5 3) routing span4_horz_34 <X> lc_trk_g0_2
+(5 3) routing span4_horz_42 <X> lc_trk_g0_2
+(5 3) routing span4_horz_r_10 <X> lc_trk_g0_2
+(5 3) routing span4_horz_r_2 <X> lc_trk_g0_2
+(5 3) routing span4_vert_18 <X> lc_trk_g0_2
+(5 3) routing span4_vert_26 <X> lc_trk_g0_2
+(5 3) routing span4_vert_34 <X> lc_trk_g0_2
+(5 3) routing span4_vert_42 <X> lc_trk_g0_2
+(5 3) routing span4_vert_b_10 <X> lc_trk_g0_2
+(5 3) routing span4_vert_b_2 <X> lc_trk_g0_2
+(5 4) routing IO_B.logic_op_tnr_5 <X> lc_trk_g0_5
+(5 4) routing IO_L.logic_op_bnr_5 <X> lc_trk_g0_5
+(5 4) routing IO_R.logic_op_bnl_5 <X> lc_trk_g0_5
+(5 4) routing IO_T.logic_op_bnr_5 <X> lc_trk_g0_5
+(5 4) routing span12_horz_5 <X> lc_trk_g0_5
+(5 4) routing span12_vert_5 <X> lc_trk_g0_5
+(5 4) routing span4_horz_21 <X> lc_trk_g0_5
+(5 4) routing span4_horz_29 <X> lc_trk_g0_5
+(5 4) routing span4_horz_37 <X> lc_trk_g0_5
+(5 4) routing span4_horz_45 <X> lc_trk_g0_5
+(5 4) routing span4_horz_r_13 <X> lc_trk_g0_5
+(5 4) routing span4_horz_r_5 <X> lc_trk_g0_5
+(5 4) routing span4_vert_21 <X> lc_trk_g0_5
+(5 4) routing span4_vert_29 <X> lc_trk_g0_5
+(5 4) routing span4_vert_37 <X> lc_trk_g0_5
+(5 4) routing span4_vert_45 <X> lc_trk_g0_5
+(5 4) routing span4_vert_b_13 <X> lc_trk_g0_5
+(5 4) routing span4_vert_b_5 <X> lc_trk_g0_5
+(5 5) routing IO_B.logic_op_tnr_4 <X> lc_trk_g0_4
+(5 5) routing IO_L.logic_op_bnr_4 <X> lc_trk_g0_4
+(5 5) routing IO_R.logic_op_bnl_4 <X> lc_trk_g0_4
+(5 5) routing IO_T.logic_op_bnr_4 <X> lc_trk_g0_4
+(5 5) routing span12_horz_4 <X> lc_trk_g0_4
+(5 5) routing span12_vert_4 <X> lc_trk_g0_4
+(5 5) routing span4_horz_20 <X> lc_trk_g0_4
+(5 5) routing span4_horz_28 <X> lc_trk_g0_4
+(5 5) routing span4_horz_36 <X> lc_trk_g0_4
+(5 5) routing span4_horz_44 <X> lc_trk_g0_4
+(5 5) routing span4_horz_r_12 <X> lc_trk_g0_4
+(5 5) routing span4_horz_r_4 <X> lc_trk_g0_4
+(5 5) routing span4_vert_20 <X> lc_trk_g0_4
+(5 5) routing span4_vert_28 <X> lc_trk_g0_4
+(5 5) routing span4_vert_36 <X> lc_trk_g0_4
+(5 5) routing span4_vert_44 <X> lc_trk_g0_4
+(5 5) routing span4_vert_b_12 <X> lc_trk_g0_4
+(5 5) routing span4_vert_b_4 <X> lc_trk_g0_4
+(5 6) routing IO_B.logic_op_tnr_7 <X> lc_trk_g0_7
+(5 6) routing IO_L.logic_op_bnr_7 <X> lc_trk_g0_7
+(5 6) routing IO_R.logic_op_bnl_7 <X> lc_trk_g0_7
+(5 6) routing IO_T.logic_op_bnr_7 <X> lc_trk_g0_7
+(5 6) routing span12_horz_7 <X> lc_trk_g0_7
+(5 6) routing span12_vert_7 <X> lc_trk_g0_7
+(5 6) routing span4_horz_23 <X> lc_trk_g0_7
+(5 6) routing span4_horz_31 <X> lc_trk_g0_7
+(5 6) routing span4_horz_39 <X> lc_trk_g0_7
+(5 6) routing span4_horz_47 <X> lc_trk_g0_7
+(5 6) routing span4_horz_r_15 <X> lc_trk_g0_7
+(5 6) routing span4_horz_r_7 <X> lc_trk_g0_7
+(5 6) routing span4_vert_23 <X> lc_trk_g0_7
+(5 6) routing span4_vert_31 <X> lc_trk_g0_7
+(5 6) routing span4_vert_39 <X> lc_trk_g0_7
+(5 6) routing span4_vert_47 <X> lc_trk_g0_7
+(5 6) routing span4_vert_b_15 <X> lc_trk_g0_7
+(5 6) routing span4_vert_b_7 <X> lc_trk_g0_7
+(5 7) routing IO_B.logic_op_tnr_6 <X> lc_trk_g0_6
+(5 7) routing IO_L.logic_op_bnr_6 <X> lc_trk_g0_6
+(5 7) routing IO_R.logic_op_bnl_6 <X> lc_trk_g0_6
+(5 7) routing IO_T.logic_op_bnr_6 <X> lc_trk_g0_6
+(5 7) routing span12_horz_6 <X> lc_trk_g0_6
+(5 7) routing span12_vert_6 <X> lc_trk_g0_6
+(5 7) routing span4_horz_22 <X> lc_trk_g0_6
+(5 7) routing span4_horz_30 <X> lc_trk_g0_6
+(5 7) routing span4_horz_38 <X> lc_trk_g0_6
+(5 7) routing span4_horz_46 <X> lc_trk_g0_6
+(5 7) routing span4_horz_r_14 <X> lc_trk_g0_6
+(5 7) routing span4_horz_r_6 <X> lc_trk_g0_6
+(5 7) routing span4_vert_22 <X> lc_trk_g0_6
+(5 7) routing span4_vert_30 <X> lc_trk_g0_6
+(5 7) routing span4_vert_38 <X> lc_trk_g0_6
+(5 7) routing span4_vert_46 <X> lc_trk_g0_6
+(5 7) routing span4_vert_b_14 <X> lc_trk_g0_6
+(5 7) routing span4_vert_b_6 <X> lc_trk_g0_6
+(5 8) routing IO_B.logic_op_tnr_1 <X> lc_trk_g1_1
+(5 8) routing IO_L.logic_op_bnr_1 <X> lc_trk_g1_1
+(5 8) routing IO_R.logic_op_bnl_1 <X> lc_trk_g1_1
+(5 8) routing IO_T.logic_op_bnr_1 <X> lc_trk_g1_1
+(5 8) routing span12_horz_1 <X> lc_trk_g1_1
+(5 8) routing span12_vert_1 <X> lc_trk_g1_1
+(5 8) routing span4_horz_17 <X> lc_trk_g1_1
+(5 8) routing span4_horz_25 <X> lc_trk_g1_1
+(5 8) routing span4_horz_33 <X> lc_trk_g1_1
+(5 8) routing span4_horz_41 <X> lc_trk_g1_1
+(5 8) routing span4_horz_r_1 <X> lc_trk_g1_1
+(5 8) routing span4_horz_r_9 <X> lc_trk_g1_1
+(5 8) routing span4_vert_17 <X> lc_trk_g1_1
+(5 8) routing span4_vert_25 <X> lc_trk_g1_1
+(5 8) routing span4_vert_33 <X> lc_trk_g1_1
+(5 8) routing span4_vert_41 <X> lc_trk_g1_1
+(5 8) routing span4_vert_b_1 <X> lc_trk_g1_1
+(5 8) routing span4_vert_b_9 <X> lc_trk_g1_1
+(5 9) routing IO_B.logic_op_tnr_0 <X> lc_trk_g1_0
+(5 9) routing IO_L.logic_op_bnr_0 <X> lc_trk_g1_0
+(5 9) routing IO_R.logic_op_bnl_0 <X> lc_trk_g1_0
+(5 9) routing IO_T.logic_op_bnr_0 <X> lc_trk_g1_0
+(5 9) routing span12_horz_0 <X> lc_trk_g1_0
+(5 9) routing span12_vert_0 <X> lc_trk_g1_0
+(5 9) routing span4_horz_16 <X> lc_trk_g1_0
+(5 9) routing span4_horz_24 <X> lc_trk_g1_0
+(5 9) routing span4_horz_32 <X> lc_trk_g1_0
+(5 9) routing span4_horz_40 <X> lc_trk_g1_0
+(5 9) routing span4_horz_r_0 <X> lc_trk_g1_0
+(5 9) routing span4_horz_r_8 <X> lc_trk_g1_0
+(5 9) routing span4_vert_16 <X> lc_trk_g1_0
+(5 9) routing span4_vert_24 <X> lc_trk_g1_0
+(5 9) routing span4_vert_32 <X> lc_trk_g1_0
+(5 9) routing span4_vert_40 <X> lc_trk_g1_0
+(5 9) routing span4_vert_b_0 <X> lc_trk_g1_0
+(5 9) routing span4_vert_b_8 <X> lc_trk_g1_0
+(6 0) routing span12_horz_17 <X> lc_trk_g0_1
+(6 0) routing span12_horz_9 <X> lc_trk_g0_1
+(6 0) routing span12_vert_17 <X> lc_trk_g0_1
+(6 0) routing span12_vert_9 <X> lc_trk_g0_1
+(6 0) routing span4_horz_1 <X> lc_trk_g0_1
+(6 0) routing span4_horz_17 <X> lc_trk_g0_1
+(6 0) routing span4_horz_25 <X> lc_trk_g0_1
+(6 0) routing span4_horz_33 <X> lc_trk_g0_1
+(6 0) routing span4_horz_41 <X> lc_trk_g0_1
+(6 0) routing span4_horz_9 <X> lc_trk_g0_1
+(6 0) routing span4_vert_1 <X> lc_trk_g0_1
+(6 0) routing span4_vert_17 <X> lc_trk_g0_1
+(6 0) routing span4_vert_25 <X> lc_trk_g0_1
+(6 0) routing span4_vert_33 <X> lc_trk_g0_1
+(6 0) routing span4_vert_41 <X> lc_trk_g0_1
+(6 0) routing span4_vert_9 <X> lc_trk_g0_1
+(6 1) routing span12_horz_16 <X> lc_trk_g0_0
+(6 1) routing span12_horz_8 <X> lc_trk_g0_0
+(6 1) routing span12_vert_16 <X> lc_trk_g0_0
+(6 1) routing span12_vert_8 <X> lc_trk_g0_0
+(6 1) routing span4_horz_0 <X> lc_trk_g0_0
+(6 1) routing span4_horz_16 <X> lc_trk_g0_0
+(6 1) routing span4_horz_24 <X> lc_trk_g0_0
+(6 1) routing span4_horz_32 <X> lc_trk_g0_0
+(6 1) routing span4_horz_40 <X> lc_trk_g0_0
+(6 1) routing span4_horz_8 <X> lc_trk_g0_0
+(6 1) routing span4_vert_0 <X> lc_trk_g0_0
+(6 1) routing span4_vert_16 <X> lc_trk_g0_0
+(6 1) routing span4_vert_24 <X> lc_trk_g0_0
+(6 1) routing span4_vert_32 <X> lc_trk_g0_0
+(6 1) routing span4_vert_40 <X> lc_trk_g0_0
+(6 1) routing span4_vert_8 <X> lc_trk_g0_0
+(6 10) routing span12_horz_11 <X> lc_trk_g1_3
+(6 10) routing span12_horz_19 <X> lc_trk_g1_3
+(6 10) routing span12_vert_11 <X> lc_trk_g1_3
+(6 10) routing span12_vert_19 <X> lc_trk_g1_3
+(6 10) routing span4_horz_11 <X> lc_trk_g1_3
+(6 10) routing span4_horz_19 <X> lc_trk_g1_3
+(6 10) routing span4_horz_27 <X> lc_trk_g1_3
+(6 10) routing span4_horz_3 <X> lc_trk_g1_3
+(6 10) routing span4_horz_35 <X> lc_trk_g1_3
+(6 10) routing span4_horz_43 <X> lc_trk_g1_3
+(6 10) routing span4_vert_11 <X> lc_trk_g1_3
+(6 10) routing span4_vert_19 <X> lc_trk_g1_3
+(6 10) routing span4_vert_27 <X> lc_trk_g1_3
+(6 10) routing span4_vert_3 <X> lc_trk_g1_3
+(6 10) routing span4_vert_35 <X> lc_trk_g1_3
+(6 10) routing span4_vert_43 <X> lc_trk_g1_3
+(6 11) routing span12_horz_10 <X> lc_trk_g1_2
+(6 11) routing span12_horz_18 <X> lc_trk_g1_2
+(6 11) routing span12_vert_10 <X> lc_trk_g1_2
+(6 11) routing span12_vert_18 <X> lc_trk_g1_2
+(6 11) routing span4_horz_10 <X> lc_trk_g1_2
+(6 11) routing span4_horz_18 <X> lc_trk_g1_2
+(6 11) routing span4_horz_2 <X> lc_trk_g1_2
+(6 11) routing span4_horz_26 <X> lc_trk_g1_2
+(6 11) routing span4_horz_34 <X> lc_trk_g1_2
+(6 11) routing span4_horz_42 <X> lc_trk_g1_2
+(6 11) routing span4_vert_10 <X> lc_trk_g1_2
+(6 11) routing span4_vert_18 <X> lc_trk_g1_2
+(6 11) routing span4_vert_2 <X> lc_trk_g1_2
+(6 11) routing span4_vert_26 <X> lc_trk_g1_2
+(6 11) routing span4_vert_34 <X> lc_trk_g1_2
+(6 11) routing span4_vert_42 <X> lc_trk_g1_2
+(6 12) routing span12_horz_13 <X> lc_trk_g1_5
+(6 12) routing span12_horz_21 <X> lc_trk_g1_5
+(6 12) routing span12_vert_13 <X> lc_trk_g1_5
+(6 12) routing span12_vert_21 <X> lc_trk_g1_5
+(6 12) routing span4_horz_13 <X> lc_trk_g1_5
+(6 12) routing span4_horz_21 <X> lc_trk_g1_5
+(6 12) routing span4_horz_29 <X> lc_trk_g1_5
+(6 12) routing span4_horz_37 <X> lc_trk_g1_5
+(6 12) routing span4_horz_45 <X> lc_trk_g1_5
+(6 12) routing span4_horz_5 <X> lc_trk_g1_5
+(6 12) routing span4_vert_13 <X> lc_trk_g1_5
+(6 12) routing span4_vert_21 <X> lc_trk_g1_5
+(6 12) routing span4_vert_29 <X> lc_trk_g1_5
+(6 12) routing span4_vert_37 <X> lc_trk_g1_5
+(6 12) routing span4_vert_45 <X> lc_trk_g1_5
+(6 12) routing span4_vert_5 <X> lc_trk_g1_5
+(6 13) routing span12_horz_12 <X> lc_trk_g1_4
+(6 13) routing span12_horz_20 <X> lc_trk_g1_4
+(6 13) routing span12_vert_12 <X> lc_trk_g1_4
+(6 13) routing span12_vert_20 <X> lc_trk_g1_4
+(6 13) routing span4_horz_12 <X> lc_trk_g1_4
+(6 13) routing span4_horz_20 <X> lc_trk_g1_4
+(6 13) routing span4_horz_28 <X> lc_trk_g1_4
+(6 13) routing span4_horz_36 <X> lc_trk_g1_4
+(6 13) routing span4_horz_4 <X> lc_trk_g1_4
+(6 13) routing span4_horz_44 <X> lc_trk_g1_4
+(6 13) routing span4_vert_12 <X> lc_trk_g1_4
+(6 13) routing span4_vert_20 <X> lc_trk_g1_4
+(6 13) routing span4_vert_28 <X> lc_trk_g1_4
+(6 13) routing span4_vert_36 <X> lc_trk_g1_4
+(6 13) routing span4_vert_4 <X> lc_trk_g1_4
+(6 13) routing span4_vert_44 <X> lc_trk_g1_4
+(6 14) routing span12_horz_15 <X> lc_trk_g1_7
+(6 14) routing span12_horz_23 <X> lc_trk_g1_7
+(6 14) routing span12_vert_15 <X> lc_trk_g1_7
+(6 14) routing span12_vert_23 <X> lc_trk_g1_7
+(6 14) routing span4_horz_15 <X> lc_trk_g1_7
+(6 14) routing span4_horz_23 <X> lc_trk_g1_7
+(6 14) routing span4_horz_31 <X> lc_trk_g1_7
+(6 14) routing span4_horz_39 <X> lc_trk_g1_7
+(6 14) routing span4_horz_47 <X> lc_trk_g1_7
+(6 14) routing span4_horz_7 <X> lc_trk_g1_7
+(6 14) routing span4_vert_15 <X> lc_trk_g1_7
+(6 14) routing span4_vert_23 <X> lc_trk_g1_7
+(6 14) routing span4_vert_31 <X> lc_trk_g1_7
+(6 14) routing span4_vert_39 <X> lc_trk_g1_7
+(6 14) routing span4_vert_47 <X> lc_trk_g1_7
+(6 14) routing span4_vert_7 <X> lc_trk_g1_7
+(6 15) routing span12_horz_14 <X> lc_trk_g1_6
+(6 15) routing span12_horz_22 <X> lc_trk_g1_6
+(6 15) routing span12_vert_14 <X> lc_trk_g1_6
+(6 15) routing span12_vert_22 <X> lc_trk_g1_6
+(6 15) routing span4_horz_14 <X> lc_trk_g1_6
+(6 15) routing span4_horz_22 <X> lc_trk_g1_6
+(6 15) routing span4_horz_30 <X> lc_trk_g1_6
+(6 15) routing span4_horz_38 <X> lc_trk_g1_6
+(6 15) routing span4_horz_46 <X> lc_trk_g1_6
+(6 15) routing span4_horz_6 <X> lc_trk_g1_6
+(6 15) routing span4_vert_14 <X> lc_trk_g1_6
+(6 15) routing span4_vert_22 <X> lc_trk_g1_6
+(6 15) routing span4_vert_30 <X> lc_trk_g1_6
+(6 15) routing span4_vert_38 <X> lc_trk_g1_6
+(6 15) routing span4_vert_46 <X> lc_trk_g1_6
+(6 15) routing span4_vert_6 <X> lc_trk_g1_6
+(6 2) routing span12_horz_11 <X> lc_trk_g0_3
+(6 2) routing span12_horz_19 <X> lc_trk_g0_3
+(6 2) routing span12_vert_11 <X> lc_trk_g0_3
+(6 2) routing span12_vert_19 <X> lc_trk_g0_3
+(6 2) routing span4_horz_11 <X> lc_trk_g0_3
+(6 2) routing span4_horz_19 <X> lc_trk_g0_3
+(6 2) routing span4_horz_27 <X> lc_trk_g0_3
+(6 2) routing span4_horz_3 <X> lc_trk_g0_3
+(6 2) routing span4_horz_35 <X> lc_trk_g0_3
+(6 2) routing span4_horz_43 <X> lc_trk_g0_3
+(6 2) routing span4_vert_11 <X> lc_trk_g0_3
+(6 2) routing span4_vert_19 <X> lc_trk_g0_3
+(6 2) routing span4_vert_27 <X> lc_trk_g0_3
+(6 2) routing span4_vert_3 <X> lc_trk_g0_3
+(6 2) routing span4_vert_35 <X> lc_trk_g0_3
+(6 2) routing span4_vert_43 <X> lc_trk_g0_3
+(6 3) routing span12_horz_10 <X> lc_trk_g0_2
+(6 3) routing span12_horz_18 <X> lc_trk_g0_2
+(6 3) routing span12_vert_10 <X> lc_trk_g0_2
+(6 3) routing span12_vert_18 <X> lc_trk_g0_2
+(6 3) routing span4_horz_10 <X> lc_trk_g0_2
+(6 3) routing span4_horz_18 <X> lc_trk_g0_2
+(6 3) routing span4_horz_2 <X> lc_trk_g0_2
+(6 3) routing span4_horz_26 <X> lc_trk_g0_2
+(6 3) routing span4_horz_34 <X> lc_trk_g0_2
+(6 3) routing span4_horz_42 <X> lc_trk_g0_2
+(6 3) routing span4_vert_10 <X> lc_trk_g0_2
+(6 3) routing span4_vert_18 <X> lc_trk_g0_2
+(6 3) routing span4_vert_2 <X> lc_trk_g0_2
+(6 3) routing span4_vert_26 <X> lc_trk_g0_2
+(6 3) routing span4_vert_34 <X> lc_trk_g0_2
+(6 3) routing span4_vert_42 <X> lc_trk_g0_2
+(6 4) routing span12_horz_13 <X> lc_trk_g0_5
+(6 4) routing span12_horz_21 <X> lc_trk_g0_5
+(6 4) routing span12_vert_13 <X> lc_trk_g0_5
+(6 4) routing span12_vert_21 <X> lc_trk_g0_5
+(6 4) routing span4_horz_13 <X> lc_trk_g0_5
+(6 4) routing span4_horz_21 <X> lc_trk_g0_5
+(6 4) routing span4_horz_29 <X> lc_trk_g0_5
+(6 4) routing span4_horz_37 <X> lc_trk_g0_5
+(6 4) routing span4_horz_45 <X> lc_trk_g0_5
+(6 4) routing span4_horz_5 <X> lc_trk_g0_5
+(6 4) routing span4_vert_13 <X> lc_trk_g0_5
+(6 4) routing span4_vert_21 <X> lc_trk_g0_5
+(6 4) routing span4_vert_29 <X> lc_trk_g0_5
+(6 4) routing span4_vert_37 <X> lc_trk_g0_5
+(6 4) routing span4_vert_45 <X> lc_trk_g0_5
+(6 4) routing span4_vert_5 <X> lc_trk_g0_5
+(6 5) routing span12_horz_12 <X> lc_trk_g0_4
+(6 5) routing span12_horz_20 <X> lc_trk_g0_4
+(6 5) routing span12_vert_12 <X> lc_trk_g0_4
+(6 5) routing span12_vert_20 <X> lc_trk_g0_4
+(6 5) routing span4_horz_12 <X> lc_trk_g0_4
+(6 5) routing span4_horz_20 <X> lc_trk_g0_4
+(6 5) routing span4_horz_28 <X> lc_trk_g0_4
+(6 5) routing span4_horz_36 <X> lc_trk_g0_4
+(6 5) routing span4_horz_4 <X> lc_trk_g0_4
+(6 5) routing span4_horz_44 <X> lc_trk_g0_4
+(6 5) routing span4_vert_12 <X> lc_trk_g0_4
+(6 5) routing span4_vert_20 <X> lc_trk_g0_4
+(6 5) routing span4_vert_28 <X> lc_trk_g0_4
+(6 5) routing span4_vert_36 <X> lc_trk_g0_4
+(6 5) routing span4_vert_4 <X> lc_trk_g0_4
+(6 5) routing span4_vert_44 <X> lc_trk_g0_4
+(6 6) routing span12_horz_15 <X> lc_trk_g0_7
+(6 6) routing span12_horz_23 <X> lc_trk_g0_7
+(6 6) routing span12_vert_15 <X> lc_trk_g0_7
+(6 6) routing span12_vert_23 <X> lc_trk_g0_7
+(6 6) routing span4_horz_15 <X> lc_trk_g0_7
+(6 6) routing span4_horz_23 <X> lc_trk_g0_7
+(6 6) routing span4_horz_31 <X> lc_trk_g0_7
+(6 6) routing span4_horz_39 <X> lc_trk_g0_7
+(6 6) routing span4_horz_47 <X> lc_trk_g0_7
+(6 6) routing span4_horz_7 <X> lc_trk_g0_7
+(6 6) routing span4_vert_15 <X> lc_trk_g0_7
+(6 6) routing span4_vert_23 <X> lc_trk_g0_7
+(6 6) routing span4_vert_31 <X> lc_trk_g0_7
+(6 6) routing span4_vert_39 <X> lc_trk_g0_7
+(6 6) routing span4_vert_47 <X> lc_trk_g0_7
+(6 6) routing span4_vert_7 <X> lc_trk_g0_7
+(6 7) routing span12_horz_14 <X> lc_trk_g0_6
+(6 7) routing span12_horz_22 <X> lc_trk_g0_6
+(6 7) routing span12_vert_14 <X> lc_trk_g0_6
+(6 7) routing span12_vert_22 <X> lc_trk_g0_6
+(6 7) routing span4_horz_14 <X> lc_trk_g0_6
+(6 7) routing span4_horz_22 <X> lc_trk_g0_6
+(6 7) routing span4_horz_30 <X> lc_trk_g0_6
+(6 7) routing span4_horz_38 <X> lc_trk_g0_6
+(6 7) routing span4_horz_46 <X> lc_trk_g0_6
+(6 7) routing span4_horz_6 <X> lc_trk_g0_6
+(6 7) routing span4_vert_14 <X> lc_trk_g0_6
+(6 7) routing span4_vert_22 <X> lc_trk_g0_6
+(6 7) routing span4_vert_30 <X> lc_trk_g0_6
+(6 7) routing span4_vert_38 <X> lc_trk_g0_6
+(6 7) routing span4_vert_46 <X> lc_trk_g0_6
+(6 7) routing span4_vert_6 <X> lc_trk_g0_6
+(6 8) routing span12_horz_17 <X> lc_trk_g1_1
+(6 8) routing span12_horz_9 <X> lc_trk_g1_1
+(6 8) routing span12_vert_17 <X> lc_trk_g1_1
+(6 8) routing span12_vert_9 <X> lc_trk_g1_1
+(6 8) routing span4_horz_1 <X> lc_trk_g1_1
+(6 8) routing span4_horz_17 <X> lc_trk_g1_1
+(6 8) routing span4_horz_25 <X> lc_trk_g1_1
+(6 8) routing span4_horz_33 <X> lc_trk_g1_1
+(6 8) routing span4_horz_41 <X> lc_trk_g1_1
+(6 8) routing span4_horz_9 <X> lc_trk_g1_1
+(6 8) routing span4_vert_1 <X> lc_trk_g1_1
+(6 8) routing span4_vert_17 <X> lc_trk_g1_1
+(6 8) routing span4_vert_25 <X> lc_trk_g1_1
+(6 8) routing span4_vert_33 <X> lc_trk_g1_1
+(6 8) routing span4_vert_41 <X> lc_trk_g1_1
+(6 8) routing span4_vert_9 <X> lc_trk_g1_1
+(6 9) routing span12_horz_16 <X> lc_trk_g1_0
+(6 9) routing span12_horz_8 <X> lc_trk_g1_0
+(6 9) routing span12_vert_16 <X> lc_trk_g1_0
+(6 9) routing span12_vert_8 <X> lc_trk_g1_0
+(6 9) routing span4_horz_0 <X> lc_trk_g1_0
+(6 9) routing span4_horz_16 <X> lc_trk_g1_0
+(6 9) routing span4_horz_24 <X> lc_trk_g1_0
+(6 9) routing span4_horz_32 <X> lc_trk_g1_0
+(6 9) routing span4_horz_40 <X> lc_trk_g1_0
+(6 9) routing span4_horz_8 <X> lc_trk_g1_0
+(6 9) routing span4_vert_0 <X> lc_trk_g1_0
+(6 9) routing span4_vert_16 <X> lc_trk_g1_0
+(6 9) routing span4_vert_24 <X> lc_trk_g1_0
+(6 9) routing span4_vert_32 <X> lc_trk_g1_0
+(6 9) routing span4_vert_40 <X> lc_trk_g1_0
+(6 9) routing span4_vert_8 <X> lc_trk_g1_0
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => logic_op_bnl_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => logic_op_bnr_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => logic_op_bot_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => logic_op_lft_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => logic_op_rgt_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => logic_op_tnl_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => logic_op_tnr_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => logic_op_top_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span12_horz_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span12_horz_17 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span12_horz_9 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span12_vert_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span12_vert_17 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span12_vert_9 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_horz_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_horz_17 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_horz_25 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_horz_33 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_horz_41 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_horz_9 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_horz_r_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_horz_r_9 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_vert_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_vert_17 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_vert_25 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_vert_33 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_vert_41 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_vert_9 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_vert_b_1 lc_trk_g0_1
+(7 0) Enable bit of Mux _local_links/g0_mux_1 => span4_vert_b_9 lc_trk_g0_1
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => logic_op_bnl_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => logic_op_bnr_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => logic_op_bot_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => logic_op_lft_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => logic_op_rgt_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => logic_op_tnl_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => logic_op_tnr_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => logic_op_top_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span12_horz_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span12_horz_16 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span12_horz_8 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span12_vert_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span12_vert_16 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span12_vert_8 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_horz_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_horz_16 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_horz_24 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_horz_32 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_horz_40 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_horz_8 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_horz_r_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_horz_r_8 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_vert_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_vert_16 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_vert_24 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_vert_32 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_vert_40 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_vert_8 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_vert_b_0 lc_trk_g0_0
+(7 1) Enable bit of Mux _local_links/g0_mux_0 => span4_vert_b_8 lc_trk_g0_0
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => logic_op_bnl_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => logic_op_bnr_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => logic_op_bot_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => logic_op_lft_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => logic_op_rgt_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => logic_op_tnl_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => logic_op_tnr_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => logic_op_top_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span12_horz_11 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span12_horz_19 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span12_horz_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span12_vert_11 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span12_vert_19 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span12_vert_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_horz_11 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_horz_19 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_horz_27 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_horz_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_horz_35 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_horz_43 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_horz_r_11 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_horz_r_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_vert_11 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_vert_19 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_vert_27 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_vert_3 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_vert_35 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_vert_43 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_vert_b_11 lc_trk_g1_3
+(7 10) Enable bit of Mux _local_links/g1_mux_3 => span4_vert_b_3 lc_trk_g1_3
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => logic_op_bnl_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => logic_op_bnr_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => logic_op_bot_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => logic_op_lft_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => logic_op_rgt_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => logic_op_tnl_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => logic_op_tnr_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => logic_op_top_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span12_horz_10 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span12_horz_18 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span12_horz_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span12_vert_10 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span12_vert_18 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span12_vert_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_horz_10 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_horz_18 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_horz_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_horz_26 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_horz_34 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_horz_42 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_horz_r_10 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_horz_r_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_vert_10 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_vert_18 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_vert_2 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_vert_26 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_vert_34 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_vert_42 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_vert_b_10 lc_trk_g1_2
+(7 11) Enable bit of Mux _local_links/g1_mux_2 => span4_vert_b_2 lc_trk_g1_2
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => logic_op_bnl_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => logic_op_bnr_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => logic_op_bot_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => logic_op_lft_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => logic_op_rgt_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => logic_op_tnl_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => logic_op_tnr_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => logic_op_top_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span12_horz_13 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span12_horz_21 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span12_horz_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span12_vert_13 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span12_vert_21 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span12_vert_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_horz_13 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_horz_21 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_horz_29 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_horz_37 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_horz_45 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_horz_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_horz_r_13 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_horz_r_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_vert_13 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_vert_21 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_vert_29 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_vert_37 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_vert_45 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_vert_5 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_vert_b_13 lc_trk_g1_5
+(7 12) Enable bit of Mux _local_links/g1_mux_5 => span4_vert_b_5 lc_trk_g1_5
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => logic_op_bnl_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => logic_op_bnr_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => logic_op_bot_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => logic_op_lft_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => logic_op_rgt_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => logic_op_tnl_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => logic_op_tnr_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => logic_op_top_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span12_horz_12 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span12_horz_20 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span12_horz_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span12_vert_12 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span12_vert_20 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span12_vert_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_horz_12 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_horz_20 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_horz_28 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_horz_36 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_horz_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_horz_44 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_horz_r_12 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_horz_r_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_vert_12 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_vert_20 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_vert_28 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_vert_36 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_vert_4 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_vert_44 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_vert_b_12 lc_trk_g1_4
+(7 13) Enable bit of Mux _local_links/g1_mux_4 => span4_vert_b_4 lc_trk_g1_4
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => logic_op_bnl_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => logic_op_bnr_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => logic_op_bot_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => logic_op_lft_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => logic_op_rgt_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => logic_op_tnl_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => logic_op_tnr_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => logic_op_top_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span12_horz_15 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span12_horz_23 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span12_horz_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span12_vert_15 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span12_vert_23 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span12_vert_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_horz_15 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_horz_23 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_horz_31 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_horz_39 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_horz_47 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_horz_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_horz_r_15 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_horz_r_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_vert_15 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_vert_23 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_vert_31 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_vert_39 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_vert_47 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_vert_7 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_vert_b_15 lc_trk_g1_7
+(7 14) Enable bit of Mux _local_links/g1_mux_7 => span4_vert_b_7 lc_trk_g1_7
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => logic_op_bnl_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => logic_op_bnr_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => logic_op_bot_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => logic_op_lft_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => logic_op_rgt_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => logic_op_tnl_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => logic_op_tnr_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => logic_op_top_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span12_horz_14 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span12_horz_22 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span12_horz_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span12_vert_14 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span12_vert_22 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span12_vert_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_horz_14 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_horz_22 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_horz_30 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_horz_38 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_horz_46 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_horz_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_horz_r_14 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_horz_r_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_vert_14 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_vert_22 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_vert_30 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_vert_38 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_vert_46 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_vert_6 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_vert_b_14 lc_trk_g1_6
+(7 15) Enable bit of Mux _local_links/g1_mux_6 => span4_vert_b_6 lc_trk_g1_6
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => logic_op_bnl_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => logic_op_bnr_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => logic_op_bot_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => logic_op_lft_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => logic_op_rgt_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => logic_op_tnl_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => logic_op_tnr_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => logic_op_top_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span12_horz_11 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span12_horz_19 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span12_horz_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span12_vert_11 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span12_vert_19 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span12_vert_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_horz_11 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_horz_19 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_horz_27 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_horz_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_horz_35 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_horz_43 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_horz_r_11 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_horz_r_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_vert_11 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_vert_19 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_vert_27 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_vert_3 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_vert_35 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_vert_43 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_vert_b_11 lc_trk_g0_3
+(7 2) Enable bit of Mux _local_links/g0_mux_3 => span4_vert_b_3 lc_trk_g0_3
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => logic_op_bnl_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => logic_op_bnr_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => logic_op_bot_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => logic_op_lft_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => logic_op_rgt_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => logic_op_tnl_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => logic_op_tnr_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => logic_op_top_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span12_horz_10 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span12_horz_18 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span12_horz_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span12_vert_10 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span12_vert_18 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span12_vert_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_horz_10 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_horz_18 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_horz_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_horz_26 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_horz_34 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_horz_42 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_horz_r_10 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_horz_r_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_vert_10 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_vert_18 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_vert_2 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_vert_26 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_vert_34 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_vert_42 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_vert_b_10 lc_trk_g0_2
+(7 3) Enable bit of Mux _local_links/g0_mux_2 => span4_vert_b_2 lc_trk_g0_2
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => logic_op_bnl_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => logic_op_bnr_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => logic_op_bot_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => logic_op_lft_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => logic_op_rgt_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => logic_op_tnl_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => logic_op_tnr_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => logic_op_top_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span12_horz_13 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span12_horz_21 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span12_horz_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span12_vert_13 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span12_vert_21 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span12_vert_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_horz_13 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_horz_21 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_horz_29 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_horz_37 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_horz_45 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_horz_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_horz_r_13 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_horz_r_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_vert_13 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_vert_21 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_vert_29 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_vert_37 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_vert_45 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_vert_5 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_vert_b_13 lc_trk_g0_5
+(7 4) Enable bit of Mux _local_links/g0_mux_5 => span4_vert_b_5 lc_trk_g0_5
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => logic_op_bnl_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => logic_op_bnr_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => logic_op_bot_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => logic_op_lft_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => logic_op_rgt_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => logic_op_tnl_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => logic_op_tnr_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => logic_op_top_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span12_horz_12 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span12_horz_20 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span12_horz_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span12_vert_12 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span12_vert_20 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span12_vert_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_horz_12 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_horz_20 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_horz_28 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_horz_36 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_horz_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_horz_44 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_horz_r_12 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_horz_r_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_vert_12 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_vert_20 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_vert_28 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_vert_36 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_vert_4 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_vert_44 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_vert_b_12 lc_trk_g0_4
+(7 5) Enable bit of Mux _local_links/g0_mux_4 => span4_vert_b_4 lc_trk_g0_4
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => logic_op_bnl_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => logic_op_bnr_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => logic_op_bot_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => logic_op_lft_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => logic_op_rgt_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => logic_op_tnl_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => logic_op_tnr_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => logic_op_top_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span12_horz_15 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span12_horz_23 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span12_horz_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span12_vert_15 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span12_vert_23 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span12_vert_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_horz_15 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_horz_23 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_horz_31 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_horz_39 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_horz_47 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_horz_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_horz_r_15 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_horz_r_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_vert_15 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_vert_23 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_vert_31 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_vert_39 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_vert_47 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_vert_7 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_vert_b_15 lc_trk_g0_7
+(7 6) Enable bit of Mux _local_links/g0_mux_7 => span4_vert_b_7 lc_trk_g0_7
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => logic_op_bnl_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => logic_op_bnr_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => logic_op_bot_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => logic_op_lft_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => logic_op_rgt_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => logic_op_tnl_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => logic_op_tnr_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => logic_op_top_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span12_horz_14 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span12_horz_22 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span12_horz_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span12_vert_14 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span12_vert_22 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span12_vert_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_horz_14 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_horz_22 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_horz_30 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_horz_38 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_horz_46 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_horz_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_horz_r_14 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_horz_r_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_vert_14 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_vert_22 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_vert_30 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_vert_38 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_vert_46 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_vert_6 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_vert_b_14 lc_trk_g0_6
+(7 7) Enable bit of Mux _local_links/g0_mux_6 => span4_vert_b_6 lc_trk_g0_6
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => logic_op_bnl_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => logic_op_bnr_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => logic_op_bot_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => logic_op_lft_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => logic_op_rgt_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => logic_op_tnl_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => logic_op_tnr_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => logic_op_top_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span12_horz_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span12_horz_17 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span12_horz_9 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span12_vert_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span12_vert_17 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span12_vert_9 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_horz_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_horz_17 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_horz_25 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_horz_33 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_horz_41 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_horz_9 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_horz_r_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_horz_r_9 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_vert_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_vert_17 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_vert_25 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_vert_33 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_vert_41 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_vert_9 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_vert_b_1 lc_trk_g1_1
+(7 8) Enable bit of Mux _local_links/g1_mux_1 => span4_vert_b_9 lc_trk_g1_1
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => logic_op_bnl_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => logic_op_bnr_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => logic_op_bot_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => logic_op_lft_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => logic_op_rgt_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => logic_op_tnl_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => logic_op_tnr_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => logic_op_top_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span12_horz_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span12_horz_16 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span12_horz_8 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span12_vert_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span12_vert_16 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span12_vert_8 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_horz_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_horz_16 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_horz_24 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_horz_32 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_horz_40 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_horz_8 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_horz_r_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_horz_r_8 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_vert_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_vert_16 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_vert_24 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_vert_32 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_vert_40 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_vert_8 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_vert_b_0 lc_trk_g1_0
+(7 9) Enable bit of Mux _local_links/g1_mux_0 => span4_vert_b_8 lc_trk_g1_0
+(8 0) routing IO_B.logic_op_tnl_1 <X> lc_trk_g0_1
+(8 0) routing IO_B.logic_op_top_1 <X> lc_trk_g0_1
+(8 0) routing IO_L.logic_op_rgt_1 <X> lc_trk_g0_1
+(8 0) routing IO_L.logic_op_tnr_1 <X> lc_trk_g0_1
+(8 0) routing IO_R.logic_op_lft_1 <X> lc_trk_g0_1
+(8 0) routing IO_R.logic_op_tnl_1 <X> lc_trk_g0_1
+(8 0) routing IO_T.logic_op_bnl_1 <X> lc_trk_g0_1
+(8 0) routing IO_T.logic_op_bot_1 <X> lc_trk_g0_1
+(8 0) routing span12_horz_1 <X> lc_trk_g0_1
+(8 0) routing span12_vert_1 <X> lc_trk_g0_1
+(8 0) routing span4_horz_1 <X> lc_trk_g0_1
+(8 0) routing span4_horz_33 <X> lc_trk_g0_1
+(8 0) routing span4_horz_41 <X> lc_trk_g0_1
+(8 0) routing span4_horz_9 <X> lc_trk_g0_1
+(8 0) routing span4_horz_r_9 <X> lc_trk_g0_1
+(8 0) routing span4_vert_1 <X> lc_trk_g0_1
+(8 0) routing span4_vert_33 <X> lc_trk_g0_1
+(8 0) routing span4_vert_41 <X> lc_trk_g0_1
+(8 0) routing span4_vert_9 <X> lc_trk_g0_1
+(8 0) routing span4_vert_b_9 <X> lc_trk_g0_1
+(8 1) routing IO_B.logic_op_top_1 <X> lc_trk_g0_1
+(8 1) routing IO_L.logic_op_rgt_1 <X> lc_trk_g0_1
+(8 1) routing IO_R.logic_op_lft_1 <X> lc_trk_g0_1
+(8 1) routing IO_T.logic_op_bot_1 <X> lc_trk_g0_1
+(8 1) routing span12_horz_1 <X> lc_trk_g0_1
+(8 1) routing span12_horz_17 <X> lc_trk_g0_1
+(8 1) routing span12_vert_1 <X> lc_trk_g0_1
+(8 1) routing span12_vert_17 <X> lc_trk_g0_1
+(8 1) routing span4_horz_25 <X> lc_trk_g0_1
+(8 1) routing span4_horz_41 <X> lc_trk_g0_1
+(8 1) routing span4_horz_9 <X> lc_trk_g0_1
+(8 1) routing span4_horz_r_1 <X> lc_trk_g0_1
+(8 1) routing span4_vert_25 <X> lc_trk_g0_1
+(8 1) routing span4_vert_41 <X> lc_trk_g0_1
+(8 1) routing span4_vert_9 <X> lc_trk_g0_1
+(8 1) routing span4_vert_b_1 <X> lc_trk_g0_1
+(8 10) routing IO_B.logic_op_tnl_3 <X> lc_trk_g1_3
+(8 10) routing IO_B.logic_op_top_3 <X> lc_trk_g1_3
+(8 10) routing IO_L.logic_op_rgt_3 <X> lc_trk_g1_3
+(8 10) routing IO_L.logic_op_tnr_3 <X> lc_trk_g1_3
+(8 10) routing IO_R.logic_op_lft_3 <X> lc_trk_g1_3
+(8 10) routing IO_R.logic_op_tnl_3 <X> lc_trk_g1_3
+(8 10) routing IO_T.logic_op_bnl_3 <X> lc_trk_g1_3
+(8 10) routing IO_T.logic_op_bot_3 <X> lc_trk_g1_3
+(8 10) routing span12_horz_3 <X> lc_trk_g1_3
+(8 10) routing span12_vert_3 <X> lc_trk_g1_3
+(8 10) routing span4_horz_11 <X> lc_trk_g1_3
+(8 10) routing span4_horz_3 <X> lc_trk_g1_3
+(8 10) routing span4_horz_35 <X> lc_trk_g1_3
+(8 10) routing span4_horz_43 <X> lc_trk_g1_3
+(8 10) routing span4_horz_r_11 <X> lc_trk_g1_3
+(8 10) routing span4_vert_11 <X> lc_trk_g1_3
+(8 10) routing span4_vert_3 <X> lc_trk_g1_3
+(8 10) routing span4_vert_35 <X> lc_trk_g1_3
+(8 10) routing span4_vert_43 <X> lc_trk_g1_3
+(8 10) routing span4_vert_b_11 <X> lc_trk_g1_3
+(8 11) routing IO_B.logic_op_top_3 <X> lc_trk_g1_3
+(8 11) routing IO_L.logic_op_rgt_3 <X> lc_trk_g1_3
+(8 11) routing IO_R.logic_op_lft_3 <X> lc_trk_g1_3
+(8 11) routing IO_T.logic_op_bot_3 <X> lc_trk_g1_3
+(8 11) routing span12_horz_19 <X> lc_trk_g1_3
+(8 11) routing span12_horz_3 <X> lc_trk_g1_3
+(8 11) routing span12_vert_19 <X> lc_trk_g1_3
+(8 11) routing span12_vert_3 <X> lc_trk_g1_3
+(8 11) routing span4_horz_11 <X> lc_trk_g1_3
+(8 11) routing span4_horz_27 <X> lc_trk_g1_3
+(8 11) routing span4_horz_43 <X> lc_trk_g1_3
+(8 11) routing span4_horz_r_3 <X> lc_trk_g1_3
+(8 11) routing span4_vert_11 <X> lc_trk_g1_3
+(8 11) routing span4_vert_27 <X> lc_trk_g1_3
+(8 11) routing span4_vert_43 <X> lc_trk_g1_3
+(8 11) routing span4_vert_b_3 <X> lc_trk_g1_3
+(8 12) routing IO_B.logic_op_tnl_5 <X> lc_trk_g1_5
+(8 12) routing IO_B.logic_op_top_5 <X> lc_trk_g1_5
+(8 12) routing IO_L.logic_op_rgt_5 <X> lc_trk_g1_5
+(8 12) routing IO_L.logic_op_tnr_5 <X> lc_trk_g1_5
+(8 12) routing IO_R.logic_op_lft_5 <X> lc_trk_g1_5
+(8 12) routing IO_R.logic_op_tnl_5 <X> lc_trk_g1_5
+(8 12) routing IO_T.logic_op_bnl_5 <X> lc_trk_g1_5
+(8 12) routing IO_T.logic_op_bot_5 <X> lc_trk_g1_5
+(8 12) routing span12_horz_5 <X> lc_trk_g1_5
+(8 12) routing span12_vert_5 <X> lc_trk_g1_5
+(8 12) routing span4_horz_13 <X> lc_trk_g1_5
+(8 12) routing span4_horz_37 <X> lc_trk_g1_5
+(8 12) routing span4_horz_45 <X> lc_trk_g1_5
+(8 12) routing span4_horz_5 <X> lc_trk_g1_5
+(8 12) routing span4_horz_r_13 <X> lc_trk_g1_5
+(8 12) routing span4_vert_13 <X> lc_trk_g1_5
+(8 12) routing span4_vert_37 <X> lc_trk_g1_5
+(8 12) routing span4_vert_45 <X> lc_trk_g1_5
+(8 12) routing span4_vert_5 <X> lc_trk_g1_5
+(8 12) routing span4_vert_b_13 <X> lc_trk_g1_5
+(8 13) routing IO_B.logic_op_top_5 <X> lc_trk_g1_5
+(8 13) routing IO_L.logic_op_rgt_5 <X> lc_trk_g1_5
+(8 13) routing IO_R.logic_op_lft_5 <X> lc_trk_g1_5
+(8 13) routing IO_T.logic_op_bot_5 <X> lc_trk_g1_5
+(8 13) routing span12_horz_21 <X> lc_trk_g1_5
+(8 13) routing span12_horz_5 <X> lc_trk_g1_5
+(8 13) routing span12_vert_21 <X> lc_trk_g1_5
+(8 13) routing span12_vert_5 <X> lc_trk_g1_5
+(8 13) routing span4_horz_13 <X> lc_trk_g1_5
+(8 13) routing span4_horz_29 <X> lc_trk_g1_5
+(8 13) routing span4_horz_45 <X> lc_trk_g1_5
+(8 13) routing span4_horz_r_5 <X> lc_trk_g1_5
+(8 13) routing span4_vert_13 <X> lc_trk_g1_5
+(8 13) routing span4_vert_29 <X> lc_trk_g1_5
+(8 13) routing span4_vert_45 <X> lc_trk_g1_5
+(8 13) routing span4_vert_b_5 <X> lc_trk_g1_5
+(8 14) routing IO_B.logic_op_tnl_7 <X> lc_trk_g1_7
+(8 14) routing IO_B.logic_op_top_7 <X> lc_trk_g1_7
+(8 14) routing IO_L.logic_op_rgt_7 <X> lc_trk_g1_7
+(8 14) routing IO_L.logic_op_tnr_7 <X> lc_trk_g1_7
+(8 14) routing IO_R.logic_op_lft_7 <X> lc_trk_g1_7
+(8 14) routing IO_R.logic_op_tnl_7 <X> lc_trk_g1_7
+(8 14) routing IO_T.logic_op_bnl_7 <X> lc_trk_g1_7
+(8 14) routing IO_T.logic_op_bot_7 <X> lc_trk_g1_7
+(8 14) routing span12_horz_7 <X> lc_trk_g1_7
+(8 14) routing span12_vert_7 <X> lc_trk_g1_7
+(8 14) routing span4_horz_15 <X> lc_trk_g1_7
+(8 14) routing span4_horz_39 <X> lc_trk_g1_7
+(8 14) routing span4_horz_47 <X> lc_trk_g1_7
+(8 14) routing span4_horz_7 <X> lc_trk_g1_7
+(8 14) routing span4_horz_r_15 <X> lc_trk_g1_7
+(8 14) routing span4_vert_15 <X> lc_trk_g1_7
+(8 14) routing span4_vert_39 <X> lc_trk_g1_7
+(8 14) routing span4_vert_47 <X> lc_trk_g1_7
+(8 14) routing span4_vert_7 <X> lc_trk_g1_7
+(8 14) routing span4_vert_b_15 <X> lc_trk_g1_7
+(8 15) routing IO_B.logic_op_top_7 <X> lc_trk_g1_7
+(8 15) routing IO_L.logic_op_rgt_7 <X> lc_trk_g1_7
+(8 15) routing IO_R.logic_op_lft_7 <X> lc_trk_g1_7
+(8 15) routing IO_T.logic_op_bot_7 <X> lc_trk_g1_7
+(8 15) routing span12_horz_23 <X> lc_trk_g1_7
+(8 15) routing span12_horz_7 <X> lc_trk_g1_7
+(8 15) routing span12_vert_23 <X> lc_trk_g1_7
+(8 15) routing span12_vert_7 <X> lc_trk_g1_7
+(8 15) routing span4_horz_15 <X> lc_trk_g1_7
+(8 15) routing span4_horz_31 <X> lc_trk_g1_7
+(8 15) routing span4_horz_47 <X> lc_trk_g1_7
+(8 15) routing span4_horz_r_7 <X> lc_trk_g1_7
+(8 15) routing span4_vert_15 <X> lc_trk_g1_7
+(8 15) routing span4_vert_31 <X> lc_trk_g1_7
+(8 15) routing span4_vert_47 <X> lc_trk_g1_7
+(8 15) routing span4_vert_b_7 <X> lc_trk_g1_7
+(8 2) routing IO_B.logic_op_tnl_3 <X> lc_trk_g0_3
+(8 2) routing IO_B.logic_op_top_3 <X> lc_trk_g0_3
+(8 2) routing IO_L.logic_op_rgt_3 <X> lc_trk_g0_3
+(8 2) routing IO_L.logic_op_tnr_3 <X> lc_trk_g0_3
+(8 2) routing IO_R.logic_op_lft_3 <X> lc_trk_g0_3
+(8 2) routing IO_R.logic_op_tnl_3 <X> lc_trk_g0_3
+(8 2) routing IO_T.logic_op_bnl_3 <X> lc_trk_g0_3
+(8 2) routing IO_T.logic_op_bot_3 <X> lc_trk_g0_3
+(8 2) routing span12_horz_3 <X> lc_trk_g0_3
+(8 2) routing span12_vert_3 <X> lc_trk_g0_3
+(8 2) routing span4_horz_11 <X> lc_trk_g0_3
+(8 2) routing span4_horz_3 <X> lc_trk_g0_3
+(8 2) routing span4_horz_35 <X> lc_trk_g0_3
+(8 2) routing span4_horz_43 <X> lc_trk_g0_3
+(8 2) routing span4_horz_r_11 <X> lc_trk_g0_3
+(8 2) routing span4_vert_11 <X> lc_trk_g0_3
+(8 2) routing span4_vert_3 <X> lc_trk_g0_3
+(8 2) routing span4_vert_35 <X> lc_trk_g0_3
+(8 2) routing span4_vert_43 <X> lc_trk_g0_3
+(8 2) routing span4_vert_b_11 <X> lc_trk_g0_3
+(8 3) routing IO_B.logic_op_top_3 <X> lc_trk_g0_3
+(8 3) routing IO_L.logic_op_rgt_3 <X> lc_trk_g0_3
+(8 3) routing IO_R.logic_op_lft_3 <X> lc_trk_g0_3
+(8 3) routing IO_T.logic_op_bot_3 <X> lc_trk_g0_3
+(8 3) routing span12_horz_19 <X> lc_trk_g0_3
+(8 3) routing span12_horz_3 <X> lc_trk_g0_3
+(8 3) routing span12_vert_19 <X> lc_trk_g0_3
+(8 3) routing span12_vert_3 <X> lc_trk_g0_3
+(8 3) routing span4_horz_11 <X> lc_trk_g0_3
+(8 3) routing span4_horz_27 <X> lc_trk_g0_3
+(8 3) routing span4_horz_43 <X> lc_trk_g0_3
+(8 3) routing span4_horz_r_3 <X> lc_trk_g0_3
+(8 3) routing span4_vert_11 <X> lc_trk_g0_3
+(8 3) routing span4_vert_27 <X> lc_trk_g0_3
+(8 3) routing span4_vert_43 <X> lc_trk_g0_3
+(8 3) routing span4_vert_b_3 <X> lc_trk_g0_3
+(8 4) routing IO_B.logic_op_tnl_5 <X> lc_trk_g0_5
+(8 4) routing IO_B.logic_op_top_5 <X> lc_trk_g0_5
+(8 4) routing IO_L.logic_op_rgt_5 <X> lc_trk_g0_5
+(8 4) routing IO_L.logic_op_tnr_5 <X> lc_trk_g0_5
+(8 4) routing IO_R.logic_op_lft_5 <X> lc_trk_g0_5
+(8 4) routing IO_R.logic_op_tnl_5 <X> lc_trk_g0_5
+(8 4) routing IO_T.logic_op_bnl_5 <X> lc_trk_g0_5
+(8 4) routing IO_T.logic_op_bot_5 <X> lc_trk_g0_5
+(8 4) routing span12_horz_5 <X> lc_trk_g0_5
+(8 4) routing span12_vert_5 <X> lc_trk_g0_5
+(8 4) routing span4_horz_13 <X> lc_trk_g0_5
+(8 4) routing span4_horz_37 <X> lc_trk_g0_5
+(8 4) routing span4_horz_45 <X> lc_trk_g0_5
+(8 4) routing span4_horz_5 <X> lc_trk_g0_5
+(8 4) routing span4_horz_r_13 <X> lc_trk_g0_5
+(8 4) routing span4_vert_13 <X> lc_trk_g0_5
+(8 4) routing span4_vert_37 <X> lc_trk_g0_5
+(8 4) routing span4_vert_45 <X> lc_trk_g0_5
+(8 4) routing span4_vert_5 <X> lc_trk_g0_5
+(8 4) routing span4_vert_b_13 <X> lc_trk_g0_5
+(8 5) routing IO_B.logic_op_top_5 <X> lc_trk_g0_5
+(8 5) routing IO_L.logic_op_rgt_5 <X> lc_trk_g0_5
+(8 5) routing IO_R.logic_op_lft_5 <X> lc_trk_g0_5
+(8 5) routing IO_T.logic_op_bot_5 <X> lc_trk_g0_5
+(8 5) routing span12_horz_21 <X> lc_trk_g0_5
+(8 5) routing span12_horz_5 <X> lc_trk_g0_5
+(8 5) routing span12_vert_21 <X> lc_trk_g0_5
+(8 5) routing span12_vert_5 <X> lc_trk_g0_5
+(8 5) routing span4_horz_13 <X> lc_trk_g0_5
+(8 5) routing span4_horz_29 <X> lc_trk_g0_5
+(8 5) routing span4_horz_45 <X> lc_trk_g0_5
+(8 5) routing span4_horz_r_5 <X> lc_trk_g0_5
+(8 5) routing span4_vert_13 <X> lc_trk_g0_5
+(8 5) routing span4_vert_29 <X> lc_trk_g0_5
+(8 5) routing span4_vert_45 <X> lc_trk_g0_5
+(8 5) routing span4_vert_b_5 <X> lc_trk_g0_5
+(8 6) routing IO_B.logic_op_tnl_7 <X> lc_trk_g0_7
+(8 6) routing IO_B.logic_op_top_7 <X> lc_trk_g0_7
+(8 6) routing IO_L.logic_op_rgt_7 <X> lc_trk_g0_7
+(8 6) routing IO_L.logic_op_tnr_7 <X> lc_trk_g0_7
+(8 6) routing IO_R.logic_op_lft_7 <X> lc_trk_g0_7
+(8 6) routing IO_R.logic_op_tnl_7 <X> lc_trk_g0_7
+(8 6) routing IO_T.logic_op_bnl_7 <X> lc_trk_g0_7
+(8 6) routing IO_T.logic_op_bot_7 <X> lc_trk_g0_7
+(8 6) routing span12_horz_7 <X> lc_trk_g0_7
+(8 6) routing span12_vert_7 <X> lc_trk_g0_7
+(8 6) routing span4_horz_15 <X> lc_trk_g0_7
+(8 6) routing span4_horz_39 <X> lc_trk_g0_7
+(8 6) routing span4_horz_47 <X> lc_trk_g0_7
+(8 6) routing span4_horz_7 <X> lc_trk_g0_7
+(8 6) routing span4_horz_r_15 <X> lc_trk_g0_7
+(8 6) routing span4_vert_15 <X> lc_trk_g0_7
+(8 6) routing span4_vert_39 <X> lc_trk_g0_7
+(8 6) routing span4_vert_47 <X> lc_trk_g0_7
+(8 6) routing span4_vert_7 <X> lc_trk_g0_7
+(8 6) routing span4_vert_b_15 <X> lc_trk_g0_7
+(8 7) routing IO_B.logic_op_top_7 <X> lc_trk_g0_7
+(8 7) routing IO_L.logic_op_rgt_7 <X> lc_trk_g0_7
+(8 7) routing IO_R.logic_op_lft_7 <X> lc_trk_g0_7
+(8 7) routing IO_T.logic_op_bot_7 <X> lc_trk_g0_7
+(8 7) routing span12_horz_23 <X> lc_trk_g0_7
+(8 7) routing span12_horz_7 <X> lc_trk_g0_7
+(8 7) routing span12_vert_23 <X> lc_trk_g0_7
+(8 7) routing span12_vert_7 <X> lc_trk_g0_7
+(8 7) routing span4_horz_15 <X> lc_trk_g0_7
+(8 7) routing span4_horz_31 <X> lc_trk_g0_7
+(8 7) routing span4_horz_47 <X> lc_trk_g0_7
+(8 7) routing span4_horz_r_7 <X> lc_trk_g0_7
+(8 7) routing span4_vert_15 <X> lc_trk_g0_7
+(8 7) routing span4_vert_31 <X> lc_trk_g0_7
+(8 7) routing span4_vert_47 <X> lc_trk_g0_7
+(8 7) routing span4_vert_b_7 <X> lc_trk_g0_7
+(8 8) routing IO_B.logic_op_tnl_1 <X> lc_trk_g1_1
+(8 8) routing IO_B.logic_op_top_1 <X> lc_trk_g1_1
+(8 8) routing IO_L.logic_op_rgt_1 <X> lc_trk_g1_1
+(8 8) routing IO_L.logic_op_tnr_1 <X> lc_trk_g1_1
+(8 8) routing IO_R.logic_op_lft_1 <X> lc_trk_g1_1
+(8 8) routing IO_R.logic_op_tnl_1 <X> lc_trk_g1_1
+(8 8) routing IO_T.logic_op_bnl_1 <X> lc_trk_g1_1
+(8 8) routing IO_T.logic_op_bot_1 <X> lc_trk_g1_1
+(8 8) routing span12_horz_1 <X> lc_trk_g1_1
+(8 8) routing span12_vert_1 <X> lc_trk_g1_1
+(8 8) routing span4_horz_1 <X> lc_trk_g1_1
+(8 8) routing span4_horz_33 <X> lc_trk_g1_1
+(8 8) routing span4_horz_41 <X> lc_trk_g1_1
+(8 8) routing span4_horz_9 <X> lc_trk_g1_1
+(8 8) routing span4_horz_r_9 <X> lc_trk_g1_1
+(8 8) routing span4_vert_1 <X> lc_trk_g1_1
+(8 8) routing span4_vert_33 <X> lc_trk_g1_1
+(8 8) routing span4_vert_41 <X> lc_trk_g1_1
+(8 8) routing span4_vert_9 <X> lc_trk_g1_1
+(8 8) routing span4_vert_b_9 <X> lc_trk_g1_1
+(8 9) routing IO_B.logic_op_top_1 <X> lc_trk_g1_1
+(8 9) routing IO_L.logic_op_rgt_1 <X> lc_trk_g1_1
+(8 9) routing IO_R.logic_op_lft_1 <X> lc_trk_g1_1
+(8 9) routing IO_T.logic_op_bot_1 <X> lc_trk_g1_1
+(8 9) routing span12_horz_1 <X> lc_trk_g1_1
+(8 9) routing span12_horz_17 <X> lc_trk_g1_1
+(8 9) routing span12_vert_1 <X> lc_trk_g1_1
+(8 9) routing span12_vert_17 <X> lc_trk_g1_1
+(8 9) routing span4_horz_25 <X> lc_trk_g1_1
+(8 9) routing span4_horz_41 <X> lc_trk_g1_1
+(8 9) routing span4_horz_9 <X> lc_trk_g1_1
+(8 9) routing span4_horz_r_1 <X> lc_trk_g1_1
+(8 9) routing span4_vert_25 <X> lc_trk_g1_1
+(8 9) routing span4_vert_41 <X> lc_trk_g1_1
+(8 9) routing span4_vert_9 <X> lc_trk_g1_1
+(8 9) routing span4_vert_b_1 <X> lc_trk_g1_1
+(9 0) Column buffer control bit: BIOLEFT_half_column_clock_enable_1
+(9 0) Column buffer control bit: IOLEFT_half_column_clock_enable_1
+(9 0) Column buffer control bit: IORIGHT_half_column_clock_enable_1
+(9 1) Column buffer control bit: BIOLEFT_half_column_clock_enable_0
+(9 1) Column buffer control bit: IOLEFT_half_column_clock_enable_0
+(9 1) Column buffer control bit: IORIGHT_half_column_clock_enable_0
+(9 2) Column buffer control bit: BIOLEFT_half_column_clock_enable_3
+(9 2) Column buffer control bit: IOLEFT_half_column_clock_enable_3
+(9 2) Column buffer control bit: IORIGHT_half_column_clock_enable_3
+(9 3) Column buffer control bit: BIOLEFT_half_column_clock_enable_2
+(9 3) Column buffer control bit: IOLEFT_half_column_clock_enable_2
+(9 3) Column buffer control bit: IORIGHT_half_column_clock_enable_2
+(9 4) Column buffer control bit: BIOLEFT_half_column_clock_enable_5
+(9 4) Column buffer control bit: IOLEFT_half_column_clock_enable_5
+(9 4) Column buffer control bit: IORIGHT_half_column_clock_enable_5
+(9 5) Column buffer control bit: BIOLEFT_half_column_clock_enable_4
+(9 5) Column buffer control bit: IOLEFT_half_column_clock_enable_4
+(9 5) Column buffer control bit: IORIGHT_half_column_clock_enable_4
+(9 6) Column buffer control bit: BIOLEFT_half_column_clock_enable_7
+(9 6) Column buffer control bit: IOLEFT_half_column_clock_enable_7
+(9 6) Column buffer control bit: IORIGHT_half_column_clock_enable_7
+(9 7) Column buffer control bit: BIOLEFT_half_column_clock_enable_6
+(9 7) Column buffer control bit: IOLEFT_half_column_clock_enable_6
+(9 7) Column buffer control bit: IORIGHT_half_column_clock_enable_6

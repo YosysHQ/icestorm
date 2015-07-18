@@ -20,6 +20,7 @@ from __future__ import print_function
 
 import icebox
 import sys
+import re
 
 print("Reading file '%s'.." % sys.argv[1])
 ic1 = icebox.iceconfig()
@@ -38,7 +39,29 @@ def format_bits(line_nr, this_line, other_line):
             else:
                 text += "%8s" % ""
     return text
-        
+
+def explained_bits(db, tile):
+    bits = set()
+    mapped_bits = set()
+    for k, line in enumerate(tile):
+        for i in range(len(line)):
+            if line[i] == "1":
+                bits.add("B%d[%d]" % (k, i))
+            else:
+                bits.add("!B%d[%d]" % (k, i))
+    text = set()
+    for entry in db:
+        if re.match(r"LC_", entry[1]):
+            continue
+        if entry[1] in ("routing", "buffer"):
+            continue
+        match = True
+        for bit in entry[0]:
+            if not bit in bits:
+                match = False
+        if match:
+            text.add("<%s> %s" % (",".join(entry[0]), " ".join(entry[1:])))
+    return text
 
 def diff_tiles(stmt, tiles1, tiles2):
     for i in sorted(set(tiles1.keys() + tiles2.keys())):
@@ -46,11 +69,13 @@ def diff_tiles(stmt, tiles1, tiles2):
             print("+ %s %d %d" % (stmt, i[0], i[1]))
             for line in tiles2[i]:
                 print("+ %s" % line)
+            print()
             continue
         if not i in tiles2:
             print("- %s %d %d" % (stmt, i[0], i[1]))
             for line in tiles1[i]:
                 print("- %s" % line)
+            print()
             continue
         if tiles1[i] == tiles2[i]:
             continue
@@ -61,6 +86,15 @@ def diff_tiles(stmt, tiles1, tiles2):
             else:
                 print("- %s%s" % (tiles1[i][c], format_bits(c, tiles1[i][c], tiles2[i][c])))
                 print("+ %s%s" % (tiles2[i][c], format_bits(c, tiles2[i][c], tiles1[i][c])))
+        bits1 = explained_bits(ic1.tile_db(i[0], i[1]), tiles1[i])
+        bits2 = explained_bits(ic2.tile_db(i[0], i[1]), tiles2[i])
+        for bit in sorted(bits1):
+            if bit not in bits2:
+                print("- %s" % bit)
+        for bit in sorted(bits2):
+            if bit not in bits1:
+                print("+ %s" % bit)
+        print()
 
 diff_tiles(".io_tile", ic1.io_tiles, ic2.io_tiles)
 diff_tiles(".logic_tile", ic1.logic_tiles, ic2.logic_tiles)

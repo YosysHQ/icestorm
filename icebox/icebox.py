@@ -59,6 +59,30 @@ class iceconfig:
             self.io_tiles[(0, y)] = ["0" * 18 for i in range(16)]
             self.io_tiles[(self.max_x, y)] = ["0" * 18 for i in range(16)]
 
+    def setup_empty_8k(self):
+        self.clear()
+        self.device = "8k"
+        self.max_x = 33
+        self.max_y = 33
+
+        for x in range(1, self.max_x):
+            for y in range(1, self.max_y):
+                if x in (8, 25):
+                    if y % 2 == 1:
+                        self.ramb_tiles[(x, y)] = ["0" * 42 for i in range(16)]
+                    else:
+                        self.ramt_tiles[(x, y)] = ["0" * 42 for i in range(16)]
+                else:
+                    self.logic_tiles[(x, y)] = ["0" * 54 for i in range(16)]
+
+        for x in range(1, self.max_x):
+            self.io_tiles[(x, 0)] = ["0" * 18 for i in range(16)]
+            self.io_tiles[(x, self.max_y)] = ["0" * 18 for i in range(16)]
+
+        for y in range(1, self.max_y):
+            self.io_tiles[(0, y)] = ["0" * 18 for i in range(16)]
+            self.io_tiles[(self.max_x, y)] = ["0" * 18 for i in range(16)]
+
     def lookup_extra_bit(self, bit):
         assert self.device in extra_bits_db
         if bit in extra_bits_db[self.device]:
@@ -73,8 +97,9 @@ class iceconfig:
         return None
 
     def pinloc_db(self):
-        assert self.device == "1k"
-        return pinloc_db
+        if self.device == "1k": return pinloc_db["1k-tq144"]
+        if self.device == "8k": return pinloc_db["8k-ct256"]
+        assert False
 
     def gbufin_db(self):
         return gbufin_db[self.device]
@@ -91,29 +116,55 @@ class iceconfig:
     def ieren_db(self):
         return ieren_db[self.device]
 
+    def pll_list(self):
+        if self.device == "1k":
+            return ["1k"]
+        if self.device == "8k":
+            return ["8k_0", "8k_1"]
+        assert False
+
     def colbuf_db(self):
-        assert self.device == "1k"
-        entries = list()
-        for x in range(self.max_x+1):
-            for y in range(self.max_y+1):
-                src_y = None
-                if  0 <= y <=  4: src_y =  4
-                if  5 <= y <=  8: src_y =  5
-                if  9 <= y <= 12: src_y = 12
-                if 13 <= y <= 17: src_y = 13
-                if x in [3, 10] and src_y ==  4: src_y =  3
-                if x in [3, 10] and src_y == 12: src_y = 11
-                entries.append((x, src_y, x, y))
-        return entries
+        if self.device == "1k":
+            entries = list()
+            for x in range(self.max_x+1):
+                for y in range(self.max_y+1):
+                    src_y = None
+                    if  0 <= y <=  4: src_y =  4
+                    if  5 <= y <=  8: src_y =  5
+                    if  9 <= y <= 12: src_y = 12
+                    if 13 <= y <= 17: src_y = 13
+                    if x in [3, 10] and src_y ==  4: src_y =  3
+                    if x in [3, 10] and src_y == 12: src_y = 11
+                    entries.append((x, src_y, x, y))
+            return entries
+
+        if self.device == "8k":
+            entries = list()
+            for x in range(self.max_x+1):
+                for y in range(self.max_y+1):
+                    src_y = None
+                    if  0 <= y <=  8: src_y =  8
+                    if  9 <= y <= 16: src_y =  9
+                    if 17 <= y <= 24: src_y = 24
+                    if 25 <= y <= 33: src_y = 25
+                    entries.append((x, src_y, x, y))
+            return entries
+
+        assert False
 
     def tile_db(self, x, y):
         if x == 0: return iotile_l_db
         if y == 0: return iotile_b_db
         if x == self.max_x: return iotile_r_db
         if y == self.max_y: return iotile_t_db
-        if (x, y) in self.ramb_tiles: return rambtile_db
-        if (x, y) in self.ramt_tiles: return ramttile_db
-        if (x, y) in self.logic_tiles: return logictile_db
+        if self.device == "1k":
+            if (x, y) in self.logic_tiles: return logictile_db
+            if (x, y) in self.ramb_tiles: return rambtile_db
+            if (x, y) in self.ramt_tiles: return ramttile_db
+        if self.device == "8k":
+            if (x, y) in self.logic_tiles: return logictile_8k_db
+            if (x, y) in self.ramb_tiles: return rambtile_8k_db
+            if (x, y) in self.ramt_tiles: return ramttile_8k_db
         assert False
 
     def tile_type(self, x, y):
@@ -205,9 +256,19 @@ class iceconfig:
                 if (nx, ny) in self.logic_tiles:
                     return (nx, ny, "lutff_%d/out" % func)
                 if (nx, ny) in self.ramb_tiles:
-                    return (nx, ny, "ram/RDATA_%d" % func)
+                    if self.device == "1k":
+                        return (nx, ny, "ram/RDATA_%d" % func)
+                    elif self.device == "8k":
+                        return (nx, ny, "ram/RDATA_%d" % (15-func))
+                    else:
+                        assert False
                 if (nx, ny) in self.ramt_tiles:
-                    return (nx, ny, "ram/RDATA_%d" % (8+func))
+                    if self.device == "1k":
+                        return (nx, ny, "ram/RDATA_%d" % (8+func))
+                    elif self.device == "8k":
+                        return (nx, ny, "ram/RDATA_%d" % (7-func))
+                    else:
+                        assert False
 
             elif pos == "x" and npos in ("l", "r", "t", "b"):
                 if func in (0, 4): return (nx, ny, "io_0/D_IN_0")
@@ -242,7 +303,12 @@ class iceconfig:
 
         match = re.match(r"ram/RDATA_(\d+)", netname)
         if match:
-            funcnets |= self.follow_funcnet(x, y, int(match.group(1)) % 8)
+            if self.device == "1k":
+                funcnets |= self.follow_funcnet(x, y, int(match.group(1)) % 8)
+            elif self.device == "8k":
+                funcnets |= self.follow_funcnet(x, y, 7 - int(match.group(1)) % 8)
+            else:
+                assert False
 
         return funcnets
 
@@ -372,16 +438,31 @@ class iceconfig:
         for idx, tile in self.logic_tiles.items():
             if idx in all_from_tiles:
                 seed_segments.add((idx[0], idx[1], "lutff_7/cout"))
-            add_seed_segments(idx, tile, logictile_db)
+            if self.device == "1k":
+                add_seed_segments(idx, tile, logictile_db)
+            elif self.device == "8k":
+                add_seed_segments(idx, tile, logictile_8k_db)
+            else:
+                assert False
 
         for idx, tile in self.ramb_tiles.items():
-            add_seed_segments(idx, tile, rambtile_db)
+            if self.device == "1k":
+                add_seed_segments(idx, tile, rambtile_db)
+            elif self.device == "8k":
+                add_seed_segments(idx, tile, rambtile_8k_db)
+            else:
+                assert False
 
         for idx, tile in self.ramt_tiles.items():
-            add_seed_segments(idx, tile, ramttile_db)
+            if self.device == "1k":
+                add_seed_segments(idx, tile, ramttile_db)
+            elif self.device == "8k":
+                add_seed_segments(idx, tile, ramttile_8k_db)
+            else:
+                assert False
 
         for padin, pio in enumerate(self.padin_pio_db()):
-            s1 = (pio[0], pio[1], "wire_gbuf/padin_%d" % pio[2])
+            s1 = (pio[0], pio[1], "padin_%d" % pio[2])
             s2 = (pio[0], pio[1], "glb_netwk_%d" % padin)
             if s1 in seed_segments or (pio[0], pio[1]) in all_from_tiles:
                 connected_segments.setdefault(s1, set()).add(s2)
@@ -395,7 +476,7 @@ class iceconfig:
             if entry[1] == 0 or entry[1] == self.max_y:
                 iocells = [(i, entry[1]) for i in range(1, self.max_x)]
             for cell in iocells:
-                s1 = (entry[0], entry[1], "wire_gbuf/in")
+                s1 = (entry[0], entry[1], "fabout")
                 s2 = (cell[0], cell[1], "io_global/latch")
                 if s1 in seed_segments or s2 in seed_segments or \
                         (entry[0], entry[1]) in all_from_tiles or (cell[0], cell[1]) in all_from_tiles:
@@ -406,7 +487,7 @@ class iceconfig:
 
         if connect_gb:
             for entry in self.gbufin_db():
-                s1 = (entry[0], entry[1], "wire_gbuf/in")
+                s1 = (entry[0], entry[1], "fabout")
                 s2 = (entry[0], entry[1], "glb_netwk_%d" % entry[2])
                 if s1 in seed_segments or (pio[0], pio[1]) in all_from_tiles:
                     connected_segments.setdefault(s1, set()).add(s2)
@@ -494,7 +575,7 @@ class iceconfig:
                     self.extra_bits.add((int(line[1]), int(line[2]), int(line[3])))
                     continue
                 if line[0] == ".device":
-                    assert line[1] in ["1k"]
+                    assert line[1] in ["1k", "8k"]
                     self.device = line[1]
                     continue
                 if line[0] in [".comment", ".sym"]:
@@ -636,7 +717,7 @@ def sp12v_normalize(netname, edge=""):
 
     return netname
 
-def netname_normalize(netname, edge="", ramb=False, ramt=False):
+def netname_normalize(netname, edge="", ramb=False, ramt=False, ramb_8k=False, ramt_8k=False):
     if netname.startswith("sp4_v_"): return sp4v_normalize(netname, edge)
     if netname.startswith("sp4_h_"): return sp4h_normalize(netname, edge)
     if netname.startswith("sp12_v_"): return sp12v_normalize(netname, edge)
@@ -647,11 +728,13 @@ def netname_normalize(netname, edge="", ramb=False, ramt=False):
     netname = netname.replace("wire_logic_cluster/", "")
     netname = netname.replace("wire_io_cluster/", "")
     netname = netname.replace("wire_bram/", "")
-    if (ramb or ramt) and netname.startswith("input"):
+    if (ramb or ramt or ramb_8k or ramt_8k) and netname.startswith("input"):
         match = re.match(r"input(\d)_(\d)", netname)
         idx1, idx2 = (int(match.group(1)), int(match.group(2)))
         if ramb: netname="ram/WADDR_%d" % (idx1*4 + idx2)
         if ramt: netname="ram/RADDR_%d" % (idx1*4 + idx2)
+        if ramb_8k: netname="ram/RADDR_%d" % ([7, 6, 5, 4, 3, 2, 1, 0, -1, -1, -1, -1, -1, 10, 9, 8][idx1*4 + idx2])
+        if ramt_8k: netname="ram/WADDR_%d" % ([7, 6, 5, 4, 3, 2, 1, 0, -1, -1, -1, -1, -1, 10, 9, 8][idx1*4 + idx2])
     match = re.match(r"(...)_op_(.*)", netname)
     if match:
         netname = "neigh_op_%s_%s" % (match.group(1), match.group(2))
@@ -850,6 +933,7 @@ def run_checks_neigh():
     print("Running consistency checks on neighbour finder..")
     ic = iceconfig()
     ic.setup_empty_1k()
+    # ic.setup_empty_8k()
 
     all_segments = set()
 
@@ -865,17 +949,12 @@ def run_checks_neigh():
         for y in range(ic.max_x+1):
             if x in (0, ic.max_x) and y in (0, ic.max_y):
                 continue
-            if x in (0, ic.max_x) or y in (0, ic.max_y):
-                add_segments((x, y), ic.tile_db(x, y))
-            elif (x, y) in ic.ramb_tiles:
-                add_segments((x, y), ic.tile_db(x, y))
-            elif (x, y) in ic.ramt_tiles:
-                add_segments((x, y), ic.tile_db(x, y))
-            else:
-                add_segments((x, y), logictile_db)
+            add_segments((x, y), ic.tile_db(x, y))
+            if (x, y) in ic.logic_tiles:
                 all_segments.add((x, y, "lutff_7/cout"))
 
     for s1 in all_segments:
+        # if s1[1] > 4: continue
         for s2 in ic.follow_net(s1):
             if s1 not in ic.follow_net(s2):
                 print("ERROR: %s -> %s, but not vice versa!" % (s1, s2))
@@ -890,9 +969,19 @@ def run_checks_neigh():
 def run_checks():
     run_checks_neigh()
 
-def parse_db(text):
+def parse_db(text, grep_8k=False):
     db = list()
     for line in text.split("\n"):
+        line_1k = line.replace("1k_glb_netwk_", "glb_netwk_")
+        line_8k = line.replace("8k_glb_netwk_", "glb_netwk_")
+        if line_1k != line:
+            if grep_8k:
+                continue
+            line = line_1k
+        elif line_8k != line:
+            if not grep_8k:
+                continue
+            line = line_8k
         line = line.split("\t")
         if len(line) == 0 or line[0] == "":
             continue
@@ -910,6 +999,16 @@ extra_bits_db = {
         (1, 331, 142): ("padin_glb_netwk", "5"),
         (0, 330, 143): ("padin_glb_netwk", "6"),
         (0, 331, 143): ("padin_glb_netwk", "7"),
+    },
+    "8k": {
+        (0, 870, 270): ("padin_glb_netwk", "0"),
+        (0, 871, 270): ("padin_glb_netwk", "1"),
+        (1, 870, 271): ("padin_glb_netwk", "2"),
+        (1, 871, 271): ("padin_glb_netwk", "3"),
+        (1, 870, 270): ("padin_glb_netwk", "4"),
+        (1, 871, 270): ("padin_glb_netwk", "5"),
+        (0, 870, 271): ("padin_glb_netwk", "6"),
+        (0, 871, 271): ("padin_glb_netwk", "7"),
     }
 }
 
@@ -923,6 +1022,16 @@ gbufin_db = {
         (13,  9,  2),
         ( 6,  0,  5),
         ( 6, 17,  4),
+    ],
+    "8k": [
+        (33, 16,  7),
+        ( 0, 16,  6),
+        (17, 33,  1),
+        (17,  0,  0),
+        ( 0, 17,  3),
+        (33, 17,  2),
+        (16,  0,  5),
+        (16, 33,  4),
     ]
 }
 
@@ -931,41 +1040,309 @@ iolatch_db = {
         ( 0,  7),
         (13, 10),
         ( 5,  0),
-        ( 8, 17)
-    ]
+        ( 8, 17),
+    ],
+    "8k": [
+        ( 0, 15),
+        (33, 18),
+        (18,  0),
+        (15, 33),
+    ],
+}
+
+warmbootinfo_db = {
+    "1k": {
+        "BOOT": ( 12, 0, "fabout" ),
+        "S0":   ( 13, 1, "fabout" ),
+        "S1":   ( 13, 2, "fabout" ),
+    },
+    "8k": {
+        "BOOT": ( 31, 0, "fabout" ),
+        "S0":   ( 33, 1, "fabout" ),
+        "S1":   ( 33, 2, "fabout" ),
+    }
 }
 
 pllinfo_db = {
     "1k": {
-        "SHIFTREG_DIV_MODE": (0, 3, "B2[2]"),
-        "FDA_FEEDBACK_0": (0, 3, "B7[3]"),
-        "FDA_FEEDBACK_1": (0, 4, "B0[2]"),
-        "FDA_FEEDBACK_2": (0, 4, "B0[3]"),
-        "FDA_FEEDBACK_3": (0, 4, "B3[3]"),
-        "FDA_RELATIVE_0": (0, 4, "B2[3]"),
-        "FDA_RELATIVE_1": (0, 4, "B5[3]"),
-        "FDA_RELATIVE_2": (0, 4, "B4[2]"),
-        "FDA_RELATIVE_3": (0, 4, "B4[3]"),
-        "DIVR_0": (0, 1, "B0[2]"),
-        "DIVR_1": (0, 1, "B0[3]"),
-        "DIVR_2": (0, 1, "B3[3]"),
-        "DIVR_3": (0, 1, "B2[2]"),
-        "DIVF_0": (0, 1, "B2[3]"),
-        "DIVF_1": (0, 1, "B5[3]"),
-        "DIVF_2": (0, 1, "B4[2]"),
-        "DIVF_3": (0, 1, "B4[3]"),
-        "DIVF_4": (0, 1, "B7[3]"),
-        "DIVF_5": (0, 2, "B0[2]"),
-        "DIVF_6": (0, 2, "B0[3]"),
-        "DIVQ_0": (0, 0, "?"),
-        "DIVQ_1": (0, 0, "?"),
-        "DIVQ_2": (0, 0, "?"),
-        "FILTER_RANGE_0": (0, 2, "B5[3]"),
-        "FILTER_RANGE_1": (0, 2, "B4[2]"),
-        "FILTER_RANGE_2": (0, 2, "B4[3]"),
-        "ENABLE_ICEGATE": (0, 0, "?"),
-        "TEST_MODE": (0, 3, "B4[3]"),
-    }
+        "LOC" : (6, 0),
+
+        # 3'b000 = "DISABLED"
+        # 3'b010 = "SB_PLL40_PAD"
+        # 3'b100 = "SB_PLL40_2_PAD"
+        # 3'b110 = "SB_PLL40_2F_PAD"
+        # 3'b011 = "SB_PLL40_CORE"
+        # 3'b111 = "SB_PLL40_2F_CORE"
+        "PLLTYPE_0":            ( 0,  3, "PLLCONFIG_5"),
+        "PLLTYPE_1":            ( 0,  5, "PLLCONFIG_1"),
+        "PLLTYPE_2":            ( 0,  5, "PLLCONFIG_3"),
+
+        # 3'b000 = "DELAY"
+        # 3'b001 = "SIMPLE"
+        # 3'b010 = "PHASE_AND_DELAY"
+        # 3'b110 = "EXTERNAL"
+        "FEEDBACK_PATH_0":      ( 0,  5, "PLLCONFIG_5"),
+        "FEEDBACK_PATH_1":      ( 0,  2, "PLLCONFIG_9"),
+        "FEEDBACK_PATH_2":      ( 0,  3, "PLLCONFIG_1"),
+
+        # 1'b0 = "FIXED"
+        # 1'b1 = "DYNAMIC" (also set FDA_FEEDBACK=4'b1111)
+        "DELAY_ADJMODE_FB":     ( 0,  4, "PLLCONFIG_4"),
+
+        # 1'b0 = "FIXED"
+        # 1'b1 = "DYNAMIC" (also set FDA_RELATIVE=4'b1111)
+        "DELAY_ADJMODE_REL":    ( 0,  4, "PLLCONFIG_9"),
+
+        # 2'b00 = "GENCLK"
+        # 2'b01 = "GENCLK_HALF"
+        # 2'b10 = "SHIFTREG_90deg"
+        # 2'b11 = "SHIFTREG_0deg"
+        "PLLOUT_SELECT_A_0":    ( 0,  3, "PLLCONFIG_6"),
+        "PLLOUT_SELECT_A_1":    ( 0,  3, "PLLCONFIG_7"),
+
+        # 2'b00 = "GENCLK"
+        # 2'b01 = "GENCLK_HALF"
+        # 2'b10 = "SHIFTREG_90deg"
+        # 2'b11 = "SHIFTREG_0deg"
+        "PLLOUT_SELECT_B_0":    ( 0,  3, "PLLCONFIG_2"),
+        "PLLOUT_SELECT_B_1":    ( 0,  3, "PLLCONFIG_3"),
+
+        # Numeric Parameters
+        "SHIFTREG_DIV_MODE":    ( 0,  3, "PLLCONFIG_4"),
+        "FDA_FEEDBACK_0":       ( 0,  3, "PLLCONFIG_9"),
+        "FDA_FEEDBACK_1":       ( 0,  4, "PLLCONFIG_1"),
+        "FDA_FEEDBACK_2":       ( 0,  4, "PLLCONFIG_2"),
+        "FDA_FEEDBACK_3":       ( 0,  4, "PLLCONFIG_3"),
+        "FDA_RELATIVE_0":       ( 0,  4, "PLLCONFIG_5"),
+        "FDA_RELATIVE_1":       ( 0,  4, "PLLCONFIG_6"),
+        "FDA_RELATIVE_2":       ( 0,  4, "PLLCONFIG_7"),
+        "FDA_RELATIVE_3":       ( 0,  4, "PLLCONFIG_8"),
+        "DIVR_0":               ( 0,  1, "PLLCONFIG_1"),
+        "DIVR_1":               ( 0,  1, "PLLCONFIG_2"),
+        "DIVR_2":               ( 0,  1, "PLLCONFIG_3"),
+        "DIVR_3":               ( 0,  1, "PLLCONFIG_4"),
+        "DIVF_0":               ( 0,  1, "PLLCONFIG_5"),
+        "DIVF_1":               ( 0,  1, "PLLCONFIG_6"),
+        "DIVF_2":               ( 0,  1, "PLLCONFIG_7"),
+        "DIVF_3":               ( 0,  1, "PLLCONFIG_8"),
+        "DIVF_4":               ( 0,  1, "PLLCONFIG_9"),
+        "DIVF_5":               ( 0,  2, "PLLCONFIG_1"),
+        "DIVF_6":               ( 0,  2, "PLLCONFIG_2"),
+        "DIVQ_0":               ( 0,  2, "PLLCONFIG_3"),
+        "DIVQ_1":               ( 0,  2, "PLLCONFIG_4"),
+        "DIVQ_2":               ( 0,  2, "PLLCONFIG_5"),
+        "FILTER_RANGE_0":       ( 0,  2, "PLLCONFIG_6"),
+        "FILTER_RANGE_1":       ( 0,  2, "PLLCONFIG_7"),
+        "FILTER_RANGE_2":       ( 0,  2, "PLLCONFIG_8"),
+        "TEST_MODE":            ( 0,  3, "PLLCONFIG_8"),
+
+        # PLL Ports
+        "PLLOUT_A":             ( 6,  0, 1),
+        "PLLOUT_B":             ( 7,  0, 0),
+        "REFERENCECLK":         ( 0,  1, "fabout"),
+        "EXTFEEDBACK":          ( 0,  2, "fabout"),
+        "DYNAMICDELAY_0":       ( 0,  4, "fabout"),
+        "DYNAMICDELAY_1":       ( 0,  5, "fabout"),
+        "DYNAMICDELAY_2":       ( 0,  6, "fabout"),
+        "DYNAMICDELAY_3":       ( 0, 10, "fabout"),
+        "DYNAMICDELAY_4":       ( 0, 11, "fabout"),
+        "DYNAMICDELAY_5":       ( 0, 12, "fabout"),
+        "DYNAMICDELAY_6":       ( 0, 13, "fabout"),
+        "DYNAMICDELAY_7":       ( 0, 14, "fabout"),
+        "LOCK":                 ( 1,  1, "neigh_op_bnl_1"),
+        "BYPASS":               ( 1,  0, "fabout"),
+        "RESETB":               ( 2,  0, "fabout"),
+        "LATCHINPUTVALUE":      ( 5,  0, "fabout"),
+        "SDO":                  (12,  1, "neigh_op_bnr_3"),
+        "SDI":                  ( 4,  0, "fabout"),
+        "SCLK":                 ( 3,  0, "fabout"),
+    },
+    "8k_0": {
+        "LOC" : (16, 0),
+
+        # 3'b000 = "DISABLED"
+        # 3'b010 = "SB_PLL40_PAD"
+        # 3'b100 = "SB_PLL40_2_PAD"
+        # 3'b110 = "SB_PLL40_2F_PAD"
+        # 3'b011 = "SB_PLL40_CORE"
+        # 3'b111 = "SB_PLL40_2F_CORE"
+        "PLLTYPE_0":            ( 16, 0, "PLLCONFIG_5"),
+        "PLLTYPE_1":            ( 18, 0, "PLLCONFIG_1"),
+        "PLLTYPE_2":            ( 18, 0, "PLLCONFIG_3"),
+
+        # 3'b000 = "DELAY"
+        # 3'b001 = "SIMPLE"
+        # 3'b010 = "PHASE_AND_DELAY"
+        # 3'b110 = "EXTERNAL"
+        "FEEDBACK_PATH_0":      ( 18, 0, "PLLCONFIG_5"),
+        "FEEDBACK_PATH_1":      ( 15, 0, "PLLCONFIG_9"),
+        "FEEDBACK_PATH_2":      ( 16, 0, "PLLCONFIG_1"),
+
+        # 1'b0 = "FIXED"
+        # 1'b1 = "DYNAMIC" (also set FDA_FEEDBACK=4'b1111)
+        "DELAY_ADJMODE_FB":     ( 17, 0, "PLLCONFIG_4"),
+
+        # 1'b0 = "FIXED"
+        # 1'b1 = "DYNAMIC" (also set FDA_RELATIVE=4'b1111)
+        "DELAY_ADJMODE_REL":    ( 17, 0, "PLLCONFIG_9"),
+
+        # 2'b00 = "GENCLK"
+        # 2'b01 = "GENCLK_HALF"
+        # 2'b10 = "SHIFTREG_90deg"
+        # 2'b11 = "SHIFTREG_0deg"
+        "PLLOUT_SELECT_A_0":    ( 16, 0, "PLLCONFIG_6"),
+        "PLLOUT_SELECT_A_1":    ( 16, 0, "PLLCONFIG_7"),
+
+        # 2'b00 = "GENCLK"
+        # 2'b01 = "GENCLK_HALF"
+        # 2'b10 = "SHIFTREG_90deg"
+        # 2'b11 = "SHIFTREG_0deg"
+        "PLLOUT_SELECT_B_0":    ( 16, 0, "PLLCONFIG_2"),
+        "PLLOUT_SELECT_B_1":    ( 16, 0, "PLLCONFIG_3"),
+
+        # Numeric Parameters
+        "SHIFTREG_DIV_MODE":    ( 16, 0, "PLLCONFIG_4"),
+        "FDA_FEEDBACK_0":       ( 16, 0, "PLLCONFIG_9"),
+        "FDA_FEEDBACK_1":       ( 17, 0, "PLLCONFIG_1"),
+        "FDA_FEEDBACK_2":       ( 17, 0, "PLLCONFIG_2"),
+        "FDA_FEEDBACK_3":       ( 17, 0, "PLLCONFIG_3"),
+        "FDA_RELATIVE_0":       ( 17, 0, "PLLCONFIG_5"),
+        "FDA_RELATIVE_1":       ( 17, 0, "PLLCONFIG_6"),
+        "FDA_RELATIVE_2":       ( 17, 0, "PLLCONFIG_7"),
+        "FDA_RELATIVE_3":       ( 17, 0, "PLLCONFIG_8"),
+        "DIVR_0":               ( 14, 0, "PLLCONFIG_1"),
+        "DIVR_1":               ( 14, 0, "PLLCONFIG_2"),
+        "DIVR_2":               ( 14, 0, "PLLCONFIG_3"),
+        "DIVR_3":               ( 14, 0, "PLLCONFIG_4"),
+        "DIVF_0":               ( 14, 0, "PLLCONFIG_5"),
+        "DIVF_1":               ( 14, 0, "PLLCONFIG_6"),
+        "DIVF_2":               ( 14, 0, "PLLCONFIG_7"),
+        "DIVF_3":               ( 14, 0, "PLLCONFIG_8"),
+        "DIVF_4":               ( 14, 0, "PLLCONFIG_9"),
+        "DIVF_5":               ( 15, 0, "PLLCONFIG_1"),
+        "DIVF_6":               ( 15, 0, "PLLCONFIG_2"),
+        "DIVQ_0":               ( 15, 0, "PLLCONFIG_3"),
+        "DIVQ_1":               ( 15, 0, "PLLCONFIG_4"),
+        "DIVQ_2":               ( 15, 0, "PLLCONFIG_5"),
+        "FILTER_RANGE_0":       ( 15, 0, "PLLCONFIG_6"),
+        "FILTER_RANGE_1":       ( 15, 0, "PLLCONFIG_7"),
+        "FILTER_RANGE_2":       ( 15, 0, "PLLCONFIG_8"),
+        "TEST_MODE":            ( 16, 0, "PLLCONFIG_8"),
+
+        # PLL Ports
+        "PLLOUT_A":             ( 16, 0, 1),
+        "PLLOUT_B":             ( 17, 0, 0),
+        "REFERENCECLK":         ( 13, 0, "fabout"),
+        "EXTFEEDBACK":          ( 14, 0, "fabout"),
+        "DYNAMICDELAY_0":       (  5, 0, "fabout"),
+        "DYNAMICDELAY_1":       (  6, 0, "fabout"),
+        "DYNAMICDELAY_2":       (  7, 0, "fabout"),
+        "DYNAMICDELAY_3":       (  8, 0, "fabout"),
+        "DYNAMICDELAY_4":       (  9, 0, "fabout"),
+        "DYNAMICDELAY_5":       ( 10, 0, "fabout"),
+        "DYNAMICDELAY_6":       ( 11, 0, "fabout"),
+        "DYNAMICDELAY_7":       ( 12, 0, "fabout"),
+        "LOCK":                 (  1, 1, "neigh_op_bnl_1"),
+        "BYPASS":               ( 19, 0, "fabout"),
+        "RESETB":               ( 20, 0, "fabout"),
+        "LATCHINPUTVALUE":      ( 15, 0, "fabout"),
+        "SDO":                  ( 32, 1, "neigh_op_bnr_3"),
+        "SDI":                  ( 22, 0, "fabout"),
+        "SCLK":                 ( 21, 0, "fabout"),
+    },
+    "8k_1": {
+        "LOC" : (16, 33),
+
+        # 3'b000 = "DISABLED"
+        # 3'b010 = "SB_PLL40_PAD"
+        # 3'b100 = "SB_PLL40_2_PAD"
+        # 3'b110 = "SB_PLL40_2F_PAD"
+        # 3'b011 = "SB_PLL40_CORE"
+        # 3'b111 = "SB_PLL40_2F_CORE"
+        "PLLTYPE_0":            ( 16, 33, "PLLCONFIG_5"),
+        "PLLTYPE_1":            ( 18, 33, "PLLCONFIG_1"),
+        "PLLTYPE_2":            ( 18, 33, "PLLCONFIG_3"),
+
+        # 3'b000 = "DELAY"
+        # 3'b001 = "SIMPLE"
+        # 3'b010 = "PHASE_AND_DELAY"
+        # 3'b110 = "EXTERNAL"
+        "FEEDBACK_PATH_0":      ( 18, 33, "PLLCONFIG_5"),
+        "FEEDBACK_PATH_1":      ( 15, 33, "PLLCONFIG_9"),
+        "FEEDBACK_PATH_2":      ( 16, 33, "PLLCONFIG_1"),
+
+        # 1'b0 = "FIXED"
+        # 1'b1 = "DYNAMIC" (also set FDA_FEEDBACK=4'b1111)
+        "DELAY_ADJMODE_FB":     ( 17, 33, "PLLCONFIG_4"),
+
+        # 1'b0 = "FIXED"
+        # 1'b1 = "DYNAMIC" (also set FDA_RELATIVE=4'b1111)
+        "DELAY_ADJMODE_REL":    ( 17, 33, "PLLCONFIG_9"),
+
+        # 2'b00 = "GENCLK"
+        # 2'b01 = "GENCLK_HALF"
+        # 2'b10 = "SHIFTREG_90deg"
+        # 2'b11 = "SHIFTREG_0deg"
+        "PLLOUT_SELECT_A_0":    ( 16, 33, "PLLCONFIG_6"),
+        "PLLOUT_SELECT_A_1":    ( 16, 33, "PLLCONFIG_7"),
+
+        # 2'b00 = "GENCLK"
+        # 2'b01 = "GENCLK_HALF"
+        # 2'b10 = "SHIFTREG_90deg"
+        # 2'b11 = "SHIFTREG_0deg"
+        "PLLOUT_SELECT_B_0":    ( 16, 33, "PLLCONFIG_2"),
+        "PLLOUT_SELECT_B_1":    ( 16, 33, "PLLCONFIG_3"),
+
+        # Numeric Parameters
+        "SHIFTREG_DIV_MODE":    ( 16, 33, "PLLCONFIG_4"),
+        "FDA_FEEDBACK_0":       ( 16, 33, "PLLCONFIG_9"),
+        "FDA_FEEDBACK_1":       ( 17, 33, "PLLCONFIG_1"),
+        "FDA_FEEDBACK_2":       ( 17, 33, "PLLCONFIG_2"),
+        "FDA_FEEDBACK_3":       ( 17, 33, "PLLCONFIG_3"),
+        "FDA_RELATIVE_0":       ( 17, 33, "PLLCONFIG_5"),
+        "FDA_RELATIVE_1":       ( 17, 33, "PLLCONFIG_6"),
+        "FDA_RELATIVE_2":       ( 17, 33, "PLLCONFIG_7"),
+        "FDA_RELATIVE_3":       ( 17, 33, "PLLCONFIG_8"),
+        "DIVR_0":               ( 14, 33, "PLLCONFIG_1"),
+        "DIVR_1":               ( 14, 33, "PLLCONFIG_2"),
+        "DIVR_2":               ( 14, 33, "PLLCONFIG_3"),
+        "DIVR_3":               ( 14, 33, "PLLCONFIG_4"),
+        "DIVF_0":               ( 14, 33, "PLLCONFIG_5"),
+        "DIVF_1":               ( 14, 33, "PLLCONFIG_6"),
+        "DIVF_2":               ( 14, 33, "PLLCONFIG_7"),
+        "DIVF_3":               ( 14, 33, "PLLCONFIG_8"),
+        "DIVF_4":               ( 14, 33, "PLLCONFIG_9"),
+        "DIVF_5":               ( 15, 33, "PLLCONFIG_1"),
+        "DIVF_6":               ( 15, 33, "PLLCONFIG_2"),
+        "DIVQ_0":               ( 15, 33, "PLLCONFIG_3"),
+        "DIVQ_1":               ( 15, 33, "PLLCONFIG_4"),
+        "DIVQ_2":               ( 15, 33, "PLLCONFIG_5"),
+        "FILTER_RANGE_0":       ( 15, 33, "PLLCONFIG_6"),
+        "FILTER_RANGE_1":       ( 15, 33, "PLLCONFIG_7"),
+        "FILTER_RANGE_2":       ( 15, 33, "PLLCONFIG_8"),
+        "TEST_MODE":            ( 16, 33, "PLLCONFIG_8"),
+
+        # PLL Ports
+        "PLLOUT_A":             ( 16, 33, 1),
+        "PLLOUT_B":             ( 17, 33, 0),
+        "REFERENCECLK":         ( 13, 33, "fabout"),
+        "EXTFEEDBACK":          ( 14, 33, "fabout"),
+        "DYNAMICDELAY_0":       (  5, 33, "fabout"),
+        "DYNAMICDELAY_1":       (  6, 33, "fabout"),
+        "DYNAMICDELAY_2":       (  7, 33, "fabout"),
+        "DYNAMICDELAY_3":       (  8, 33, "fabout"),
+        "DYNAMICDELAY_4":       (  9, 33, "fabout"),
+        "DYNAMICDELAY_5":       ( 10, 33, "fabout"),
+        "DYNAMICDELAY_6":       ( 11, 33, "fabout"),
+        "DYNAMICDELAY_7":       ( 12, 33, "fabout"),
+        "LOCK":                 (  1, 32, "neigh_op_tnl_1"),
+        "BYPASS":               ( 19, 33, "fabout"),
+        "RESETB":               ( 20, 33, "fabout"),
+        "LATCHINPUTVALUE":      ( 15, 33, "fabout"),
+        "SDO":                  ( 32, 32, "neigh_op_tnr_1"),
+        "SDI":                  ( 22, 33, "fabout"),
+        "SCLK":                 ( 21, 33, "fabout"),
+    },
 }
 
 padin_pio_db = {
@@ -978,116 +1355,645 @@ padin_pio_db = {
         (13,  9, 0),  # glb_netwk_5
         ( 6,  0, 1),  # glb_netwk_6
         ( 6, 17, 1),  # glb_netwk_7
+    ],
+    "8k": [
+        (33, 16, 1),
+        ( 0, 16, 1),
+        (17, 33, 0),
+        (17,  0, 0),
+        ( 0, 17, 0),
+        (33, 17, 0),
+        (16,  0, 1),
+        (16, 33, 1),
     ]
 }
 
 ieren_db = {
     "1k": [
         # IO-block (X, Y, Z) <-> IeRen-block (X, Y, Z)
-        ( 0, 14,  1,  0, 14,  0),
-        ( 0, 14,  0,  0, 14,  1),
-        ( 0, 13,  1,  0, 13,  0),
-        ( 0, 13,  0,  0, 13,  1),
-        ( 0, 12,  1,  0, 12,  0),
-        ( 0, 12,  0,  0, 12,  1),
-        ( 0, 11,  1,  0, 11,  0),
-        ( 0, 11,  0,  0, 11,  1),
-        ( 0, 10,  1,  0, 10,  0),
-        ( 0, 10,  0,  0, 10,  1),
-        ( 0,  9,  1,  0,  9,  0),
-        ( 0,  9,  0,  0,  9,  1),
-        ( 0,  8,  1,  0,  8,  0),
-        ( 0,  8,  0,  0,  8,  1),
-        ( 0,  6,  1,  0,  6,  0),
-        ( 0,  6,  0,  0,  6,  1),
-        ( 0,  5,  1,  0,  5,  0),
-        ( 0,  5,  0,  0,  5,  1),
-        ( 0,  4,  1,  0,  4,  0),
-        ( 0,  4,  0,  0,  4,  1),
-        ( 0,  3,  1,  0,  3,  0),
-        ( 0,  3,  0,  0,  3,  1),
-        ( 0,  2,  1,  0,  2,  0),
-        ( 0,  2,  0,  0,  2,  1),
-        ( 1,  0,  0,  1,  0,  0),
-        ( 1,  0,  1,  1,  0,  1),
-        ( 2,  0,  0,  2,  0,  0),
-        ( 2,  0,  1,  2,  0,  1),
-        ( 3,  0,  0,  3,  0,  0),
-        ( 3,  0,  1,  3,  0,  1),
-        ( 4,  0,  0,  4,  0,  0),
-        ( 4,  0,  1,  4,  0,  1),
-        ( 5,  0,  0,  5,  0,  0),
-        ( 5,  0,  1,  5,  0,  1),
-        ( 6,  0,  1,  6,  0,  0),
-        ( 7,  0,  0,  6,  0,  1),
-        ( 6,  0,  0,  7,  0,  0),
-        ( 7,  0,  1,  7,  0,  1),
-        ( 8,  0,  0,  8,  0,  0),
-        ( 8,  0,  1,  8,  0,  1),
-        ( 9,  0,  0,  9,  0,  0),
-        ( 9,  0,  1,  9,  0,  1),
-        (10,  0,  0, 10,  0,  0),
-        (10,  0,  1, 10,  0,  1),
-        (11,  0,  0, 11,  0,  0),
-        (11,  0,  1, 11,  0,  1),
-        (12,  0,  0, 12,  0,  0),
-        (12,  0,  1, 12,  0,  1),
-        (13,  1,  0, 13,  1,  0),
-        (13,  1,  1, 13,  1,  1),
-        (13,  2,  0, 13,  2,  0),
-        (13,  2,  1, 13,  2,  1),
-        (13,  3,  1, 13,  3,  1),
-        (13,  4,  0, 13,  4,  0),
-        (13,  4,  1, 13,  4,  1),
-        (13,  6,  0, 13,  6,  0),
-        (13,  6,  1, 13,  6,  1),
-        (13,  7,  0, 13,  7,  0),
-        (13,  7,  1, 13,  7,  1),
-        (13,  8,  0, 13,  8,  0),
-        (13,  8,  1, 13,  8,  1),
-        (13,  9,  0, 13,  9,  0),
-        (13,  9,  1, 13,  9,  1),
-        (13, 11,  0, 13, 10,  0),
-        (13, 11,  1, 13, 10,  1),
-        (13, 12,  0, 13, 11,  0),
-        (13, 12,  1, 13, 11,  1),
-        (13, 13,  0, 13, 13,  0),
-        (13, 13,  1, 13, 13,  1),
-        (13, 14,  0, 13, 14,  0),
-        (13, 14,  1, 13, 14,  1),
-        (13, 15,  0, 13, 15,  0),
-        (13, 15,  1, 13, 15,  1),
-        (12, 17,  1, 12, 17,  1),
-        (12, 17,  0, 12, 17,  0),
-        (11, 17,  1, 11, 17,  1),
-        (11, 17,  0, 11, 17,  0),
-        (10, 17,  1,  9, 17,  1),
-        (10, 17,  0,  9, 17,  0),
-        ( 9, 17,  1, 10, 17,  1),
-        ( 9, 17,  0, 10, 17,  0),
-        ( 8, 17,  1,  8, 17,  1),
-        ( 8, 17,  0,  8, 17,  0),
-        ( 7, 17,  1,  7, 17,  1),
-        ( 7, 17,  0,  7, 17,  0),
-        ( 6, 17,  1,  6, 17,  1),
-        ( 5, 17,  1,  5, 17,  1),
-        ( 5, 17,  0,  5, 17,  0),
-        ( 4, 17,  1,  4, 17,  1),
-        ( 4, 17,  0,  4, 17,  0),
-        ( 3, 17,  1,  3, 17,  1),
-        ( 3, 17,  0,  3, 17,  0),
-        ( 2, 17,  1,  2, 17,  1),
-        ( 2, 17,  0,  2, 17,  0),
-        ( 1, 17,  1,  1, 17,  1),
-        ( 1, 17,  0,  1, 17,  0)
+        ( 0,  2, 0,  0,  2, 1),
+        ( 0,  2, 1,  0,  2, 0),
+        ( 0,  3, 0,  0,  3, 1),
+        ( 0,  3, 1,  0,  3, 0),
+        ( 0,  4, 0,  0,  4, 1),
+        ( 0,  4, 1,  0,  4, 0),
+        ( 0,  5, 0,  0,  5, 1),
+        ( 0,  5, 1,  0,  5, 0),
+        ( 0,  6, 0,  0,  6, 1),
+        ( 0,  6, 1,  0,  6, 0),
+        ( 0,  8, 0,  0,  8, 1),
+        ( 0,  8, 1,  0,  8, 0),
+        ( 0,  9, 0,  0,  9, 1),
+        ( 0,  9, 1,  0,  9, 0),
+        ( 0, 10, 0,  0, 10, 1),
+        ( 0, 10, 1,  0, 10, 0),
+        ( 0, 11, 0,  0, 11, 1),
+        ( 0, 11, 1,  0, 11, 0),
+        ( 0, 12, 0,  0, 12, 1),
+        ( 0, 12, 1,  0, 12, 0),
+        ( 0, 13, 0,  0, 13, 1),
+        ( 0, 13, 1,  0, 13, 0),
+        ( 0, 14, 0,  0, 14, 1),
+        ( 0, 14, 1,  0, 14, 0),
+        ( 1,  0, 0,  1,  0, 0),
+        ( 1,  0, 1,  1,  0, 1),
+        ( 1, 17, 0,  1, 17, 0),
+        ( 1, 17, 1,  1, 17, 1),
+        ( 2,  0, 0,  2,  0, 0),
+        ( 2,  0, 1,  2,  0, 1),
+        ( 2, 17, 0,  2, 17, 0),
+        ( 2, 17, 1,  2, 17, 1),
+        ( 3,  0, 0,  3,  0, 0),
+        ( 3,  0, 1,  3,  0, 1),
+        ( 3, 17, 0,  3, 17, 0),
+        ( 3, 17, 1,  3, 17, 1),
+        ( 4,  0, 0,  4,  0, 0),
+        ( 4,  0, 1,  4,  0, 1),
+        ( 4, 17, 0,  4, 17, 0),
+        ( 4, 17, 1,  4, 17, 1),
+        ( 5,  0, 0,  5,  0, 0),
+        ( 5,  0, 1,  5,  0, 1),
+        ( 5, 17, 0,  5, 17, 0),
+        ( 5, 17, 1,  5, 17, 1),
+        ( 6,  0, 0,  7,  0, 0),
+        ( 6,  0, 1,  6,  0, 0),
+        ( 6, 17, 1,  6, 17, 1),
+        ( 7,  0, 0,  6,  0, 1),
+        ( 7,  0, 1,  7,  0, 1),
+        ( 7, 17, 0,  7, 17, 0),
+        ( 7, 17, 1,  7, 17, 1),
+        ( 8,  0, 0,  8,  0, 0),
+        ( 8,  0, 1,  8,  0, 1),
+        ( 8, 17, 0,  8, 17, 0),
+        ( 8, 17, 1,  8, 17, 1),
+        ( 9,  0, 0,  9,  0, 0),
+        ( 9,  0, 1,  9,  0, 1),
+        ( 9, 17, 0, 10, 17, 0),
+        ( 9, 17, 1, 10, 17, 1),
+        (10,  0, 0, 10,  0, 0),
+        (10,  0, 1, 10,  0, 1),
+        (10, 17, 0,  9, 17, 0),
+        (10, 17, 1,  9, 17, 1),
+        (11,  0, 0, 11,  0, 0),
+        (11,  0, 1, 11,  0, 1),
+        (11, 17, 0, 11, 17, 0),
+        (11, 17, 1, 11, 17, 1),
+        (12,  0, 0, 12,  0, 0),
+        (12,  0, 1, 12,  0, 1),
+        (12, 17, 0, 12, 17, 0),
+        (12, 17, 1, 12, 17, 1),
+        (13,  1, 0, 13,  1, 0),
+        (13,  1, 1, 13,  1, 1),
+        (13,  2, 0, 13,  2, 0),
+        (13,  2, 1, 13,  2, 1),
+        (13,  3, 1, 13,  3, 1),
+        (13,  4, 0, 13,  4, 0),
+        (13,  4, 1, 13,  4, 1),
+        (13,  6, 0, 13,  6, 0),
+        (13,  6, 1, 13,  6, 1),
+        (13,  7, 0, 13,  7, 0),
+        (13,  7, 1, 13,  7, 1),
+        (13,  8, 0, 13,  8, 0),
+        (13,  8, 1, 13,  8, 1),
+        (13,  9, 0, 13,  9, 0),
+        (13,  9, 1, 13,  9, 1),
+        (13, 11, 0, 13, 10, 0),
+        (13, 11, 1, 13, 10, 1),
+        (13, 12, 0, 13, 11, 0),
+        (13, 12, 1, 13, 11, 1),
+        (13, 13, 0, 13, 13, 0),
+        (13, 13, 1, 13, 13, 1),
+        (13, 14, 0, 13, 14, 0),
+        (13, 14, 1, 13, 14, 1),
+        (13, 15, 0, 13, 15, 0),
+        (13, 15, 1, 13, 15, 1),
+    ],
+    "8k": [
+        ( 0,  3, 0,  0,  3, 0),
+        ( 0,  3, 1,  0,  3, 1),
+        ( 0,  4, 0,  0,  4, 0),
+        ( 0,  4, 1,  0,  4, 1),
+        ( 0,  5, 0,  0,  5, 0),
+        ( 0,  5, 1,  0,  5, 1),
+        ( 0,  6, 0,  0,  6, 0),
+        ( 0,  6, 1,  0,  6, 1),
+        ( 0,  7, 0,  0,  7, 0),
+        ( 0,  7, 1,  0,  7, 1),
+        ( 0,  8, 0,  0,  8, 0),
+        ( 0,  8, 1,  0,  8, 1),
+        ( 0,  9, 0,  0,  9, 0),
+        ( 0,  9, 1,  0,  9, 1),
+        ( 0, 10, 0,  0, 10, 0),
+        ( 0, 10, 1,  0, 10, 1),
+        ( 0, 11, 0,  0, 11, 0),
+        ( 0, 11, 1,  0, 11, 1),
+        ( 0, 12, 0,  0, 12, 0),
+        ( 0, 12, 1,  0, 12, 1),
+        ( 0, 13, 0,  0, 13, 0),
+        ( 0, 13, 1,  0, 13, 1),
+        ( 0, 14, 0,  0, 14, 0),
+        ( 0, 14, 1,  0, 14, 1),
+        ( 0, 16, 0,  0, 16, 0),
+        ( 0, 16, 1,  0, 16, 1),
+        ( 0, 17, 0,  0, 17, 0),
+        ( 0, 17, 1,  0, 17, 1),
+        ( 0, 18, 0,  0, 18, 0),
+        ( 0, 18, 1,  0, 18, 1),
+        ( 0, 19, 0,  0, 19, 0),
+        ( 0, 19, 1,  0, 19, 1),
+        ( 0, 20, 0,  0, 20, 0),
+        ( 0, 20, 1,  0, 20, 1),
+        ( 0, 21, 0,  0, 21, 0),
+        ( 0, 21, 1,  0, 21, 1),
+        ( 0, 22, 0,  0, 22, 0),
+        ( 0, 22, 1,  0, 22, 1),
+        ( 0, 23, 0,  0, 23, 0),
+        ( 0, 23, 1,  0, 23, 1),
+        ( 0, 24, 0,  0, 24, 0),
+        ( 0, 24, 1,  0, 24, 1),
+        ( 0, 25, 0,  0, 25, 0),
+        ( 0, 25, 1,  0, 25, 1),
+        ( 0, 27, 0,  0, 27, 0),
+        ( 0, 27, 1,  0, 27, 1),
+        ( 0, 28, 0,  0, 28, 0),
+        ( 0, 28, 1,  0, 28, 1),
+        ( 0, 30, 0,  0, 30, 0),
+        ( 0, 30, 1,  0, 30, 1),
+        ( 0, 31, 0,  0, 31, 0),
+        ( 0, 31, 1,  0, 31, 1),
+        ( 1, 33, 0,  1, 33, 0),
+        ( 1, 33, 1,  1, 33, 1),
+        ( 2,  0, 0,  2,  0, 0),
+        ( 2,  0, 1,  2,  0, 1),
+        ( 2, 33, 0,  2, 33, 0),
+        ( 2, 33, 1,  2, 33, 1),
+        ( 3,  0, 0,  3,  0, 0),
+        ( 3,  0, 1,  3,  0, 1),
+        ( 3, 33, 0,  3, 33, 0),
+        ( 3, 33, 1,  3, 33, 1),
+        ( 4,  0, 0,  4,  0, 0),
+        ( 4,  0, 1,  4,  0, 1),
+        ( 4, 33, 0,  4, 33, 0),
+        ( 4, 33, 1,  4, 33, 1),
+        ( 5,  0, 0,  5,  0, 0),
+        ( 5,  0, 1,  5,  0, 1),
+        ( 5, 33, 0,  5, 33, 0),
+        ( 5, 33, 1,  5, 33, 1),
+        ( 6,  0, 0,  6,  0, 0),
+        ( 6,  0, 1,  6,  0, 1),
+        ( 6, 33, 1,  6, 33, 1),
+        ( 7,  0, 1,  7,  0, 1),
+        ( 7, 33, 0,  7, 33, 0),
+        ( 7, 33, 1,  7, 33, 1),
+        ( 8,  0, 0,  8,  0, 0),
+        ( 8, 33, 0,  8, 33, 0),
+        ( 8, 33, 1,  8, 33, 1),
+        ( 9,  0, 0,  9,  0, 0),
+        ( 9,  0, 1,  9,  0, 1),
+        ( 9, 33, 0,  9, 33, 0),
+        ( 9, 33, 1,  9, 33, 1),
+        (10,  0, 0, 10,  0, 0),
+        (10,  0, 1, 10,  0, 1),
+        (10, 33, 0, 10, 33, 0),
+        (10, 33, 1, 10, 33, 1),
+        (11,  0, 1, 11,  0, 1),
+        (11, 33, 0, 11, 33, 0),
+        (11, 33, 1, 11, 33, 1),
+        (12,  0, 0, 12,  0, 0),
+        (12,  0, 1, 12,  0, 1),
+        (12, 33, 0, 12, 33, 0),
+        (13,  0, 0, 13,  0, 0),
+        (13,  0, 1, 13,  0, 1),
+        (13, 33, 0, 13, 33, 0),
+        (14,  0, 0, 14,  0, 0),
+        (14,  0, 1, 14,  0, 1),
+        (14, 33, 1, 14, 33, 1),
+        (15,  0, 0, 15,  0, 0),
+        (15,  0, 1, 15,  0, 1),
+        (16,  0, 0, 16,  0, 0),
+        (16,  0, 1, 16,  0, 1),
+        (16, 33, 0, 16, 33, 0),
+        (16, 33, 1, 16, 33, 1),
+        (17,  0, 0, 17,  0, 0),
+        (17,  0, 1, 17,  0, 1),
+        (17, 33, 0, 17, 33, 0),
+        (17, 33, 1, 17, 33, 1),
+        (18, 33, 1, 18, 33, 1),
+        (19,  0, 0, 19,  0, 0),
+        (19,  0, 1, 19,  0, 1),
+        (19, 33, 0, 19, 33, 0),
+        (19, 33, 1, 19, 33, 1),
+        (20,  0, 0, 20,  0, 0),
+        (20,  0, 1, 20,  0, 1),
+        (20, 33, 0, 20, 33, 0),
+        (20, 33, 1, 20, 33, 1),
+        (21,  0, 0, 21,  0, 0),
+        (21,  0, 1, 21,  0, 1),
+        (22,  0, 1, 22,  0, 1),
+        (22, 33, 0, 22, 33, 0),
+        (22, 33, 1, 22, 33, 1),
+        (23,  0, 0, 23,  0, 0),
+        (23,  0, 1, 23,  0, 1),
+        (23, 33, 0, 23, 33, 0),
+        (23, 33, 1, 23, 33, 1),
+        (24,  0, 0, 24,  0, 0),
+        (24, 33, 0, 24, 33, 0),
+        (24, 33, 1, 24, 33, 1),
+        (25, 33, 0, 25, 33, 0),
+        (25, 33, 1, 25, 33, 1),
+        (26,  0, 0, 26,  0, 0),
+        (26,  0, 1, 26,  0, 1),
+        (26, 33, 0, 26, 33, 0),
+        (26, 33, 1, 26, 33, 1),
+        (27,  0, 0, 27,  0, 0),
+        (27,  0, 1, 27,  0, 1),
+        (27, 33, 0, 27, 33, 0),
+        (27, 33, 1, 27, 33, 1),
+        (28,  0, 0, 28,  0, 0),
+        (28, 33, 1, 28, 33, 1),
+        (29,  0, 0, 29,  0, 0),
+        (29,  0, 1, 29,  0, 1),
+        (29, 33, 0, 29, 33, 0),
+        (29, 33, 1, 29, 33, 1),
+        (30,  0, 0, 30,  0, 0),
+        (30,  0, 1, 30,  0, 1),
+        (30, 33, 0, 30, 33, 0),
+        (30, 33, 1, 30, 33, 1),
+        (31,  0, 0, 31,  0, 0),
+        (31,  0, 1, 31,  0, 1),
+        (31, 33, 0, 31, 33, 0),
+        (31, 33, 1, 31, 33, 1),
+        (33,  1, 0, 33,  1, 0),
+        (33,  1, 1, 33,  1, 1),
+        (33,  2, 0, 33,  2, 0),
+        (33,  2, 1, 33,  2, 1),
+        (33,  3, 0, 33,  3, 0),
+        (33,  3, 1, 33,  3, 1),
+        (33,  4, 0, 33,  4, 0),
+        (33,  4, 1, 33,  4, 1),
+        (33,  5, 0, 33,  5, 0),
+        (33,  5, 1, 33,  5, 1),
+        (33,  6, 0, 33,  6, 0),
+        (33,  6, 1, 33,  6, 1),
+        (33,  7, 0, 33,  7, 0),
+        (33,  7, 1, 33,  7, 1),
+        (33,  8, 0, 33,  8, 0),
+        (33,  9, 1, 33,  9, 1),
+        (33, 10, 0, 33, 10, 0),
+        (33, 10, 1, 33, 10, 1),
+        (33, 11, 0, 33, 11, 0),
+        (33, 11, 1, 33, 11, 1),
+        (33, 12, 0, 33, 12, 0),
+        (33, 13, 0, 33, 13, 0),
+        (33, 13, 1, 33, 13, 1),
+        (33, 14, 1, 33, 14, 1),
+        (33, 15, 0, 33, 15, 0),
+        (33, 15, 1, 33, 15, 1),
+        (33, 16, 0, 33, 16, 0),
+        (33, 16, 1, 33, 16, 1),
+        (33, 17, 0, 33, 17, 0),
+        (33, 17, 1, 33, 17, 1),
+        (33, 19, 0, 33, 19, 0),
+        (33, 19, 1, 33, 19, 1),
+        (33, 20, 0, 33, 20, 0),
+        (33, 20, 1, 33, 20, 1),
+        (33, 21, 0, 33, 21, 0),
+        (33, 21, 1, 33, 21, 1),
+        (33, 22, 0, 33, 22, 0),
+        (33, 22, 1, 33, 22, 1),
+        (33, 23, 0, 33, 23, 0),
+        (33, 23, 1, 33, 23, 1),
+        (33, 24, 0, 33, 24, 0),
+        (33, 24, 1, 33, 24, 1),
+        (33, 25, 0, 33, 25, 0),
+        (33, 25, 1, 33, 25, 1),
+        (33, 26, 0, 33, 26, 0),
+        (33, 26, 1, 33, 26, 1),
+        (33, 27, 1, 33, 27, 1),
+        (33, 28, 0, 33, 28, 0),
+        (33, 28, 1, 33, 28, 1),
+        (33, 30, 0, 33, 30, 0),
+        (33, 30, 1, 33, 30, 1),
+        (33, 31, 0, 33, 31, 0),
+    ]
+}
+
+pinloc_db = {
+    "1k-tq144": [
+        (  "1",  0, 14, 1),
+        ( "10",  0, 11, 0),
+        ("101", 13, 13, 0),
+        ("102", 13, 13, 1),
+        ("104", 13, 14, 0),
+        ("105", 13, 14, 1),
+        ("106", 13, 15, 0),
+        ("107", 13, 15, 1),
+        ( "11",  0, 10, 1),
+        ("112", 12, 17, 1),
+        ("113", 12, 17, 0),
+        ("114", 11, 17, 1),
+        ("115", 11, 17, 0),
+        ("116", 10, 17, 1),
+        ("117", 10, 17, 0),
+        ("118",  9, 17, 1),
+        ("119",  9, 17, 0),
+        ( "12",  0, 10, 0),
+        ("120",  8, 17, 1),
+        ("121",  8, 17, 0),
+        ("122",  7, 17, 1),
+        ("128",  7, 17, 0),
+        ("129",  6, 17, 1),
+        ("134",  5, 17, 1),
+        ("135",  5, 17, 0),
+        ("136",  4, 17, 1),
+        ("137",  4, 17, 0),
+        ("138",  3, 17, 1),
+        ("139",  3, 17, 0),
+        ("141",  2, 17, 1),
+        ("142",  2, 17, 0),
+        ("143",  1, 17, 1),
+        ("144",  1, 17, 0),
+        ( "19",  0,  9, 1),
+        (  "2",  0, 14, 0),
+        ( "20",  0,  9, 0),
+        ( "21",  0,  8, 1),
+        ( "22",  0,  8, 0),
+        ( "23",  0,  6, 1),
+        ( "24",  0,  6, 0),
+        ( "25",  0,  5, 1),
+        ( "26",  0,  5, 0),
+        ( "28",  0,  4, 1),
+        ( "29",  0,  4, 0),
+        (  "3",  0, 13, 1),
+        ( "31",  0,  3, 1),
+        ( "32",  0,  3, 0),
+        ( "33",  0,  2, 1),
+        ( "34",  0,  2, 0),
+        ( "37",  1,  0, 0),
+        ( "38",  1,  0, 1),
+        ( "39",  2,  0, 0),
+        (  "4",  0, 13, 0),
+        ( "41",  2,  0, 1),
+        ( "42",  3,  0, 0),
+        ( "43",  3,  0, 1),
+        ( "44",  4,  0, 0),
+        ( "45",  4,  0, 1),
+        ( "47",  5,  0, 0),
+        ( "48",  5,  0, 1),
+        ( "49",  6,  0, 1),
+        ( "50",  7,  0, 0),
+        ( "52",  6,  0, 0),
+        ( "56",  7,  0, 1),
+        ( "58",  8,  0, 0),
+        ( "60",  8,  0, 1),
+        ( "61",  9,  0, 0),
+        ( "62",  9,  0, 1),
+        ( "63", 10,  0, 0),
+        ( "64", 10,  0, 1),
+        ( "67", 11,  0, 0),
+        ( "68", 11,  0, 1),
+        (  "7",  0, 12, 1),
+        ( "70", 12,  0, 0),
+        ( "71", 12,  0, 1),
+        ( "73", 13,  1, 0),
+        ( "74", 13,  1, 1),
+        ( "75", 13,  2, 0),
+        ( "76", 13,  2, 1),
+        ( "78", 13,  3, 1),
+        ( "79", 13,  4, 0),
+        (  "8",  0, 12, 0),
+        ( "80", 13,  4, 1),
+        ( "81", 13,  6, 0),
+        ( "87", 13,  6, 1),
+        ( "88", 13,  7, 0),
+        (  "9",  0, 11, 1),
+        ( "90", 13,  7, 1),
+        ( "91", 13,  8, 0),
+        ( "93", 13,  8, 1),
+        ( "94", 13,  9, 0),
+        ( "95", 13,  9, 1),
+        ( "96", 13, 11, 0),
+        ( "97", 13, 11, 1),
+        ( "98", 13, 12, 0),
+        ( "99", 13, 12, 1),
+    ],
+    "8k-ct256": [
+        ( "A1",  4, 33, 1),
+        ("A10", 22, 33, 1),
+        ("A11", 22, 33, 0),
+        ("A15", 27, 33, 0),
+        ("A16", 27, 33, 1),
+        ( "A2",  5, 33, 1),
+        ( "A5",  8, 33, 0),
+        ( "A6",  9, 33, 0),
+        ( "A7", 12, 33, 0),
+        ( "A9", 18, 33, 1),
+        ( "B1",  0, 30, 0),
+        ("B10", 24, 33, 0),
+        ("B11", 23, 33, 1),
+        ("B12", 24, 33, 1),
+        ("B13", 26, 33, 1),
+        ("B14", 30, 33, 0),
+        ("B15", 31, 33, 0),
+        ("B16", 33, 30, 0),
+        ( "B2",  0, 31, 0),
+        ( "B3",  3, 33, 0),
+        ( "B4",  6, 33, 1),
+        ( "B5",  7, 33, 1),
+        ( "B6", 10, 33, 1),
+        ( "B7", 11, 33, 0),
+        ( "B8", 13, 33, 0),
+        ( "B9", 16, 33, 0),
+        ( "C1",  0, 28, 1),
+        ("C10", 23, 33, 0),
+        ("C11", 25, 33, 1),
+        ("C12", 29, 33, 1),
+        ("C13", 28, 33, 1),
+        ("C14", 31, 33, 1),
+        ("C16", 33, 28, 0),
+        ( "C2",  0, 28, 0),
+        ( "C3",  1, 33, 0),
+        ( "C4",  3, 33, 1),
+        ( "C5",  4, 33, 0),
+        ( "C6", 10, 33, 0),
+        ( "C7", 11, 33, 1),
+        ( "C8", 17, 33, 0),
+        ( "C9", 20, 33, 0),
+        ( "D1",  0, 25, 0),
+        ("D10", 20, 33, 1),
+        ("D11", 25, 33, 0),
+        ("D13", 30, 33, 1),
+        ("D14", 33, 31, 0),
+        ("D15", 33, 26, 0),
+        ("D16", 33, 24, 0),
+        ( "D2",  0, 27, 0),
+        ( "D3",  1, 33, 1),
+        ( "D4",  2, 33, 1),
+        ( "D5",  5, 33, 0),
+        ( "D6",  8, 33, 1),
+        ( "D7",  9, 33, 1),
+        ( "D8", 14, 33, 1),
+        ( "D9", 19, 33, 0),
+        ("E10", 26, 33, 0),
+        ("E11", 29, 33, 0),
+        ("E13", 33, 30, 1),
+        ("E14", 33, 27, 1),
+        ("E16", 33, 23, 0),
+        ( "E2",  0, 23, 0),
+        ( "E3",  0, 24, 0),
+        ( "E4",  0, 31, 1),
+        ( "E5",  2, 33, 0),
+        ( "E6",  7, 33, 0),
+        ( "E9", 19, 33, 1),
+        ( "F1",  0, 20, 0),
+        ("F11", 33, 26, 1),
+        ("F12", 33, 25, 1),
+        ("F13", 33, 28, 1),
+        ("F14", 33, 25, 0),
+        ("F15", 33, 22, 0),
+        ("F16", 33, 21, 0),
+        ( "F2",  0, 21, 0),
+        ( "F3",  0, 22, 0),
+        ( "F4",  0, 27, 1),
+        ( "F5",  0, 30, 1),
+        ( "F7", 16, 33, 1),
+        ( "F9", 17, 33, 1),
+        ( "G1",  0, 17, 0),
+        ("G10", 33, 20, 1),
+        ("G11", 33, 21, 1),
+        ("G12", 33, 24, 1),
+        ("G13", 33, 23, 1),
+        ("G14", 33, 22, 1),
+        ("G15", 33, 20, 0),
+        ("G16", 33, 19, 0),
+        ( "G2",  0, 19, 0),
+        ( "G3",  0, 22, 1),
+        ( "G4",  0, 24, 1),
+        ( "G5",  0, 25, 1),
+        ( "H1",  0, 16, 0),
+        ("H11", 33, 16, 1),
+        ("H12", 33, 19, 1),
+        ("H13", 33, 16, 0),
+        ("H14", 33, 17, 1),
+        ("H16", 33, 17, 0),
+        ( "H2",  0, 18, 0),
+        ( "H3",  0, 21, 1),
+        ( "H4",  0, 19, 1),
+        ( "H5",  0, 23, 1),
+        ( "H6",  0, 20, 1),
+        ( "J1",  0, 14, 0),
+        ("J10", 33,  7, 1),
+        ("J11", 33,  9, 1),
+        ("J12", 33, 14, 1),
+        ("J13", 33, 15, 0),
+        ("J14", 33, 13, 1),
+        ("J15", 33, 11, 1),
+        ("J16", 33, 15, 1),
+        ( "J2",  0, 14, 1),
+        ( "J3",  0, 16, 1),
+        ( "J4",  0, 18, 1),
+        ( "J5",  0, 17, 1),
+        ( "K1",  0, 13, 1),
+        ("K11", 29,  0, 0),
+        ("K12", 33,  6, 1),
+        ("K13", 33, 10, 1),
+        ("K14", 33, 11, 0),
+        ("K15", 33, 12, 0),
+        ("K16", 33, 13, 0),
+        ( "K3",  0, 13, 0),
+        ( "K4",  0, 11, 1),
+        ( "K5",  0,  9, 1),
+        ( "K9", 17,  0, 0),
+        ( "L1",  0, 12, 0),
+        ("L10", 19,  0, 1),
+        ("L11", 26,  0, 1),
+        ("L12", 33,  4, 1),
+        ("L13", 33,  5, 1),
+        ("L14", 33,  6, 0),
+        ("L16", 33, 10, 0),
+        ( "L3",  0, 10, 0),
+        ( "L4",  0, 12, 1),
+        ( "L5",  0,  6, 1),
+        ( "L6",  0, 10, 1),
+        ( "L7",  0,  8, 1),
+        ( "L9", 13,  0, 0),
+        ( "M1",  0, 11, 0),
+        ("M11", 23,  0, 1),
+        ("M12", 27,  0, 1),
+        ("M13", 33,  3, 1),
+        ("M14", 33,  4, 0),
+        ("M15", 33,  8, 0),
+        ("M16", 33,  7, 0),
+        ( "M2",  0,  9, 0),
+        ( "M3",  0,  7, 0),
+        ( "M4",  0,  5, 0),
+        ( "M5",  0,  4, 0),
+        ( "M6",  0,  7, 1),
+        ( "M7",  8,  0, 0),
+        ( "M8", 10,  0, 0),
+        ( "M9", 16,  0, 0),
+        ("N10", 20,  0, 1),
+        ("N12", 26,  0, 0),
+        ("N16", 33,  5, 0),
+        ( "N2",  0,  8, 0),
+        ( "N3",  0,  6, 0),
+        ( "N4",  0,  3, 0),
+        ( "N5",  4,  0, 0),
+        ( "N6",  2,  0, 0),
+        ( "N7",  9,  0, 0),
+        ( "N9", 15,  0, 0),
+        ( "P1",  0,  5, 1),
+        ("P10", 20,  0, 0),
+        ("P11", 30,  0, 1),
+        ("P12", 30,  0, 0),
+        ("P13", 29,  0, 1),
+        ("P14", 33,  2, 0),
+        ("P15", 33,  2, 1),
+        ("P16", 33,  3, 0),
+        ( "P2",  0,  4, 1),
+        ( "P4",  3,  0, 0),
+        ( "P5",  5,  0, 0),
+        ( "P6",  9,  0, 1),
+        ( "P7", 14,  0, 1),
+        ( "P8", 12,  0, 0),
+        ( "P9", 17,  0, 1),
+        ( "R1",  0,  3, 1),
+        ("R10", 19,  0, 0),
+        ("R11", 31,  0, 0),
+        ("R12", 31,  0, 1),
+        ("R14", 33,  1, 0),
+        ("R15", 33,  1, 1),
+        ("R16", 28,  0, 0),
+        ( "R2",  3,  0, 1),
+        ( "R3",  5,  0, 1),
+        ( "R4",  7,  0, 1),
+        ( "R5",  6,  0, 0),
+        ( "R6", 11,  0, 1),
+        ( "R9", 16,  0, 1),
+        ( "T1",  2,  0, 1),
+        ("T10", 21,  0, 0),
+        ("T11", 21,  0, 1),
+        ("T13", 24,  0, 0),
+        ("T14", 23,  0, 0),
+        ("T15", 22,  0, 1),
+        ("T16", 27,  0, 0),
+        ( "T2",  4,  0, 1),
+        ( "T3",  6,  0, 1),
+        ( "T5", 10,  0, 1),
+        ( "T6", 12,  0, 1),
+        ( "T7", 13,  0, 1),
+        ( "T8", 14,  0, 0),
+        ( "T9", 15,  0, 1),
     ]
 }
 
 iotile_full_db = parse_db(iceboxdb.database_io_txt)
 logictile_db = parse_db(iceboxdb.database_logic_txt)
+logictile_8k_db = parse_db(iceboxdb.database_logic_txt, True)
 rambtile_db = parse_db(iceboxdb.database_ramb_txt)
 ramttile_db = parse_db(iceboxdb.database_ramt_txt)
-pinloc_db = [[int(s) for s in line.split()] for line in iceboxdb.pinloc_txt.split("\n") if line != ""]
+rambtile_8k_db = parse_db(iceboxdb.database_ramb_8k_txt, True)
+ramttile_8k_db = parse_db(iceboxdb.database_ramt_8k_txt, True)
 
 iotile_l_db = list()
 iotile_r_db = list()
@@ -1120,11 +2026,14 @@ for entry in iotile_full_db:
 logictile_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
 logictile_db.append([["B1[50]"], "CarryInSet"])
 
-for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, logictile_db, rambtile_db, ramttile_db]:
+logictile_8k_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
+logictile_8k_db.append([["B1[50]"], "CarryInSet"])
+
+for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, logictile_db, logictile_8k_db, rambtile_db, ramttile_db, rambtile_8k_db, ramttile_8k_db]:
     for entry in db:
         if entry[1] in ("buffer", "routing"):
-            entry[2] = netname_normalize(entry[2], ramb=(db == rambtile_db), ramt=(db == ramttile_db))
-            entry[3] = netname_normalize(entry[3], ramb=(db == rambtile_db), ramt=(db == ramttile_db))
+            entry[2] = netname_normalize(entry[2], ramb=(db == rambtile_db), ramt=(db == ramttile_db), ramb_8k=(db == rambtile_8k_db), ramt_8k=(db == ramttile_8k_db))
+            entry[3] = netname_normalize(entry[3], ramb=(db == rambtile_db), ramt=(db == ramttile_db), ramb_8k=(db == rambtile_8k_db), ramt_8k=(db == ramttile_8k_db))
     unique_entries = dict()
     while db:
         entry = db.pop()

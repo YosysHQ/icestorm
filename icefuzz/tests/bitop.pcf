@@ -1,0 +1,3 @@
+set_io a 1
+set_io b 10
+set_io y 11

@@ -31,6 +31,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 struct ftdi_context ftdic;
 bool ftdic_open = false;
@@ -148,7 +150,7 @@ void flash_read_id()
 {
 	// printf("read flash ID..\n");
 
-	uint8_t data[21] = { 0x9E };
+	uint8_t data[21] = { 0x9F };
 	set_gpio(0, 0);
 	xfer_spi(data, 21);
 	set_gpio(1, 0);
@@ -157,6 +159,22 @@ void flash_read_id()
 	for (int i = 1; i < 21; i++)
 		printf(" 0x%02X", data[i]);
 	printf("\n");
+}
+
+void flash_power_up()
+{
+	uint8_t data[1] = { 0xAB };
+	set_gpio(0, 0);
+	xfer_spi(data, 1);
+	set_gpio(1, 0);
+}
+
+void flash_power_down()
+{
+	uint8_t data[1] = { 0xB9 };
+	set_gpio(0, 0);
+	xfer_spi(data, 1);
+	set_gpio(1, 0);
 }
 
 void flash_write_enable()
@@ -180,9 +198,9 @@ void flash_bulk_erase()
 	set_gpio(1, 0);
 }
 
-void flash_sector_erase(int addr)
+void flash_64kB_sector_erase(int addr)
 {
-	printf("sector erase 0x%06X..\n", addr);
+	printf("erase 64kB sector at 0x%06X..\n", addr);
 
 	uint8_t command[4] = { 0xd8, addr >> 16, addr >> 8, addr };
 	set_gpio(0, 0);
@@ -279,6 +297,9 @@ void help(const char *progname)
 	fprintf(stderr, "            i:<vendor>:<product>:<index>  (e.g. i:0x0403:0x6010:0)\n");
 	fprintf(stderr, "            s:<vendor>:<product>:<serial-string>\n");
 	fprintf(stderr, "\n");
+	fprintf(stderr, "    -I [ABCD]\n");
+	fprintf(stderr, "        connect to the specified interface on the FTDI chip\n");
+	fprintf(stderr, "\n");
 	fprintf(stderr, "    -r\n");
 	fprintf(stderr, "        read entire flash (32Mb / 4MB) and write to file\n");
 	fprintf(stderr, "\n");
@@ -297,6 +318,9 @@ void help(const char *progname)
 	fprintf(stderr, "    -S\n");
 	fprintf(stderr, "        perform SRAM programming\n");
 	fprintf(stderr, "\n");
+	fprintf(stderr, "    -t\n");
+	fprintf(stderr, "        just read the flash ID sequence\n");
+	fprintf(stderr, "\n");
 	fprintf(stderr, "    -v\n");
 	fprintf(stderr, "        verbose output\n");
 	fprintf(stderr, "\n");
@@ -311,16 +335,25 @@ int main(int argc, char **argv)
 	bool bulk_erase = false;
 	bool dont_erase = false;
 	bool prog_sram = false;
+	bool test_mode = false;
 	const char *filename = NULL;
 	const char *devstr = NULL;
+	int ifnum = INTERFACE_A;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "d:rRcbnSv")) != -1)
+	while ((opt = getopt(argc, argv, "d:I:rRcbnStv")) != -1)
 	{
 		switch (opt)
 		{
 		case 'd':
 			devstr = optarg;
+			break;
+		case 'I':
+			if (!strcmp(optarg, "A")) ifnum = INTERFACE_A;
+			else if (!strcmp(optarg, "B")) ifnum = INTERFACE_B;
+			else if (!strcmp(optarg, "C")) ifnum = INTERFACE_C;
+			else if (!strcmp(optarg, "D")) ifnum = INTERFACE_D;
+			else help(argv[0]);
 			break;
 		case 'r':
 			read_mode = true;
@@ -341,6 +374,9 @@ int main(int argc, char **argv)
 		case 'S':
 			prog_sram = true;
 			break;
+		case 't':
+			test_mode = true;
+			break;
 		case 'v':
 			verbose = true;
 			break;
@@ -349,13 +385,13 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (read_mode && check_mode)
+	if (read_mode + check_mode + prog_sram + test_mode > 1)
 		help(argv[0]);
 
 	if (bulk_erase && dont_erase)
 		help(argv[0]);
 
-	if (optind+1 != argc)
+	if (optind+1 != argc && !test_mode)
 		help(argv[0]);
 
 	filename = argv[optind];
@@ -367,7 +403,7 @@ int main(int argc, char **argv)
 	printf("init..\n");
 
 	ftdi_init(&ftdic);
-	ftdi_set_interface(&ftdic, INTERFACE_A);
+	ftdi_set_interface(&ftdic, ifnum);
 
 	if (devstr != NULL) {
 		if (ftdi_usb_open_string(&ftdic, devstr)) {
@@ -412,7 +448,27 @@ int main(int argc, char **argv)
 	usleep(100000);
 
 
-	if (prog_sram)
+	if (test_mode)
+	{
+		printf("reset..\n");
+
+		set_gpio(1, 0);
+		usleep(250000);
+
+		printf("cdone: %s\n", get_cdone() ? "high" : "low");
+
+		flash_power_up();
+
+		flash_read_id();
+
+		flash_power_down();
+
+		set_gpio(1, 1);
+		usleep(250000);
+
+		printf("cdone: %s\n", get_cdone() ? "high" : "low");
+	}
+	else if (prog_sram)
 	{
 		// ---------------------------------------------------------
 		// Reset
@@ -476,6 +532,8 @@ int main(int argc, char **argv)
 
 		printf("cdone: %s\n", get_cdone() ? "high" : "low");
 
+		flash_power_up();
+
 		flash_read_id();
 
 
@@ -501,13 +559,16 @@ int main(int argc, char **argv)
 				}
 				else
 				{
-					fseek(f, SEEK_END, 0);
-					int file_size = ftell(f);
-					rewind(f);
+					struct stat st_buf;
+					if (stat(filename, &st_buf)) {
+						fprintf(stderr, "Error: Can't stat '%s': %s\n", filename, strerror(errno));
+						error();
+					}
 
-					for (int addr = 0; addr < file_size; addr += 0x1000) {
+					printf("file size: %d\n", (int)st_buf.st_size);
+					for (int addr = 0; addr < st_buf.st_size; addr += 0x10000) {
 						flash_write_enable();
-						flash_sector_erase(addr);
+						flash_64kB_sector_erase(addr);
 						flash_wait();
 					}
 				}
@@ -577,6 +638,8 @@ int main(int argc, char **argv)
 		// ---------------------------------------------------------
 		// Reset
 		// ---------------------------------------------------------
+
+		flash_power_down();
 
 		set_gpio(1, 1);
 		usleep(250000);

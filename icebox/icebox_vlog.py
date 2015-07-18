@@ -96,7 +96,10 @@ for o, a in opts:
                     if not re.match(r"[a-zA-Z_][a-zA-Z0-9_]*$", p):
                         p = "\\%s " % p
                     unmatched_ports.add(p)
-                    pinloc = tuple([int(s) for s in line[2:]])
+                    if len(line) > 3:
+                        pinloc = tuple([int(s) for s in line[2:]])
+                    else:
+                        pinloc = (line[2],)
                     pcf_data[pinloc] = p
     elif o == "-R":
         check_ieren = True
@@ -135,6 +138,8 @@ iocells_special = set()
 iocells_type = dict()
 iocells_negclk = set()
 iocells_inbufs = set()
+iocells_skip = set()
+iocells_pll = set()
 
 def is_interconn(netname):
     if netname.startswith("sp4_"): return True
@@ -146,6 +151,36 @@ def is_interconn(netname):
     if netname.startswith("local_"): return True
     return False
 
+pll_config_bitidx = dict()
+pll_gbuf = dict()
+
+for entry in icebox.iotile_l_db:
+    if entry[1] == "PLL":
+        match = re.match(r"B(\d+)\[(\d+)\]", entry[0][0]);
+        assert match
+        pll_config_bitidx[entry[2]] = (int(match.group(1)), int(match.group(2)))
+
+def get_pll_bit(pllinfo, name):
+    bit = pllinfo[name]
+    assert bit[2] in pll_config_bitidx
+    return ic.tile(bit[0], bit[1])[pll_config_bitidx[bit[2]][0]][pll_config_bitidx[bit[2]][1]]
+
+def get_pll_bits(pllinfo, name, n):
+    return "".join([get_pll_bit(pllinfo, "%s_%d" % (name, i)) for i in range(n-1, -1, -1)])
+
+for pllid in ic.pll_list():
+    pllinfo = icebox.pllinfo_db[pllid]
+    plltype = get_pll_bits(pllinfo, "PLLTYPE", 3)
+    if plltype != "000":
+        if plltype in ["010", "100", "110"]:
+            iocells_special.add(pllinfo["PLLOUT_A"])
+        else:
+            iocells_skip.add(pllinfo["PLLOUT_A"])
+        iocells_pll.add(pllinfo["PLLOUT_A"])
+        if plltype not in ["010", "011"]:
+            iocells_skip.add(pllinfo["PLLOUT_B"])
+            iocells_pll.add(pllinfo["PLLOUT_B"])
+
 extra_connections = list()
 extra_segments = list()
 
@@ -154,11 +189,15 @@ for bit in ic.extra_bits:
     if entry[0] == "padin_glb_netwk":
         glb = int(entry[1])
         pin_entry = ic.padin_pio_db()[glb]
-        iocells.add((pin_entry[0], pin_entry[1], pin_entry[2]))
-        iocells_in.add((pin_entry[0], pin_entry[1], pin_entry[2]))
-        s1 = (pin_entry[0], pin_entry[1], "io_%d/PAD" % pin_entry[2])
-        s2 = (pin_entry[0], pin_entry[1], "wire_gbuf/padin_%d" % pin_entry[2])
-        extra_connections.append((s1, s2))
+        if pin_entry in iocells_pll:
+            pll_gbuf[pin_entry] = (pin_entry[0], pin_entry[1], "padin_%d" % pin_entry[2])
+            extra_segments.append(pll_gbuf[pin_entry])
+        else:
+            iocells.add((pin_entry[0], pin_entry[1], pin_entry[2]))
+            iocells_in.add((pin_entry[0], pin_entry[1], pin_entry[2]))
+            s1 = (pin_entry[0], pin_entry[1], "io_%d/PAD" % pin_entry[2])
+            s2 = (pin_entry[0], pin_entry[1], "padin_%d" % pin_entry[2])
+            extra_connections.append((s1, s2))
 
 for idx, tile in ic.io_tiles.items():
     tc = icebox.tileconfig(tile)
@@ -187,6 +226,8 @@ for segs in sorted(ic.group_segments()):
             match = re.match("io_(\d+)/D_(IN|OUT)_(\d+)", seg[2])
             if match:
                 cell = (seg[0], seg[1], int(match.group(1)))
+                if cell in iocells_skip:
+                    continue
                 iocells.add(cell)
                 if match.group(2) == "IN":
                     if check_ieren:
@@ -231,7 +272,7 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
             p = "io_%d_%d_%d" % idx
             net_segs.add(p)
             if lookup_pins or pcf_data:
-                for entry in icebox.pinloc_db:
+                for entry in ic.pinloc_db():
                     if idx[0] == entry[1] and idx[1] == entry[2] and idx[2] == entry[3]:
                         if (entry[0],) in pcf_data:
                             p = pcf_data[(entry[0],)]
@@ -309,6 +350,167 @@ def seg_to_net(seg, default=None):
                 text_wires.append("// %s" % (seg,))
             text_wires.append("")
     return seg2net[seg]
+
+wb_boot = seg_to_net(icebox.warmbootinfo_db[ic.device]["BOOT"], "")
+wb_s0 = seg_to_net(icebox.warmbootinfo_db[ic.device]["S0"], "")
+wb_s1 = seg_to_net(icebox.warmbootinfo_db[ic.device]["S1"], "")
+
+if wb_boot != "" or wb_s0 != "" or wb_s1 != "":
+    text_func.append("SB_WARMBOOT (")
+    text_func.append("  .BOOT(%s)," % wb_boot)
+    text_func.append("  .S0(%s)," % wb_s0)
+    text_func.append("  .S1(%s)," % wb_s1)
+    text_func.append(");")
+    text_func.append("")
+
+def get_pll_feedback_path(pllinfo):
+    v = get_pll_bits(pllinfo, "FEEDBACK_PATH", 3)
+    if v == "000": return "DELAY"
+    if v == "001": return "SIMPLE"
+    if v == "010": return "PHASE_AND_DELAY"
+    if v == "110": return "EXTERNAL"
+    assert False
+
+def get_pll_adjmode(pllinfo, name):
+    v = get_pll_bit(pllinfo, name)
+    if v == "0": return "FIXED"
+    if v == "1": return "DYNAMIC"
+    assert False
+
+def get_pll_outsel(pllinfo, name):
+    v = get_pll_bits(pllinfo, name, 2)
+    if v == "00": return "GENCLK"
+    if v == "01": return "GENCLK_HALF"
+    if v == "10": return "SHIFTREG_90deg"
+    if v == "11": return "SHIFTREG_0deg"
+    assert False
+
+for pllid in ic.pll_list():
+    pllinfo = icebox.pllinfo_db[pllid]
+    plltype = get_pll_bits(pllinfo, "PLLTYPE", 3)
+
+    if plltype == "000":
+        continue
+
+    if not strip_comments:
+        text_func.append("// plltype = %s" % plltype)
+        for ti in sorted(ic.io_tiles):
+            for bit in sorted(pll_config_bitidx):
+                if ic.io_tiles[ti][pll_config_bitidx[bit][0]][pll_config_bitidx[bit][1]] == "1":
+                    resolved_bitname = ""
+                    for bitname in pllinfo:
+                        if pllinfo[bitname] == (ti[0], ti[1], bit):
+                            resolved_bitname = " " + bitname
+                    text_func.append("// (%2d, %2d, \"%s\")%s" % (ti[0], ti[1], bit, resolved_bitname))
+
+    if plltype in ["010", "100", "110"]:
+        if plltype == "010": text_func.append("SB_PLL40_PAD #(")
+        if plltype == "100": text_func.append("SB_PLL40_2_PAD #(")
+        if plltype == "110": text_func.append("SB_PLL40_2F_PAD #(")
+        text_func.append("  .FEEDBACK_PATH(\"%s\")," % get_pll_feedback_path(pllinfo))
+        text_func.append("  .DELAY_ADJUSTMENT_MODE_FEEDBACK(\"%s\")," % get_pll_adjmode(pllinfo, "DELAY_ADJMODE_FB"))
+        text_func.append("  .DELAY_ADJUSTMENT_MODE_RELATIVE(\"%s\")," % get_pll_adjmode(pllinfo, "DELAY_ADJMODE_REL"))
+        if plltype == "010":
+            text_func.append("  .PLLOUT_SELECT(\"%s\")," % get_pll_outsel(pllinfo, "PLLOUT_SELECT_A"))
+        else:
+            if plltype != "100":
+                text_func.append("  .PLLOUT_SELECT_PORTA(\"%s\")," % get_pll_outsel(pllinfo, "PLLOUT_SELECT_A"))
+            text_func.append("  .PLLOUT_SELECT_PORTB(\"%s\")," % get_pll_outsel(pllinfo, "PLLOUT_SELECT_B"))
+        text_func.append("  .SHIFTREG_DIV_MODE(1'b%s)," % get_pll_bit(pllinfo, "SHIFTREG_DIV_MODE"))
+        text_func.append("  .FDA_FEEDBACK(4'b%s)," % get_pll_bits(pllinfo, "FDA_FEEDBACK", 4))
+        text_func.append("  .FDA_RELATIVE(4'b%s)," % get_pll_bits(pllinfo, "FDA_RELATIVE", 4))
+        text_func.append("  .DIVR(4'b%s)," % get_pll_bits(pllinfo, "DIVR", 4))
+        text_func.append("  .DIVF(7'b%s)," % get_pll_bits(pllinfo, "DIVF", 7))
+        text_func.append("  .DIVQ(3'b%s)," % get_pll_bits(pllinfo, "DIVQ", 3))
+        text_func.append("  .FILTER_RANGE(3'b%s)," % get_pll_bits(pllinfo, "FILTER_RANGE", 3))
+        if plltype == "010":
+            text_func.append("  .ENABLE_ICEGATE(1'b0),")
+        else:
+            text_func.append("  .ENABLE_ICEGATE_PORTA(1'b0),")
+            text_func.append("  .ENABLE_ICEGATE_PORTB(1'b0),")
+        text_func.append("  .TEST_MODE(1'b%s)" % get_pll_bit(pllinfo, "TEST_MODE"))
+        text_func.append(") PLL_%d_%d (" % pllinfo["LOC"])
+        if plltype == "010":
+            pad_segment = (pllinfo["PLLOUT_A"][0], pllinfo["PLLOUT_A"][1], "io_%d/PAD" % pllinfo["PLLOUT_A"][2])
+            text_func.append("  .PACKAGEPIN(%s)," % seg_to_net(pad_segment))
+            del seg2net[pad_segment]
+            text_func.append("  .PLLOUTCORE(%s)," % seg_to_net(pad_segment))
+            if pllinfo["PLLOUT_A"] in pll_gbuf:
+                text_func.append("  .PLLOUTGLOBAL(%s)," % seg_to_net(pll_gbuf[pllinfo["PLLOUT_A"]]))
+        else:
+            pad_segment = (pllinfo["PLLOUT_A"][0], pllinfo["PLLOUT_A"][1], "io_%d/PAD" % pllinfo["PLLOUT_A"][2])
+            text_func.append("  .PACKAGEPIN(%s)," % seg_to_net(pad_segment))
+            del seg2net[pad_segment]
+            text_func.append("  .PLLOUTCOREA(%s)," % seg_to_net(pad_segment))
+            if pllinfo["PLLOUT_A"] in pll_gbuf:
+                text_func.append("  .PLLOUTGLOBALA(%s)," % seg_to_net(pll_gbuf[pllinfo["PLLOUT_A"]]))
+            pad_segment = (pllinfo["PLLOUT_B"][0], pllinfo["PLLOUT_B"][1], "io_%d/D_IN_0" % pllinfo["PLLOUT_B"][2])
+            text_func.append("  .PLLOUTCOREB(%s)," % seg_to_net(pad_segment))
+            if pllinfo["PLLOUT_B"] in pll_gbuf:
+                text_func.append("  .PLLOUTGLOBALB(%s)," % seg_to_net(pll_gbuf[pllinfo["PLLOUT_B"]]))
+        text_func.append("  .EXTFEEDBACK(%s)," % seg_to_net(pllinfo["EXTFEEDBACK"], "1'b0"))
+        text_func.append("  .DYNAMICDELAY({%s})," % ", ".join([seg_to_net(pllinfo["DYNAMICDELAY_%d" % i], "1'b0") for i in range(7, -1, -1)]))
+        text_func.append("  .LOCK(%s)," % seg_to_net(pllinfo["LOCK"]))
+        text_func.append("  .BYPASS(%s)," % seg_to_net(pllinfo["BYPASS"], "1'b0"))
+        text_func.append("  .RESETB(%s)," % seg_to_net(pllinfo["RESETB"], "1'b0"))
+        text_func.append("  .LATCHINPUTVALUE(%s)," % seg_to_net(pllinfo["LATCHINPUTVALUE"], "1'b0"))
+        text_func.append("  .SDO(%s)," % seg_to_net(pllinfo["SDO"]))
+        text_func.append("  .SDI(%s)," % seg_to_net(pllinfo["SDI"], "1'b0"))
+        text_func.append("  .SCLK(%s)" % seg_to_net(pllinfo["SCLK"], "1'b0"))
+        text_func.append(");")
+
+    if plltype in ["011", "111"]:
+        if plltype == "011": text_func.append("SB_PLL40_CORE #(")
+        if plltype == "111": text_func.append("SB_PLL40_2F_CORE #(")
+        text_func.append("  .FEEDBACK_PATH(\"%s\")," % get_pll_feedback_path(pllinfo))
+        text_func.append("  .DELAY_ADJUSTMENT_MODE_FEEDBACK(\"%s\")," % get_pll_adjmode(pllinfo, "DELAY_ADJMODE_FB"))
+        text_func.append("  .DELAY_ADJUSTMENT_MODE_RELATIVE(\"%s\")," % get_pll_adjmode(pllinfo, "DELAY_ADJMODE_REL"))
+        if plltype == "011":
+            text_func.append("  .PLLOUT_SELECT(\"%s\")," % get_pll_outsel(pllinfo, "PLLOUT_SELECT_A"))
+        else:
+            text_func.append("  .PLLOUT_SELECT_PORTA(\"%s\")," % get_pll_outsel(pllinfo, "PLLOUT_SELECT_A"))
+            text_func.append("  .PLLOUT_SELECT_PORTB(\"%s\")," % get_pll_outsel(pllinfo, "PLLOUT_SELECT_B"))
+        text_func.append("  .SHIFTREG_DIV_MODE(1'b%s)," % get_pll_bit(pllinfo, "SHIFTREG_DIV_MODE"))
+        text_func.append("  .FDA_FEEDBACK(4'b%s)," % get_pll_bits(pllinfo, "FDA_FEEDBACK", 4))
+        text_func.append("  .FDA_RELATIVE(4'b%s)," % get_pll_bits(pllinfo, "FDA_RELATIVE", 4))
+        text_func.append("  .DIVR(4'b%s)," % get_pll_bits(pllinfo, "DIVR", 4))
+        text_func.append("  .DIVF(7'b%s)," % get_pll_bits(pllinfo, "DIVF", 7))
+        text_func.append("  .DIVQ(3'b%s)," % get_pll_bits(pllinfo, "DIVQ", 3))
+        text_func.append("  .FILTER_RANGE(3'b%s)," % get_pll_bits(pllinfo, "FILTER_RANGE", 3))
+        if plltype == "011":
+            text_func.append("  .ENABLE_ICEGATE(1'b0),")
+        else:
+            text_func.append("  .ENABLE_ICEGATE_PORTA(1'b0),")
+            text_func.append("  .ENABLE_ICEGATE_PORTB(1'b0),")
+        text_func.append("  .TEST_MODE(1'b%s)" % get_pll_bit(pllinfo, "TEST_MODE"))
+        text_func.append(") PLL_%d_%d (" % pllinfo["LOC"])
+        text_func.append("  .REFERENCECLK(%s)," % seg_to_net(pllinfo["REFERENCECLK"], "1'b0"))
+        if plltype == "011":
+            pad_segment = (pllinfo["PLLOUT_A"][0], pllinfo["PLLOUT_A"][1], "io_%d/D_IN_0" % pllinfo["PLLOUT_A"][2])
+            text_func.append("  .PLLOUTCORE(%s)," % seg_to_net(pad_segment))
+            if pllinfo["PLLOUT_A"] in pll_gbuf:
+                text_func.append("  .PLLOUTGLOBAL(%s)," % seg_to_net(pll_gbuf[pllinfo["PLLOUT_A"]]))
+        else:
+            pad_segment = (pllinfo["PLLOUT_A"][0], pllinfo["PLLOUT_A"][1], "io_%d/D_IN_0" % pllinfo["PLLOUT_A"][2])
+            text_func.append("  .PLLOUTCOREA(%s)," % seg_to_net(pad_segment))
+            if pllinfo["PLLOUT_A"] in pll_gbuf:
+                text_func.append("  .PLLOUTGLOBALA(%s)," % seg_to_net(pll_gbuf[pllinfo["PLLOUT_A"]]))
+            pad_segment = (pllinfo["PLLOUT_B"][0], pllinfo["PLLOUT_B"][1], "io_%d/D_IN_0" % pllinfo["PLLOUT_B"][2])
+            text_func.append("  .PLLOUTCOREB(%s)," % seg_to_net(pad_segment))
+            if pllinfo["PLLOUT_B"] in pll_gbuf:
+                text_func.append("  .PLLOUTGLOBALB(%s)," % seg_to_net(pll_gbuf[pllinfo["PLLOUT_B"]]))
+        text_func.append("  .EXTFEEDBACK(%s)," % seg_to_net(pllinfo["EXTFEEDBACK"], "1'b0"))
+        text_func.append("  .DYNAMICDELAY({%s})," % ", ".join([seg_to_net(pllinfo["DYNAMICDELAY_%d" % i], "1'b0") for i in range(7, -1, -1)]))
+        text_func.append("  .LOCK(%s)," % seg_to_net(pllinfo["LOCK"]))
+        text_func.append("  .BYPASS(%s)," % seg_to_net(pllinfo["BYPASS"], "1'b0"))
+        text_func.append("  .RESETB(%s)," % seg_to_net(pllinfo["RESETB"], "1'b0"))
+        text_func.append("  .LATCHINPUTVALUE(%s)," % seg_to_net(pllinfo["LATCHINPUTVALUE"], "1'b0"))
+        text_func.append("  .SDO(%s)," % seg_to_net(pllinfo["SDO"]))
+        text_func.append("  .SDI(%s)," % seg_to_net(pllinfo["SDI"], "1'b0"))
+        text_func.append("  .SCLK(%s)" % seg_to_net(pllinfo["SCLK"], "1'b0"))
+        text_func.append(");")
+
+    text_func.append("")
 
 for cell in iocells:
     if cell in iocells_type:
@@ -437,6 +639,65 @@ for cell in iocells:
 
 for p in unmatched_ports:
     text_ports.append("input %s" % p)
+
+ram_config_bitidx = dict()
+
+for tile in ic.ramb_tiles:
+    for entry in ic.tile_db(tile[0], tile[1]):
+        if entry[1] == "RamConfig":
+            assert entry[2] not in ram_config_bitidx
+            ram_config_bitidx[entry[2]] = ('B', entry[0])
+    for entry in ic.tile_db(tile[0], tile[1]+1):
+        if entry[1] == "RamConfig":
+            assert entry[2] not in ram_config_bitidx
+            ram_config_bitidx[entry[2]] = ('T', entry[0])
+    break
+
+for tile in ic.ramb_tiles:
+    ramb_config = icebox.tileconfig(ic.tile(tile[0], tile[1]))
+    ramt_config = icebox.tileconfig(ic.tile(tile[0], tile[1]+1))
+    def get_ram_config(name):
+        assert name in ram_config_bitidx
+        if ram_config_bitidx[name][0] == 'B':
+            return ramb_config.match(ram_config_bitidx[name][1])
+        elif ram_config_bitidx[name][0] == 'T':
+            return ramt_config.match(ram_config_bitidx[name][1])
+        else:
+            assert False
+    def get_ram_wire(name, msb, lsb):
+        wire_bits = []
+        for i in range(msb, lsb-1, -1):
+            if msb != lsb:
+                n = "ram/%s_%d" % (name, i)
+            else:
+                n = "ram/" + name
+            b = seg_to_net((tile[0], tile[1], n), "1'b0")
+            b = seg_to_net((tile[0], tile[1]+1, n), b)
+            if len(wire_bits) != 0 or b != "1'b0" or i == lsb:
+                wire_bits.append(b)
+        if len(wire_bits) > 1:
+            return "{%s}" % ", ".join(wire_bits)
+        return wire_bits[0]
+    if get_ram_config('PowerUp') == (ic.device == "8k"):
+        if not strip_comments:
+            text_func.append("// RAM TILE %d %d" % tile)
+        text_func.append("SB_RAM40_4K #(");
+        text_func.append("  .READ_MODE(%d)," % ((1 if get_ram_config('CBIT_2') else 0) + (2 if get_ram_config('CBIT_3') else 0)));
+        text_func.append("  .WRITE_MODE(%d)" % ((1 if get_ram_config('CBIT_0') else 0) + (2 if get_ram_config('CBIT_1') else 0)));
+        text_func.append(") ram40_%d_%d (" % tile);
+        text_func.append("  .WADDR(%s),"  % get_ram_wire('WADDR', 10, 0))
+        text_func.append("  .RADDR(%s),"  % get_ram_wire('RADDR', 10, 0))
+        text_func.append("  .MASK(%s),"  % get_ram_wire('MASK', 15, 0))
+        text_func.append("  .WDATA(%s),"  % get_ram_wire('WDATA', 15, 0))
+        text_func.append("  .RDATA(%s),"  % get_ram_wire('RDATA', 15, 0))
+        text_func.append("  .WE(%s),"  % get_ram_wire('WE', 0, 0))
+        text_func.append("  .WCLKE(%s),"  % get_ram_wire('WCLKE', 0, 0))
+        text_func.append("  .WCLK(%s),"  % get_ram_wire('WCLK', 0, 0))
+        text_func.append("  .RE(%s),"  % get_ram_wire('RE', 0, 0))
+        text_func.append("  .RCLKE(%s),"  % get_ram_wire('RCLKE', 0, 0))
+        text_func.append("  .RCLK(%s)"  % get_ram_wire('RCLK', 0, 0))
+        text_func.append(");")
+        text_func.append("")
 
 wire_to_reg = set()
 lut_assigns = list()

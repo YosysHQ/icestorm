@@ -1,0 +1,2 @@
+set_location dst_lut 6 8 2 # SB_LUT4 (LogicCell: dst_lut_LC_0)
+set_location src_lut 6 8 1 # SB_LUT4 (LogicCell: src_lut_LC_1)

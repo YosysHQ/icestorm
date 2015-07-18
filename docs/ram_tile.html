@@ -1,0 +1,95 @@
+<title>Project IceStorm &ndash; RAM Tile Documentation</title>
+<h1>Project IceStorm &ndash; RAM Tile Documentation</h1>
+
+<p>
+<i><a href=".">Project IceStorm</a> aims at documenting the bitstream format of Lattice iCE40
+FPGAs and providing simple tools for analyzing and creating bitstream files.
+This is work in progress.</i>
+</p>
+
+<h2>Span-4 and Span-12 Wires</h2>
+
+<p>
+Regarding the Span-4 and Span-12 Wires a RAM tile behaves exactly like a LOGIC tile. So for simple
+applications that do not need the block ram resources, the RAM tiles can be handled like a LOGIC
+tiles without logic cells in them.
+</p>
+
+<h2>Block RAM Resources</h2>
+
+<p>
+A pair or RAM tiles (odd and even y-coordinates) provides an interface to a block ram cell. Like with
+LOGIC tiles, signals entering the RAM tile have to be routed over local tracks to the block ram
+inputs. Tiles with odd y-coordinates are "bottom" RAM Tiles (RAMB Tiles), and tiles with even y-coordinates
+are "top" RAM Tiles (RAMT Tiles). Each pair of RAMB/RAMT tiles implements a <tt>SB_RAM40_4K</tt> cell. The
+cell ports are spread out over the two tiles as follows:
+</p>
+
+<p align="center">
+<table cellpadding="3" border>
+<tr><th>SB_RAM40_4K</th><th>RAMB Tile</th><th>RAMT Tile</th></tr>
+<tr><td><tt>RDATA[15:0]</tt></td><td><tt>RDATA[7:0]</tt></td><td><tt>RDATA[15:8]</tt></td></tr>
+<tr><td><tt>RADDR[10:0]</tt></td><td><tt>-</tt></td><td><tt>RADDR[10:0]</tt></td></tr>
+<tr><td><tt>WADDR[10:0]</tt></td><td><tt>WADDR[10:0]</tt></td><td><tt>-</tt></td></tr>
+<tr><td><tt>MASK[15:0]</tt></td><td><tt>MASK[7:0]</tt></td><td><tt>MASK[15:8]</tt></td></tr>
+<tr><td><tt>WDATA[15:0]</tt></td><td><tt>WDATA[7:0]</tt></td><td><tt>WDATA[15:8]</tt></td></tr>
+<tr><td><tt>RCLKE</tt></td><td><tt>-</tt></td><td><tt>RCLKE</tt></td></tr>
+<tr><td><tt>RCLK</tt></td><td><tt>-</tt></td><td><tt>RCLK</tt></td></tr>
+<tr><td><tt>RE</tt></td><td><tt>-</tt></td><td><tt>RE</tt></td></tr>
+<tr><td><tt>WCLKE</tt></td><td><tt>WCLKE</tt></td><td><tt>-</tt></td></tr>
+<tr><td><tt>WCLK</tt></td><td><tt>WCLK</tt></td><td><tt>-</tt></td></tr>
+<tr><td><tt>WE</tt></td><td><tt>WE</tt></td><td><tt>-</tt></td></tr>
+</table>
+</p>
+
+<p>
+The configuration bit <tt>RamConfig PowerUp</tt> in the RAMB tile enables the memory. This bit
+is active-low in 1k chips, i.e. an unused RAM block has only this bit set. Note that <tt>icebox_explain.py</tt>
+will ignore all RAMB tiles that only have the <tt>RamConfig PowerUp</tt> bit set.
+</p>
+
+<p>
+In 8k chips the <tt>RamConfig PowerUp</tt> bit is active-high. So an unused RAM block has all bits cleared
+in the 8k config bitstream.
+</p>
+
+<p>
+The <tt>RamConfig CBIT_*</tt> bits in the RAMT tile configure the read/write width of the
+memory. Those bits map to the <tt>SB_RAM40_4K</tt> cell parameters as follows:
+</p>
+
+<p align="center">
+<table cellpadding="3" border>
+<tr><th>SB_RAM40_4K</th><th>RAMT Config Bit</th></tr>
+<tr><td><tt>WRITE_MODE[0]</tt></td><td><tt>RamConfig CBIT_0</tt></td></tr>
+<tr><td><tt>WRITE_MODE[1]</tt></td><td><tt>RamConfig CBIT_1</tt></td></tr>
+<tr><td><tt>READ_MODE[0]</tt></td><td><tt>RamConfig CBIT_2</tt></td></tr>
+<tr><td><tt>READ_MODE[1]</tt></td><td><tt>RamConfig CBIT_3</tt></td></tr>
+</table>
+</p>
+
+<p>
+The read/write mode selects the width of the read/write port:
+</p>
+
+<p align="center">
+<table cellpadding="3" border>
+<tr><th>MODE</th><th>DATA Width</th><th>Used WDATA/RDATA Bits</th></tr>
+<tr><td>0</td><td>16</td><td>15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0</td></tr>
+<tr><td>1</td><td>8</td><td>14, 12, 10, 8, 6, 4, 2, 0</td></tr>
+<tr><td>2</td><td>4</td><td>13, 9, 5, 1</td></tr>
+<tr><td>3</td><td>2</td><td>11, 3</td></tr>
+</table>
+</p>
+
+<p>
+The <tt>NegClk</tt> bit in the RAMB tile negates the polarity of the <tt>WCLK</tt> port,
+and the <tt>NegClk</tt> bit in the RAMT  tile negates the polarity of the <tt>RCLK</tt> port.
+</p>
+
+<p>
+A logic tile sends the output of its eight logic cells to its neighbour tiles. A RAM tile does the same thing
+with the <tt>RDATA</tt> outputs. Each RAMB tile exports its <tt>RDATA[7:0]</tt> outputs and each RAMT tile
+exports its <tt>RDATA[15:8]</tt> outputs via this mechanism.
+</p>
+

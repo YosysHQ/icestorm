@@ -1,0 +1,4 @@
+set_location lut      7 21 0
+set_location ram40_00 8 21 0
+set_location ram40_12 8 19 0
+set_location ram40_33 8 17 0

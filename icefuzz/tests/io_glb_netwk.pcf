@@ -1,0 +1,10 @@
+set_io in 1
+set_io out 2
+set_io pin[0] 20   # padin_4
+set_io pin[1] 21   # padin_1
+set_io pin[2] 49   # padin_6
+set_io pin[3] 50   # padin_3
+set_io pin[4] 93   # padin_0
+set_io pin[5] 94   # padin_5
+set_io pin[6] 128  # padin_2
+set_io pin[7] 129  # padin_7

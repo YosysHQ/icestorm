@@ -1,0 +1,17 @@
+
+# row 14, block 0
+set_io in_left 2
+set_io out_right 104
+
+# row 4, block 0
+set_io out_left 29
+set_io in_right 79
+
+# col 4, block 0
+set_io in_bottom 44
+set_io out_top 137
+
+# col 8, block 0
+set_io out_bottom 58
+set_io in_top 121
+

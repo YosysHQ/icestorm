@@ -21,8 +21,33 @@ from __future__ import print_function
 import icebox
 import getopt, sys, re
 
+mode_8k = False
+
+def usage():
+    print("""
+Usage: icebox_chipdb [options] [bitmap.txt]
+
+    -8
+        create chipdb for 8k device
+""")
+    sys.exit(0)
+
+try:
+    opts, args = getopt.getopt(sys.argv[1:], "8")
+except:
+    usage()
+
+for o, a in opts:
+    if o == "-8":
+        mode_8k = True
+    else:
+        usage()
+
 ic = icebox.iceconfig()
-ic.setup_empty_1k()
+if mode_8k:
+    ic.setup_empty_8k()
+else:
+    ic.setup_empty_1k()
 
 all_tiles = set()
 for x in range(ic.max_x+1):
@@ -34,7 +59,7 @@ seg_to_net = dict()
 net_to_segs = list()
 
 print("""#
-# IceBox Database Dump for iCE40 HX1K / LP1K
+# IceBox Chip Database Dump (iCE40 %s)
 #
 #
 # Quick File Format Reference:
@@ -42,11 +67,11 @@ print("""#
 #
 # .device DEVICE WIDTH HEIGHT NUM_NETS
 #
-#    declares the device type (e.g. "1k")
+#    declares the device type
 #
 #
 # .pins PACKAGE
-# PIN_NUM TILE_X TILE_Y PIO_NUM GLB_NUM
+# PIN_NUM TILE_X TILE_Y PIO_NUM
 # ...
 #
 #    associates a package pin with an IO tile and block, and global network
@@ -56,14 +81,21 @@ print("""#
 # TILE_X TILE_Y GLB_NUM
 # ...
 #
-#    associates an IO tile with the global network it drives via wire_gbuf/in
+#    associates an IO tile with the global network can drive via fabout
+#
+#
+# .gbufpin
+# TILE_X TILE_Y PIO_NUM GLB_NUM
+# ...
+#
+#    associates an IO tile with the global network can drive via the pad
 #
 #
 # .iolatch
 # TILE_X TILE_Y
 # ...
 #
-#    specifies the IO tiles that drive the latch signal for the bank via wire_gbuf/in
+#    specifies the IO tiles that drive the latch signal for the bank via fabout
 #
 #
 # .ieren
@@ -99,6 +131,13 @@ print("""#
 #    declares non-routing configuration bits of IO/LOGIC/RAM tiles
 #
 #
+# .extra_cell X Y <cell-type>
+# KEY MULTI-FIELD-VALUE
+# ....
+#
+#    declares a special-purpose cell that is not part of the FPGA fabric
+#
+# 
 # .extra_bits
 # FUNCTION BANK_NUM ADDR_X ADDR_Y
 # ...
@@ -129,24 +168,29 @@ print("""#
 #
 #    declares a routing switch in the specified tile
 #
-""")
+""" % ic.device)
 
 all_group_segments = ic.group_segments(all_tiles, connect_gb=False)
 
-print(".device 1k %d %d %d" % (ic.max_x+1, ic.max_y+1, len(all_group_segments)))
+print(".device %s %d %d %d" % (ic.device, ic.max_x+1, ic.max_y+1, len(all_group_segments)))
 print()
 
-print(".pins tq144")
-pio_to_padin = dict()
-for padin, pio in enumerate(ic.padin_pio_db()):
-    pio_to_padin[pio] = padin
-for entry in sorted(ic.pinloc_db()):
-    pio = (entry[1], entry[2], entry[3])
-    print("%d %d %d %d %d" % tuple(entry + [pio_to_padin[pio] if pio in pio_to_padin else -1]))
-print()
+for key in icebox.pinloc_db.keys():
+    key_dev, key_package = key.split("-")
+    if key_dev == ic.device:
+        print(".pins %s" % (key_package))
+        for entry in sorted(icebox.pinloc_db[key]):
+            print("%s %d %d %d" % entry)
+        print()
 
 print(".gbufin")
 for entry in sorted(ic.gbufin_db()):
+    print(" ".join(["%d" % k for k in entry]))
+print()
+
+print(".gbufpin")
+for padin, pio in enumerate(ic.padin_pio_db()):
+    entry = pio + (padin,)
     print(" ".join(["%d" % k for k in entry]))
 print()
 
@@ -207,6 +251,19 @@ print_tile_nonrouting_bits("logic", ic.logic_tiles.keys()[0])
 print_tile_nonrouting_bits("io", ic.io_tiles.keys()[0])
 print_tile_nonrouting_bits("ramb", ic.ramb_tiles.keys()[0])
 print_tile_nonrouting_bits("ramt", ic.ramt_tiles.keys()[0])
+
+print(".extra_cell 0 0 WARMBOOT")
+for key in sorted(icebox.warmbootinfo_db[ic.device]):
+    print("%s %s" % (key, " ".join([str(k) for k in icebox.warmbootinfo_db[ic.device][key]])))
+print()
+
+for pllid in ic.pll_list():
+    pllinfo = icebox.pllinfo_db[pllid]
+    print(".extra_cell %d %d PLL" % pllinfo["LOC"])
+    for key in sorted(pllinfo):
+        if key != "LOC":
+            print("%s %s" % (key, " ".join([str(k) for k in pllinfo[key]])))
+    print()
 
 print(".extra_bits")
 extra_bits = dict()

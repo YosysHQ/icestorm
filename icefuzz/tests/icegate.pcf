@@ -1,0 +1,4 @@
+set_io din_0 33
+set_io global 97
+set_io latch_in 112
+set_io pin_gb_io 0 9 0

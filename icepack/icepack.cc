@@ -379,12 +379,10 @@ void FpgaConfig::read_bits(std::istream &ifs)
 		}
 	}
 
-	if (this->cram_width == 182 && this->cram_height == 80)
-		this->device = "384";
-	else if (this->cram_width == 332 && this->cram_height == 144)
+	if (this->cram_width == 332 && this->cram_height == 144)
 		this->device = "1k";
 	else if (this->cram_width == 872 && this->cram_height == 272)
-		this->device = "4k8k";
+		this->device = "8k";
 	else
 		error("Failed to detect chip type.\n");
 	
@@ -593,6 +591,12 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 				this->cram_width = 332;
 				this->cram_height = 144;
 				this->bram_width = 64;
+				this->bram_height = 2 * 128;
+			} else
+			if (this->device == "8k") {
+				this->cram_width = 872;
+				this->cram_height = 272;
+				this->bram_width = 128;
 				this->bram_height = 2 * 128;
 			} else
 				error("Unsupported chip type '%s'.\n", this->device.c_str());
@@ -842,36 +846,40 @@ void FpgaConfig::write_bram_pbm(std::ostream &ofs, int bank_num) const
 
 int FpgaConfig::chip_width() const
 {
-	if (this->device == "384")  return 6;
-	if (this->device == "1k")   return 12;
-	if (this->device == "4k8k") return 32;
+	if (this->device == "1k") return 12;
+	if (this->device == "8k") return 32;
 	panic("Unkown chip type '%s'.\n", this->device.c_str());
 }
 
 int FpgaConfig::chip_height() const
 {
-	if (this->device == "384")  return 8;
-	if (this->device == "1k")   return 16;
-	if (this->device == "4k8k") return 32;
+	if (this->device == "1k") return 16;
+	if (this->device == "8k") return 32;
 	panic("Unkown chip type '%s'.\n", this->device.c_str());
 }
 
 vector<int> FpgaConfig::chip_cols() const
 {
-	if (this->device == "384")  return vector<int>({18, 54, 54, 54});
-	if (this->device == "1k")   return vector<int>({18, 54, 54, 42, 54, 54, 54});
-	if (this->device == "4k8k") return vector<int>({18,  2, 54, 54, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54, 54, 54});
+	if (this->device == "1k") return vector<int>({18, 54, 54, 42, 54, 54, 54});
+	if (this->device == "8k") return vector<int>({18, 54, 54, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54, 54, 54});
 	panic("Unkown chip type '%s'.\n", this->device.c_str());
 }
 
 string FpgaConfig::tile_type(int x, int y) const
 {
+	if ((x == 0 || x == this->chip_width()+1) && (y == 0 || y == this->chip_height()+1)) return "corner";
+	if ((x == 0 || x == this->chip_width()+1) || (y == 0 || y == this->chip_height()+1)) return "io";
+
 	if (this->device == "1k") {
-		if ((x == 0 || x == this->chip_width()+1) && (y == 0 || y == this->chip_height()+1)) return "corner";
-		if ((x == 0 || x == this->chip_width()+1) || (y == 0 || y == this->chip_height()+1)) return "io";
 		if (x == 3 || x == 10) return y % 2 == 1 ? "ramb" : "ramt";
 		return "logic";
 	}
+
+	if (this->device == "8k") {
+		if (x == 8 || x == 25) return y % 2 == 1 ? "ramb" : "ramt";
+		return "logic";
+	}
+
 	panic("Unkown chip type '%s'.\n", this->device.c_str());
 }
 
