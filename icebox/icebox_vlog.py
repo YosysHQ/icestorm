@@ -718,7 +718,9 @@ for tile in ic.ramb_tiles:
             text_func.append("// RAM TILE %d %d" % tile)
         text_func.append("SB_RAM40_4K #(");
         text_func.append("  .READ_MODE(%d)," % ((1 if get_ram_config('CBIT_2') else 0) + (2 if get_ram_config('CBIT_3') else 0)));
-        text_func.append("  .WRITE_MODE(%d)" % ((1 if get_ram_config('CBIT_0') else 0) + (2 if get_ram_config('CBIT_1') else 0)));
+        text_func.append("  .WRITE_MODE(%d)," % ((1 if get_ram_config('CBIT_0') else 0) + (2 if get_ram_config('CBIT_1') else 0)));
+        for i in range(16):
+            text_func.append("  .INIT_%X(256'h%s)%s" % (i, ic.ram_data[tile][i], "," if i < 15 else ""));
         text_func.append(") ram40_%d_%d (" % tile);
         text_func.append("  .WADDR(%s),"  % get_ram_wire('WADDR', 10, 0))
         text_func.append("  .RADDR(%s),"  % get_ram_wire('RADDR', 10, 0))
