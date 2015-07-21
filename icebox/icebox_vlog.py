@@ -26,6 +26,7 @@ strip_interconn = False
 lookup_pins = False
 check_ieren = False
 check_driver = False
+lookup_symbols = False
 pcf_data = dict()
 portnames = set()
 unmatched_ports = set()
@@ -43,6 +44,9 @@ Usage: icebox_vlog [options] [bitmap.txt]
 
     -l
         convert io tile port names to chip pin numbers
+
+    -L
+        lookup symbol names (using .sym statements in input)
 
     -n <module-name>
         name for the exported module (default: "chip")
@@ -63,7 +67,7 @@ Usage: icebox_vlog [options] [bitmap.txt]
     sys.exit(0)
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "sSlap:P:n:RD")
+    opts, args = getopt.getopt(sys.argv[1:], "sSlLap:P:n:RD")
 except:
     usage()
 
@@ -74,6 +78,8 @@ for o, a in opts:
         strip_interconn = True
     elif o == "-l":
         lookup_pins = True
+    elif o == "-L":
+        lookup_symbols = True
     elif o == "-n":
         modname = a
     elif o == "-a":
@@ -350,6 +356,35 @@ def seg_to_net(seg, default=None):
                 text_wires.append("// %s" % (seg,))
             text_wires.append("")
     return seg2net[seg]
+
+if lookup_symbols:
+    text_func.append("// Debug Symbols")
+    with open("/usr/local/share/icebox/chipdb-%s.txt" % ic.device, "r") as f:
+        current_net = -1
+        exported_names = dict()
+        for line in f:
+            line = line.split()
+            if len(line) == 0:
+                pass
+            elif line[0] == ".net":
+                current_net = int(line[1])
+                if current_net not in ic.symbols:
+                    current_net = -1
+            elif line[0].startswith("."):
+                current_net = -1
+            elif current_net >= 0:
+                seg = (int(line[0]), int(line[1]), line[2])
+                if seg in seg2net:
+                    for name in ic.symbols[current_net]:
+                        while name in exported_names:
+                            if exported_names[name] == seg2net[seg]:
+                                break
+                            name += "_"
+                        if name not in exported_names:
+                            text_func.append("wire \\_%s = %s;" % (name, seg2net[seg]))
+                            exported_names[name] = seg2net[seg]
+                    current_net = -1
+    text_func.append("")
 
 wb_boot = seg_to_net(icebox.warmbootinfo_db[ic.device]["BOOT"], "")
 wb_s0 = seg_to_net(icebox.warmbootinfo_db[ic.device]["S0"], "")
@@ -781,19 +816,22 @@ for a in const_assigns + lut_assigns + carry_assigns:
 print("module %s (%s);\n" % (modname, ", ".join(text_ports)))
 
 new_text_wires = list()
+new_text_regs = list()
 for line in text_wires:
     match = re.match(r"wire ([^ ;]+)(.*)", line)
-    if match and match.group(1) in wire_to_reg:
-        line = "reg " + match.group(1) + match.group(2)
     if strip_comments:
-        if new_text_wires and new_text_wires[-1].split()[0] == line.split()[0] and new_text_wires[-1][-1] == ";":
-            new_text_wires[-1] = new_text_wires[-1][0:-1] + "," + line[len(line.split()[0]):]
-        else:
-            new_text_wires.append(line)
+        if match and match.group(1) in wire_to_reg:
+            new_text_regs.append(match.group(1))
+        elif match:
+            new_text_wires.append(match.group(1))
     else:
+        if match and match.group(1) in wire_to_reg:
+            line = "reg " + match.group(1) + " = 0" + match.group(2)
         print(line)
-for line in new_text_wires:
-    print(line)
+for names in [new_text_wires[x:x+10] for x in range(0, len(new_text_wires), 10)]:
+    print("wire %s;" % ", ".join(names))
+for names in [new_text_regs[x:x+10] for x in range(0, len(new_text_regs), 10)]:
+    print("reg %s = 0;" % " = 0, ".join(names))
 if strip_comments:
     print()
 
