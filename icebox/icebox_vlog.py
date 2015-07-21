@@ -817,22 +817,30 @@ print("module %s (%s);\n" % (modname, ", ".join(text_ports)))
 
 new_text_wires = list()
 new_text_regs = list()
+new_text_raw = list()
 for line in text_wires:
     match = re.match(r"wire ([^ ;]+)(.*)", line)
+    if match:
+        if strip_comments:
+            if match.group(1) in wire_to_reg:
+                new_text_regs.append(match.group(1))
+            else:
+                new_text_wires.append(match.group(1))
+            continue
+        else:
+            if match.group(1) in wire_to_reg:
+                line = "reg " + match.group(1) + " = 0" + match.group(2)
     if strip_comments:
-        if match and match.group(1) in wire_to_reg:
-            new_text_regs.append(match.group(1))
-        elif match:
-            new_text_wires.append(match.group(1))
+        new_text_raw.append(line)
     else:
-        if match and match.group(1) in wire_to_reg:
-            line = "reg " + match.group(1) + " = 0" + match.group(2)
         print(line)
 for names in [new_text_wires[x:x+10] for x in range(0, len(new_text_wires), 10)]:
     print("wire %s;" % ", ".join(names))
 for names in [new_text_regs[x:x+10] for x in range(0, len(new_text_regs), 10)]:
     print("reg %s = 0;" % " = 0, ".join(names))
 if strip_comments:
+    for line in new_text_raw:
+        print(line)
     print()
 
 for line in text_func:
