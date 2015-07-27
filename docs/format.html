@@ -116,7 +116,7 @@ corner tile (12 16). The entire CRAM of such a device is depicted on the right (
 </p>
 
 <p>
-The checkerboard pattern in the picture visualizes which bits are assoziated
+The checkerboard pattern in the picture visualizes which bits are associated
 with which tile. The height of the configuration block is 16 for all tile
 types, but the width is different for each tile type. IO tiles have
 configurations that are 18 bits wide, LOGIC tiles are 54 bits wide, and
@@ -126,12 +126,12 @@ RAM tiles are 42 bits wide. (Notice the two slightly smaller columns for the RAM
 <p>
 The IO tiles on the top and bottom of the chip use a strange permutation pattern for their bits. It can be seen in the picture that
 their columns are spread out horizontally. What cannot be seen in the picture is the columns also are not in order and the bit
-positions are vertically permutated as well. The <tt>CramIndexConverter</tt> class in <tt>icepack.cc</tt> encapsulates the calculations
+positions are vertically permuted as well. The <tt>CramIndexConverter</tt> class in <tt>icepack.cc</tt> encapsulates the calculations
 that are neccessary to convert between tile-relative bit addresses and CRAM bank-relative bit addresses.
 </p>
 
 <p>
-The black pixels in the image correspond to CRAM bits that are not assoziated with any IO, LOGIC or RAM tile.
+The black pixels in the image correspond to CRAM bits that are not associated with any IO, LOGIC or RAM tile.
 Some of them are unused, others are used by hard IPs or other global resources. The <tt>iceunpack</tt> tool reports
 such bits, when set, with the "<tt>.extra_bit <i>bank x y</i></tt>" statement in the ASCII output format.
 </p>

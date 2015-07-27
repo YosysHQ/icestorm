@@ -70,7 +70,7 @@ For example, the wire <tt>sp4_h_r_0</tt> in cell (x, y) has the following names:
 <p><a href="sp4v.svg"><img style="float:right; padding:1em; padding-top:0" height="200" src="sp4v.svg" border="0"></a></p>
 
 <p>
-The image on the right shows the <i>veritical span-4</i> wires of a logic or ram cell (click to enlarge).
+The image on the right shows the <i>vertical span-4</i> wires of a logic or ram cell (click to enlarge).
 </p>
 
 <p>
@@ -82,7 +82,7 @@ to <tt>sp4_v_b_12</tt> to <tt>sp4_v_b_47</tt>.
 
 <p>
 But in addition to that, each cell also has access to <tt>sp4_v_b_0</tt> to <tt>sp4_v_b_47</tt> of its right neighbour.
-This are the wires <tt>sp4_r_v_b_0</tt> to <tt>sp4_r_v_b_47</tt>. So over all a single veritical span-4 wire
+This are the wires <tt>sp4_r_v_b_0</tt> to <tt>sp4_r_v_b_47</tt>. So over all a single vertical span-4 wire
 connects 9 cells. For example, the wire <tt>sp4_v_b_0</tt> in cell (x, y) has the following names:
 </p>
 
@@ -129,7 +129,7 @@ terminate in the cell. Wire names are normalized to <tt>sp12_v_r_2</tt> to <tt>s
 
 <p>
 The <i>local tracks</i> are the gateway to the logic cell inputs. Signals from the span-wires
-and the logic cell ouputs of the eight neighbour cells can be routed to the local tracks and
+and the logic cell outputs of the eight neighbour cells can be routed to the local tracks and
 signals from the local tracks can be routed to the logic cell inputs.
 </p>
 
@@ -223,7 +223,7 @@ Each logic tile has a logic block containing 8 logic cells. Each logic cell cont
 unit and a flip-flop. Clock, clock enable, and set/reset inputs are shared along the 8 logic cells. So is the
 bit that configures positive/negative edge for the flip flops. But the three configuration bits that specify if
 the flip flop should be used, if it is set or reset by the set/reset input, and if the set/reset is synchronous
-or asynchrouns exist for each logic cell individually.
+or asynchronous exist for each logic cell individually.
 </p>
 
 <p>
@@ -240,7 +240,7 @@ The carry unit calculates <tt>lutff_<i>i</i>/cout</tt> = <tt>lutff_<i>i</i>/in_1
 
 <p>
 Part of the functionality described above is documented as part of the routing
-bitstream documentation (see the buffers for <tt>luttff_</tt> inputs). The <tt>NegClk</tt>
+bitstream documentation (see the buffers for <tt>lutff_</tt> inputs). The <tt>NegClk</tt>
 bit switches all 8 FFs in the tile to negative edge mode. The <tt>CarryInSet</tt>
 bit drives the <tt>carry_in_mux</tt> high (it defaults to low when not driven via the buffer from
 <tt>carry_in</tt>).
@@ -248,7 +248,7 @@ bit drives the <tt>carry_in_mux</tt> high (it defaults to low when not driven vi
 
 <p>
 The remaining functions of the logic cell are configured via the <tt>LC_<i>i</i></tt> bits. This
-are 20 bit per logic cell. We have arbitrarily labeld those bits as follows:
+are 20 bit per logic cell. We have arbitrarily labeled those bits as follows:
 </p>
 
 <p align="center">
