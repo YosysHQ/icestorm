@@ -2,6 +2,7 @@
 LDLIBS = -lm -lstdc++
 CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11
 CC = $(CXX)
+DESTDIR = /usr/local
 
 all: icepack iceunpack
 
@@ -11,12 +12,12 @@ iceunpack: icepack
 	ln -sf icepack iceunpack
 
 install: all
-	cp icepack /usr/local/bin/icepack
-	ln -sf icepack /usr/local/bin/iceunpack
+	cp icepack $(DESTDIR)/bin/icepack
+	ln -sf icepack $(DESTDIR)/bin/iceunpack
 
 uninstall:
-	rm -f /usr/local/bin/icepack
-	rm -f /usr/local/bin/iceunpack
+	rm -f $(DESTDIR)/bin/icepack
+	rm -f $(DESTDIR)/bin/iceunpack
 
 clean:
 	rm -f icepack

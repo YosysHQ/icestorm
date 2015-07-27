@@ -1,3 +1,4 @@
+DESTDIR = /usr/local
 
 all: chipdb-1k.txt chipdb-8k.txt
 
@@ -14,30 +15,30 @@ clean:
 	rm -f icebox.pyc iceboxdb.pyc
 
 install: all
-	mkdir -p /usr/local/share/icebox
-	cp chipdb-1k.txt     /usr/local/share/icebox/
-	cp chipdb-8k.txt     /usr/local/share/icebox/
-	cp icebox.py         /usr/local/bin/icebox.py
-	cp iceboxdb.py       /usr/local/bin/iceboxdb.py
-	cp icebox_chipdb.py  /usr/local/bin/icebox_chipdb
-	cp icebox_diff.py    /usr/local/bin/icebox_diff
-	cp icebox_explain.py /usr/local/bin/icebox_explain
-	cp icebox_html.py    /usr/local/bin/icebox_html
-	cp icebox_maps.py    /usr/local/bin/icebox_maps
-	cp icebox_vlog.py    /usr/local/bin/icebox_vlog
+	mkdir -p $(DESTDIR)/share/icebox
+	cp chipdb-1k.txt     $(DESTDIR)/share/icebox/
+	cp chipdb-8k.txt     $(DESTDIR)/share/icebox/
+	cp icebox.py         $(DESTDIR)/bin/icebox.py
+	cp iceboxdb.py       $(DESTDIR)/bin/iceboxdb.py
+	cp icebox_chipdb.py  $(DESTDIR)/bin/icebox_chipdb
+	cp icebox_diff.py    $(DESTDIR)/bin/icebox_diff
+	cp icebox_explain.py $(DESTDIR)/bin/icebox_explain
+	cp icebox_html.py    $(DESTDIR)/bin/icebox_html
+	cp icebox_maps.py    $(DESTDIR)/bin/icebox_maps
+	cp icebox_vlog.py    $(DESTDIR)/bin/icebox_vlog
 
 uninstall:
-	rm -f /usr/local/bin/icebox.py
-	rm -f /usr/local/bin/iceboxdb.py
-	rm -f /usr/local/bin/icebox_chipdb
-	rm -f /usr/local/bin/icebox_diff
-	rm -f /usr/local/bin/icebox_explain
-	rm -f /usr/local/bin/icebox_html
-	rm -f /usr/local/bin/icebox_maps
-	rm -f /usr/local/bin/icebox_vlog
-	rm -f /usr/local/share/icebox/chipdb-1k.txt
-	rm -f /usr/local/share/icebox/chipdb-8k.txt
-	-rmdir /usr/local/share/icebox
+	rm -f $(DESTDIR)/bin/icebox.py
+	rm -f $(DESTDIR)/bin/iceboxdb.py
+	rm -f $(DESTDIR)/bin/icebox_chipdb
+	rm -f $(DESTDIR)/bin/icebox_diff
+	rm -f $(DESTDIR)/bin/icebox_explain
+	rm -f $(DESTDIR)/bin/icebox_html
+	rm -f $(DESTDIR)/bin/icebox_maps
+	rm -f $(DESTDIR)/bin/icebox_vlog
+	rm -f $(DESTDIR)/share/icebox/chipdb-1k.txt
+	rm -f $(DESTDIR)/share/icebox/chipdb-8k.txt
+	-rmdir $(DESTDIR)/share/icebox
 
 .PHONY: all clean install uninstall
 
