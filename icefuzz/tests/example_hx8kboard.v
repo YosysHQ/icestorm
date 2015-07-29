@@ -9,24 +9,43 @@ module top (
 	output LED6,
 	output LED7
 );
+	reg [31:0] counter = 0;
+	wire [7:0] raddr = counter >> 22;
+	always @(posedge clk) counter <= counter + 1;
 
-	localparam BITS = 8;
-	localparam LOG2DELAY = 22;
+	// Python 3 code for memory initialization:
+	//
+	// queue = list()
+	// for i in range(256):
+	//     queue.append("%04x" % (i ^ (i >> 1)))
+	//     if i % 16 == 15:
+	//         print("256'h%s" % "".join(reversed(queue)))
+	//         queue = list()
 
-	function [BITS-1:0] bin2gray(input [BITS-1:0] in);
-		integer i;
-		reg [BITS:0] temp;
-		begin
-			temp = in;
-			for (i=0; i<BITS; i=i+1)
-				bin2gray[i] = ^temp[i +: 2];
-		end
-	endfunction
-
-	reg [BITS+LOG2DELAY-1:0] counter = 0;
-
-	always@(posedge clk)
-		counter <= counter + 1;
-	
-	assign {LED0, LED1, LED2, LED3, LED4, LED5, LED6, LED7} = bin2gray(counter >> LOG2DELAY);
+	SB_RAM40_4K #(
+		.READ_MODE(0),
+		.WRITE_MODE(0),
+		.INIT_0(256'h00080009000b000a000e000f000d000c00040005000700060002000300010000),
+		.INIT_1(256'h00100011001300120016001700150014001c001d001f001e001a001b00190018),
+		.INIT_2(256'h00380039003b003a003e003f003d003c00340035003700360032003300310030),
+		.INIT_3(256'h00200021002300220026002700250024002c002d002f002e002a002b00290028),
+		.INIT_4(256'h00680069006b006a006e006f006d006c00640065006700660062006300610060),
+		.INIT_5(256'h00700071007300720076007700750074007c007d007f007e007a007b00790078),
+		.INIT_6(256'h00580059005b005a005e005f005d005c00540055005700560052005300510050),
+		.INIT_7(256'h00400041004300420046004700450044004c004d004f004e004a004b00490048),
+		.INIT_8(256'h00c800c900cb00ca00ce00cf00cd00cc00c400c500c700c600c200c300c100c0),
+		.INIT_9(256'h00d000d100d300d200d600d700d500d400dc00dd00df00de00da00db00d900d8),
+		.INIT_A(256'h00f800f900fb00fa00fe00ff00fd00fc00f400f500f700f600f200f300f100f0),
+		.INIT_B(256'h00e000e100e300e200e600e700e500e400ec00ed00ef00ee00ea00eb00e900e8),
+		.INIT_C(256'h00a800a900ab00aa00ae00af00ad00ac00a400a500a700a600a200a300a100a0),
+		.INIT_D(256'h00b000b100b300b200b600b700b500b400bc00bd00bf00be00ba00bb00b900b8),
+		.INIT_E(256'h00980099009b009a009e009f009d009c00940095009700960092009300910090),
+		.INIT_F(256'h00800081008300820086008700850084008c008d008f008e008a008b00890088)
+	) ram (
+		.RADDR(raddr),
+		.RDATA({LED0, LED1, LED2, LED3, LED4, LED5, LED6, LED7}),
+		.RE(1'b1),
+		.RCLKE(1'b1),
+		.RCLK(clk)
+	);
 endmodule
