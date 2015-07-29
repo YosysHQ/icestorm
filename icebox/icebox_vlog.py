@@ -27,6 +27,7 @@ lookup_pins = False
 check_ieren = False
 check_driver = False
 lookup_symbols = False
+do_collect = False
 pcf_data = dict()
 portnames = set()
 unmatched_ports = set()
@@ -58,6 +59,9 @@ Usage: icebox_vlog [options] [bitmap.txt]
         like -p, enable some hacks for pcf files created
         by the iCEcube2 placer.
 
+    -c
+        collect multi-bit ports
+
     -R
         enable IeRen database checks
 
@@ -67,7 +71,7 @@ Usage: icebox_vlog [options] [bitmap.txt]
     sys.exit(0)
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "sSlLap:P:n:RD")
+    opts, args = getopt.getopt(sys.argv[1:], "sSlLap:P:n:cRD")
 except:
     usage()
 
@@ -107,6 +111,8 @@ for o, a in opts:
                     else:
                         pinloc = (line[2],)
                     pcf_data[pinloc] = p
+    elif o == "-c":
+        do_collect = True
     elif o == "-R":
         check_ieren = True
     elif o == "-D":
@@ -815,6 +821,25 @@ for lut in luts_queue:
 for a in const_assigns + lut_assigns + carry_assigns:
     text_func.append("assign %-*s = %s;" % (max_net_len, a[0], a[1]))
 
+if do_collect:
+    new_text_ports = set()
+    vec_ports_min = dict()
+    vec_ports_max = dict()
+    vec_ports_dir = dict()
+    for port in text_ports:
+        match = re.match(r"(input|output|inout) (.*)\[(\d+)\] ?$", port);
+        if match:
+            vec_ports_min[match.group(2)] = min(vec_ports_min.setdefault(match.group(2), int(match.group(3))), int(match.group(3)))
+            vec_ports_max[match.group(2)] = max(vec_ports_max.setdefault(match.group(2), int(match.group(3))), int(match.group(3)))
+            vec_ports_dir[match.group(2)] = match.group(1)
+        else:
+            new_text_ports.add(port)
+    for port, direct in vec_ports_dir.items():
+        min_idx = vec_ports_min[port]
+        max_idx = vec_ports_max[port]
+        new_text_ports.add("%s [%d:%d] %s " % (direct, max_idx, min_idx, port))
+    text_ports = list(new_text_ports)
+
 print("module %s (%s);\n" % (modname, ", ".join(text_ports)))
 
 new_text_wires = list()
@@ -847,6 +872,16 @@ if strip_comments:
     for line in new_text_raw:
         print(line)
     print()
+
+if do_collect:
+    for port, direct in vec_ports_dir.items():
+        min_idx = vec_ports_min[port]
+        max_idx = vec_ports_max[port]
+        for i in range(min_idx, max_idx+1):
+            if direct == "input":  print("assign %s[%d] = %s [%d];"  % (port, i, port, i))
+            if direct == "output": print("assign %s [%d] = %s[%d] ;" % (port, i, port, i))
+            if direct == "inout":  print("tran(%s [%d], %s[%d] );"   % (port, i, port, i))
+        print()
 
 for line in text_func:
     print(line)
