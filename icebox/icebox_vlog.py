@@ -824,10 +824,13 @@ for line in text_wires:
     match = re.match(r"wire ([^ ;]+)(.*)", line)
     if match:
         if strip_comments:
+            name = match.group(1)
+            if name.startswith("\\"):
+                name += " "
             if match.group(1) in wire_to_reg:
-                new_text_regs.append(match.group(1))
+                new_text_regs.append(name)
             else:
-                new_text_wires.append(match.group(1))
+                new_text_wires.append(name)
             continue
         else:
             if match.group(1) in wire_to_reg:
