@@ -1206,7 +1206,7 @@ int main(int argc, char **argv)
 			fpga_config.write_ascii(*osp);
 	} else {
 		fpga_config.read_ascii(*isp);
-		if (set_colbufs)
+		if (set_colbufs || fpga_config.device == "8k")
 			fpga_config.set_colbufs();
 		if (!netpbm_mode)
 			fpga_config.write_bits(*osp);
