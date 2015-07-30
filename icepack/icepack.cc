@@ -125,6 +125,7 @@ struct FpgaConfig
 	void cram_clear();
 	void cram_fill_tiles();
 	void cram_checkerboard(int m = 0);
+	void set_colbufs();
 };
 
 struct CramIndexConverter
@@ -936,6 +937,47 @@ void FpgaConfig::cram_checkerboard(int m)
 	}
 }
 
+void FpgaConfig::set_colbufs()
+{
+	for (int tx = 0; tx <= chip_width()+1; tx++)
+	for (int ty = 0; ty <= chip_height()+1; ty++)
+	{
+		int cb, cx, cy;
+		CramIndexConverter cidx(this, tx, ty);
+
+		for (int glb = 0; glb < 8; glb++)
+		{
+			int by = -1, bx = -1;
+
+			if (cidx.tile_type == "io")
+				by = glb, bx = 9;
+
+			if (cidx.tile_type == "logic" || cidx.tile_type == "ramb") {
+				if (this->device == "1k") {
+					if (glb == 0) by = 0, bx = 1;
+					if (glb == 1) by = 1, bx = 2;
+					if (glb == 2) by = 5, bx = 2;
+					if (glb == 3) by = 7, bx = 2;
+					if (glb == 4) by = 9, bx = 2;
+					if (glb == 5) by = 11, bx = 2;
+					if (glb == 6) by = 13, bx = 2;
+					if (glb == 7) by = 15, bx = 2;
+				}
+				if (this->device == "8k")
+					by = 8 + glb, bx = 7;
+			}
+
+			if (cidx.tile_type == "ramt" && this->device == "8k")
+				by = 8 + glb, bx = 7;
+
+			if (by > 0 && bx > 0) {
+				cidx.get_cram_index(bx, by, cb, cx, cy);
+				this->cram[cb][cx][cy] = true;
+			}
+		}
+	}
+}
+
 CramIndexConverter::CramIndexConverter(const FpgaConfig *fpga, int tile_x, int tile_y)
 {
 	this->fpga = fpga;
@@ -1070,6 +1112,9 @@ void usage()
 	log("    -B0, -B1, -B2, -B3\n");
 	log("        only include the specified bank in the netpbm file\n");
 	log("\n");
+	log("    -C\n");
+	log("        set all column buffer bits in all tiles\n");
+	log("\n");
 	exit(1);
 }
 
@@ -1081,6 +1126,7 @@ int main(int argc, char **argv)
 	bool netpbm_bram = false;
 	bool netpbm_fill_tiles = false;
 	bool netpbm_checkerboard = false;
+	bool set_colbufs = false;
 	int netpbm_banknum = -1;
 	int checkerboard_m = 1;
 
@@ -1111,6 +1157,8 @@ int main(int argc, char **argv)
 				} else if (arg[i] == 'B') {
 					netpbm_mode = true;
 					netpbm_banknum = arg[++i] - '0';
+				} else if (arg[i] == 'C') {
+					set_colbufs = true;
 				} else if (arg[i] == 'v') {
 					log_level++;
 				} else
@@ -1152,10 +1200,14 @@ int main(int argc, char **argv)
 
 	if (unpack_mode) {
 		fpga_config.read_bits(*isp);
+		if (set_colbufs)
+			fpga_config.set_colbufs();
 		if (!netpbm_mode)
 			fpga_config.write_ascii(*osp);
 	} else {
 		fpga_config.read_ascii(*isp);
+		if (set_colbufs)
+			fpga_config.set_colbufs();
 		if (!netpbm_mode)
 			fpga_config.write_bits(*osp);
 	}
