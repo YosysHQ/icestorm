@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 # convert 1k ramb/ramt to 8k ramb/ramt and vice versa
 
 subst_rules = [

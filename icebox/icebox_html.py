@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 #
 #  Copyright (C) 2015  Clifford Wolf <clifford@clifford.at>
 #
@@ -566,7 +566,7 @@ if outdir is not None:
                 print_tile(x, y)
 
     print("Writing %s/%s..." % (outdir, chipdbfile), file=stdout)
-    os.system("python icebox_chipdb.py > %s/%s" % (outdir, chipdbfile))
+    os.system("python2 icebox_chipdb.py > %s/%s" % (outdir, chipdbfile))
 
     sys.stdout = stdout
     

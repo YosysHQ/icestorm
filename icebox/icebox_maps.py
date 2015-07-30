@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 #
 #  Copyright (C) 2015  Clifford Wolf <clifford@clifford.at>
 #
