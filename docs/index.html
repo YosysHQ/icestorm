@@ -13,8 +13,8 @@
 <p>
 Project IceStorm aims at documenting the bitstream format of Lattice iCE40
 FPGAs and providing simple tools for analyzing and creating bitstream files.
-At the moment the focus of the project is on the HX1K-TQ144 device, but
-most of the information is device-independent.
+At the moment the focus of the project is on the HX1K-TQ144 and HX8K-CT256
+devices, but most of the information is device-independent.
 </p>
 
 <h2>Why the Lattice iCE40?</h2>
@@ -199,10 +199,13 @@ an example program that does that.
 </p>
 
 <p>
-The recommended approach for learning how to use this documentation is to synthesize very simple circuits using
-Lattice iCEcube2, run our toolchain on the resulting bitstream files, and analyze the results using the HTML export of the database
-mentioned above. <tt>icebox_vlog.py</tt> can be used to convert the bitstream to Verilog. The output file of
-this tool will also outline the signal paths in comments added to the generated Verilog.
+The recommended approach for learning how to use this documentation is to
+synthesize very simple circuits using Yosys and Arachne-pnr (or Lattice
+iCEcube2), run our toolchain on the resulting bitstream files, and analyze the
+results using the HTML export of the database mentioned above.
+<tt>icebox_vlog.py</tt> can be used to convert the bitstream to Verilog. The
+output file of this tool will also outline the signal paths in comments added
+to the generated Verilog.
 </p>
 
 <p>
@@ -326,7 +329,7 @@ endmodule</pre>
 <h2>Links</h2>
 
 <p>
-Links to related projects. Contact me at clifford@clifford.at if you have an interesting relevant link.
+Links to related projects. Contact me at clifford@clifford.at if you have an interesting and relevant link.
 </p>
 
 <ul>
