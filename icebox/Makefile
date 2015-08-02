@@ -23,6 +23,7 @@ install: all
 	cp icebox_chipdb.py  $(DESTDIR)/bin/icebox_chipdb
 	cp icebox_diff.py    $(DESTDIR)/bin/icebox_diff
 	cp icebox_explain.py $(DESTDIR)/bin/icebox_explain
+	cp icebox_colbuf.py  $(DESTDIR)/bin/icebox_colbuf
 	cp icebox_html.py    $(DESTDIR)/bin/icebox_html
 	cp icebox_maps.py    $(DESTDIR)/bin/icebox_maps
 	cp icebox_vlog.py    $(DESTDIR)/bin/icebox_vlog
@@ -33,6 +34,7 @@ uninstall:
 	rm -f $(DESTDIR)/bin/icebox_chipdb
 	rm -f $(DESTDIR)/bin/icebox_diff
 	rm -f $(DESTDIR)/bin/icebox_explain
+	rm -f $(DESTDIR)/bin/icebox_colbuf
 	rm -f $(DESTDIR)/bin/icebox_html
 	rm -f $(DESTDIR)/bin/icebox_maps
 	rm -f $(DESTDIR)/bin/icebox_vlog
