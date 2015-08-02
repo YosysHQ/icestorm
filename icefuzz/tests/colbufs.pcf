@@ -1,0 +1,8 @@
+set_io clk[0] J3
+set_io clk[1] G1
+set_io clk[2] R9
+set_io clk[3] F7
+set_io clk[4] K9
+set_io clk[5] C8
+set_io clk[6] H11
+set_io clk[7] H16
