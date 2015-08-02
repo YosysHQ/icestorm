@@ -579,8 +579,10 @@ class iceconfig:
                     assert line[1] in ["1k", "8k"]
                     self.device = line[1]
                     continue
-                if line[0] in [".comment", ".sym"]:
+                if line[0] == ".sym":
                     self.symbols.setdefault(int(line[1]), set()).add(line[2])
+                    continue
+                if line[0] == ".comment":
                     expected_data_lines = -1
                     continue
                 print("%sWarning: ignoring line %d: %s" % (logprefix, linenum, linetext.strip()))
