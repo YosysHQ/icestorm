@@ -26,7 +26,7 @@ fixup_mode = False
 
 def usage():
     print("""
-Usage: icebox_colbuf [options] [bitmap.txt]
+Usage: icebox_colbuf [options] [input.txt [output.txt]]
 
     -c
         check colbuf bits
@@ -52,7 +52,7 @@ for o, a in opts:
 if len(args) == 0:
     args.append("/dev/stdin")
 
-if len(args) != 1:
+if len(args) not in [1, 2]:
     usage()
 
 if check_mode == fixup_mode:
@@ -117,24 +117,38 @@ for tiles in [ic.io_tiles, ic.logic_tiles, ic.ramb_tiles, ic.ramt_tiles]:
         if len(glbs):
             driven_glbs_map[tile] = glbs
 
-if check_mode:
-    error_count = 0
-    for tile, bits in used_glbs_map.items():
-        for bit in bits:
-            if tile not in driven_glbs_map or bit not in driven_glbs_map[tile]:
-                print("Missing driver for glb_netwk_%d in tile %s" % (bit, tile))
-                error_count += 1
-    for tile, bits in driven_glbs_map.items():
-        for bit in bits:
-            if tile not in used_glbs_map or bit not in used_glbs_map[tile]:
-                print("Unused driver for glb_netwk_%d in tile %s" % (bit, tile))
-                error_count += 1
-    if error_count != 0:
+def set_colbuf(ic, tile, bit, value):
+    tile_dat = ic.tile(tile[0], tile[1])
+    tile_db = ic.tile_db(tile[0], tile[1])
+    for entry in tile_db:
+        if entry[1] == "ColBufCtrl" and entry[2] == "glb_netwk_%d" % bit:
+            match = re.match("B([0-9]+)\[([0-9]+)\]", entry[0][0])
+            l = tile_dat[int(match.group(1))]
+            n = int(match.group(2))
+            l = l[:n] + value + l[n+1:]
+            tile_dat[int(match.group(1))] = l
+            return
+    assert False
+
+error_count = 0
+for tile, bits in used_glbs_map.items():
+    for bit in bits:
+        if tile not in driven_glbs_map or bit not in driven_glbs_map[tile]:
+            print("Missing driver for glb_netwk_%d in tile %s" % (bit, tile))
+            set_colbuf(ic, tile, bit, "1")
+            error_count += 1
+for tile, bits in driven_glbs_map.items():
+    for bit in bits:
+        if tile not in used_glbs_map or bit not in used_glbs_map[tile]:
+            print("Unused driver for glb_netwk_%d in tile %s" % (bit, tile))
+            set_colbuf(ic, tile, bit, "0")
+            error_count += 1
+if error_count != 0:
+    if not fixup_mode:
         print("Found %d errors!" % error_count)
         sys.exit(1)
+    ic.write_file(args[0] if len(args) == 1 else args[1])
+    print("Corrected %d errors." % error_count)
+else:
     print("No errors found.")
-
-if fixup_mode:
-    print("Error: Fixup mode is not implemented yet!")
-    sys.exit(1)
 

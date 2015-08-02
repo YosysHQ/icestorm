@@ -529,7 +529,7 @@ class iceconfig:
                     queue.add(k)
         return segments
 
-    def read_file(self, filename, logprefix=""):
+    def read_file(self, filename):
         self.clear()
         current_data = None
         expected_data_lines = 0
@@ -544,7 +544,7 @@ class iceconfig:
                     if expected_data_lines == -1:
                         continue
                     if line[0][0] not in "0123456789abcdef":
-                        print("%sWarning: ignoring data block in line %d: %s" % (logprefix, linenum, linetext.strip()))
+                        print("Warning: ignoring data block in line %d: %s" % (linenum, linetext.strip()))
                         expected_data_lines = 0
                         continue
                     assert expected_data_lines != 0
@@ -585,8 +585,22 @@ class iceconfig:
                 if line[0] == ".comment":
                     expected_data_lines = -1
                     continue
-                print("%sWarning: ignoring line %d: %s" % (logprefix, linenum, linetext.strip()))
+                print("Warning: ignoring line %d: %s" % (linenum, linetext.strip()))
                 expected_data_lines = -1
+
+    def write_file(self, filename):
+        with open(filename, "w") as f:
+            print(".device %s" % self.device, file=f)
+            for y in range(self.max_y+1):
+                for x in range(self.max_x+1):
+                    if self.tile_pos(x, y) is not None:
+                        print(".%s_tile %d %d" % (self.tile_type(x, y).lower(), x, y), file=f)
+                        for line in self.tile(x, y):
+                            print(line, file=f)
+            for x, y in sorted(self.ram_data):
+                print(".ram_data %d %d" % (x, y), file=f)
+                for line in self.ram_data[(x, y)]:
+                    print(line, file=f)
 
 class tileconfig:
     def __init__(self, tile):
