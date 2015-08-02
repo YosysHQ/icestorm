@@ -131,18 +131,23 @@ def set_colbuf(ic, tile, bit, value):
     assert False
 
 error_count = 0
-for tile, bits in used_glbs_map.items():
+correct_count = 0
+for tile, bits in sorted(used_glbs_map.items()):
     for bit in bits:
         if tile not in driven_glbs_map or bit not in driven_glbs_map[tile]:
             print("Missing driver for glb_netwk_%d in tile %s" % (bit, tile))
             set_colbuf(ic, tile, bit, "1")
             error_count += 1
-for tile, bits in driven_glbs_map.items():
+for tile, bits in sorted(driven_glbs_map.items()):
     for bit in bits:
         if tile not in used_glbs_map or bit not in used_glbs_map[tile]:
             print("Unused driver for glb_netwk_%d in tile %s" % (bit, tile))
             set_colbuf(ic, tile, bit, "0")
             error_count += 1
+        else:
+            # print("Correct driver for glb_netwk_%d in tile %s" % (bit, tile))
+            correct_count += 1
+print("Found %d correct driver bits." % correct_count)
 if error_count != 0:
     if not fixup_mode:
         print("Found %d errors!" % error_count)
