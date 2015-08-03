@@ -1,0 +1,8 @@
+*.bin
+*.glb
+*.psb
+*.tmp/
+*.txt
+*.vsb
+*.pyc
+/work_*/

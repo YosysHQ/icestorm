@@ -107,7 +107,8 @@ for tiles in [ic.io_tiles, ic.logic_tiles, ic.ramb_tiles, ic.ramt_tiles]:
         glbs = analyze_tile(ic, cache, tile)
         if len(glbs):
             assert tile in colbuf_map
-            used_glbs_map[colbuf_map[tile]] = glbs
+            s = used_glbs_map.setdefault(colbuf_map[tile], set())
+            used_glbs_map[colbuf_map[tile]] = s.union(glbs)
 
     cache = None
     for tile in tiles:
