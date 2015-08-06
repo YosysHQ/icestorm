@@ -62,7 +62,7 @@ Installing prerequisites (this command is for Ubuntu 14.04):
 <pre style="padding-left: 3em">
 sudo apt-get install build-essential clang bison flex libreadline-dev \
                      gawk tcl-dev libffi-dev git mercurial graphviz   \
-                     xdot pkg-config python libftdi-dev
+                     xdot pkg-config python python3 libftdi-dev
 </pre>
 
 <p>
@@ -92,6 +92,11 @@ cd yosys
 make -j$(nproc)
 sudo make install</pre>
 
+<p>
+Note: The Arachne-PNR build depends on files installed by IceStorm. Always rebuild Arachne-PNR
+after updating your IceStorm installation.
+</p>
+
 <h2>What are the IceStorm Tools?</h2>
 
 <h3>IcePack/IceUnpack</h3>
@@ -106,7 +111,7 @@ that has blocks of <tt>0</tt> and <tt>1</tt> for the config bits for each tile i
 
 <p>
 A python library and various tools for working with IceBox ASCII files and accessing
-the device database. For example <tt>icebox_vlog.py</tt> converts our ASCII file
+the device database. For example <tt>icebox_vlog</tt> converts our ASCII file
 dump of a bitstream into a Verilog file that implements an equivalent circuit.
 </p>
 
@@ -180,7 +185,7 @@ line, <tt>B0[0]</tt> the first bit in the first line, and <tt>B15[53]</tt> the l
 </p>
 
 <p>
-The <tt>icebox_explain.py</tt> program can be used to turn this block of config bits into a description of the cell
+The <tt>icebox_explain</tt> program can be used to turn this block of config bits into a description of the cell
 configuration:
 </p>
 
@@ -194,39 +199,49 @@ buffer sp12_h_r_20 local_g1_4</pre>
 <p>
 IceBox contains a database of the wires and configuration bits that can be found in iCE40 tiles. This database can be accessed
 via the IceBox Python API. But IceBox is a large hack. So it is recommended to only use the IceBox API
-to export this database into a format that fits the target application. See <tt>icebox_chipdb.py</tt> for
+to export this database into a format that fits the target application. See <tt>icebox_chipdb</tt> for
 an example program that does that.
 </p>
 
 <p>
 The recommended approach for learning how to use this documentation is to
-synthesize very simple circuits using Yosys and Arachne-pnr (or Lattice
-iCEcube2), run our toolchain on the resulting bitstream files, and analyze the
+synthesize very simple circuits using Yosys and Arachne-pnr, run the icestorm
+tool <tt>icebox_explain</tt> on the resulting bitstream files, and analyze the
 results using the HTML export of the database mentioned above.
-<tt>icebox_vlog.py</tt> can be used to convert the bitstream to Verilog. The
+<tt>icebox_vlog</tt> can be used to convert the bitstream to Verilog. The
 output file of this tool will also outline the signal paths in comments added
-to the generated Verilog.
+to the generated Verilog code.
 </p>
 
 <p>
-For example, using the <tt>top_bitmap.bin</tt> from the following Verilog and PCF files:
+For example, consider the following Verilog and PCF files:
 </p>
 
-<pre style="padding-left: 3em">module top (input a, b, output y);
+<pre style="padding-left: 3em">// example.v
+module top (input a, b, output y);
   assign y = a &amp; b;
 endmodule
 
+# example.pcf
 set_io a 1
 set_io b 10
 set_io y 11</pre>
 
 <p>
-We would get something like the following <tt>icebox_explain.py</tt> output:
+And run them through Yosys, Arachne-PNR and IcePack:
 </p>
 
-<pre style="padding-left: 3em">$ iceunpack top_bitmap.bin top_bitmap.txt
-$ icebox_explain top_bitmap.txt
-Reading file 'top_bitmap.txt'..
+<pre style="padding-left: 3em">$ yosys -p 'synth_ice40 -top top -blif example.blif' example.v
+$ arachne-pnr -d 1k -o example.txt -p example.pcf example.blif
+$ icepack example.txt example.bin
+</pre>
+
+<p>
+We would get something like the following <tt>icebox_explain</tt> output:
+</p>
+
+<pre style="padding-left: 3em">$ icebox_explain example.txt
+Reading file 'example.txt'..
 Fabric size (without IO tiles): 12 x 16
 
 .io_tile 0 10
@@ -236,93 +251,88 @@ IOB_1 PINTYPE_4
 IoCtrl IE_0
 IoCtrl IE_1
 IoCtrl REN_0
-buffer local_g1_2 io_1/D_OUT_0
-buffer logic_op_tnr_2 local_g1_2
+buffer local_g0_5 io_1/D_OUT_0
+buffer logic_op_tnr_5 local_g0_5
 
 .io_tile 0 14
 IOB_1 PINTYPE_0
 IoCtrl IE_1
 IoCtrl REN_0
-buffer io_1/D_IN_0 span4_horz_28
+buffer io_1/D_IN_0 span4_vert_b_6
 
 .io_tile 0 11
 IOB_0 PINTYPE_0
 IoCtrl IE_0
 IoCtrl REN_1
+routing span4_vert_t_14 span4_horz_13
 
 .logic_tile 1 11
-LC_2 0000000001010101 0000
-buffer local_g1_4 lutff_2/in_3
-buffer local_g3_1 lutff_2/in_0
-buffer neigh_op_lft_4 local_g1_4
-buffer sp4_r_v_b_41 local_g3_1
-
-.logic_tile 2 14
-routing sp4_h_l_41 sp4_v_b_4</pre>
+LC_5 0001000000000000 0000
+buffer local_g0_0 lutff_5/in_1
+buffer local_g3_0 lutff_5/in_0
+buffer neigh_op_lft_0 local_g0_0
+buffer sp4_h_r_24 local_g3_0</pre>
 
 <p>
-And something like the following <tt>icebox_vlog.py</tt> output:
+And something like the following <tt>icebox_vlog</tt> output:
 </p>
 
-<pre style="padding-left: 3em">$ icebox_vlog top_bitmap.txt
-// Reading file 'top_bitmap.txt'..
+<pre style="padding-left: 3em">$ icebox_vlog -p example.pcf example.txt
+// Reading file 'example.txt'..
 
-module chip (output io_0_10_1, input io_0_11_0, input io_0_14_1);
+module chip (output y, input b, input a);
 
-wire io_0_10_1;
+wire y;
 // io_0_10_1
 // (0, 10, 'io_1/D_OUT_0')
 // (0, 10, 'io_1/PAD')
-// (0, 10, 'local_g1_2')
-// (0, 10, 'logic_op_tnr_2')
-// (0, 11, 'logic_op_rgt_2')
-// (0, 12, 'logic_op_bnr_2')
-// (1, 10, 'neigh_op_top_2')
-// (1, 11, 'lutff_2/out')
-// (1, 12, 'neigh_op_bot_2')
-// (2, 10, 'neigh_op_tnl_2')
-// (2, 11, 'neigh_op_lft_2')
-// (2, 12, 'neigh_op_bnl_2')
+// (0, 10, 'local_g0_5')
+// (0, 10, 'logic_op_tnr_5')
+// (0, 11, 'logic_op_rgt_5')
+// (0, 12, 'logic_op_bnr_5')
+// (1, 10, 'neigh_op_top_5')
+// (1, 11, 'lutff_5/out')
+// (1, 12, 'neigh_op_bot_5')
+// (2, 10, 'neigh_op_tnl_5')
+// (2, 11, 'neigh_op_lft_5')
+// (2, 12, 'neigh_op_bnl_5')
 
-wire io_0_11_0;
+wire b;
 // io_0_11_0
 // (0, 11, 'io_0/D_IN_0')
 // (0, 11, 'io_0/PAD')
 // (1, 10, 'neigh_op_tnl_0')
 // (1, 10, 'neigh_op_tnl_4')
-// (1, 11, 'local_g1_4')
-// (1, 11, 'lutff_2/in_3')
+// (1, 11, 'local_g0_0')
+// (1, 11, 'lutff_5/in_1')
 // (1, 11, 'neigh_op_lft_0')
 // (1, 11, 'neigh_op_lft_4')
 // (1, 12, 'neigh_op_bnl_0')
 // (1, 12, 'neigh_op_bnl_4')
 
-wire io_0_14_1;
+wire a;
 // io_0_14_1
+// (0, 11, 'span4_horz_13')
+// (0, 11, 'span4_vert_t_14')
+// (0, 12, 'span4_vert_b_14')
+// (0, 13, 'span4_vert_b_10')
 // (0, 14, 'io_1/D_IN_0')
 // (0, 14, 'io_1/PAD')
-// (0, 14, 'span4_horz_28')
-// (1, 11, 'local_g3_1')
-// (1, 11, 'lutff_2/in_0')
-// (1, 11, 'sp4_r_v_b_41')
-// (1, 12, 'sp4_r_v_b_28')
+// (0, 14, 'span4_vert_b_6')
+// (0, 15, 'span4_vert_b_2')
+// (1, 11, 'local_g3_0')
+// (1, 11, 'lutff_5/in_0')
+// (1, 11, 'sp4_h_r_24')
 // (1, 13, 'neigh_op_tnl_2')
 // (1, 13, 'neigh_op_tnl_6')
-// (1, 13, 'sp4_r_v_b_17')
 // (1, 14, 'neigh_op_lft_2')
 // (1, 14, 'neigh_op_lft_6')
-// (1, 14, 'sp4_h_r_41')
-// (1, 14, 'sp4_r_v_b_4')
 // (1, 15, 'neigh_op_bnl_2')
 // (1, 15, 'neigh_op_bnl_6')
-// (2, 10, 'sp4_v_t_41')
-// (2, 11, 'sp4_v_b_41')
-// (2, 12, 'sp4_v_b_28')
-// (2, 13, 'sp4_v_b_17')
-// (2, 14, 'sp4_h_l_41')
-// (2, 14, 'sp4_v_b_4')
+// (2, 11, 'sp4_h_r_37')
+// (3, 11, 'sp4_h_l_37')
 
-assign io_0_10_1 = /* LUT    1 11  2 */ io_0_11_0 ? io_0_14_1 : 0;
+assign y = /* LUT    1 11  5 */ b ? a : 0;
 
 endmodule</pre>
 
