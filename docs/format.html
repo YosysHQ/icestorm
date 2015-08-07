@@ -37,9 +37,11 @@ The following commands are known:
 <tr><td>0</td><td>payload=0: CRAM Data<br/>
                   payload=3: BRAM Data<br/>
 		  payload=5: Reset CRC<br/>
-		  payload=6: Wakeup</td></tr>
+		  payload=6: Wakeup<br/>
+		  payload=8: Reboot</td></tr>
 <tr><td>1</td><td>Set bank number</td></tr>
 <tr><td>2</td><td>CRC check</td></tr>
+<tr><td>4</td><td>Set boot address</td></tr>
 <tr><td>5</td><td>Set internal oscillator frequency range<br/>
                   payload=0: low<br/>
                   payload=1: medium<br/>
@@ -48,6 +50,7 @@ The following commands are known:
 <tr><td>7</td><td>Set bank height</td></tr>
 <tr><td>8</td><td>Set bank offset</td></tr>
 <tr><td>9</td><td>payload=0: Disable warm boot<br/>
+                  payload=16: Enable cold boot<br/>
                   payload=32: Enable warm boot</td></tr>
 </table>
 </p>
