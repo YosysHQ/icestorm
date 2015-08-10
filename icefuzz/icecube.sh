@@ -173,10 +173,13 @@ try_rerun "$icecubedir"/sbt_backend/bin/linux/opt/sbtplacer --des-lib netlist/oa
 "$icecubedir"/sbt_backend/bin/linux/opt/packer "$icecubedir"/sbt_backend/devices/$devfile netlist/oadb-top --package $iCEPACKAGE --outdir outputs/packer --translator "$icecubedir"/sbt_backend/bin/sdc_translator.tcl --src_sdc_file outputs/placer/top_pl.sdc --dst_sdc_file outputs/packer/top_pk.sdc --devicename $iCE40DEV
 
 # run router
-"$icecubedir"/sbt_backend/bin/linux/opt/sbrouter "$icecubedir"/sbt_backend/devices/$devfile netlist/oadb-top "$icecubedir"/sbt_backend/devices/$libfile outputs/packer/top_pk.sdc --outdir outputs/router --sdf_file outputs/simulation_netlist/top_sbt.sdf --pin_permutation
+"$icecubedir"/sbt_backend/bin/linux/opt/sbrouter "$icecubedir"/sbt_backend/devices/$devfile netlist/oadb-top "$icecubedir"/sbt_backend/devices/$libfile outputs/packer/top_pk.sdc --outdir outputs/router --sdf_file outputs/netlist/top_sbt.sdf --pin_permutation
 
 # run netlister
-"$icecubedir"/sbt_backend/bin/linux/opt/netlister --verilog outputs/netlist/top_sbt.v --vhdl outputs/netlist/top_sbt.vhd --lib netlist/oadb-top --view rt --device "$icecubedir"/sbt_backend/devices/$devfile --splitio --in-sdc-file outputs/packer/top_pk.sdc --out-sdc-file netlister/top_sbt.sdc
+"$icecubedir"/sbt_backend/bin/linux/opt/netlister --verilog outputs/netlist/top_sbt.v --vhdl outputs/netlist/top_sbt.vhd --lib netlist/oadb-top --view rt --device "$icecubedir"/sbt_backend/devices/$devfile --splitio --in-sdc-file outputs/packer/top_pk.sdc --out-sdc-file outputs/netlist/top_sbt.sdc
+
+# run timer
+"$icecubedir"/sbt_backend/bin/linux/opt/sbtimer --des-lib netlist/oadb-top --lib-file "$icecubedir"/sbt_backend/devices/$libfile --sdc-file outputs/netlist/top_sbt.sdc --sdf-file outputs/netlist/top_sbt.sdf --report-file outputs/netlist/top_timing.rpt --device-file "$icecubedir"/sbt_backend/devices/$devfile --timing-summary
 
 # make bitmap
 "$icecubedir"/sbt_backend/bin/linux/opt/bitmap "$icecubedir"/sbt_backend/devices/$devfile --design netlist/oadb-top --device_name $iCE40DEV --package $iCEPACKAGE --outdir outputs/bitmap --debug --low_power on --init_ram on --init_ram_bank 1111 --frequency low --warm_boot on
