@@ -1,3 +1,4 @@
+PYTHON ?= python2
 DESTDIR = /usr/local
 
 all: chipdb-1k.txt chipdb-8k.txt
