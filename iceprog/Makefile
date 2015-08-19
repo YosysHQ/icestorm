@@ -1,6 +1,6 @@
 # CC = clang
-LDLIBS = -lftdi -lm
-CFLAGS = -MD -O0 -ggdb -Wall -std=c99
+LDLIBS = -L/usr/local/lib -lftdi -lm
+CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
 DESTDIR = /usr/local
 
 all: iceprog

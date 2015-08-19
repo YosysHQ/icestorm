@@ -1,6 +1,7 @@
 # CXX = clang
+CXX ?= clang
 LDLIBS = -lm -lstdc++
-CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11
+CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include
 CC = $(CXX)
 DESTDIR = /usr/local
 
