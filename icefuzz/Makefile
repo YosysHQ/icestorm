@@ -64,12 +64,12 @@ define data_template
 data_$(1).txt: make_$(1).py ../icepack/icepack
 ifeq ($(EIGTHK),_8k)
 	ICE8KPINS=1 $(PYTHON) make_$(1).py
-	ICEDEV=hx8k-ct256 $$(MAKE) -C work_$(1)
-	$$(PYTHON) extract.py -8 work_$(1)/*.glb > $$@
+	ICEDEV=hx8k-ct256 $(MAKE) -C work_$(1)
+	$(PYTHON) extract.py -8 work_$(1)/*.glb > $$@
 else
-	$$(PYTHON) make_$(1).py
-	$$(MAKE) -C work_$(1)
-	$$(PYTHON) extract.py work_$(1)/*.glb > $$@
+	$(PYTHON) make_$(1).py
+	$(MAKE) -C work_$(1)
+	$(PYTHON) extract.py work_$(1)/*.glb > $$@
 endif
 endef
 
