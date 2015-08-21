@@ -22,20 +22,15 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include <sstream>
 #include <cstdint>
 
 #include <stdio.h>
 #include <stdarg.h>
 
-/*
- * needed for VS2013 at least
- */
 #ifdef _WIN32
-
 #define __PRETTY_FUNCTION__ __FUNCTION__
-#include <algorithm>
-
 #endif
 
 
@@ -1139,16 +1134,7 @@ int main(int argc, char **argv)
 	std::ostream *osp;
 
 	if (parameters.size() >= 1 && parameters[0] != "-") {
-
-
-		/* VS2013 would open .bin file as ascii */
-#ifdef _WIN32
 		ifs.open(parameters[0], std::ios::binary);
-#else
-		ifs.open(parameters[0]);
-#endif
-
-
 		if (!ifs.is_open())
 			error("Failed to open input file.\n");
 		isp = &ifs;
@@ -1157,7 +1143,7 @@ int main(int argc, char **argv)
 	}
 
 	if (parameters.size() >= 2 && parameters[1] != "-") {
-		ofs.open(parameters[1]);
+		ofs.open(parameters[1], std::ios::binary);
 		if (!ofs.is_open())
 			error("Failed to open output file.\n");
 		osp = &ofs;
