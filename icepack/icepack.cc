@@ -1157,7 +1157,13 @@ int main(int argc, char **argv)
 	}
 
 	if (parameters.size() >= 2 && parameters[1] != "-") {
+#ifdef _WIN32
+		ofs.open(parameters[1], std::ios::binary);
+#else
 		ofs.open(parameters[1]);
+#endif
+
+
 		if (!ofs.is_open())
 			error("Failed to open output file.\n");
 		osp = &ofs;
