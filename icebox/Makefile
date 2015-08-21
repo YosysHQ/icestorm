@@ -1,4 +1,4 @@
-PYTHON ?= python2
+PYTHON ?= /usr/bin/python2
 DESTDIR = /usr/local
 
 all: chipdb-1k.txt chipdb-8k.txt
@@ -17,17 +17,17 @@ clean:
 
 install: all
 	mkdir -p $(DESTDIR)/share/icebox
-	cp chipdb-1k.txt     $(DESTDIR)/share/icebox/
-	cp chipdb-8k.txt     $(DESTDIR)/share/icebox/
-	cp icebox.py         $(DESTDIR)/bin/icebox.py
-	cp iceboxdb.py       $(DESTDIR)/bin/iceboxdb.py
-	cp icebox_chipdb.py  $(DESTDIR)/bin/icebox_chipdb
-	cp icebox_diff.py    $(DESTDIR)/bin/icebox_diff
-	cp icebox_explain.py $(DESTDIR)/bin/icebox_explain
-	cp icebox_colbuf.py  $(DESTDIR)/bin/icebox_colbuf
-	cp icebox_html.py    $(DESTDIR)/bin/icebox_html
-	cp icebox_maps.py    $(DESTDIR)/bin/icebox_maps
-	cp icebox_vlog.py    $(DESTDIR)/bin/icebox_vlog
+	cp chipdb-1k.txt $(DESTDIR)/share/icebox/
+	cp chipdb-8k.txt $(DESTDIR)/share/icebox/
+	sed -e 's,^#!/usr/bin/python2$$,#!$(PYTHON),' < icebox.py         > $(DESTDIR)/bin/icebox.py
+	sed -e 's,^#!/usr/bin/python2$$,#!$(PYTHON),' < iceboxdb.py       > $(DESTDIR)/bin/iceboxdb.py
+	sed -e 's,^#!/usr/bin/python2$$,#!$(PYTHON),' < icebox_chipdb.py  > $(DESTDIR)/bin/icebox_chipdb
+	sed -e 's,^#!/usr/bin/python2$$,#!$(PYTHON),' < icebox_diff.py    > $(DESTDIR)/bin/icebox_diff
+	sed -e 's,^#!/usr/bin/python2$$,#!$(PYTHON),' < icebox_explain.py > $(DESTDIR)/bin/icebox_explain
+	sed -e 's,^#!/usr/bin/python2$$,#!$(PYTHON),' < icebox_colbuf.py  > $(DESTDIR)/bin/icebox_colbuf
+	sed -e 's,^#!/usr/bin/python2$$,#!$(PYTHON),' < icebox_html.py    > $(DESTDIR)/bin/icebox_html
+	sed -e 's,^#!/usr/bin/python2$$,#!$(PYTHON),' < icebox_maps.py    > $(DESTDIR)/bin/icebox_maps
+	sed -e 's,^#!/usr/bin/python2$$,#!$(PYTHON),' < icebox_vlog.py    > $(DESTDIR)/bin/icebox_vlog
 
 uninstall:
 	rm -f $(DESTDIR)/bin/icebox.py

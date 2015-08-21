@@ -1,4 +1,4 @@
-PYTHON ?= python2
+PYTHON ?= /usr/bin/python2
 CXX ?= clang
 
 all:
