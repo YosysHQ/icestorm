@@ -4,5 +4,5 @@
 *.tmp/
 *.txt
 *.vsb
-*.pyc
 /work_*/
+__pycache__

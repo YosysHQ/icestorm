@@ -1,4 +1,3 @@
 chipdb-1k.txt
 chipdb-8k.txt
-icebox.pyc
-iceboxdb.pyc
+__pycache__
