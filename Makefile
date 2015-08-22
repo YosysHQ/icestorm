@@ -1,4 +1,3 @@
-PYTHON ?= python2
 CXX ?= clang
 
 all:

@@ -1,14 +1,13 @@
-PYTHON ?= python2
 DESTDIR = /usr/local
 
 all: chipdb-1k.txt chipdb-8k.txt
 
 chipdb-1k.txt: icebox.py iceboxdb.py icebox_chipdb.py
-	$(PYTHON) icebox_chipdb.py > chipdb-1k.new
+	python3 icebox_chipdb.py > chipdb-1k.new
 	mv chipdb-1k.new chipdb-1k.txt
 
 chipdb-8k.txt: icebox.py iceboxdb.py icebox_chipdb.py
-	$(PYTHON) icebox_chipdb.py -8 > chipdb-8k.new
+	python3 icebox_chipdb.py -8 > chipdb-8k.new
 	mv chipdb-8k.new chipdb-8k.txt
 
 clean:

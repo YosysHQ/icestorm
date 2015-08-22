@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 #
 #  Copyright (C) 2015  Clifford Wolf <clifford@clifford.at>
 #
@@ -14,9 +14,6 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-
-from __future__ import division
-from __future__ import print_function
 
 import icebox
 import getopt, sys, re

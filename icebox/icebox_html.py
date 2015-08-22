@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 #
 #  Copyright (C) 2015  Clifford Wolf <clifford@clifford.at>
 #
@@ -14,9 +14,6 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-
-from __future__ import division
-from __future__ import print_function
 
 import icebox
 import getopt, sys, os, re
@@ -64,15 +61,15 @@ mktiles = set()
 if mode8k:
     ic.setup_empty_8k()
 
-    for x in range(1, 3) + range(8-2, 8+3) + range(15, 19) + range(25-2, 25+3) + range(33-2, 33):
+    for x in list(range(1, 3)) + list(range(8-2, 8+3)) + list(range(15, 19)) + list(range(25-2, 25+3)) + list(range(33-2, 33)):
         mktiles.add((x, 0))
         mktiles.add((x, 33))
 
-    for x in range(0, 3) + range(8-1, 8+2) + range(25-1, 25+2) + range(33-2, 34):
+    for x in list(range(0, 3)) + list(range(8-1, 8+2)) + list(range(25-1, 25+2)) + list(range(33-2, 34)):
         mktiles.add((x, 1))
         mktiles.add((x, 32))
 
-    for x in range(0, 2) + range(8-1, 8+2) + range(25-1, 25+2) + range(34-2, 34):
+    for x in list(range(0, 2)) + list(range(8-1, 8+2)) + list(range(25-1, 25+2)) + list(range(34-2, 34)):
         mktiles.add((x, 2))
         mktiles.add((x, 31))
 
@@ -93,11 +90,11 @@ else:
         mktiles.add((x, 0))
         mktiles.add((x, 17))
 
-    for x in range(0, 6) + range(8, 14):
+    for x in list(range(0, 6)) + list(range(8, 14)):
         mktiles.add((x, 1))
         mktiles.add((x, 16))
 
-    for x in range(0, 5) + range(9, 14):
+    for x in list(range(0, 5)) + list(range(9, 14)):
         mktiles.add((x, 2))
         mktiles.add((x, 15))
 
@@ -566,7 +563,7 @@ if outdir is not None:
                 print_tile(x, y)
 
     print("Writing %s/%s..." % (outdir, chipdbfile), file=stdout)
-    os.system("python2 icebox_chipdb.py > %s/%s" % (outdir, chipdbfile))
+    os.system("python3 icebox_chipdb.py > %s/%s" % (outdir, chipdbfile))
 
     sys.stdout = stdout
     

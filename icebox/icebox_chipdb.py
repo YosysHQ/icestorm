@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 #
 #  Copyright (C) 2015  Clifford Wolf <clifford@clifford.at>
 #
@@ -14,9 +14,6 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-
-from __future__ import division
-from __future__ import print_function
 
 import icebox
 import getopt, sys, re
@@ -175,7 +172,7 @@ all_group_segments = ic.group_segments(all_tiles, connect_gb=False)
 print(".device %s %d %d %d" % (ic.device, ic.max_x+1, ic.max_y+1, len(all_group_segments)))
 print()
 
-for key in icebox.pinloc_db.keys():
+for key in list(icebox.pinloc_db.keys()):
     key_dev, key_package = key.split("-")
     if key_dev == ic.device:
         print(".pins %s" % (key_package))
@@ -247,10 +244,10 @@ def print_tile_nonrouting_bits(tile_type, idx):
         print(" ".join([x] + function_bits[x]))
     print()
 
-print_tile_nonrouting_bits("logic", ic.logic_tiles.keys()[0])
-print_tile_nonrouting_bits("io", ic.io_tiles.keys()[0])
-print_tile_nonrouting_bits("ramb", ic.ramb_tiles.keys()[0])
-print_tile_nonrouting_bits("ramt", ic.ramt_tiles.keys()[0])
+print_tile_nonrouting_bits("logic", list(ic.logic_tiles.keys())[0])
+print_tile_nonrouting_bits("io", list(ic.io_tiles.keys())[0])
+print_tile_nonrouting_bits("ramb", list(ic.ramb_tiles.keys())[0])
+print_tile_nonrouting_bits("ramt", list(ic.ramt_tiles.keys())[0])
 
 print(".extra_cell 0 0 WARMBOOT")
 for key in sorted(icebox.warmbootinfo_db[ic.device]):

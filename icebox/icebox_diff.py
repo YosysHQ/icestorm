@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 #
 #  Copyright (C) 2015  Clifford Wolf <clifford@clifford.at>
 #
@@ -14,9 +14,6 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-
-from __future__ import division
-from __future__ import print_function
 
 import icebox
 import sys
@@ -64,7 +61,7 @@ def explained_bits(db, tile):
     return text
 
 def diff_tiles(stmt, tiles1, tiles2):
-    for i in sorted(set(tiles1.keys() + tiles2.keys())):
+    for i in sorted(set(list(tiles1.keys()) + list(tiles2.keys()))):
         if not i in tiles1:
             print("+ %s %d %d" % (stmt, i[0], i[1]))
             for line in tiles2[i]:

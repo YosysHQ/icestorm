@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 #
 #  Copyright (C) 2015  Clifford Wolf <clifford@clifford.at>
 #
@@ -15,8 +15,6 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from __future__ import division
-from __future__ import print_function
 import iceboxdb
 import re, sys
 

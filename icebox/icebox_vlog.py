@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 #
 #  Copyright (C) 2015  Clifford Wolf <clifford@clifford.at>
 #
@@ -14,9 +14,6 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-
-from __future__ import division
-from __future__ import print_function
 
 import icebox
 import getopt, sys, re
@@ -211,7 +208,7 @@ for bit in ic.extra_bits:
             s2 = (pin_entry[0], pin_entry[1], "padin_%d" % pin_entry[2])
             extra_connections.append((s1, s2))
 
-for idx, tile in ic.io_tiles.items():
+for idx, tile in list(ic.io_tiles.items()):
     tc = icebox.tileconfig(tile)
     iocells_type[(idx[0], idx[1], 0)] = ["0" for i in range(6)]
     iocells_type[(idx[0], idx[1], 1)] = ["0" for i in range(6)]
@@ -834,7 +831,7 @@ if do_collect:
             vec_ports_dir[match.group(2)] = match.group(1)
         else:
             new_text_ports.add(port)
-    for port, direct in vec_ports_dir.items():
+    for port, direct in list(vec_ports_dir.items()):
         min_idx = vec_ports_min[port]
         max_idx = vec_ports_max[port]
         new_text_ports.add("%s [%d:%d] %s " % (direct, max_idx, min_idx, port))
@@ -874,7 +871,7 @@ if strip_comments:
     print()
 
 if do_collect:
-    for port, direct in vec_ports_dir.items():
+    for port, direct in list(vec_ports_dir.items()):
         min_idx = vec_ports_min[port]
         max_idx = vec_ports_max[port]
         for i in range(min_idx, max_idx+1):
