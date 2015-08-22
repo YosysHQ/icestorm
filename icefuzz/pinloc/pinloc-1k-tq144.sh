@@ -29,5 +29,5 @@ pins="
 
 set -ex
 make -f pinloc-1k-tq144.mk -j4
-python2 pinlocdb.py pinloc-1k-tq144_*.exp > pinloc-1k-tq144.txt
+python3 pinlocdb.py pinloc-1k-tq144_*.exp > pinloc-1k-tq144.txt
 

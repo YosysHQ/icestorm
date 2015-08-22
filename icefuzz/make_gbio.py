@@ -1,7 +1,5 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 
-from __future__ import division
-from __future__ import print_function
 from fuzzconfig import *
 import numpy as np
 import os
@@ -11,7 +9,7 @@ os.mkdir("work_gbio")
 
 for idx in range(num):
     with open("work_gbio/gbio_%02d.v" % idx, "w") as f:
-        glbs = np.random.permutation(range(8))
+        glbs = np.random.permutation(list(range(8)))
         print("""
             module top (
                 inout [7:0] pin,

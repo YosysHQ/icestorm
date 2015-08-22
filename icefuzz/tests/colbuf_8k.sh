@@ -2,7 +2,7 @@
 
 for f in colbuf_io_8k.work/*.exp colbuf_logic_8k.work/*.exp colbuf_ram_8k.work/*.exp; do
 	echo $f >&2
-	python2 colbuf.py $f
+	python3 colbuf.py $f
 done | sort -u > colbuf_8k.txt
 
 get_colbuf_data()

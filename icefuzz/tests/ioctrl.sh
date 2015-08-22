@@ -24,7 +24,7 @@ done
 set +x
 echo "--snip--"
 for pin in $pins; do
-	python2 ../ioctrl.py ioctrl_${pin}.exp
+	python3 ../ioctrl.py ioctrl_${pin}.exp
 done | tee ioctrl_db.txt
 echo "--snap--"
 

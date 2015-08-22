@@ -49,7 +49,7 @@ for OUTTYPE in 0000 0110 1010 1110 0101 1001 1101 \
 		EOT
 		bash ../../icecube.sh ${pf}.v > ${pf}.log 2>&1
 	fi
-	python2 ../../../icebox/icebox_vlog.py -P ${pf}.psb ${pf}.txt > ${pf}_out.v
+	python3 ../../../icebox/icebox_vlog.py -P ${pf}.psb ${pf}.txt > ${pf}_out.v
 	iverilog -D"VCDFILE=\"${pf}_tb.vcd\"" -DINTYPE=${INTYPE} -o ${pf}_tb \
 			-s testbench ../test_pio_tb.v ${pf}.v ${pf}_out.v $lattice_simlib 2> /dev/null
 	./${pf}_tb > ${pf}_tb.txt

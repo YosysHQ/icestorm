@@ -1,7 +1,5 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 
-from __future__ import division
-from __future__ import print_function
 import re, sys, os
 
 def cmp_bits(a, b):
@@ -92,7 +90,7 @@ def read_database(filename, tile_type):
         func_to_bits.setdefault(entry[1], set()).add(entry[0])
 
     bit_groups = dict()
-    for func, bits in func_to_bits.items():
+    for func, bits in list(func_to_bits.items()):
         for bit in bits:
             bit_groups[bit] = bit_groups.setdefault(bit, set()).union(bits)
 

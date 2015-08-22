@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # for f in colbuf_io.work/*.exp colbuf_logic.work/*.exp colbuf_ram.work/*.exp; do
-# 	python2 colbuf.py $f
+# 	python3 colbuf.py $f
 # done | sort -u > colbuf.txt
 
 get_colbuf_data()

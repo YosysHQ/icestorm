@@ -1,7 +1,5 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 
-from __future__ import division
-from __future__ import print_function
 from fuzzconfig import *
 import numpy as np
 import os

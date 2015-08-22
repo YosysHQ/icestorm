@@ -27,8 +27,8 @@ else
 	cp cached_ramb_8k.txt bitdata_ramb_8k.txt
 	cp cached_ramt_8k.txt bitdata_ramt_8k.txt
 endif
-	$(PYTHON) database.py
-	$(PYTHON) export.py
+	python3 database.py
+	python3 export.py
 	diff -U0 cached_io.txt bitdata_io.txt || cp -v bitdata_io.txt cached_io.txt
 	diff -U0 cached_logic.txt bitdata_logic.txt || cp -v bitdata_logic.txt cached_logic.txt
 	diff -U0 cached_ramb.txt bitdata_ramb.txt || cp -v bitdata_ramb.txt cached_ramb.txt
@@ -63,13 +63,13 @@ datafiles: $(addprefix data_,$(addsuffix .txt,$(TESTS)))
 define data_template
 data_$(1).txt: make_$(1).py ../icepack/icepack
 ifeq ($(EIGTHK),_8k)
-	ICE8KPINS=1 $(PYTHON) make_$(1).py
+	ICE8KPINS=1 python3 make_$(1).py
 	ICEDEV=hx8k-ct256 $(MAKE) -C work_$(1)
-	$(PYTHON) extract.py -8 work_$(1)/*.glb > $$@
+	python3 extract.py -8 work_$(1)/*.glb > $$@
 else
-	$(PYTHON) make_$(1).py
+	python3 make_$(1).py
 	$(MAKE) -C work_$(1)
-	$(PYTHON) extract.py work_$(1)/*.glb > $$@
+	python3 extract.py work_$(1)/*.glb > $$@
 endif
 endef
 

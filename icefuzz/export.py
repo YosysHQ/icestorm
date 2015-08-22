@@ -1,7 +1,4 @@
-#!/usr/bin/python2
-
-from __future__ import division
-from __future__ import print_function
+#!/usr/bin/env python3
 
 with open("../icebox/iceboxdb.py", "w") as f:
     for i in [ "database_io", "database_logic", "database_ramb", "database_ramt", "database_ramb_8k", "database_ramt_8k" ]:
