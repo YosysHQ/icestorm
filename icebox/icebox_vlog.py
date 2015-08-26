@@ -279,7 +279,6 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
         if match:
             idx = (s[0], s[1], int(match.group(1)))
             p = "io_%d_%d_%d" % idx
-            net_segs.add(p)
             if lookup_pins or pcf_data:
                 for entry in ic.pinloc_db():
                     if idx[0] == entry[1] and idx[1] == entry[2] and idx[2] == entry[3]:
