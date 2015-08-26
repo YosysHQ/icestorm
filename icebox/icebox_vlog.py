@@ -95,10 +95,11 @@ for o, a in opts:
                     p = line[1]
                     if o == "-P":
                         p = p.lower()
-                        p = p.replace("_ibuf", "")
-                        p = p.replace("_obuft", "")
-                        p = p.replace("_obuf", "")
-                        p = p.replace("_gb_io", "")
+                        p = re.sub(r"_ibuf$", "", p)
+                        p = re.sub(r"_obuft$", "", p)
+                        p = re.sub(r"_obuf$", "", p)
+                        p = re.sub(r"_gb_io$", "", p)
+                        p = re.sub(r"_pad(_[0-9]+|)$", r"\1", p)
                     portnames.add(p)
                     if not re.match(r"[a-zA-Z_][a-zA-Z0-9_]*$", p):
                         p = "\\%s " % p
