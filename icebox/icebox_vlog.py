@@ -290,7 +290,7 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
                             p = pcf_data[(entry[1], entry[2], entry[3])]
                             unmatched_ports.discard(p)
                         elif lookup_pins:
-                            p = "pin_%d" % entry[0]
+                            p = "pin_%s" % entry[0]
             if not renamed_net_to_port:
                 n = p
                 if idx in iocells_in and idx not in iocells_out:
