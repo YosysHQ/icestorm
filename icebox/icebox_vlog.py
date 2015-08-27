@@ -755,15 +755,15 @@ for lut in luts_queue:
     tile = ic.logic_tiles[(lut[0], lut[1])]
     lut_bits = icebox.get_lutff_lut_bits(tile, lut[2])
     seq_bits = icebox.get_lutff_seq_bits(tile, lut[2])
-    net_in0 = seg_to_net((lut[0], lut[1], "lutff_%d/in_0" % lut[2]), "0")
-    net_in1 = seg_to_net((lut[0], lut[1], "lutff_%d/in_1" % lut[2]), "0")
-    net_in2 = seg_to_net((lut[0], lut[1], "lutff_%d/in_2" % lut[2]), "0")
-    net_in3 = seg_to_net((lut[0], lut[1], "lutff_%d/in_3" % lut[2]), "0")
+    net_in0 = seg_to_net((lut[0], lut[1], "lutff_%d/in_0" % lut[2]), "1'b0")
+    net_in1 = seg_to_net((lut[0], lut[1], "lutff_%d/in_1" % lut[2]), "1'b0")
+    net_in2 = seg_to_net((lut[0], lut[1], "lutff_%d/in_2" % lut[2]), "1'b0")
+    net_in3 = seg_to_net((lut[0], lut[1], "lutff_%d/in_3" % lut[2]), "1'b0")
     net_out = seg_to_net((lut[0], lut[1], "lutff_%d/out" % lut[2]))
     if seq_bits[0] == "1":
         net_cout = seg_to_net((lut[0], lut[1], "lutff_%d/cout" % lut[2]))
-        net_in1 = seg_to_net((lut[0], lut[1], "lutff_%d/in_1" % lut[2]), "0")
-        net_in2 = seg_to_net((lut[0], lut[1], "lutff_%d/in_2" % lut[2]), "0")
+        net_in1 = seg_to_net((lut[0], lut[1], "lutff_%d/in_1" % lut[2]), "1'b0")
+        net_in2 = seg_to_net((lut[0], lut[1], "lutff_%d/in_2" % lut[2]), "1'b0")
         if lut[2] == 0:
             net_cin = seg_to_net((lut[0], lut[1], "carry_in_mux"))
             if icebox.get_carry_cascade_bit(tile) == "0":
@@ -773,7 +773,7 @@ for lut in luts_queue:
                 if not strip_comments:
                     text_wires.append("")
         else:
-            net_cin = seg_to_net((lut[0], lut[1], "lutff_%d/cout" % (lut[2]-1)), "0")
+            net_cin = seg_to_net((lut[0], lut[1], "lutff_%d/cout" % (lut[2]-1)), "1'b0")
         carry_assigns.append([net_cout, "/* CARRY %2d %2d %2d */ (%s & %s) | ((%s | %s) & %s)" %
                 (lut[0], lut[1], lut[2], net_in1, net_in2, net_in1, net_in2, net_cin)])
     if seq_bits[1] == "1":
@@ -782,15 +782,15 @@ for lut in luts_queue:
         if not strip_comments:
             text_wires.append("// FF %s" % (lut,))
             text_wires.append("")
-        net_cen = seg_to_net((lut[0], lut[1], "lutff_global/cen"), "1")
-        net_clk = seg_to_net((lut[0], lut[1], "lutff_global/clk"), "0")
-        net_sr  = seg_to_net((lut[0], lut[1], "lutff_global/s_r"), "0")
+        net_cen = seg_to_net((lut[0], lut[1], "lutff_global/cen"), "1'b1")
+        net_clk = seg_to_net((lut[0], lut[1], "lutff_global/clk"), "1'b0")
+        net_sr  = seg_to_net((lut[0], lut[1], "lutff_global/s_r"), "1'b0")
         if seq_bits[3] == "0":
-            always_stmts.append("/* FF %2d %2d %2d */ always @(%sedge %s) if (%s) %s <= %s ? %s : %s;" %
+            always_stmts.append("/* FF %2d %2d %2d */ always @(%sedge %s) if (%s) %s <= %s ? 1'b%s : %s;" %
                     (lut[0], lut[1], lut[2], "neg" if icebox.get_negclk_bit(tile) == "1" else "pos",
                     net_clk, net_cen, net_out, net_sr, seq_bits[2], n))
         else:
-            always_stmts.append("/* FF %2d %2d %2d */ always @(%sedge %s, posedge %s) if (%s) %s <= %s; else if (%s) %s <= %s;" %
+            always_stmts.append("/* FF %2d %2d %2d */ always @(%sedge %s, posedge %s) if (%s) %s <= 1'b%s; else if (%s) %s <= %s;" %
                     (lut[0], lut[1], lut[2], "neg" if icebox.get_negclk_bit(tile) == "1" else "pos",
                     net_clk, net_sr, net_sr, net_out, seq_bits[2], net_cen, net_out, n))
         wire_to_reg.add(net_out)
@@ -802,7 +802,7 @@ for lut in luts_queue:
     else:
         def make_lut_expr(bits, sigs):
             if not sigs:
-                return "%s" % bits[0]
+                return "1'b%s" % bits[0]
             l_expr = make_lut_expr(bits[0:len(bits)//2], sigs[1:])
             h_expr = make_lut_expr(bits[len(bits)//2:len(bits)], sigs[1:])
             if h_expr == l_expr: return h_expr
