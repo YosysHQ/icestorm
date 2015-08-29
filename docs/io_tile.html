@@ -72,7 +72,7 @@ is first routed to one of 16 local tracks in the IO tile and then from the local
 </p>
 
 <p>
-The <tt>io_global/latch</tt> signal is shared among all IO tiles on an edge of the chip and is driven by <tt>wire_gbuf/in</tt>
+The <tt>io_global/latch</tt> signal is shared among all IO tiles on an edge of the chip and is driven by <tt>fabout</tt>
 from one dedicated IO tile on that edge. For the HX1K chips the tiles driving the <tt>io_global/latch</tt> signal are:
 (0, 7), (13, 10), (5, 0), and (8, 17)
 </p>
@@ -297,7 +297,7 @@ format to represent the corresponding configuration bits:
 
 <p>
 Signals internal to the FPGA can also be routed to the global nets. This is done by routing the signal
-to the <tt>wire_gbuf/in</tt> net on an IO tile. The same set of I/O tiles is used for this, but in this
+to the <tt>fabout</tt> net on an IO tile. The same set of I/O tiles is used for this, but in this
 case each of the I/O tiles corresponds to a different global net:
 </p>
 
@@ -345,7 +345,7 @@ IO columns.
 
 <p>
 The <tt>SB_WARMBOOT</tt> primitive in iCE40 FPGAs has three inputs and no outputs. The three inputs of that cell
-are driven by the <tt>wire_gbuf/in</tt> signal from three IO tiles. In HX1K chips the tiles connected to the
+are driven by the <tt>fabout</tt> signal from three IO tiles. In HX1K chips the tiles connected to the
 <tt>SB_WARMBOOT</tt> primitive are:
 </p>
 
@@ -458,7 +458,7 @@ follows (bits listed from LSB to MSB):
 </p>
 
 <p>
-The PLL inputs are routed to the PLL via the <tt>wire_gbuf/in</tt> signal from various IO tiles. The non-clock
+The PLL inputs are routed to the PLL via the <tt>fabout</tt> signal from various IO tiles. The non-clock
 PLL outputs are routed via otherwise unused <tt>neigh_op_*</tt> signals in fabric corners. For example in case
 of the 1k chip:
 </p>
@@ -466,23 +466,23 @@ of the 1k chip:
 <p align="center">
 <table cellpadding="3" border>
 <tr><th>Tile</th><th>Net-Segment</th><th>SB_PLL40_* Port Name</th></tr>
-<tr><td>0 1</td><td><tt>wire_gbuf/in</tt></td><td rowspan="1"><tt>REFERENCECLK</tt></td></tr>
-<tr><td>0 2</td><td><tt>wire_gbuf/in</tt></td><td rowspan="1"><tt>EXTFEEDBACK</tt></td></tr>
-<tr><td>0 4</td><td><tt>wire_gbuf/in</tt></td><td rowspan="8"><tt>DYNAMICDELAY</tt></td></tr>
-<tr><td>0 5</td><td><tt>wire_gbuf/in</tt></td></tr>
-<tr><td>0 6</td><td><tt>wire_gbuf/in</tt></td></tr>
-<tr><td>0 10</td><td><tt>wire_gbuf/in</tt></td></tr>
-<tr><td>0 11</td><td><tt>wire_gbuf/in</tt></td></tr>
-<tr><td>0 12</td><td><tt>wire_gbuf/in</tt></td></tr>
-<tr><td>0 13</td><td><tt>wire_gbuf/in</tt></td></tr>
-<tr><td>0 14</td><td><tt>wire_gbuf/in</tt></td></tr>
+<tr><td>0 1</td><td><tt>fabout</tt></td><td rowspan="1"><tt>REFERENCECLK</tt></td></tr>
+<tr><td>0 2</td><td><tt>fabout</tt></td><td rowspan="1"><tt>EXTFEEDBACK</tt></td></tr>
+<tr><td>0 4</td><td><tt>fabout</tt></td><td rowspan="8"><tt>DYNAMICDELAY</tt></td></tr>
+<tr><td>0 5</td><td><tt>fabout</tt></td></tr>
+<tr><td>0 6</td><td><tt>fabout</tt></td></tr>
+<tr><td>0 10</td><td><tt>fabout</tt></td></tr>
+<tr><td>0 11</td><td><tt>fabout</tt></td></tr>
+<tr><td>0 12</td><td><tt>fabout</tt></td></tr>
+<tr><td>0 13</td><td><tt>fabout</tt></td></tr>
+<tr><td>0 14</td><td><tt>fabout</tt></td></tr>
 <tr><td>1 1</td><td><tt>neigh_op_bnl_1</tt></td><td rowspan="1"><tt>LOCK</tt></td></tr>
-<tr><td>1 0</td><td><tt>wire_gbuf/in</tt></td><td rowspan="1"><tt>BYPASS</tt></td></tr>
-<tr><td>2 0</td><td><tt>wire_gbuf/in</tt></td><td rowspan="1"><tt>RESETB</tt></td></tr>
-<tr><td>5 0</td><td><tt>wire_gbuf/in</tt></td><td rowspan="1"><tt>LATCHINPUTVALUE</tt></td></tr>
+<tr><td>1 0</td><td><tt>fabout</tt></td><td rowspan="1"><tt>BYPASS</tt></td></tr>
+<tr><td>2 0</td><td><tt>fabout</tt></td><td rowspan="1"><tt>RESETB</tt></td></tr>
+<tr><td>5 0</td><td><tt>fabout</tt></td><td rowspan="1"><tt>LATCHINPUTVALUE</tt></td></tr>
 <tr><td>12 1</td><td><tt>neigh_op_bnl_1</tt></td><td rowspan="1"><tt>SDO</tt></td></tr>
-<tr><td>4 0</td><td><tt>wire_gbuf/in</tt></td><td rowspan="1"><tt>SDI</tt></td></tr>
-<tr><td>5 0</td><td><tt>wire_gbuf/in</tt></td><td rowspan="1"><tt>SCLK</tt></td></tr>
+<tr><td>4 0</td><td><tt>fabout</tt></td><td rowspan="1"><tt>SDI</tt></td></tr>
+<tr><td>5 0</td><td><tt>fabout</tt></td><td rowspan="1"><tt>SCLK</tt></td></tr>
 </table>
 </p>
 
