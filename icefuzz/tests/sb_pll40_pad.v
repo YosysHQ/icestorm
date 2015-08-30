@@ -1,5 +1,5 @@
 module top(
-	input   REFERENCECLK,
+	input   PACKAGEPIN,
 	output  PLLOUTCORE,
 	output  PLLOUTGLOBAL,
 	input   EXTFEEDBACK,
@@ -14,7 +14,7 @@ module top(
 	input   SDI,
 	input   SCLK
 );
-	SB_PLL40_CORE #(
+	SB_PLL40_PAD #(
 		.FEEDBACK_PATH("DELAY"),
 		// .FEEDBACK_PATH("SIMPLE"),
 		// .FEEDBACK_PATH("PHASE_AND_DELAY"),
@@ -38,10 +38,10 @@ module top(
 		.DIVF(7'b0000000),
 		.DIVQ(3'b001),
 		.FILTER_RANGE(3'b000),
-		.ENABLE_ICEGATE(1'b0),
+		 .ENABLE_ICEGATE(1'b0),
 		.TEST_MODE(1'b0)
 	) uut (
-		.REFERENCECLK   (REFERENCECLK   ),
+		.PACKAGEPIN     (PACKAGEPIN     ),
 		.PLLOUTCORE     (PLLOUTCORE     ),
 		.PLLOUTGLOBAL   (PLLOUTGLOBAL   ),
 		.EXTFEEDBACK    (EXTFEEDBACK    ),
