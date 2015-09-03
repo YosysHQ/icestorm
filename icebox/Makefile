@@ -16,6 +16,7 @@ clean:
 
 install: all
 	mkdir -p $(DESTDIR)/share/icebox
+	mkdir -p $(DESTDIR)/bin
 	cp chipdb-1k.txt     $(DESTDIR)/share/icebox/
 	cp chipdb-8k.txt     $(DESTDIR)/share/icebox/
 	cp icebox.py         $(DESTDIR)/bin/icebox.py
