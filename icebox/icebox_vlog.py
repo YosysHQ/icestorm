@@ -699,6 +699,12 @@ for tile in ic.ramb_tiles:
 for tile in ic.ramb_tiles:
     ramb_config = icebox.tileconfig(ic.tile(tile[0], tile[1]))
     ramt_config = icebox.tileconfig(ic.tile(tile[0], tile[1]+1))
+    if ic.device == "8k":
+        negclk_rd = icebox.get_negclk_bit(ic.tile(tile[0], tile[1])) == "1"
+        negclk_wr = icebox.get_negclk_bit(ic.tile(tile[0], tile[1]+1)) == "1"
+    else:
+        negclk_wr = icebox.get_negclk_bit(ic.tile(tile[0], tile[1])) == "1"
+        negclk_rd = icebox.get_negclk_bit(ic.tile(tile[0], tile[1]+1)) == "1"
     def get_ram_config(name):
         assert name in ram_config_bitidx
         if ram_config_bitidx[name][0] == 'B':
@@ -723,7 +729,7 @@ for tile in ic.ramb_tiles:
     if get_ram_config('PowerUp') == (ic.device == "8k"):
         if not strip_comments:
             text_func.append("// RAM TILE %d %d" % tile)
-        text_func.append("SB_RAM40_4K #(");
+        text_func.append("SB_RAM40_4K%s%s #(" % ("NR" if negclk_rd else "", "NW" if negclk_wr else ""));
         text_func.append("  .READ_MODE(%d)," % ((1 if get_ram_config('CBIT_2') else 0) + (2 if get_ram_config('CBIT_3') else 0)));
         text_func.append("  .WRITE_MODE(%d)," % ((1 if get_ram_config('CBIT_0') else 0) + (2 if get_ram_config('CBIT_1') else 0)));
         for i in range(16):
@@ -736,10 +742,10 @@ for tile in ic.ramb_tiles:
         text_func.append("  .RDATA(%s),"  % get_ram_wire('RDATA', 15, 0, "-"))
         text_func.append("  .WE(%s),"  % get_ram_wire('WE', 0, 0))
         text_func.append("  .WCLKE(%s),"  % get_ram_wire('WCLKE', 0, 0, "1'b1"))
-        text_func.append("  .WCLK(%s),"  % get_ram_wire('WCLK', 0, 0))
+        text_func.append("  .WCLK%s(%s),"  % ("N" if negclk_wr else "", get_ram_wire('WCLK', 0, 0)))
         text_func.append("  .RE(%s),"  % get_ram_wire('RE', 0, 0))
         text_func.append("  .RCLKE(%s),"  % get_ram_wire('RCLKE', 0, 0, "1'b1"))
-        text_func.append("  .RCLK(%s)"  % get_ram_wire('RCLK', 0, 0))
+        text_func.append("  .RCLK%s(%s)"  % ("N" if negclk_rd else "", get_ram_wire('RCLK', 0, 0)))
         text_func.append(");")
         text_func.append("")
 
