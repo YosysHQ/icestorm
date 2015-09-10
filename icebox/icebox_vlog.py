@@ -137,7 +137,7 @@ luts_queue = set()
 text_func = list()
 failed_drivers_check = list()
 
-netidx = [0]
+netidx = [0, 0]
 nets = dict()
 seg2net = dict()
 
@@ -349,6 +349,11 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
 def seg_to_net(seg, default=None):
     if seg not in seg2net:
         if default is not None:
+            if default == "-":
+                n = "open_%d" % netidx[1]
+                netidx[1] += 1
+                text_wires.append("wire %s;" % n)
+                return n
             return default
         n = next_netname()
         nets[n] = set([seg])
@@ -711,8 +716,7 @@ for tile in ic.ramb_tiles:
                 n = "ram/" + name
             b = seg_to_net((tile[0], tile[1], n), default)
             b = seg_to_net((tile[0], tile[1]+1, n), b)
-            if len(wire_bits) != 0 or b != default or i == lsb:
-                wire_bits.append(b)
+            wire_bits.append(b)
         if len(wire_bits) > 1:
             return "{%s}" % ", ".join(wire_bits)
         return wire_bits[0]
@@ -729,7 +733,7 @@ for tile in ic.ramb_tiles:
         text_func.append("  .RADDR(%s),"  % get_ram_wire('RADDR', 10, 0))
         text_func.append("  .MASK(%s),"  % get_ram_wire('MASK', 15, 0))
         text_func.append("  .WDATA(%s),"  % get_ram_wire('WDATA', 15, 0))
-        text_func.append("  .RDATA(%s),"  % get_ram_wire('RDATA', 15, 0))
+        text_func.append("  .RDATA(%s),"  % get_ram_wire('RDATA', 15, 0, "-"))
         text_func.append("  .WE(%s),"  % get_ram_wire('WE', 0, 0))
         text_func.append("  .WCLKE(%s),"  % get_ram_wire('WCLKE', 0, 0, "1'b1"))
         text_func.append("  .WCLK(%s),"  % get_ram_wire('WCLK', 0, 0))
