@@ -212,9 +212,10 @@ for filename in txt_inputs:
         celltype = None
         for line in f:
             line = line.split()
-            if len(len) > 1:
+            if len(line) > 1:
                 if line[0] == "CELL":
                     celltype = line[1]
+                    database.setdefault(celltype, set())
                 else:
                     database[celltype].add(tuple(line))
 

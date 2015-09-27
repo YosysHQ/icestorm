@@ -38,9 +38,15 @@ endif
 
 timings:
 ifeq ($(EIGTHK),_8k)
+	cp tmedges_8k.txt tmedges.tmp
+	for f in work_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
+	sort -u tmedges.tmp > tmedges_8k.txt && rm -f tmedges.tmp
 	python3 timings.py -t timings_8k.txt work_*/*.sdf > timings_8k.new
 	mv timings_8k.new timings_8k.txt
 else
+	cp tmedges_1k.txt tmedges.tmp
+	for f in work_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
+	sort -u tmedges.tmp > tmedges_1k.txt && rm -f tmedges.tmp
 	python3 timings.py -t timings_1k.txt work_*/*.sdf > timings_1k.new
 	mv timings_1k.new timings_1k.txt
 endif
