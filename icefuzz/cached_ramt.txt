@@ -82,6 +82,7 @@
 (1 13) routing glb_netwk_5 <X> glb2local_3
 (1 13) routing glb_netwk_6 <X> glb2local_3
 (1 13) routing glb_netwk_7 <X> glb2local_3
+(1 14) Enable bit of Mux _global_links/set_rst_mux => glb_netwk_0 wire_bram/ram/RE
 (1 14) Enable bit of Mux _global_links/set_rst_mux => glb_netwk_2 wire_bram/ram/RE
 (1 14) Enable bit of Mux _global_links/set_rst_mux => glb_netwk_4 wire_bram/ram/RE
 (1 14) Enable bit of Mux _global_links/set_rst_mux => glb_netwk_6 wire_bram/ram/RE

@@ -178,6 +178,19 @@ def rewrite_celltype(celltype):
     return celltype
 
 
+def add_entry(celltype, entry):
+    entry = sdf_to_string(entry)
+    entry = entry.replace("(posedge ", "posedge:")
+    entry = entry.replace("(negedge ", "negedge:")
+    entry = entry.replace("(", "")
+    entry = entry.replace(")", "")
+    entry = entry.split()
+    if celltype.count("FEEDBACK") == 0 and entry[0] == "IOPATH" and entry[2].startswith("PLLOUT"):
+        entry[3] = "*:*:*"
+        entry[4] = "*:*:*"
+    database[celltype].add(tuple(entry))
+
+
 ###########################################
 # Parse SDF input files
 
@@ -200,15 +213,6 @@ for filename in sdf_inputs:
 
         celltype = None
 
-        def add_entry(entry):
-            entry = sdf_to_string(entry)
-            entry = entry.replace("(posedge ", "posedge:")
-            entry = entry.replace("(negedge ", "negedge:")
-            entry = entry.replace("(", "")
-            entry = entry.replace(")", "")
-            entry = entry.split()
-            database[celltype].add(tuple(entry))
-
         for stmt in cell:
             if stmt[0] == "CELLTYPE":
                 celltype = rewrite_celltype(stmt[1][1:-1])
@@ -218,11 +222,11 @@ for filename in sdf_inputs:
                 assert stmt[1][0] == "ABSOLUTE"
                 for entry in stmt[1][1:]:
                     assert entry[0] == "IOPATH"
-                    add_entry(entry)
+                    add_entry(celltype, entry)
 
             if stmt[0] == "TIMINGCHECK":
                 for entry in stmt[1:]:
-                    add_entry(entry)
+                    add_entry(celltype, entry)
 
 
 ###########################################
@@ -239,7 +243,7 @@ for filename in txt_inputs:
                     celltype = rewrite_celltype(line[1])
                     database.setdefault(celltype, set())
                 else:
-                    database[celltype].add(tuple(line))
+                    add_entry(celltype, line)
 
 
 ###########################################
@@ -321,11 +325,7 @@ if output_mode == "txt":
 if output_mode == "html":
     print("<h1>IceStorm Timing Model: %s</h1>" % label)
 
-    print("<div style=\"-webkit-column-count: 3; -moz-column-count: 3; column-count: 3;\"><ul style=\"margin:0\">")
-    for celltype in sorted(database, key=alphanum_key):
-        print("<li><a href=\"#%s\">%s</a></li>" % (celltype, celltype))
-    print("</ul></div>")
-
+    edge_celltypes = set()
     source_by_sink_desc = dict()
     sink_by_source_desc = dict()
 
@@ -334,14 +334,34 @@ if output_mode == "html":
             source, sink = line.split()
             source_cell, source_port = source.split(".")
             sink_cell, sink_port = sink.split(".")
+
             source_cell = rewrite_celltype(source_cell)
             sink_cell = rewrite_celltype(sink_cell)
+
+            if source_cell in ["GND", "VCC"]:
+                continue
+
             source_by_sink_desc.setdefault(sink_cell, set())
             sink_by_source_desc.setdefault(source_cell, set())
+
             source_by_sink_desc[sink_cell].add((sink_port, source_cell, source_port))
             sink_by_source_desc[source_cell].add((source_port, sink_cell, sink_port))
 
+            edge_celltypes.add(source_cell)
+            edge_celltypes.add(sink_cell)
+
+    print("<div style=\"-webkit-column-count: 3; -moz-column-count: 3; column-count: 3;\"><ul style=\"margin:0\">")
     for celltype in sorted(database, key=alphanum_key):
+        if celltype not in edge_celltypes:
+            print("### ignoring unused cell type %s" % celltype, file=sys.stderr)
+        else:
+            print("<li><a href=\"#%s\">%s</a></li>" % (celltype, celltype))
+    print("</ul></div>")
+
+    for celltype in sorted(database, key=alphanum_key):
+        if celltype not in edge_celltypes:
+            continue
+
         print("<p><hr></p>")
         print("<h2><a name=\"%s\">%s</a></h2>" % (celltype, celltype))
 

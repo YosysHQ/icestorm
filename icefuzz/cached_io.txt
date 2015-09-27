@@ -12,6 +12,7 @@
 (0 13) Enable bit of Mux _out_links/OutMux0_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_6
 (0 14) Enable bit of Mux _out_links/OutMux7_3 => wire_io_cluster/io_1/D_IN_1 span4_horz_r_7
 (0 14) Enable bit of Mux _out_links/OutMux7_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_b_7
+(0 15) Enable bit of Mux _out_links/OutMux5_3 => wire_io_cluster/io_1/D_IN_1 span4_horz_46
 (0 15) Enable bit of Mux _out_links/OutMux5_3 => wire_io_cluster/io_1/D_IN_1 span4_vert_46
 (0 2) Enable bit of Mux _out_links/OutMux7_0 => wire_io_cluster/io_0/D_IN_0 span4_horz_r_4
 (0 2) Enable bit of Mux _out_links/OutMux7_0 => wire_io_cluster/io_0/D_IN_0 span4_vert_b_4
@@ -52,6 +53,7 @@
 (1 4) Enable bit of Mux _out_links/OutMux3_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_26
 (1 4) Enable bit of Mux _out_links/OutMux3_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_26
 (1 5) Enable bit of Mux _out_links/OutMux1_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_10
+(1 5) Enable bit of Mux _out_links/OutMux1_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_10
 (1 6) Enable bit of Mux _out_links/OutMux8_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_r_9
 (1 6) Enable bit of Mux _out_links/OutMux8_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_b_9
 (1 7) Enable bit of Mux _out_links/OutMux6_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_r_1

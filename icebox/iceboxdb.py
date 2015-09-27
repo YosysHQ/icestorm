@@ -705,6 +705,7 @@ B7[1]	buffer	wire_io_cluster/io_0/D_IN_1	span4_horz_r_1
 B7[2]	buffer	wire_io_cluster/io_0/D_IN_1	span4_horz_r_13
 B6[0]	buffer	wire_io_cluster/io_0/D_IN_1	span4_horz_r_5
 B6[1]	buffer	wire_io_cluster/io_0/D_IN_1	span4_horz_r_9
+B5[1]	buffer	wire_io_cluster/io_0/D_IN_1	span4_vert_10
 B4[0]	buffer	wire_io_cluster/io_0/D_IN_1	span4_vert_18
 B5[0]	buffer	wire_io_cluster/io_0/D_IN_1	span4_vert_2
 B4[1]	buffer	wire_io_cluster/io_0/D_IN_1	span4_vert_26
@@ -750,6 +751,7 @@ B13[1]	buffer	wire_io_cluster/io_1/D_IN_1	span4_horz_14
 B12[0]	buffer	wire_io_cluster/io_1/D_IN_1	span4_horz_22
 B12[1]	buffer	wire_io_cluster/io_1/D_IN_1	span4_horz_30
 B13[2]	buffer	wire_io_cluster/io_1/D_IN_1	span4_horz_38
+B15[0]	buffer	wire_io_cluster/io_1/D_IN_1	span4_horz_46
 B13[0]	buffer	wire_io_cluster/io_1/D_IN_1	span4_horz_6
 B14[1]	buffer	wire_io_cluster/io_1/D_IN_1	span4_horz_r_11
 B15[2]	buffer	wire_io_cluster/io_1/D_IN_1	span4_horz_r_15
@@ -3939,6 +3941,7 @@ B6[21],B6[22],!B6[23],!B6[24],B7[21]	buffer	bnr_op_7	lc_trk_g1_7
 !B10[0],B10[1],!B11[0],!B11[1]	buffer	glb_netwk_0	glb2local_2
 !B12[0],B12[1],!B13[0],!B13[1]	buffer	glb_netwk_0	glb2local_3
 !B2[0],!B2[1],B2[2],!B3[0],!B3[2]	buffer	glb_netwk_0	wire_bram/ram/RCLK
+!B14[0],B14[1],!B15[0],!B15[1]	buffer	glb_netwk_0	wire_bram/ram/RE
 !B6[0],B6[1],B7[0],!B7[1]	buffer	glb_netwk_1	glb2local_0
 !B8[0],B8[1],B9[0],!B9[1]	buffer	glb_netwk_1	glb2local_1
 !B10[0],B10[1],B11[0],!B11[1]	buffer	glb_netwk_1	glb2local_2
