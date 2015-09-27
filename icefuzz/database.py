@@ -2,12 +2,9 @@
 
 import re, sys, os
 
-def cmp_bits(a, b):
+def sort_bits_key(a):
     if a[0] == "!": a = a[1:]
-    if b[0] == "!": b = b[1:]
-    a = re.sub(r"\d+", lambda m: "%02d" % int(m.group(0)), a)
-    b = re.sub(r"\d+", lambda m: "%02d" % int(m.group(0)), b)
-    return cmp(a, b)
+    return re.sub(r"\d+", lambda m: "%02d" % int(m.group(0)), a)
 
 def read_database(filename, tile_type):
     raw_db = list()
@@ -107,7 +104,7 @@ def read_database(filename, tile_type):
     database = list()
     for func in sorted(func_to_bits):
         bits = func_to_bits[func]
-        entry = (",".join(sorted(bits, cmp_bits)),) + func
+        entry = (",".join(sorted(bits, key=sort_bits_key)),) + func
         database.append(entry)
 
     return database

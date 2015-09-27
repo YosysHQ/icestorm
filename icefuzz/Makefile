@@ -17,7 +17,7 @@ TESTS += fflogic
 TESTS += ram40
 TESTS += pll
 
-EIGTHK = _8k
+# EIGTHK = _8k
 
 database: bitdata_io.txt bitdata_logic.txt bitdata_ramb$(EIGTHK).txt bitdata_ramt$(EIGTHK).txt
 ifeq ($(EIGTHK),_8k)
@@ -35,6 +35,15 @@ endif
 	diff -U0 cached_ramt.txt bitdata_ramt.txt || cp -v bitdata_ramt.txt cached_ramt.txt
 	diff -U0 cached_ramb_8k.txt bitdata_ramb_8k.txt || cp -v bitdata_ramb_8k.txt cached_ramb_8k.txt
 	diff -U0 cached_ramt_8k.txt bitdata_ramt_8k.txt || cp -v bitdata_ramt_8k.txt cached_ramt_8k.txt
+
+timings:
+ifeq ($(EIGTHK),_8k)
+	python3 timings.py -t timings_8k.txt work_*/*.sdf > timings_8k.new
+	mv timings_8k.new timings_8k.txt
+else
+	python3 timings.py -t timings_1k.txt work_*/*.sdf > timings_1k.new
+	mv timings_1k.new timings_1k.txt
+endif
 
 data_cached.txt: cached_io.txt cached_logic.txt cached_ramb$(EIGTHK).txt cached_ramt$(EIGTHK).txt
 	gawk '{ print "io", $$0; }' cached_io.txt > data_cached.new
