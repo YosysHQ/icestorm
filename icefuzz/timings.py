@@ -5,8 +5,9 @@ import getopt, sys, re
 database = dict()
 sdf_inputs = list()
 txt_inputs = list()
-output_sdf = False
-
+output_mode = "txt"
+label = "unknown"
+edgefile = None
 
 def usage():
     print("""
@@ -15,6 +16,12 @@ Usage: python3 timings.py [options] [sdf_file..]
     -t filename
         read TXT file
 
+    -l label
+        label for HTML file title
+
+    -h edgefile
+        output HTML, use specified edge file
+
     -s
         output SDF (not TXT) format
 """)
@@ -22,19 +29,29 @@ Usage: python3 timings.py [options] [sdf_file..]
 
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "t:s")
+    opts, args = getopt.getopt(sys.argv[1:], "t:l:h:s")
 except:
     usage()
 
 for o, a in opts:
     if o == "-t":
         txt_inputs.append(a)
+    elif o == "-l":
+        label = a
+    elif o == "-h":
+        output_mode = "html"
+        edgefile = a
     elif o == "-s":
-        output_sdf = True
+        output_mode = "sdf"
     else:
         usage()
 
 sdf_inputs += args
+
+
+convert = lambda text: int(text) if text.isdigit() else text.lower()
+alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
+alphanum_key_list = lambda l: [len(l)] + [ alphanum_key(s) for s in l ]
 
 
 def skip_whitespace(text, cursor):
@@ -130,6 +147,37 @@ def uniquify_cells(expr):
     return filtered_expr
 
 
+def rewrite_celltype(celltype):
+    if celltype.startswith("PRE_IO_PIN_TYPE_"):
+        celltype = "PRE_IO_PIN_TYPE"
+
+    if celltype.startswith("Span4Mux"):
+        if celltype == "Span4Mux":
+            celltype = "Span4Mux_v4"
+        elif celltype == "Span4Mux_v":
+            celltype = "Span4Mux_v4"
+        elif celltype == "Span4Mux_h":
+            celltype = "Span4Mux_h4"
+        else:
+            match = re.match("Span4Mux_s(.*)_(h|v)", celltype)
+            if match:
+                celltype = "Span4Mux_%c%d" % (match.group(2), int(match.group(1)))
+
+    if celltype.startswith("Span12Mux"):
+        if celltype == "Span12Mux":
+            celltype = "Span12Mux_v12"
+        elif celltype == "Span12Mux_v":
+            celltype = "Span12Mux_v12"
+        elif celltype == "Span12Mux_h":
+            celltype = "Span12Mux_h12"
+        else:
+            match = re.match("Span12Mux_s(.*)_(h|v)", celltype)
+            if match:
+                celltype = "Span12Mux_%c%d" % (match.group(2), int(match.group(1)))
+
+    return celltype
+
+
 ###########################################
 # Parse SDF input files
 
@@ -163,33 +211,7 @@ for filename in sdf_inputs:
 
         for stmt in cell:
             if stmt[0] == "CELLTYPE":
-                celltype = stmt[1][1:-1]
-
-                if celltype.startswith("PRE_IO_PIN_TYPE_"):
-                    celltype = "PRE_IO_PIN_TYPE"
-
-                if celltype.startswith("Span4Mux"):
-                    if celltype == "Span4Mux":
-                        celltype = "Span4Mux_v4"
-                    elif celltype == "Span4Mux_v":
-                        celltype = "Span4Mux_v4"
-                    elif celltype == "Span4Mux_h":
-                        celltype = "Span4Mux_h4"
-                    else:
-                        match = re.match("Span4Mux_s(.*)_(h|v)", celltype)
-                        celltype = "Span4Mux_%c%d" % (match.group(2), int(match.group(1)))
-
-                if celltype.startswith("Span12Mux"):
-                    if celltype == "Span12Mux":
-                        celltype = "Span12Mux_v12"
-                    elif celltype == "Span12Mux_v":
-                        celltype = "Span12Mux_v12"
-                    elif celltype == "Span12Mux_h":
-                        celltype = "Span12Mux_h12"
-                    else:
-                        match = re.match("Span12Mux_s(.*)_(h|v)", celltype)
-                        celltype = "Span12Mux_%c%d" % (match.group(2), int(match.group(1)))
-
+                celltype = rewrite_celltype(stmt[1][1:-1])
                 database.setdefault(celltype, set())
 
             if stmt[0] == "DELAY":
@@ -214,7 +236,7 @@ for filename in txt_inputs:
             line = line.split()
             if len(line) > 1:
                 if line[0] == "CELL":
-                    celltype = line[1]
+                    celltype = rewrite_celltype(line[1])
                     database.setdefault(celltype, set())
                 else:
                     database[celltype].add(tuple(line))
@@ -223,11 +245,7 @@ for filename in txt_inputs:
 ###########################################
 # Create SDF output
 
-convert = lambda text: int(text) if text.isdigit() else text.lower()
-alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
-alphanum_key_list = lambda l: [len(l)] + [ alphanum_key(s) for s in l ]
-
-if output_sdf:
+if output_mode == "sdf":
     print("(DELAYFILE")
     print("  (SDFVERSION \"3.0\")")
     print("  (TIMESCALE 1ps)")
@@ -280,7 +298,7 @@ if output_sdf:
 ###########################################
 # Create TXT output
 
-else:
+if output_mode == "txt":
     for celltype in sorted(database, key=alphanum_key):
         print("CELL %s" % celltype)
         entries_lens = list()
@@ -295,4 +313,84 @@ else:
                 print("%s%-*s" % ("  " if i != 0 else "", entries_lens[i] if i != len(entry)-1 else 0, entry[i]), end="")
             print()
         print()
+
+
+###########################################
+# Create HTML output
+
+if output_mode == "html":
+    print("<h1>IceStorm Timing Model: %s</h1>" % label)
+
+    print("<div style=\"-webkit-column-count: 3; -moz-column-count: 3; column-count: 3;\"><ul style=\"margin:0\">")
+    for celltype in sorted(database, key=alphanum_key):
+        print("<li><a href=\"#%s\">%s</a></li>" % (celltype, celltype))
+    print("</ul></div>")
+
+    source_by_sink_desc = dict()
+    sink_by_source_desc = dict()
+
+    with open(edgefile, "r") as f:
+        for line in f:
+            source, sink = line.split()
+            source_cell, source_port = source.split(".")
+            sink_cell, sink_port = sink.split(".")
+            source_cell = rewrite_celltype(source_cell)
+            sink_cell = rewrite_celltype(sink_cell)
+            source_by_sink_desc.setdefault(sink_cell, set())
+            sink_by_source_desc.setdefault(source_cell, set())
+            source_by_sink_desc[sink_cell].add((sink_port, source_cell, source_port))
+            sink_by_source_desc[source_cell].add((source_port, sink_cell, sink_port))
+
+    for celltype in sorted(database, key=alphanum_key):
+        print("<p><hr></p>")
+        print("<h2><a name=\"%s\">%s</a></h2>" % (celltype, celltype))
+
+        if celltype in source_by_sink_desc:
+            print("<h3>Sources driving this cell type:</h3>")
+            print("<table width=\"600\" border>")
+            print("<tr><th>Input Port</th><th>Source Cell</th><th>Source Port</th></tr>")
+            for entry in sorted(source_by_sink_desc[celltype], key=alphanum_key_list):
+                print("<tr><td>%s</td><td><a href=\"#%s\">%s</a></td><td>%s</td></tr>" % (entry[0], entry[1], entry[1], entry[2]))
+            print("</table>")
+
+        if celltype in sink_by_source_desc:
+            print("<h3>Sinks driven by this cell type:</h3>")
+            print("<table width=\"600\" border>")
+            print("<tr><th>Output Port</th><th>Sink Cell</th><th>Sink Port</th></tr>")
+            for entry in sorted(sink_by_source_desc[celltype], key=alphanum_key_list):
+                print("<tr><td>%s</td><td><a href=\"#%s\">%s</a></td><td>%s</td></tr>" % (entry[0], entry[1], entry[1], entry[2]))
+            print("</table>")
+
+        delay_abs_entries = list()
+        timingcheck_entries = list()
+        for entry in sorted(database[celltype], key=alphanum_key_list):
+            if entry[0] == "IOPATH":
+                delay_abs_entries.append(entry)
+            else:
+                timingcheck_entries.append(entry)
+
+        if len(delay_abs_entries) > 0:
+            print("<h3>Propagation Delays:</h3>")
+            print("<table width=\"800\" border>")
+            print("<tr><th rowspan=\"2\">Input Port</th><th rowspan=\"2\">Output Port</th>")
+            print("<th colspan=\"3\">Low-High Transition</th><th colspan=\"3\">High-Low Transition</th></tr>")
+            print("<tr><th>Min</th><th>Typ</th><th>Max</th><th>Min</th><th>Typ</th><th>Max</th></tr>")
+            for entry in delay_abs_entries:
+                print("<tr><td>%s</td><td>%s</td>" % (entry[1].replace(":", " "), entry[2].replace(":", " ")), end="")
+                print("<td>%s</td><td>%s</td><td>%s</td>" % tuple(entry[3].split(":")), end="")
+                print("<td>%s</td><td>%s</td><td>%s</td>" % tuple(entry[4].split(":")), end="")
+                print("</tr>")
+            print("</table>")
+
+        if len(timingcheck_entries) > 0:
+            print("<h3>Timing Checks:</h3>")
+            print("<table width=\"800\" border>")
+            print("<tr><th rowspan=\"2\">Check Type</th><th rowspan=\"2\">Input Port</th>")
+            print("<th rowspan=\"2\">Output Port</th><th colspan=\"3\">Timing</th></tr>")
+            print("<tr><th>Min</th><th>Typ</th><th>Max</th></tr>")
+            for entry in timingcheck_entries:
+                print("<tr><td>%s</td><td>%s</td><td>%s</td>" % (entry[0], entry[1].replace(":", " "), entry[2].replace(":", " ")), end="")
+                print("<td>%s</td><td>%s</td><td>%s</td>" % tuple(entry[3].split(":")), end="")
+                print("</tr>")
+            print("</table>")
 
