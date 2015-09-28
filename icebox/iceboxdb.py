@@ -3971,6 +3971,7 @@ B14[0],B14[1],!B15[0],!B15[1]	buffer	glb_netwk_4	wire_bram/ram/RE
 !B10[0],B10[1],B11[0],B11[1]	buffer	glb_netwk_5	glb2local_2
 !B12[0],B12[1],B13[0],B13[1]	buffer	glb_netwk_5	glb2local_3
 !B2[0],B2[1],B2[2],B3[0],!B3[2]	buffer	glb_netwk_5	wire_bram/ram/RCLK
+B4[0],B4[1],!B5[0],!B5[1]	buffer	glb_netwk_5	wire_bram/ram/RCLKE
 B6[0],B6[1],!B7[0],B7[1]	buffer	glb_netwk_6	glb2local_0
 B8[0],B8[1],!B9[0],B9[1]	buffer	glb_netwk_6	glb2local_1
 B10[0],B10[1],!B11[0],B11[1]	buffer	glb_netwk_6	glb2local_2

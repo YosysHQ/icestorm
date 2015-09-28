@@ -2,6 +2,17 @@
 
 import getopt, sys, re
 
+ignore_cells = set([
+    "ADTTRIBUF", "CascadeBuf", "DL", "GIOBUG", "LUT_MUX", "MUX4",
+    "PLL40_2_FEEDBACK_PATH_DELAY", "PLL40_2_FEEDBACK_PATH_EXTERNAL",
+    "PLL40_2_FEEDBACK_PATH_PHASE_AND_DELAY", "PLL40_2_FEEDBACK_PATH_SIMPLE",
+    "PLL40_2F_FEEDBACK_PATH_DELAY", "PLL40_2F_FEEDBACK_PATH_EXTERNAL",
+    "PLL40_2F_FEEDBACK_PATH_PHASE_AND_DELAY", "PLL40_2F_FEEDBACK_PATH_SIMPLE",
+    "PLL40_FEEDBACK_PATH_DELAY", "PLL40_FEEDBACK_PATH_EXTERNAL",
+    "PLL40_FEEDBACK_PATH_PHASE_AND_DELAY", "PLL40_FEEDBACK_PATH_SIMPLE",
+    "PRE_IO_PIN_TYPE", "sync_clk_enable", "TRIBUF"
+])
+
 database = dict()
 sdf_inputs = list()
 txt_inputs = list()
@@ -247,6 +258,13 @@ for filename in txt_inputs:
 
 
 ###########################################
+# Filter database
+
+for celltype in ignore_cells:
+    del database[celltype]
+
+
+###########################################
 # Create SDF output
 
 if output_mode == "sdf":
@@ -337,6 +355,9 @@ if output_mode == "html":
 
             source_cell = rewrite_celltype(source_cell)
             sink_cell = rewrite_celltype(sink_cell)
+
+            assert source_cell not in ignore_cells
+            assert sink_cell not in ignore_cells
 
             if source_cell in ["GND", "VCC"]:
                 continue
