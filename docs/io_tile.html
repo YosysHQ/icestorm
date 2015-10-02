@@ -1,4 +1,27 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+.xtab {
+	margin-left: auto;
+	margin-right: auto;
+}
+.xtab td, .xtab th {
+	padding: 10px;
+	vertical-align: top;
+}
+.ctab {
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid gray;
+}
+.ctab td, .ctab th {
+	padding: 3px;
+	border: 1px solid gray;
+	vertical-align: baseline;
+}
+</style>
 <title>Project IceStorm &ndash; IO Tile Documentation</title>
+</head><body>
 <h1>Project IceStorm &ndash; IO Tile Documentation</h1>
 
 <p>
@@ -9,31 +32,31 @@ This is work in progress.</i>
 
 <h2>Span-4 and Span-12 Wires</h2>
 
-<p><a href="iosp.svg"><img style="float:right; padding:1em; padding-top:0" height="200" src="iosp.svg" border="0"></a></p>
+<p><a href="iosp.svg"><img alt="IO Tile Span-Wires" style="float:right; padding:1em; padding-top:0; border:0" height="200" src="iosp.svg"></a></p>
 
 <p>
 The image on the right shows the span-wires of a left (or right) io cell (click to enlarge).
 </p>
 
 <p>
-A left/right io cell has 16 connections named <tt>span4_vert_t_0</tt> to <tt>span4_vert_t_15</tt> on its top edge and
-16 connections named <tt>span4_vert_b_0</tt> to <tt>span4_vert_b_15</tt> on its bottom edge. The nets <tt>span4_vert_t_0</tt>
-to <tt>span4_vert_t_11</tt> are connected to <tt>span4_vert_b_4</tt> to <tt>span4_vert_b_15</tt>. The span-4 and span-12 wires
-of the adjacent logic cell are connected to the nets <tt>span4_horz_0</tt> to <tt>span4_horz_47</tt> and <tt>span12_horz_0</tt>
-to <tt>span12_horz_23</tt>.
+A left/right io cell has 16 connections named <span style="font-family:monospace">span4_vert_t_0</span> to <span style="font-family:monospace">span4_vert_t_15</span> on its top edge and
+16 connections named <span style="font-family:monospace">span4_vert_b_0</span> to <span style="font-family:monospace">span4_vert_b_15</span> on its bottom edge. The nets <span style="font-family:monospace">span4_vert_t_0</span>
+to <span style="font-family:monospace">span4_vert_t_11</span> are connected to <span style="font-family:monospace">span4_vert_b_4</span> to <span style="font-family:monospace">span4_vert_b_15</span>. The span-4 and span-12 wires
+of the adjacent logic cell are connected to the nets <span style="font-family:monospace">span4_horz_0</span> to <span style="font-family:monospace">span4_horz_47</span> and <span style="font-family:monospace">span12_horz_0</span>
+to <span style="font-family:monospace">span12_horz_23</span>.
 </p>
 
 <p>
-A top/bottom io cell has 16 connections named <tt>span4_vert_l_0</tt> to <tt>span4_vert_l_15</tt> on its top edge and
-16 connections named <tt>span4_vert_r_0</tt> to <tt>span4_vert_r_15</tt> on its bottom edge. The nets <tt>span4_vert_l_0</tt>
-to <tt>span4_vert_l_11</tt> are connected to <tt>span4_vert_r_4</tt> to <tt>span4_vert_r_15</tt>. The span-4 and span-12 wires
-of the adjacent logic cell are connected to the nets <tt>span4_vert_0</tt> to <tt>span4_vert_47</tt> and <tt>span12_vert_0</tt>
-to <tt>span12_vert_23</tt>.
+A top/bottom io cell has 16 connections named <span style="font-family:monospace">span4_vert_l_0</span> to <span style="font-family:monospace">span4_vert_l_15</span> on its top edge and
+16 connections named <span style="font-family:monospace">span4_vert_r_0</span> to <span style="font-family:monospace">span4_vert_r_15</span> on its bottom edge. The nets <span style="font-family:monospace">span4_vert_l_0</span>
+to <span style="font-family:monospace">span4_vert_l_11</span> are connected to <span style="font-family:monospace">span4_vert_r_4</span> to <span style="font-family:monospace">span4_vert_r_15</span>. The span-4 and span-12 wires
+of the adjacent logic cell are connected to the nets <span style="font-family:monospace">span4_vert_0</span> to <span style="font-family:monospace">span4_vert_47</span> and <span style="font-family:monospace">span12_vert_0</span>
+to <span style="font-family:monospace">span12_vert_23</span>.
 </p>
 
 <p>
 The vertical span4 wires of left/right io cells are connected "around the corner" to the horizontal span4 wires of the top/bottom
-io cells. For example <tt>span4_vert_b_0</tt> of IO cell (0 1) is connected to <tt>span4_horz_l_0</tt> (<tt>span4_horz_r_4</tt>)
+io cells. For example <span style="font-family:monospace">span4_vert_b_0</span> of IO cell (0 1) is connected to <span style="font-family:monospace">span4_horz_l_0</span> (<span style="font-family:monospace">span4_horz_r_4</span>)
 of IO cell (1 0).
 </p>
 
@@ -45,26 +68,24 @@ connecting IO tiles to each other are not pairwise crossed out.
 <h2>IO Blocks</h2>
 
 <p>
-Each IO tile contains two IO blocks. Each IO block essentially implements the <tt>SB_IO</tt>
+Each IO tile contains two IO blocks. Each IO block essentially implements the <span style="font-family:monospace">SB_IO</span>
 primitive from the Lattice iCE Technology Library.
 Some inputs are shared between the two IO blocks. The following table lists how the
-wires in the logic tile map to the <tt>SB_IO</tt> primitive ports:
+wires in the logic tile map to the <span style="font-family:monospace">SB_IO</span> primitive ports:
 </p>
 
-<p align="center">
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>SB_IO Port</th><th>IO Block 0</th><th>IO Block 1</th></tr>
-<tr><td>D_IN_0</td><td><tt>io_0/D_IN_0</tt></td><td><tt>io_1/D_IN_0</tt></td></tr>
-<tr><td>D_IN_1</td><td><tt>io_0/D_IN_1</tt></td><td><tt>io_1/D_IN_1</tt></td></tr>
-<tr><td>D_OUT_0</td><td><tt>io_0/D_OUT_0</tt></td><td><tt>io_1/D_OUT_0</tt></td></tr>
-<tr><td>D_OUT_1</td><td><tt>io_0/D_OUT_1</tt></td><td><tt>io_1/D_OUT_1</tt></td></tr>
-<tr><td>OUTPUT_ENABLE</td><td><tt>io_0/OUT_ENB</tt></td><td><tt>io_1/OUT_ENB</tt></td></tr>
-<tr><td>CLOCK_ENABLE</td><td colspan="2"><tt>io_global/cen</tt></td></tr>
-<tr><td>INPUT_CLK</td><td colspan="2"><tt>io_global/inclk</tt></td></tr>
-<tr><td>OUTPUT_CLK</td><td colspan="2"><tt>io_global/outclk</tt></td></tr>
-<tr><td>LATCH_INPUT_VALUE</td><td colspan="2"><tt>io_global/latch</tt></td></tr>
+<tr><td>D_IN_0</td><td><span style="font-family:monospace">io_0/D_IN_0</span></td><td><span style="font-family:monospace">io_1/D_IN_0</span></td></tr>
+<tr><td>D_IN_1</td><td><span style="font-family:monospace">io_0/D_IN_1</span></td><td><span style="font-family:monospace">io_1/D_IN_1</span></td></tr>
+<tr><td>D_OUT_0</td><td><span style="font-family:monospace">io_0/D_OUT_0</span></td><td><span style="font-family:monospace">io_1/D_OUT_0</span></td></tr>
+<tr><td>D_OUT_1</td><td><span style="font-family:monospace">io_0/D_OUT_1</span></td><td><span style="font-family:monospace">io_1/D_OUT_1</span></td></tr>
+<tr><td>OUTPUT_ENABLE</td><td><span style="font-family:monospace">io_0/OUT_ENB</span></td><td><span style="font-family:monospace">io_1/OUT_ENB</span></td></tr>
+<tr><td>CLOCK_ENABLE</td><td colspan="2"><span style="font-family:monospace">io_global/cen</span></td></tr>
+<tr><td>INPUT_CLK</td><td colspan="2"><span style="font-family:monospace">io_global/inclk</span></td></tr>
+<tr><td>OUTPUT_CLK</td><td colspan="2"><span style="font-family:monospace">io_global/outclk</span></td></tr>
+<tr><td>LATCH_INPUT_VALUE</td><td colspan="2"><span style="font-family:monospace">io_global/latch</span></td></tr>
 </table>
-</p>
 
 <p>
 Like the inputs to logic cells, the inputs to IO blocks are routed to the IO block via a two-stage process. A signal
@@ -72,36 +93,34 @@ is first routed to one of 16 local tracks in the IO tile and then from the local
 </p>
 
 <p>
-The <tt>io_global/latch</tt> signal is shared among all IO tiles on an edge of the chip and is driven by <tt>fabout</tt>
-from one dedicated IO tile on that edge. For the HX1K chips the tiles driving the <tt>io_global/latch</tt> signal are:
+The <span style="font-family:monospace">io_global/latch</span> signal is shared among all IO tiles on an edge of the chip and is driven by <span style="font-family:monospace">fabout</span>
+from one dedicated IO tile on that edge. For the HX1K chips the tiles driving the <span style="font-family:monospace">io_global/latch</span> signal are:
 (0, 7), (13, 10), (5, 0), and (8, 17)
 </p>
 
 <p>
-A logic tile sends the output of its eight logic cells to its neighbour tiles. An IO tile does the same thing with the four <tt>D_IN</tt>
-signals created by its two IO blocks. The <tt>D_IN</tt> signals map to logic function indices as follows:
+A logic tile sends the output of its eight logic cells to its neighbour tiles. An IO tile does the same thing with the four <span style="font-family:monospace">D_IN</span>
+signals created by its two IO blocks. The <span style="font-family:monospace">D_IN</span> signals map to logic function indices as follows:
 </p>
 
-<p align="center">
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>Function Index</th><th>D_IN Wire</th></tr>
-<tr><td>0</td><td><tt>io_0/D_IN_0</tt></td></tr>
-<tr><td>1</td><td><tt>io_0/D_IN_1</tt></td></tr>
-<tr><td>2</td><td><tt>io_1/D_IN_0</tt></td></tr>
-<tr><td>3</td><td><tt>io_1/D_IN_1</tt></td></tr>
-<tr><td>4</td><td><tt>io_0/D_IN_0</tt></td></tr>
-<tr><td>5</td><td><tt>io_0/D_IN_1</tt></td></tr>
-<tr><td>6</td><td><tt>io_1/D_IN_0</tt></td></tr>
-<tr><td>7</td><td><tt>io_1/D_IN_1</tt></td></tr>
+<tr><td>0</td><td><span style="font-family:monospace">io_0/D_IN_0</span></td></tr>
+<tr><td>1</td><td><span style="font-family:monospace">io_0/D_IN_1</span></td></tr>
+<tr><td>2</td><td><span style="font-family:monospace">io_1/D_IN_0</span></td></tr>
+<tr><td>3</td><td><span style="font-family:monospace">io_1/D_IN_1</span></td></tr>
+<tr><td>4</td><td><span style="font-family:monospace">io_0/D_IN_0</span></td></tr>
+<tr><td>5</td><td><span style="font-family:monospace">io_0/D_IN_1</span></td></tr>
+<tr><td>6</td><td><span style="font-family:monospace">io_1/D_IN_0</span></td></tr>
+<tr><td>7</td><td><span style="font-family:monospace">io_1/D_IN_1</span></td></tr>
 </table>
+
+<p>
+For example the signal <span style="font-family:monospace">io_1/D_IN_0</span> in IO tile (0, 5) can be seen as <span style="font-family:monospace">neigh_op_lft_2</span> and <span style="font-family:monospace">neigh_op_lft_6</span> in LOGIC tile (1, 5).
 </p>
 
 <p>
-For example the signal <tt>io_1/D_IN_0</tt> in IO tile (0, 5) can be seen as <tt>neigh_op_lft_2</tt> and <tt>neigh_op_lft_6</tt> in LOGIC tile (1, 5).
-</p>
-
-<p>
-Each IO Tile has 2 <tt>NegClk</tt> configuration bits, suggesting that the
+Each IO Tile has 2 <span style="font-family:monospace">NegClk</span> configuration bits, suggesting that the
 clock signals can be inverted independently for the the two IO blocks in the
 tile. However, the Lattice tools refuse to pack to IO blocks with different block
 polarity into the same IO tile. In our tests we only managed to either set or clear
@@ -109,159 +128,157 @@ both NegClk bits.
 </p>
 
 <p>
-Each IO block has two <tt>IoCtrl IE</tt> bits that enable the input buffers and 
-two <tt>IoCtrl REN</tt> bits that enable the pull up resistors. Both bits are active
+Each IO block has two <span style="font-family:monospace">IoCtrl IE</span> bits that enable the input buffers and
+two <span style="font-family:monospace">IoCtrl REN</span> bits that enable the pull up resistors. Both bits are active
 low, i.e. an unused IO tile will have both IE bits set and both REN bits cleared (the
 default behavior is to enable pullup resistors on all unused pins). Note that
-<tt>icebox_explain.py</tt> will ignore all IO tiles that only have the two <tt>IoCtrl
-IE</tt> bits set.
+<span style="font-family:monospace">icebox_explain.py</span> will ignore all IO tiles that only have the two <span style="font-family:monospace">IoCtrl
+IE</span> bits set.
 </p>
 
 <p>
-However, the <tt>IoCtrl IE_0/IE_1</tt> and <tt>IoCtrl REN_0/REN_1</tt> do not
+However, the <span style="font-family:monospace">IoCtrl IE_0/IE_1</span> and <span style="font-family:monospace">IoCtrl REN_0/REN_1</span> do not
 necessarily configure the IO PIN that are connected to the IO block in the same tile,
 and if they do the numbers (0/1) do not necessarily match. As a general rule, the pins
 on the right and bottom side of the chips match up with the IO blocks and for the pins
 on the left and top side the numbers must be swapped. But in some cases the IO block
-and the set of <tt>IE/REN</tt> are not even located in the same tile. The following
-table lists the correlation between IO blocks and <tt>IE/REN</tt> bits for the
+and the set of <span style="font-family:monospace">IE/REN</span> are not even located in the same tile. The following
+table lists the correlation between IO blocks and <span style="font-family:monospace">IE/REN</span> bits for the
 1K chip:
 </p>
 
-<p align="center">
-<table cellpadding="10">
-<tr><td valign="top">
+<table class="xtab">
+<tr><td>
 
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>IO Block</th><th>IE/REN Block</th></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0 14 1</td><td align="center">0 14 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0 14 0</td><td align="center">0 14 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0 13 1</td><td align="center">0 13 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0 13 0</td><td align="center">0 13 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0 12 1</td><td align="center">0 12 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0 12 0</td><td align="center">0 12 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0 11 1</td><td align="center">0 11 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0 11 0</td><td align="center">0 11 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0 10 1</td><td align="center">0 10 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0 10 0</td><td align="center">0 10 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  9 1</td><td align="center">0  9 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  9 0</td><td align="center">0  9 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  8 1</td><td align="center">0  8 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  8 0</td><td align="center">0  8 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  6 1</td><td align="center">0  6 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  6 0</td><td align="center">0  6 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  5 1</td><td align="center">0  5 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  5 0</td><td align="center">0  5 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  4 1</td><td align="center">0  4 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  4 0</td><td align="center">0  4 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  3 1</td><td align="center">0  3 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  3 0</td><td align="center">0  3 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  2 1</td><td align="center">0  2 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0  2 0</td><td align="center">0  2 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0 14 1</td><td style="text-align:center">0 14 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0 14 0</td><td style="text-align:center">0 14 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0 13 1</td><td style="text-align:center">0 13 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0 13 0</td><td style="text-align:center">0 13 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0 12 1</td><td style="text-align:center">0 12 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0 12 0</td><td style="text-align:center">0 12 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0 11 1</td><td style="text-align:center">0 11 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0 11 0</td><td style="text-align:center">0 11 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0 10 1</td><td style="text-align:center">0 10 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0 10 0</td><td style="text-align:center">0 10 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  9 1</td><td style="text-align:center">0  9 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  9 0</td><td style="text-align:center">0  9 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  8 1</td><td style="text-align:center">0  8 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  8 0</td><td style="text-align:center">0  8 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  6 1</td><td style="text-align:center">0  6 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  6 0</td><td style="text-align:center">0  6 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  5 1</td><td style="text-align:center">0  5 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  5 0</td><td style="text-align:center">0  5 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  4 1</td><td style="text-align:center">0  4 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  4 0</td><td style="text-align:center">0  4 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  3 1</td><td style="text-align:center">0  3 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  3 0</td><td style="text-align:center">0  3 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  2 1</td><td style="text-align:center">0  2 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0  2 0</td><td style="text-align:center">0  2 1</td></tr>
 </table>
 
-</td><td valign="top">
+</td><td>
 
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>IO Block</th><th>IE/REN Block</th></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 1 0 0</td><td align="center"> 1 0 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 1 0 1</td><td align="center"> 1 0 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 2 0 0</td><td align="center"> 2 0 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 2 0 1</td><td align="center"> 2 0 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 3 0 0</td><td align="center"> 3 0 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 3 0 1</td><td align="center"> 3 0 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 4 0 0</td><td align="center"> 4 0 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 4 0 1</td><td align="center"> 4 0 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 5 0 0</td><td align="center"> 5 0 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 5 0 1</td><td align="center"> 5 0 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 6 0 1</td><td align="center"> 6 0 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 7 0 0</td><td align="center"> 6 0 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 6 0 0</td><td align="center"> 7 0 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 7 0 1</td><td align="center"> 7 0 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 8 0 0</td><td align="center"> 8 0 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 8 0 1</td><td align="center"> 8 0 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 9 0 0</td><td align="center"> 9 0 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 9 0 1</td><td align="center"> 9 0 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">10 0 0</td><td align="center">10 0 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">10 0 1</td><td align="center">10 0 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">11 0 0</td><td align="center">11 0 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">11 0 1</td><td align="center">11 0 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">12 0 0</td><td align="center">12 0 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">12 0 1</td><td align="center">12 0 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 1 0 0</td><td style="text-align:center"> 1 0 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 1 0 1</td><td style="text-align:center"> 1 0 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 2 0 0</td><td style="text-align:center"> 2 0 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 2 0 1</td><td style="text-align:center"> 2 0 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 3 0 0</td><td style="text-align:center"> 3 0 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 3 0 1</td><td style="text-align:center"> 3 0 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 4 0 0</td><td style="text-align:center"> 4 0 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 4 0 1</td><td style="text-align:center"> 4 0 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 5 0 0</td><td style="text-align:center"> 5 0 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 5 0 1</td><td style="text-align:center"> 5 0 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 6 0 1</td><td style="text-align:center"> 6 0 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 7 0 0</td><td style="text-align:center"> 6 0 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 6 0 0</td><td style="text-align:center"> 7 0 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 7 0 1</td><td style="text-align:center"> 7 0 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 8 0 0</td><td style="text-align:center"> 8 0 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 8 0 1</td><td style="text-align:center"> 8 0 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 9 0 0</td><td style="text-align:center"> 9 0 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 9 0 1</td><td style="text-align:center"> 9 0 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">10 0 0</td><td style="text-align:center">10 0 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">10 0 1</td><td style="text-align:center">10 0 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">11 0 0</td><td style="text-align:center">11 0 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">11 0 1</td><td style="text-align:center">11 0 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">12 0 0</td><td style="text-align:center">12 0 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">12 0 1</td><td style="text-align:center">12 0 1</td></tr>
 </table>
 
-</td><td valign="top">
+</td><td>
 
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>IO Block</th><th>IE/REN Block</th></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  1 0</td><td align="center">13  1 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  1 1</td><td align="center">13  1 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  2 0</td><td align="center">13  2 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  2 1</td><td align="center">13  2 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  3 1</td><td align="center">13  3 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  4 0</td><td align="center">13  4 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  4 1</td><td align="center">13  4 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  6 0</td><td align="center">13  6 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  6 1</td><td align="center">13  6 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  7 0</td><td align="center">13  7 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  7 1</td><td align="center">13  7 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  8 0</td><td align="center">13  8 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  8 1</td><td align="center">13  8 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  9 0</td><td align="center">13  9 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13  9 1</td><td align="center">13  9 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13 11 0</td><td align="center">13 10 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13 11 1</td><td align="center">13 10 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13 12 0</td><td align="center">13 11 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13 12 1</td><td align="center">13 11 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13 13 0</td><td align="center">13 13 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13 13 1</td><td align="center">13 13 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13 14 0</td><td align="center">13 14 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13 14 1</td><td align="center">13 14 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13 15 0</td><td align="center">13 15 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">13 15 1</td><td align="center">13 15 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  1 0</td><td style="text-align:center">13  1 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  1 1</td><td style="text-align:center">13  1 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  2 0</td><td style="text-align:center">13  2 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  2 1</td><td style="text-align:center">13  2 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  3 1</td><td style="text-align:center">13  3 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  4 0</td><td style="text-align:center">13  4 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  4 1</td><td style="text-align:center">13  4 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  6 0</td><td style="text-align:center">13  6 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  6 1</td><td style="text-align:center">13  6 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  7 0</td><td style="text-align:center">13  7 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  7 1</td><td style="text-align:center">13  7 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  8 0</td><td style="text-align:center">13  8 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  8 1</td><td style="text-align:center">13  8 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  9 0</td><td style="text-align:center">13  9 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13  9 1</td><td style="text-align:center">13  9 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13 11 0</td><td style="text-align:center">13 10 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13 11 1</td><td style="text-align:center">13 10 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13 12 0</td><td style="text-align:center">13 11 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13 12 1</td><td style="text-align:center">13 11 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13 13 0</td><td style="text-align:center">13 13 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13 13 1</td><td style="text-align:center">13 13 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13 14 0</td><td style="text-align:center">13 14 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13 14 1</td><td style="text-align:center">13 14 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13 15 0</td><td style="text-align:center">13 15 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">13 15 1</td><td style="text-align:center">13 15 1</td></tr>
 </table>
 
-</td><td valign="top">
+</td><td>
 
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>IO Block</th><th>IE/REN Block</th></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">12 17 1</td><td align="center">12 17 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">12 17 0</td><td align="center">12 17 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">11 17 1</td><td align="center">11 17 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">11 17 0</td><td align="center">11 17 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">10 17 1</td><td align="center"> 9 17 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">10 17 0</td><td align="center"> 9 17 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 9 17 1</td><td align="center">10 17 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 9 17 0</td><td align="center">10 17 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 8 17 1</td><td align="center"> 8 17 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 8 17 0</td><td align="center"> 8 17 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 7 17 1</td><td align="center"> 7 17 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 7 17 0</td><td align="center"> 7 17 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 6 17 1</td><td align="center"> 6 17 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 5 17 1</td><td align="center"> 5 17 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 5 17 0</td><td align="center"> 5 17 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 4 17 1</td><td align="center"> 4 17 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 4 17 0</td><td align="center"> 4 17 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 3 17 1</td><td align="center"> 3 17 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 3 17 0</td><td align="center"> 3 17 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 2 17 1</td><td align="center"> 2 17 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 2 17 0</td><td align="center"> 2 17 0</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 1 17 1</td><td align="center"> 1 17 1</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center"> 1 17 0</td><td align="center"> 1 17 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">12 17 1</td><td style="text-align:center">12 17 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">12 17 0</td><td style="text-align:center">12 17 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">11 17 1</td><td style="text-align:center">11 17 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">11 17 0</td><td style="text-align:center">11 17 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">10 17 1</td><td style="text-align:center"> 9 17 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">10 17 0</td><td style="text-align:center"> 9 17 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 9 17 1</td><td style="text-align:center">10 17 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 9 17 0</td><td style="text-align:center">10 17 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 8 17 1</td><td style="text-align:center"> 8 17 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 8 17 0</td><td style="text-align:center"> 8 17 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 7 17 1</td><td style="text-align:center"> 7 17 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 7 17 0</td><td style="text-align:center"> 7 17 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 6 17 1</td><td style="text-align:center"> 6 17 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 5 17 1</td><td style="text-align:center"> 5 17 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 5 17 0</td><td style="text-align:center"> 5 17 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 4 17 1</td><td style="text-align:center"> 4 17 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 4 17 0</td><td style="text-align:center"> 4 17 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 3 17 1</td><td style="text-align:center"> 3 17 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 3 17 0</td><td style="text-align:center"> 3 17 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 2 17 1</td><td style="text-align:center"> 2 17 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 2 17 0</td><td style="text-align:center"> 2 17 0</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 1 17 1</td><td style="text-align:center"> 1 17 1</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center"> 1 17 0</td><td style="text-align:center"> 1 17 0</td></tr>
 </table>
 
 </table>
-</p>
 
 <p>
 When an input pin pair is used as LVDS pair (IO standard
-<tt>SB_LVDS_INPUT</tt>, bank 3 / left edge only), then the four bits
-<tt>IoCtrl IE_0/IE_1</tt> and <tt>IoCtrl REN_0/REN_1</tt> are all set, as well
-as the <tt>IoCtrl LVDS</tt> bit.
+<span style="font-family:monospace">SB_LVDS_INPUT</span>, bank 3 / left edge only), then the four bits
+<span style="font-family:monospace">IoCtrl IE_0/IE_1</span> and <span style="font-family:monospace">IoCtrl REN_0/REN_1</span> are all set, as well
+as the <span style="font-family:monospace">IoCtrl LVDS</span> bit.
 </p>
 
 <p>
-In the iCE 8k devices the <tt>IoCtrl IE</tt> bits are active high. So an unused
+In the iCE 8k devices the <span style="font-family:monospace">IoCtrl IE</span> bits are active high. So an unused
 IO tile on an 8k chip has all bits cleared.
 </p>
 
@@ -276,55 +293,51 @@ tile are used. In IceBox nomenclature such bits are called "extra bits".
 
 <p>
 The following table lists which pins / IO blocks may be used to drive
-which global net, and what <tt>.extra</tt> statements in the IceBox ASCII file
+which global net, and what <span style="font-family:monospace">.extra</span> statements in the IceBox ASCII file
 format to represent the corresponding configuration bits:
 </p>
 
 
-<p align="center">
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>Glb Net</th><th>Pin<br/>(HX1K-TQ144)</th><th>IO Tile +<br/>Block #</th><th>IceBox Statement</th></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">0</td><td align="center"> 93</td><td align="center">13  8  1</td><td align="center">.extra_bit 0 330 142</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">1</td><td align="center"> 21</td><td align="center"> 0  8  1</td><td align="center">.extra_bit 0 331 142</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">2</td><td align="center">128</td><td align="center"> 7 17  0</td><td align="center">.extra_bit 1 330 143</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">3</td><td align="center"> 50</td><td align="center"> 7  0  0</td><td align="center">.extra_bit 1 331 143</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">4</td><td align="center"> 20</td><td align="center"> 0  9  0</td><td align="center">.extra_bit 1 330 142</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">5</td><td align="center"> 94</td><td align="center">13  9  0</td><td align="center">.extra_bit 1 331 142</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">6</td><td align="center"> 49</td><td align="center"> 6  0  1</td><td align="center">.extra_bit 0 330 143</td></tr>
-<tr style="white-space: pre; font-family: monospace"><td align="center">7</td><td align="center">129</td><td align="center"> 6 17  1</td><td align="center">.extra_bit 0 331 143</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">0</td><td style="text-align:center"> 93</td><td style="text-align:center">13  8  1</td><td style="text-align:center">.extra_bit 0 330 142</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">1</td><td style="text-align:center"> 21</td><td style="text-align:center"> 0  8  1</td><td style="text-align:center">.extra_bit 0 331 142</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">2</td><td style="text-align:center">128</td><td style="text-align:center"> 7 17  0</td><td style="text-align:center">.extra_bit 1 330 143</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">3</td><td style="text-align:center"> 50</td><td style="text-align:center"> 7  0  0</td><td style="text-align:center">.extra_bit 1 331 143</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">4</td><td style="text-align:center"> 20</td><td style="text-align:center"> 0  9  0</td><td style="text-align:center">.extra_bit 1 330 142</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">5</td><td style="text-align:center"> 94</td><td style="text-align:center">13  9  0</td><td style="text-align:center">.extra_bit 1 331 142</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">6</td><td style="text-align:center"> 49</td><td style="text-align:center"> 6  0  1</td><td style="text-align:center">.extra_bit 0 330 143</td></tr>
+<tr style="white-space: pre; font-family: monospace"><td style="text-align:center">7</td><td style="text-align:center">129</td><td style="text-align:center"> 6 17  1</td><td style="text-align:center">.extra_bit 0 331 143</td></tr>
 </table>
-</p>
 
 <p>
 Signals internal to the FPGA can also be routed to the global nets. This is done by routing the signal
-to the <tt>fabout</tt> net on an IO tile. The same set of I/O tiles is used for this, but in this
+to the <span style="font-family:monospace">fabout</span> net on an IO tile. The same set of I/O tiles is used for this, but in this
 case each of the I/O tiles corresponds to a different global net:
 </p>
 
-<p align="center">
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>Glb Net</th>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">2</td>
-<td align="center">3</td>
-<td align="center">4</td>
-<td align="center">5</td>
-<td align="center">6</td>
-<td align="center">7</td></tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">7</td></tr>
 <tr><th>IO Tile</th>
-<td style="white-space: pre; font-family: monospace" align="center"> 7  0</td>
-<td style="white-space: pre; font-family: monospace" align="center"> 7 17</td>
-<td style="white-space: pre; font-family: monospace" align="center">13  9</td>
-<td style="white-space: pre; font-family: monospace" align="center"> 0  9</td>
-<td style="white-space: pre; font-family: monospace" align="center"> 6 17</td>
-<td style="white-space: pre; font-family: monospace" align="center"> 6  0</td>
-<td style="white-space: pre; font-family: monospace" align="center"> 0  8</td>
-<td style="white-space: pre; font-family: monospace" align="center">13  8</td></tr>
+<td style="white-space: pre; font-family: monospace; text-align:center"> 7  0</td>
+<td style="white-space: pre; font-family: monospace; text-align:center"> 7 17</td>
+<td style="white-space: pre; font-family: monospace; text-align:center">13  9</td>
+<td style="white-space: pre; font-family: monospace; text-align:center"> 0  9</td>
+<td style="white-space: pre; font-family: monospace; text-align:center"> 6 17</td>
+<td style="white-space: pre; font-family: monospace; text-align:center"> 6  0</td>
+<td style="white-space: pre; font-family: monospace; text-align:center"> 0  8</td>
+<td style="white-space: pre; font-family: monospace; text-align:center">13  8</td></tr>
 </table>
-</p>
 
-<p><a href="colbuf.svg"><img style="float:right; padding:1em; padding-top:0" height="200" src="colbuf.svg" border="0"></a></p>
+<p><a href="colbuf.svg"><img alt="Column Buffers" style="float:right; padding:1em; padding-top:0; border:0" height="200" src="colbuf.svg"></a></p>
 
 <h3>Column Buffer Control Bits</h3>
 
@@ -344,147 +357,142 @@ IO columns.
 <h2>Warmboot</h2>
 
 <p>
-The <tt>SB_WARMBOOT</tt> primitive in iCE40 FPGAs has three inputs and no outputs. The three inputs of that cell
-are driven by the <tt>fabout</tt> signal from three IO tiles. In HX1K chips the tiles connected to the
-<tt>SB_WARMBOOT</tt> primitive are:
+The <span style="font-family:monospace">SB_WARMBOOT</span> primitive in iCE40 FPGAs has three inputs and no outputs. The three inputs of that cell
+are driven by the <span style="font-family:monospace">fabout</span> signal from three IO tiles. In HX1K chips the tiles connected to the
+<span style="font-family:monospace">SB_WARMBOOT</span> primitive are:
 </p>
 
-<p align="center">
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>Warmboot Pin</th><th>IO Tile</th></tr>
-<tr><td>BOOT</td><td><tt>12 0</tt></td></tr>
-<tr><td>S0</td><td><tt>13 1</tt></td></tr>
-<tr><td>S1</td><td><tt>13 2</tt></td></tr>
+<tr><td>BOOT</td><td><span style="font-family:monospace">12 0</span></td></tr>
+<tr><td>S0</td><td><span style="font-family:monospace">13 1</span></td></tr>
+<tr><td>S1</td><td><span style="font-family:monospace">13 2</span></td></tr>
 </table>
-</p>
 
 <h2>PLL Cores</h2>
 
 <p>
-The PLL primitives in iCE40 FPGAs are configured using the <tt>PLLCONFIG_*</tt>
+The PLL primitives in iCE40 FPGAs are configured using the <span style="font-family:monospace">PLLCONFIG_*</span>
 bits in the IO tiles. The configuration for a single PLL cell is spread out
 over many IO tiles. For example, the PLL cell in the 1K chip are configured as
 follows (bits listed from LSB to MSB):
 </p>
 
-<p align="center">
-<table cellpadding="10"><tr><td valign="top">
+<table class="xtab">
+<tr><td>
 
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>IO Tile</th><th>Config Bit</th><th>SB_PLL40_* Parameter</th></tr>
 
-<tr><td>0 3</td><td><tt>PLLCONFIG_5</tt></td><td rowspan="3">Select PLL Type:<br/>
+<tr><td>0 3</td><td><span style="font-family:monospace">PLLCONFIG_5</span></td><td rowspan="3">Select PLL Type:<br/>
 000 = DISABLED<br/>
 010 = SB_PLL40_PAD<br/>
 100 = SB_PLL40_2_PAD<br/>
 110 = SB_PLL40_2F_PAD<br/>
 011 = SB_PLL40_CORE<br/>
 111 = SB_PLL40_2F_CORE</td></tr>
-<tr><td>0 5</td><td><tt>PLLCONFIG_1</tt></td></tr>
-<tr><td>0 5</td><td><tt>PLLCONFIG_3</tt></td></tr>
+<tr><td>0 5</td><td><span style="font-family:monospace">PLLCONFIG_1</span></td></tr>
+<tr><td>0 5</td><td><span style="font-family:monospace">PLLCONFIG_3</span></td></tr>
 
-<tr><td>0 5</td><td><tt>PLLCONFIG_5</tt></td><td rowspan="3"><tt>FEEDBACK_PATH</tt><br/>
+<tr><td>0 5</td><td><span style="font-family:monospace">PLLCONFIG_5</span></td><td rowspan="3"><span style="font-family:monospace">FEEDBACK_PATH</span><br/>
 000 = "DELAY"<br/>
 001 = "SIMPLE"<br/>
 010 = "PHASE_AND_DELAY"<br/>
 110 = "EXTERNAL"</td></tr>
-<tr><td>0 2</td><td><tt>PLLCONFIG_9</tt></td></tr>
-<tr><td>0 3</td><td><tt>PLLCONFIG_1</tt></td></tr>
+<tr><td>0 2</td><td><span style="font-family:monospace">PLLCONFIG_9</span></td></tr>
+<tr><td>0 3</td><td><span style="font-family:monospace">PLLCONFIG_1</span></td></tr>
 
-<tr><td>0 4</td><td><tt>PLLCONFIG_4</tt></td><td rowspan="1"><tt>DELAY_ADJUSTMENT_MODE_FEEDBACK</tt><br/>
+<tr><td>0 4</td><td><span style="font-family:monospace">PLLCONFIG_4</span></td><td rowspan="1"><span style="font-family:monospace">DELAY_ADJUSTMENT_MODE_FEEDBACK</span><br/>
 0 = "FIXED"<br/>
 1 = "DYNAMIC"</td></tr>
 
-<tr><td>0 4</td><td><tt>PLLCONFIG_9</tt></td><td rowspan="1"><tt>DELAY_ADJUSTMENT_MODE_RELATIVE</tt><br/>
+<tr><td>0 4</td><td><span style="font-family:monospace">PLLCONFIG_9</span></td><td rowspan="1"><span style="font-family:monospace">DELAY_ADJUSTMENT_MODE_RELATIVE</span><br/>
 0 = "FIXED"<br/>
 1 = "DYNAMIC"</td></tr>
 
-<tr><td>0 3</td><td><tt>PLLCONFIG_6</tt></td><td rowspan="2"><tt>PLLOUT_SELECT<br/>PLLOUT_SELECT_PORTA</tt><br/>
+<tr><td>0 3</td><td><span style="font-family:monospace">PLLCONFIG_6</span></td><td rowspan="2"><span style="font-family:monospace">PLLOUT_SELECT<br/>PLLOUT_SELECT_PORTA</span><br/>
 00 = "GENCLK"<br/>
 01 = "GENCLK_HALF"<br/>
 10 = "SHIFTREG_90deg"<br/>
 11 = "SHIFTREG_0deg"</td></tr>
-<tr><td>0 3</td><td><tt>PLLCONFIG_7</tt></td></tr>
+<tr><td>0 3</td><td><span style="font-family:monospace">PLLCONFIG_7</span></td></tr>
 
-<tr><td>0 3</td><td><tt>PLLCONFIG_2</tt></td><td rowspan="2"><tt>PLLOUT_SELECT_PORTB</tt><br/>
+<tr><td>0 3</td><td><span style="font-family:monospace">PLLCONFIG_2</span></td><td rowspan="2"><span style="font-family:monospace">PLLOUT_SELECT_PORTB</span><br/>
 00 = "GENCLK"<br/>
 01 = "GENCLK_HALF"<br/>
 10 = "SHIFTREG_90deg"<br/>
 11 = "SHIFTREG_0deg"</td></tr>
-<tr><td>0 3</td><td><tt>PLLCONFIG_3</tt></td></tr>
+<tr><td>0 3</td><td><span style="font-family:monospace">PLLCONFIG_3</span></td></tr>
 
-<tr><td>0 3</td><td><tt>PLLCONFIG_4</tt></td><td rowspan="1"><tt>SHIFTREG_DIV_MODE</tt></td></tr>
+<tr><td>0 3</td><td><span style="font-family:monospace">PLLCONFIG_4</span></td><td rowspan="1"><span style="font-family:monospace">SHIFTREG_DIV_MODE</span></td></tr>
 
-<tr><td>0 3</td><td><tt>PLLCONFIG_8</tt></td><td rowspan="1"><tt>TEST_MODE</tt></td></tr>
+<tr><td>0 3</td><td><span style="font-family:monospace">PLLCONFIG_8</span></td><td rowspan="1"><span style="font-family:monospace">TEST_MODE</span></td></tr>
 
-</table></td><td valign="top">
+</table></td><td>
 
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>IO Tile</th><th>Config Bit</th><th>SB_PLL40_* Parameter</th></tr>
 
-<tr><td>0 3</td><td><tt>PLLCONFIG_9</tt></td><td rowspan="4"><tt>FDA_FEEDBACK</tt></td></tr>
-<tr><td>0 4</td><td><tt>PLLCONFIG_1</tt></td></tr>
-<tr><td>0 4</td><td><tt>PLLCONFIG_2</tt></td></tr>
-<tr><td>0 4</td><td><tt>PLLCONFIG_3</tt></td></tr>
+<tr><td>0 3</td><td><span style="font-family:monospace">PLLCONFIG_9</span></td><td rowspan="4"><span style="font-family:monospace">FDA_FEEDBACK</span></td></tr>
+<tr><td>0 4</td><td><span style="font-family:monospace">PLLCONFIG_1</span></td></tr>
+<tr><td>0 4</td><td><span style="font-family:monospace">PLLCONFIG_2</span></td></tr>
+<tr><td>0 4</td><td><span style="font-family:monospace">PLLCONFIG_3</span></td></tr>
 
-<tr><td>0 5</td><td><tt>PLLCONFIG_5</tt></td><td rowspan="4"><tt>FDA_RELATIVE</tt></td></tr>
-<tr><td>0 4</td><td><tt>PLLCONFIG_6</tt></td></tr>
-<tr><td>0 4</td><td><tt>PLLCONFIG_7</tt></td></tr>
-<tr><td>0 4</td><td><tt>PLLCONFIG_8</tt></td></tr>
+<tr><td>0 5</td><td><span style="font-family:monospace">PLLCONFIG_5</span></td><td rowspan="4"><span style="font-family:monospace">FDA_RELATIVE</span></td></tr>
+<tr><td>0 4</td><td><span style="font-family:monospace">PLLCONFIG_6</span></td></tr>
+<tr><td>0 4</td><td><span style="font-family:monospace">PLLCONFIG_7</span></td></tr>
+<tr><td>0 4</td><td><span style="font-family:monospace">PLLCONFIG_8</span></td></tr>
 
-<tr><td>0 1</td><td><tt>PLLCONFIG_1</tt></td><td rowspan="4"><tt>DIVR</tt></td></tr>
-<tr><td>0 1</td><td><tt>PLLCONFIG_2</tt></td></tr>
-<tr><td>0 1</td><td><tt>PLLCONFIG_3</tt></td></tr>
-<tr><td>0 1</td><td><tt>PLLCONFIG_4</tt></td></tr>
+<tr><td>0 1</td><td><span style="font-family:monospace">PLLCONFIG_1</span></td><td rowspan="4"><span style="font-family:monospace">DIVR</span></td></tr>
+<tr><td>0 1</td><td><span style="font-family:monospace">PLLCONFIG_2</span></td></tr>
+<tr><td>0 1</td><td><span style="font-family:monospace">PLLCONFIG_3</span></td></tr>
+<tr><td>0 1</td><td><span style="font-family:monospace">PLLCONFIG_4</span></td></tr>
 
-<tr><td>0 1</td><td><tt>PLLCONFIG_5</tt></td><td rowspan="7"><tt>DIVF</tt></td></tr>
-<tr><td>0 1</td><td><tt>PLLCONFIG_6</tt></td></tr>
-<tr><td>0 1</td><td><tt>PLLCONFIG_7</tt></td></tr>
-<tr><td>0 1</td><td><tt>PLLCONFIG_8</tt></td></tr>
-<tr><td>0 1</td><td><tt>PLLCONFIG_9</tt></td></tr>
-<tr><td>0 2</td><td><tt>PLLCONFIG_1</tt></td></tr>
-<tr><td>0 2</td><td><tt>PLLCONFIG_2</tt></td></tr>
+<tr><td>0 1</td><td><span style="font-family:monospace">PLLCONFIG_5</span></td><td rowspan="7"><span style="font-family:monospace">DIVF</span></td></tr>
+<tr><td>0 1</td><td><span style="font-family:monospace">PLLCONFIG_6</span></td></tr>
+<tr><td>0 1</td><td><span style="font-family:monospace">PLLCONFIG_7</span></td></tr>
+<tr><td>0 1</td><td><span style="font-family:monospace">PLLCONFIG_8</span></td></tr>
+<tr><td>0 1</td><td><span style="font-family:monospace">PLLCONFIG_9</span></td></tr>
+<tr><td>0 2</td><td><span style="font-family:monospace">PLLCONFIG_1</span></td></tr>
+<tr><td>0 2</td><td><span style="font-family:monospace">PLLCONFIG_2</span></td></tr>
 
-<tr><td>0 2</td><td><tt>PLLCONFIG_3</tt></td><td rowspan="3"><tt>DIVQ</tt></td></tr>
-<tr><td>0 2</td><td><tt>PLLCONFIG_4</tt></td></tr>
-<tr><td>0 2</td><td><tt>PLLCONFIG_5</tt></td></tr>
+<tr><td>0 2</td><td><span style="font-family:monospace">PLLCONFIG_3</span></td><td rowspan="3"><span style="font-family:monospace">DIVQ</span></td></tr>
+<tr><td>0 2</td><td><span style="font-family:monospace">PLLCONFIG_4</span></td></tr>
+<tr><td>0 2</td><td><span style="font-family:monospace">PLLCONFIG_5</span></td></tr>
 
-<tr><td>0 2</td><td><tt>PLLCONFIG_6</tt></td><td rowspan="3"><tt>FILTER_RANGE</tt></td></tr>
-<tr><td>0 2</td><td><tt>PLLCONFIG_7</tt></td></tr>
-<tr><td>0 2</td><td><tt>PLLCONFIG_8</tt></td></tr>
+<tr><td>0 2</td><td><span style="font-family:monospace">PLLCONFIG_6</span></td><td rowspan="3"><span style="font-family:monospace">FILTER_RANGE</span></td></tr>
+<tr><td>0 2</td><td><span style="font-family:monospace">PLLCONFIG_7</span></td></tr>
+<tr><td>0 2</td><td><span style="font-family:monospace">PLLCONFIG_8</span></td></tr>
 
 </table>
 </table>
-</p>
 
 <p>
-The PLL inputs are routed to the PLL via the <tt>fabout</tt> signal from various IO tiles. The non-clock
-PLL outputs are routed via otherwise unused <tt>neigh_op_*</tt> signals in fabric corners. For example in case
+The PLL inputs are routed to the PLL via the <span style="font-family:monospace">fabout</span> signal from various IO tiles. The non-clock
+PLL outputs are routed via otherwise unused <span style="font-family:monospace">neigh_op_*</span> signals in fabric corners. For example in case
 of the 1k chip:
 </p>
 
-<p align="center">
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>Tile</th><th>Net-Segment</th><th>SB_PLL40_* Port Name</th></tr>
-<tr><td>0 1</td><td><tt>fabout</tt></td><td rowspan="1"><tt>REFERENCECLK</tt></td></tr>
-<tr><td>0 2</td><td><tt>fabout</tt></td><td rowspan="1"><tt>EXTFEEDBACK</tt></td></tr>
-<tr><td>0 4</td><td><tt>fabout</tt></td><td rowspan="8"><tt>DYNAMICDELAY</tt></td></tr>
-<tr><td>0 5</td><td><tt>fabout</tt></td></tr>
-<tr><td>0 6</td><td><tt>fabout</tt></td></tr>
-<tr><td>0 10</td><td><tt>fabout</tt></td></tr>
-<tr><td>0 11</td><td><tt>fabout</tt></td></tr>
-<tr><td>0 12</td><td><tt>fabout</tt></td></tr>
-<tr><td>0 13</td><td><tt>fabout</tt></td></tr>
-<tr><td>0 14</td><td><tt>fabout</tt></td></tr>
-<tr><td>1 1</td><td><tt>neigh_op_bnl_1</tt></td><td rowspan="1"><tt>LOCK</tt></td></tr>
-<tr><td>1 0</td><td><tt>fabout</tt></td><td rowspan="1"><tt>BYPASS</tt></td></tr>
-<tr><td>2 0</td><td><tt>fabout</tt></td><td rowspan="1"><tt>RESETB</tt></td></tr>
-<tr><td>5 0</td><td><tt>fabout</tt></td><td rowspan="1"><tt>LATCHINPUTVALUE</tt></td></tr>
-<tr><td>12 1</td><td><tt>neigh_op_bnl_1</tt></td><td rowspan="1"><tt>SDO</tt></td></tr>
-<tr><td>4 0</td><td><tt>fabout</tt></td><td rowspan="1"><tt>SDI</tt></td></tr>
-<tr><td>5 0</td><td><tt>fabout</tt></td><td rowspan="1"><tt>SCLK</tt></td></tr>
+<tr><td>0 1</td><td><span style="font-family:monospace">fabout</span></td><td rowspan="1"><span style="font-family:monospace">REFERENCECLK</span></td></tr>
+<tr><td>0 2</td><td><span style="font-family:monospace">fabout</span></td><td rowspan="1"><span style="font-family:monospace">EXTFEEDBACK</span></td></tr>
+<tr><td>0 4</td><td><span style="font-family:monospace">fabout</span></td><td rowspan="8"><span style="font-family:monospace">DYNAMICDELAY</span></td></tr>
+<tr><td>0 5</td><td><span style="font-family:monospace">fabout</span></td></tr>
+<tr><td>0 6</td><td><span style="font-family:monospace">fabout</span></td></tr>
+<tr><td>0 10</td><td><span style="font-family:monospace">fabout</span></td></tr>
+<tr><td>0 11</td><td><span style="font-family:monospace">fabout</span></td></tr>
+<tr><td>0 12</td><td><span style="font-family:monospace">fabout</span></td></tr>
+<tr><td>0 13</td><td><span style="font-family:monospace">fabout</span></td></tr>
+<tr><td>0 14</td><td><span style="font-family:monospace">fabout</span></td></tr>
+<tr><td>1 1</td><td><span style="font-family:monospace">neigh_op_bnl_1</span></td><td rowspan="1"><span style="font-family:monospace">LOCK</span></td></tr>
+<tr><td>1 0</td><td><span style="font-family:monospace">fabout</span></td><td rowspan="1"><span style="font-family:monospace">BYPASS</span></td></tr>
+<tr><td>2 0</td><td><span style="font-family:monospace">fabout</span></td><td rowspan="1"><span style="font-family:monospace">RESETB</span></td></tr>
+<tr><td>5 0</td><td><span style="font-family:monospace">fabout</span></td><td rowspan="1"><span style="font-family:monospace">LATCHINPUTVALUE</span></td></tr>
+<tr><td>12 1</td><td><span style="font-family:monospace">neigh_op_bnl_1</span></td><td rowspan="1"><span style="font-family:monospace">SDO</span></td></tr>
+<tr><td>4 0</td><td><span style="font-family:monospace">fabout</span></td><td rowspan="1"><span style="font-family:monospace">SDI</span></td></tr>
+<tr><td>5 0</td><td><span style="font-family:monospace">fabout</span></td><td rowspan="1"><span style="font-family:monospace">SCLK</span></td></tr>
 </table>
-</p>
 
 <p>
 The PLL clock outputs are fed directly into the input path of certain IO tiles.
@@ -494,3 +502,4 @@ PIOs can only be used as output Pins by the FPGA fabric when the PLL ports
 are being used.
 </p>
 
+</body></html>

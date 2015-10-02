@@ -1,4 +1,7 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
 <title>Project IceStorm</title>
+</head><body>
 <h1>Project IceStorm</h1>
 
 <p>
@@ -102,16 +105,16 @@ after updating your IceStorm installation.
 <h3>IcePack/IceUnpack</h3>
 
 <p>
-The <tt>iceunpack</tt> program converts an iCE40 <tt>.bin</tt> file into the IceBox ASCII format
-that has blocks of <tt>0</tt> and <tt>1</tt> for the config bits for each tile in the chip. The
-<tt>icepack</tt> program converts such an ASCII file back to an iCE40 <tt>.bin</tt> file.
+The <span style="font-family:monospace">iceunpack</span> program converts an iCE40 <span style="font-family:monospace">.bin</span> file into the IceBox ASCII format
+that has blocks of <span style="font-family:monospace">0</span> and <span style="font-family:monospace">1</span> for the config bits for each tile in the chip. The
+<span style="font-family:monospace">icepack</span> program converts such an ASCII file back to an iCE40 <span style="font-family:monospace">.bin</span> file.
 </p>
 
 <h3>IceBox</h3>
 
 <p>
 A python library and various tools for working with IceBox ASCII files and accessing
-the device database. For example <tt>icebox_vlog</tt> converts our ASCII file
+the device database. For example <span style="font-family:monospace">icebox_vlog</span> converts our ASCII file
 dump of a bitstream into a Verilog file that implements an equivalent circuit.
 </p>
 
@@ -130,7 +133,7 @@ A tool for packing multiple bitstream files into one iCE40 multiboot image file.
 <h3>ChipDB</h3>
 
 <p>
-The IceStorm Makefile builds and installs two files: <tt>chipdb-1k.txt</tt> and <tt>chipdb-8k.txt</tt>.
+The IceStorm Makefile builds and installs two files: <span style="font-family:monospace">chipdb-1k.txt</span> and <span style="font-family:monospace">chipdb-8k.txt</span>.
 This files contain all the relevant information for arachne-pnr to place&amp;route a design and
 create an IceBox ASCII file for the placed and routed design.
 </p>
@@ -163,8 +166,8 @@ The FPGA fabric is divided into tiles. There are IO, RAM and LOGIC tiles.
 </ul>
 
 <p>
-The <tt>iceunpack</tt> program can be used to convert the bitstream into an ASCII file
-that has a block of <tt>0</tt> and <tt>1</tt> characters for each tile. For example:
+The <span style="font-family:monospace">iceunpack</span> program can be used to convert the bitstream into an ASCII file
+that has a block of <span style="font-family:monospace">0</span> and <span style="font-family:monospace">1</span> characters for each tile. For example:
 </p>
 
 <pre style="padding-left: 3em">.logic_tile 12 12
@@ -186,12 +189,12 @@ that has a block of <tt>0</tt> and <tt>1</tt> characters for each tile. For exam
 000000000000000000000000000101010000101010100000000000</pre>
 
 <p>
-This bits are referred to as <tt>B<i>y</i>[<i>x</i>]</tt> in the documentation. For example, <tt>B0</tt> is the first
-line, <tt>B0[0]</tt> the first bit in the first line, and <tt>B15[53]</tt> the last bit in the last line.
+This bits are referred to as <span style="font-family:monospace">B<i>y</i>[<i>x</i>]</span> in the documentation. For example, <span style="font-family:monospace">B0</span> is the first
+line, <span style="font-family:monospace">B0[0]</span> the first bit in the first line, and <span style="font-family:monospace">B15[53]</span> the last bit in the last line.
 </p>
 
 <p>
-The <tt>icebox_explain</tt> program can be used to turn this block of config bits into a description of the cell
+The <span style="font-family:monospace">icebox_explain</span> program can be used to turn this block of config bits into a description of the cell
 configuration:
 </p>
 
@@ -205,16 +208,16 @@ buffer sp12_h_r_20 local_g1_4</pre>
 <p>
 IceBox contains a database of the wires and configuration bits that can be found in iCE40 tiles. This database can be accessed
 via the IceBox Python API. But IceBox is a large hack. So it is recommended to only use the IceBox API
-to export this database into a format that fits the target application. See <tt>icebox_chipdb</tt> for
+to export this database into a format that fits the target application. See <span style="font-family:monospace">icebox_chipdb</span> for
 an example program that does that.
 </p>
 
 <p>
 The recommended approach for learning how to use this documentation is to
 synthesize very simple circuits using Yosys and Arachne-pnr, run the icestorm
-tool <tt>icebox_explain</tt> on the resulting bitstream files, and analyze the
+tool <span style="font-family:monospace">icebox_explain</span> on the resulting bitstream files, and analyze the
 results using the HTML export of the database mentioned above.
-<tt>icebox_vlog</tt> can be used to convert the bitstream to Verilog. The
+<span style="font-family:monospace">icebox_vlog</span> can be used to convert the bitstream to Verilog. The
 output file of this tool will also outline the signal paths in comments added
 to the generated Verilog code.
 </p>
@@ -243,7 +246,7 @@ $ icepack example.txt example.bin
 </pre>
 
 <p>
-We would get something like the following <tt>icebox_explain</tt> output:
+We would get something like the following <span style="font-family:monospace">icebox_explain</span> output:
 </p>
 
 <pre style="padding-left: 3em">$ icebox_explain example.txt
@@ -280,7 +283,7 @@ buffer neigh_op_lft_0 local_g0_0
 buffer sp4_h_r_24 local_g3_0</pre>
 
 <p>
-And something like the following <tt>icebox_vlog</tt> output:
+And something like the following <span style="font-family:monospace">icebox_vlog</span> output:
 </p>
 
 <pre style="padding-left: 3em">$ icebox_vlog -p example.pcf example.txt
@@ -353,9 +356,7 @@ Links to related projects. Contact me at clifford@clifford.at if you have an int
 <li><a href="https://hackaday.io/project/6636-iced-an-arduino-style-board-with-ice-fpga">ICEd = an Arduino Style Board, with ICE FPGA</a>
 </ul>
 
-<p>
 <hr>
-</p>
 
 <p>
 In papers and reports, please refer to Project IceStorm as follows: Clifford Wolf, Mathias Lasser. Project IceStorm. http://www.clifford.at/icestorm/,
@@ -368,11 +369,11 @@ e.g. using the following BibTeX code:
 	howpublished = "\url{http://www.clifford.at/icestorm/}"
 }</pre>
 
-<p>
 <hr>
-</p>
 
 <p>
 <i>Documentation mostly by Clifford Wolf &lt;clifford@clifford.at&gt; in 2015. Based on research by Mathias Lasser and Clifford Wolf.<br/>
 Buy an <a href="http://www.latticesemi.com/icestick">iCEstick</a> from Lattice and see what you can do with the information provided here. Buy a few because you might break some..</i>
 </p>
+
+</body></html>

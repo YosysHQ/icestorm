@@ -1,4 +1,18 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+.ctab {
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid gray;
+}
+.ctab td, .ctab th {
+	padding: 3px;
+	border: 1px solid gray;
+}
+</style>
 <title>Project IceStorm &ndash; Bitstream File Format Documentation</title>
+</head><body>
 <h1>Project IceStorm &ndash; Bitstream File Format Documentation</h1>
 
 <p>
@@ -31,8 +45,7 @@ follows the command in case of the CRAM and BRAM commands.
 The following commands are known:
 </p>
 
-<p align="center">
-<table cellpadding="3" border>
+<table class="ctab">
 <tr><th>Opcode</th><th>Description</th></tr>
 <tr><td>0</td><td>payload=0: CRAM Data<br/>
                   payload=3: BRAM Data<br/>
@@ -53,10 +66,9 @@ The following commands are known:
                   payload=16: Enable cold boot<br/>
                   payload=32: Enable warm boot</td></tr>
 </table>
-</p>
 
 <p>
-Use <tt>iceunpack -vv</tt> to display the commands as they are interpreted by the tool.
+Use <span style="font-family:monospace">iceunpack -vv</span> to display the commands as they are interpreted by the tool.
 </p>
 
 <p>
@@ -72,7 +84,7 @@ Most bytes in the bitstream are SRAM data bytes that should be written to the va
 in the FPGA. The following sequence is used to program an SRAM cell:
 </p>
 
-<p><ul>
+<ul>
 <li>Set bank width (opcode 6)</li>
 <li>Set bank height (opcode 7)</li>
 <li>Set bank offset (opcode 8)</li>
@@ -80,7 +92,7 @@ in the FPGA. The following sequence is used to program an SRAM cell:
 <li>CRAM or BRAM Data Command</li>
 <li>(width * height / 8) data bytes</li>
 <li>two zero bytes</li>
-</ul></p>
+</ul>
 
 <p>
 The bank width and height parameters reflect the width and height of the SRAM bank. A large SRAM can
@@ -104,7 +116,8 @@ The ordering of the data bits is in MSB first row-major order.
 
 <h2>Organization of the CRAM</h2>
 
-<p><a href="checkerboard.png"><img style="float:right; padding:1em; padding-top:0" height="200" src="checkerboard.png" border="0"></a></p>
+<p><a href="checkerboard.png"><img alt="Mapping of tile config bits to 2D CRAM"
+style="float:right; padding:1em; padding-top:0; border:0" height="200" src="checkerboard.png"></a></p>
 
 <p>
 The chip is organized into four quadrants. Each CRAM memory bank contains the configuration bits for one quadrant.
@@ -129,14 +142,14 @@ RAM tiles are 42 bits wide. (Notice the two slightly smaller columns for the RAM
 <p>
 The IO tiles on the top and bottom of the chip use a strange permutation pattern for their bits. It can be seen in the picture that
 their columns are spread out horizontally. What cannot be seen in the picture is the columns also are not in order and the bit
-positions are vertically permuted as well. The <tt>CramIndexConverter</tt> class in <tt>icepack.cc</tt> encapsulates the calculations
+positions are vertically permuted as well. The <span style="font-family:monospace">CramIndexConverter</span> class in <span style="font-family:monospace">icepack.cc</span> encapsulates the calculations
 that are neccessary to convert between tile-relative bit addresses and CRAM bank-relative bit addresses.
 </p>
 
 <p>
 The black pixels in the image correspond to CRAM bits that are not associated with any IO, LOGIC or RAM tile.
-Some of them are unused, others are used by hard IPs or other global resources. The <tt>iceunpack</tt> tool reports
-such bits, when set, with the "<tt>.extra_bit <i>bank x y</i></tt>" statement in the ASCII output format.
+Some of them are unused, others are used by hard IPs or other global resources. The <span style="font-family:monospace">iceunpack</span> tool reports
+such bits, when set, with the "<span style="font-family:monospace">.extra_bit <i>bank x y</i></span>" statement in the ASCII output format.
 </p>
 
 <h2>Organization of the BRAM</h2>
@@ -152,3 +165,4 @@ The CRC is a 16 bit CRC. The (truncated) polynomial is 0x1021 (CRC-16-CCITT). Th
 the CRC to 0xFFFF. No zero padding is performed.
 </p>
 
+</body></html>
