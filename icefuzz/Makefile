@@ -17,7 +17,7 @@ TESTS += fflogic
 TESTS += ram40
 TESTS += pll
 
-# EIGTHK = _8k
+EIGTHK = _8k
 
 database: bitdata_io.txt bitdata_logic.txt bitdata_ramb$(EIGTHK).txt bitdata_ramt$(EIGTHK).txt
 ifeq ($(EIGTHK),_8k)
@@ -82,11 +82,11 @@ define data_template
 data_$(1).txt: make_$(1).py ../icepack/icepack
 ifeq ($(EIGTHK),_8k)
 	ICE8KPINS=1 python3 make_$(1).py
-	ICEDEV=hx8k-ct256 $(MAKE) -C work_$(1)
+	+ICEDEV=hx8k-ct256 $(MAKE) -C work_$(1)
 	python3 extract.py -8 work_$(1)/*.glb > $$@
 else
 	python3 make_$(1).py
-	$(MAKE) -C work_$(1)
+	+$(MAKE) -C work_$(1)
 	python3 extract.py work_$(1)/*.glb > $$@
 endif
 endef

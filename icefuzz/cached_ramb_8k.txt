@@ -57,6 +57,7 @@
 (0 8) routing glb_netwk_7 <X> glb2local_1
 (0 9) routing glb_netwk_1 <X> glb2local_1
 (0 9) routing glb_netwk_3 <X> glb2local_1
+(0 9) routing glb_netwk_5 <X> glb2local_1
 (0 9) routing glb_netwk_7 <X> glb2local_1
 (1 10) Enable bit of Mux _local_links/global_mux_2 => glb_netwk_0 glb2local_2
 (1 10) Enable bit of Mux _local_links/global_mux_2 => glb_netwk_1 glb2local_2
@@ -128,9 +129,11 @@
 (1 8) Enable bit of Mux _local_links/global_mux_1 => glb_netwk_2 glb2local_1
 (1 8) Enable bit of Mux _local_links/global_mux_1 => glb_netwk_3 glb2local_1
 (1 8) Enable bit of Mux _local_links/global_mux_1 => glb_netwk_4 glb2local_1
+(1 8) Enable bit of Mux _local_links/global_mux_1 => glb_netwk_5 glb2local_1
 (1 8) Enable bit of Mux _local_links/global_mux_1 => glb_netwk_6 glb2local_1
 (1 8) Enable bit of Mux _local_links/global_mux_1 => glb_netwk_7 glb2local_1
 (1 9) routing glb_netwk_4 <X> glb2local_1
+(1 9) routing glb_netwk_5 <X> glb2local_1
 (1 9) routing glb_netwk_6 <X> glb2local_1
 (1 9) routing glb_netwk_7 <X> glb2local_1
 (10 0) routing sp4_h_l_40 <X> sp4_h_r_1
