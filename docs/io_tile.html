@@ -122,7 +122,7 @@ For example the signal <span style="font-family:monospace">io_1/D_IN_0</span> in
 <p>
 Each IO Tile has 2 <span style="font-family:monospace">NegClk</span> configuration bits, suggesting that the
 clock signals can be inverted independently for the the two IO blocks in the
-tile. However, the Lattice tools refuse to pack to IO blocks with different block
+tile. However, the Lattice tools refuse to pack two IO blocks with different clock
 polarity into the same IO tile. In our tests we only managed to either set or clear
 both NegClk bits.
 </p>
