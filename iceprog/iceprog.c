@@ -270,60 +270,60 @@ void flash_wait()
 
 void help(const char *progname)
 {
-	fprintf(stderr, "\n");
-	fprintf(stderr, "iceprog -- simple programming tool for FTDI-based Lattice iCE programmers\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "Notes for iCEstick (iCE40HX-1k devel board):\n");
-	fprintf(stderr, "  An unmodified iCEstick can only be programmed via the serial flash.\n");
-	fprintf(stderr, "  Direct programming of the SRAM is not supported. For direct SRAM\n");
-	fprintf(stderr, "  programming the flash chip and one zero ohm resistor must be desoldered\n");
-	fprintf(stderr, "  and the FT2232H SI pin must be connected to the iCE SPI_SI pin, as shown\n");
-	fprintf(stderr, "  in this picture: http://www.clifford.at/gallery/2014-elektronik/IMG_20141115_183838\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "Notes for the iCE40-HX8K Breakout Board:\n");
-	fprintf(stderr, "  Make sure that the jumper settings on the board match the selected\n");
-	fprintf(stderr, "  mode (SRAM or FLASH). See the iCE40-HX8K user manual for details.\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "Usage: %s [options] <filename>\n", progname);
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -d <device-string>\n");
-	fprintf(stderr, "        use the specified USB device:\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "            d:<devicenode>                (e.g. d:002/005)\n");
-	fprintf(stderr, "            i:<vendor>:<product>          (e.g. i:0x0403:0x6010)\n");
-	fprintf(stderr, "            i:<vendor>:<product>:<index>  (e.g. i:0x0403:0x6010:0)\n");
-	fprintf(stderr, "            s:<vendor>:<product>:<serial-string>\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -I [ABCD]\n");
-	fprintf(stderr, "        connect to the specified interface on the FTDI chip\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -r\n");
-	fprintf(stderr, "        read entire flash (32Mb / 4MB) and write to file\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -R\n");
-	fprintf(stderr, "        read first 256 kB from flash and write to file\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -c\n");
-	fprintf(stderr, "        do not write flash, only verify (check)\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -b\n");
-	fprintf(stderr, "        bulk erase entire flash before writing\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -n\n");
-	fprintf(stderr, "        do not erase flash before writing\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -S\n");
-	fprintf(stderr, "        perform SRAM programming\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -t\n");
-	fprintf(stderr, "        just read the flash ID sequence\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -v\n");
-	fprintf(stderr, "        verbose output\n");
-	fprintf(stderr, "\n");
+	fprintf(stderr, "\n"
+		"iceprog -- simple programming tool for FTDI-based Lattice iCE programmers\n"
+		"\n"
+		"\n"
+		"Notes for iCEstick (iCE40HX-1k devel board):\n"
+		"  An unmodified iCEstick can only be programmed via the serial flash.\n"
+		"  Direct programming of the SRAM is not supported. For direct SRAM\n"
+		"  programming the flash chip and one zero ohm resistor must be desoldered\n"
+		"  and the FT2232H SI pin must be connected to the iCE SPI_SI pin, as shown\n"
+		"  in this picture: http://www.clifford.at/gallery/2014-elektronik/IMG_20141115_183838\n"
+		"\n"
+		"\n"
+		"Notes for the iCE40-HX8K Breakout Board:\n"
+		"  Make sure that the jumper settings on the board match the selected\n"
+		"  mode (SRAM or FLASH). See the iCE40-HX8K user manual for details.\n"
+		"\n"
+		"\n"
+		"Usage: %s [options] <filename>\n"
+		"\n"
+		"    -d <device-string>\n"
+		"        use the specified USB device:\n"
+		"\n"
+		"            d:<devicenode>                (e.g. d:002/005)\n"
+		"            i:<vendor>:<product>          (e.g. i:0x0403:0x6010)\n"
+		"            i:<vendor>:<product>:<index>  (e.g. i:0x0403:0x6010:0)\n"
+		"            s:<vendor>:<product>:<serial-string>\n"
+		"\n"
+		"    -I [ABCD]\n"
+		"        connect to the specified interface on the FTDI chip\n"
+		"\n"
+		"    -r\n"
+		"        read entire flash (32Mb / 4MB) and write to file\n"
+		"\n"
+		"    -R\n"
+		"        read first 256 kB from flash and write to file\n"
+		"\n"
+		"    -c\n"
+		"        do not write flash, only verify (check)\n"
+		"\n"
+		"    -b\n"
+		"        bulk erase entire flash before writing\n"
+		"\n"
+		"    -n\n"
+		"        do not erase flash before writing\n"
+		"\n"
+		"    -S\n"
+		"        perform SRAM programming\n"
+		"\n"
+		"    -t\n"
+		"        just read the flash ID sequence\n"
+		"\n"
+		"    -v\n"
+		"        verbose output\n"
+		"\n", progname);
 	exit(1);
 }
 
