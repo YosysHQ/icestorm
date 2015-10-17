@@ -289,6 +289,10 @@ void help(const char *progname)
 		"\n"
 		"Usage: %s [options] <filename>\n"
 		"\n"
+		"    <filename>\n"
+		"        the path to the file to read or write from, or - to read\n"
+		"        from stdin and write to stdout\n"
+		"\n"
 		"    -d <device-string>\n"
 		"        use the specified USB device:\n"
 		"\n"
@@ -489,7 +493,8 @@ int main(int argc, char **argv)
 		// Program
 		// ---------------------------------------------------------
 
-		FILE *f = fopen(filename, "r");
+		FILE *f = (strcmp(filename, "-") == 0) ? stdin :
+			fopen(filename, "r");
 		if (f == NULL) {
 			fprintf(stderr, "Error: Can't open '%s' for reading: %s\n", filename, strerror(errno));
 			error();
@@ -506,7 +511,8 @@ int main(int argc, char **argv)
 			send_spi(buffer, rc);
 		}
 
-		fclose(f);
+		if (f != stdin)
+			fclose(f);
 
 		// add 48 dummy bits
 		send_byte(0x8f);
@@ -543,7 +549,8 @@ int main(int argc, char **argv)
 
 		if (!read_mode && !check_mode)
 		{
-			FILE *f = fopen(filename, "r");
+			FILE *f = (strcmp(filename, "-") == 0) ? stdin :
+				fopen(filename, "r");
 			if (f == NULL) {
 				fprintf(stderr, "Error: Can't open '%s' for reading: %s\n", filename, strerror(errno));
 				error();
@@ -584,7 +591,8 @@ int main(int argc, char **argv)
 				flash_wait();
 			}
 
-			fclose(f);
+			if (f != stdin)
+				fclose(f);
 		}
 
 
@@ -594,7 +602,8 @@ int main(int argc, char **argv)
 
 		if (read_mode)
 		{
-			FILE *f = fopen(filename, "w");
+			FILE *f = (strcmp(filename, "-") == 0) ? stdout :
+				fopen(filename, "w");
 			if (f == NULL) {
 				fprintf(stderr, "Error: Can't open '%s' for writing: %s\n", filename, strerror(errno));
 				error();
@@ -607,11 +616,13 @@ int main(int argc, char **argv)
 				fwrite(buffer, 256, 1, f);
 			}
 
-			fclose(f);
+			if (f != stdout)
+				fclose(f);
 		}
 		else
 		{
-			FILE *f = fopen(filename, "r");
+			FILE *f = (strcmp(filename, "-") == 0) ? stdin :
+				fopen(filename, "r");
 			if (f == NULL) {
 				fprintf(stderr, "Error: Can't open '%s' for reading: %s\n", filename, strerror(errno));
 				error();
@@ -631,7 +642,8 @@ int main(int argc, char **argv)
 
 			fprintf(stderr, "VERIFY OK\n");
 
-			fclose(f);
+			if (f != stdin)
+				fclose(f);
 		}
 
 
