@@ -1,0 +1,5 @@
+pinloc-*.mk
+pinloc-*.exp
+pinloc-*.log
+pinloc-*.pcf
+pinloc-*.v
