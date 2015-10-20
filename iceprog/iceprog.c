@@ -44,14 +44,14 @@ void check_rx()
 		uint8_t data;
 		int rc = ftdi_read_data(&ftdic, &data, 1);
 		if (rc <= 0) break;
-		printf("unexpected rx byte: %02X\n", data);
+		fprintf(stderr, "unexpected rx byte: %02X\n", data);
 	}
 }
 
 void error()
 {
 	check_rx();
-	printf("ABORT.\n");
+	fprintf(stderr, "ABORT.\n");
 	if (ftdic_open)
 		ftdi_usb_close(&ftdic);
 	ftdi_deinit(&ftdic);
@@ -64,7 +64,7 @@ uint8_t recv_byte()
 	while (1) {
 		int rc = ftdi_read_data(&ftdic, &data, 1);
 		if (rc < 0) {
-			printf("Read error.\n");
+			fprintf(stderr, "Read error.\n");
 			error();
 		}
 		if (rc == 1)
@@ -78,7 +78,7 @@ void send_byte(uint8_t data)
 {
 	int rc = ftdi_write_data(&ftdic, &data, 1);
 	if (rc != 1) {
-		printf("Write error (single byte, rc=%d, expected %d).\n", rc, 1);
+		fprintf(stderr, "Write error (single byte, rc=%d, expected %d).\n", rc, 1);
 		error();
 	}
 }
@@ -94,7 +94,7 @@ void send_spi(uint8_t *data, int n)
 
 	int rc = ftdi_write_data(&ftdic, data, n);
 	if (rc != n) {
-		printf("Write error (chunk, rc=%d, expected %d).\n", rc, n);
+		fprintf(stderr, "Write error (chunk, rc=%d, expected %d).\n", rc, n);
 		error();
 	}
 }
@@ -110,7 +110,7 @@ void xfer_spi(uint8_t *data, int n)
 
 	int rc = ftdi_write_data(&ftdic, data, n);
 	if (rc != n) {
-		printf("Write error (chunk, rc=%d, expected %d).\n", rc, n);
+		fprintf(stderr, "Write error (chunk, rc=%d, expected %d).\n", rc, n);
 		error();
 	}
 
@@ -148,17 +148,17 @@ int get_cdone()
 
 void flash_read_id()
 {
-	// printf("read flash ID..\n");
+	// fprintf(stderr, "read flash ID..\n");
 
 	uint8_t data[21] = { 0x9F };
 	set_gpio(0, 0);
 	xfer_spi(data, 21);
 	set_gpio(1, 0);
 
-	printf("flash ID:");
+	fprintf(stderr, "flash ID:");
 	for (int i = 1; i < 21; i++)
-		printf(" 0x%02X", data[i]);
-	printf("\n");
+		fprintf(stderr, " 0x%02X", data[i]);
+	fprintf(stderr, "\n");
 }
 
 void flash_power_up()
@@ -180,7 +180,7 @@ void flash_power_down()
 void flash_write_enable()
 {
 	if (verbose)
-		printf("write enable..\n");
+		fprintf(stderr, "write enable..\n");
 
 	uint8_t data[1] = { 0x06 };
 	set_gpio(0, 0);
@@ -190,7 +190,7 @@ void flash_write_enable()
 
 void flash_bulk_erase()
 {
-	printf("bulk erase..\n");
+	fprintf(stderr, "bulk erase..\n");
 
 	uint8_t data[1] = { 0xc7 };
 	set_gpio(0, 0);
@@ -200,7 +200,7 @@ void flash_bulk_erase()
 
 void flash_64kB_sector_erase(int addr)
 {
-	printf("erase 64kB sector at 0x%06X..\n", addr);
+	fprintf(stderr, "erase 64kB sector at 0x%06X..\n", addr);
 
 	uint8_t command[4] = { 0xd8, addr >> 16, addr >> 8, addr };
 	set_gpio(0, 0);
@@ -211,7 +211,7 @@ void flash_64kB_sector_erase(int addr)
 void flash_prog(int addr, uint8_t *data, int n)
 {
 	if (verbose)
-		printf("prog 0x%06X +0x%03X..\n", addr, n);
+		fprintf(stderr, "prog 0x%06X +0x%03X..\n", addr, n);
 
 	uint8_t command[4] = { 0x02, addr >> 16, addr >> 8, addr };
 	set_gpio(0, 0);
@@ -221,13 +221,13 @@ void flash_prog(int addr, uint8_t *data, int n)
 
 	if (verbose)
 		for (int i = 0; i < n; i++)
-			printf("%02x%c", data[i], i == n-1 || i % 32 == 31 ? '\n' : ' ');
+			fprintf(stderr, "%02x%c", data[i], i == n-1 || i % 32 == 31 ? '\n' : ' ');
 }
 
 void flash_read(int addr, uint8_t *data, int n)
 {
 	if (verbose)
-		printf("read 0x%06X +0x%03X..\n", addr, n);
+		fprintf(stderr, "read 0x%06X +0x%03X..\n", addr, n);
 
 	uint8_t command[4] = { 0x03, addr >> 16, addr >> 8, addr };
 	set_gpio(0, 0);
@@ -238,13 +238,13 @@ void flash_read(int addr, uint8_t *data, int n)
 
 	if (verbose)
 		for (int i = 0; i < n; i++)
-			printf("%02x%c", data[i], i == n-1 || i % 32 == 31 ? '\n' : ' ');
+			fprintf(stderr, "%02x%c", data[i], i == n-1 || i % 32 == 31 ? '\n' : ' ');
 }
 
 void flash_wait()
 {
 	if (verbose)
-		printf("waiting..");
+		fprintf(stderr, "waiting..");
 
 	while (1)
 	{
@@ -258,72 +258,76 @@ void flash_wait()
 			break;
 
 		if (verbose) {
-			printf(".");
+			fprintf(stderr, ".");
 			fflush(stdout);
 		}
 		usleep(250000);
 	}
 
 	if (verbose)
-		printf("\n");
+		fprintf(stderr, "\n");
 }
 
 void help(const char *progname)
 {
-	fprintf(stderr, "\n");
-	fprintf(stderr, "iceprog -- simple programming tool for FTDI-based Lattice iCE programmers\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "Notes for iCEstick (iCE40HX-1k devel board):\n");
-	fprintf(stderr, "  An unmodified iCEstick can only be programmed via the serial flash.\n");
-	fprintf(stderr, "  Direct programming of the SRAM is not supported. For direct SRAM\n");
-	fprintf(stderr, "  programming the flash chip and one zero ohm resistor must be desoldered\n");
-	fprintf(stderr, "  and the FT2232H SI pin must be connected to the iCE SPI_SI pin, as shown\n");
-	fprintf(stderr, "  in this picture: http://www.clifford.at/gallery/2014-elektronik/IMG_20141115_183838\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "Notes for the iCE40-HX8K Breakout Board:\n");
-	fprintf(stderr, "  Make sure that the jumper settings on the board match the selected\n");
-	fprintf(stderr, "  mode (SRAM or FLASH). See the iCE40-HX8K user manual for details.\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "Usage: %s [options] <filename>\n", progname);
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -d <device-string>\n");
-	fprintf(stderr, "        use the specified USB device:\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "            d:<devicenode>                (e.g. d:002/005)\n");
-	fprintf(stderr, "            i:<vendor>:<product>          (e.g. i:0x0403:0x6010)\n");
-	fprintf(stderr, "            i:<vendor>:<product>:<index>  (e.g. i:0x0403:0x6010:0)\n");
-	fprintf(stderr, "            s:<vendor>:<product>:<serial-string>\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -I [ABCD]\n");
-	fprintf(stderr, "        connect to the specified interface on the FTDI chip\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -r\n");
-	fprintf(stderr, "        read entire flash (32Mb / 4MB) and write to file\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -R\n");
-	fprintf(stderr, "        read first 256 kB from flash and write to file\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -c\n");
-	fprintf(stderr, "        do not write flash, only verify (check)\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -b\n");
-	fprintf(stderr, "        bulk erase entire flash before writing\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -n\n");
-	fprintf(stderr, "        do not erase flash before writing\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -S\n");
-	fprintf(stderr, "        perform SRAM programming\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -t\n");
-	fprintf(stderr, "        just read the flash ID sequence\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -v\n");
-	fprintf(stderr, "        verbose output\n");
-	fprintf(stderr, "\n");
+	fprintf(stderr, "\n"
+		"iceprog -- simple programming tool for FTDI-based Lattice iCE programmers\n"
+		"\n"
+		"\n"
+		"Notes for iCEstick (iCE40HX-1k devel board):\n"
+		"  An unmodified iCEstick can only be programmed via the serial flash.\n"
+		"  Direct programming of the SRAM is not supported. For direct SRAM\n"
+		"  programming the flash chip and one zero ohm resistor must be desoldered\n"
+		"  and the FT2232H SI pin must be connected to the iCE SPI_SI pin, as shown\n"
+		"  in this picture: http://www.clifford.at/gallery/2014-elektronik/IMG_20141115_183838\n"
+		"\n"
+		"\n"
+		"Notes for the iCE40-HX8K Breakout Board:\n"
+		"  Make sure that the jumper settings on the board match the selected\n"
+		"  mode (SRAM or FLASH). See the iCE40-HX8K user manual for details.\n"
+		"\n"
+		"\n"
+		"Usage: %s [options] <filename>\n"
+		"\n"
+		"    <filename>\n"
+		"        the path to the file to read or write from, or - to read\n"
+		"        from stdin and write to stdout\n"
+		"\n"
+		"    -d <device-string>\n"
+		"        use the specified USB device:\n"
+		"\n"
+		"            d:<devicenode>                (e.g. d:002/005)\n"
+		"            i:<vendor>:<product>          (e.g. i:0x0403:0x6010)\n"
+		"            i:<vendor>:<product>:<index>  (e.g. i:0x0403:0x6010:0)\n"
+		"            s:<vendor>:<product>:<serial-string>\n"
+		"\n"
+		"    -I [ABCD]\n"
+		"        connect to the specified interface on the FTDI chip\n"
+		"\n"
+		"    -r\n"
+		"        read entire flash (32Mb / 4MB) and write to file\n"
+		"\n"
+		"    -R\n"
+		"        read first 256 kB from flash and write to file\n"
+		"\n"
+		"    -c\n"
+		"        do not write flash, only verify (check)\n"
+		"\n"
+		"    -b\n"
+		"        bulk erase entire flash before writing\n"
+		"\n"
+		"    -n\n"
+		"        do not erase flash before writing\n"
+		"\n"
+		"    -S\n"
+		"        perform SRAM programming\n"
+		"\n"
+		"    -t\n"
+		"        just read the flash ID sequence\n"
+		"\n"
+		"    -v\n"
+		"        verbose output\n"
+		"\n", progname);
 	exit(1);
 }
 
@@ -400,19 +404,19 @@ int main(int argc, char **argv)
 	// Initialize USB connection to FT2232H
 	// ---------------------------------------------------------
 
-	printf("init..\n");
+	fprintf(stderr, "init..\n");
 
 	ftdi_init(&ftdic);
 	ftdi_set_interface(&ftdic, ifnum);
 
 	if (devstr != NULL) {
 		if (ftdi_usb_open_string(&ftdic, devstr)) {
-			printf("Can't find iCE FTDI USB device (device string %s).\n", devstr);
+			fprintf(stderr, "Can't find iCE FTDI USB device (device string %s).\n", devstr);
 			error();
 		}
 	} else {
 		if (ftdi_usb_open(&ftdic, 0x0403, 0x6010)) {
-			printf("Can't find iCE FTDI USB device (vedor_id 0x0403, device_id 0x6010).\n");
+			fprintf(stderr, "Can't find iCE FTDI USB device (vedor_id 0x0403, device_id 0x6010).\n");
 			error();
 		}
 	}
@@ -420,17 +424,17 @@ int main(int argc, char **argv)
 	ftdic_open = true;
 
 	if (ftdi_usb_reset(&ftdic)) {
-		printf("Failed to reset iCE FTDI USB device.\n");
+		fprintf(stderr, "Failed to reset iCE FTDI USB device.\n");
 		error();
 	}
 
 	if (ftdi_usb_purge_buffers(&ftdic)) {
-		printf("Failed to purge buffers on iCE FTDI USB device.\n");
+		fprintf(stderr, "Failed to purge buffers on iCE FTDI USB device.\n");
 		error();
 	}
 
 	if (ftdi_set_bitmode(&ftdic, 0xff, BITMODE_MPSSE) < 0) {
-		printf("Failed set BITMODE_MPSSE on iCE FTDI USB device.\n");
+		fprintf(stderr, "Failed set BITMODE_MPSSE on iCE FTDI USB device.\n");
 		error();
 	}
 
@@ -442,7 +446,7 @@ int main(int argc, char **argv)
 	send_byte(0x00);
 	send_byte(0x00);
 
-	printf("cdone: %s\n", get_cdone() ? "high" : "low");
+	fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
 	set_gpio(1, 1);
 	usleep(100000);
@@ -450,12 +454,12 @@ int main(int argc, char **argv)
 
 	if (test_mode)
 	{
-		printf("reset..\n");
+		fprintf(stderr, "reset..\n");
 
 		set_gpio(1, 0);
 		usleep(250000);
 
-		printf("cdone: %s\n", get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
 		flash_power_up();
 
@@ -466,7 +470,7 @@ int main(int argc, char **argv)
 		set_gpio(1, 1);
 		usleep(250000);
 
-		printf("cdone: %s\n", get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 	}
 	else if (prog_sram)
 	{
@@ -474,7 +478,7 @@ int main(int argc, char **argv)
 		// Reset
 		// ---------------------------------------------------------
 
-		printf("reset..\n");
+		fprintf(stderr, "reset..\n");
 
 		set_gpio(0, 0);
 		usleep(100);
@@ -482,31 +486,33 @@ int main(int argc, char **argv)
 		set_gpio(0, 1);
 		usleep(2000);
 
-		printf("cdone: %s\n", get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
 
 		// ---------------------------------------------------------
 		// Program
 		// ---------------------------------------------------------
 
-		FILE *f = fopen(filename, "r");
+		FILE *f = (strcmp(filename, "-") == 0) ? stdin :
+			fopen(filename, "r");
 		if (f == NULL) {
 			fprintf(stderr, "Error: Can't open '%s' for reading: %s\n", filename, strerror(errno));
 			error();
 		}
 
-		printf("programming..\n");
+		fprintf(stderr, "programming..\n");
 		while (1)
 		{
 			static unsigned char buffer[4096];
 			int rc = fread(buffer, 1, 4096, f);
 			if (rc <= 0) break;
 			if (verbose)
-				printf("sending %d bytes.\n", rc);
+				fprintf(stderr, "sending %d bytes.\n", rc);
 			send_spi(buffer, rc);
 		}
 
-		fclose(f);
+		if (f != stdin)
+			fclose(f);
 
 		// add 48 dummy bits
 		send_byte(0x8f);
@@ -517,7 +523,7 @@ int main(int argc, char **argv)
 		send_byte(0x8e);
 		send_byte(0x00);
 
-		printf("cdone: %s\n", get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 	}
 	else
 	{
@@ -525,12 +531,12 @@ int main(int argc, char **argv)
 		// Reset
 		// ---------------------------------------------------------
 
-		printf("reset..\n");
+		fprintf(stderr, "reset..\n");
 
 		set_gpio(1, 0);
 		usleep(250000);
 
-		printf("cdone: %s\n", get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
 		flash_power_up();
 
@@ -543,7 +549,8 @@ int main(int argc, char **argv)
 
 		if (!read_mode && !check_mode)
 		{
-			FILE *f = fopen(filename, "r");
+			FILE *f = (strcmp(filename, "-") == 0) ? stdin :
+				fopen(filename, "r");
 			if (f == NULL) {
 				fprintf(stderr, "Error: Can't open '%s' for reading: %s\n", filename, strerror(errno));
 				error();
@@ -565,7 +572,7 @@ int main(int argc, char **argv)
 						error();
 					}
 
-					printf("file size: %d\n", (int)st_buf.st_size);
+					fprintf(stderr, "file size: %d\n", (int)st_buf.st_size);
 					for (int addr = 0; addr < st_buf.st_size; addr += 0x10000) {
 						flash_write_enable();
 						flash_64kB_sector_erase(addr);
@@ -574,7 +581,7 @@ int main(int argc, char **argv)
 				}
 			}
 
-			printf("programming..\n");
+			fprintf(stderr, "programming..\n");
 			for (int addr = 0; true; addr += 256) {
 				uint8_t buffer[256];
 				int rc = fread(buffer, 1, 256, f);
@@ -584,7 +591,8 @@ int main(int argc, char **argv)
 				flash_wait();
 			}
 
-			fclose(f);
+			if (f != stdin)
+				fclose(f);
 		}
 
 
@@ -594,30 +602,33 @@ int main(int argc, char **argv)
 
 		if (read_mode)
 		{
-			FILE *f = fopen(filename, "w");
+			FILE *f = (strcmp(filename, "-") == 0) ? stdout :
+				fopen(filename, "w");
 			if (f == NULL) {
 				fprintf(stderr, "Error: Can't open '%s' for writing: %s\n", filename, strerror(errno));
 				error();
 			}
 
-			printf("reading..\n");
+			fprintf(stderr, "reading..\n");
 			for (int addr = 0; addr < max_read_size; addr += 256) {
 				uint8_t buffer[256];
 				flash_read(addr, buffer, 256);
 				fwrite(buffer, 256, 1, f);
 			}
 
-			fclose(f);
+			if (f != stdout)
+				fclose(f);
 		}
 		else
 		{
-			FILE *f = fopen(filename, "r");
+			FILE *f = (strcmp(filename, "-") == 0) ? stdin :
+				fopen(filename, "r");
 			if (f == NULL) {
 				fprintf(stderr, "Error: Can't open '%s' for reading: %s\n", filename, strerror(errno));
 				error();
 			}
 
-			printf("reading..\n");
+			fprintf(stderr, "reading..\n");
 			for (int addr = 0; true; addr += 256) {
 				uint8_t buffer_flash[256], buffer_file[256];
 				int rc = fread(buffer_file, 1, 256, f);
@@ -629,9 +640,10 @@ int main(int argc, char **argv)
 				}
 			}
 
-			printf("VERIFY OK\n");
+			fprintf(stderr, "VERIFY OK\n");
 
-			fclose(f);
+			if (f != stdin)
+				fclose(f);
 		}
 
 
@@ -644,7 +656,7 @@ int main(int argc, char **argv)
 		set_gpio(1, 1);
 		usleep(250000);
 
-		printf("cdone: %s\n", get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 	}
 
 
@@ -652,7 +664,7 @@ int main(int argc, char **argv)
 	// Exit
 	// ---------------------------------------------------------
 
-	printf("Bye.\n");
+	fprintf(stderr, "Bye.\n");
 	ftdi_disable_bitbang(&ftdic);
 	ftdi_usb_close(&ftdic);
 	ftdi_deinit(&ftdic);
