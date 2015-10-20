@@ -304,6 +304,44 @@ std::string make_seg_pre_io(int x, int y, int z)
 	return cell;
 }
 
+void make_odrv(int x, int y, int src)
+{
+	for (int dst : net_buffers[src])
+	{
+		auto cell = stringf("odrv_%d_%d_%d_%d", x, y, src, dst);
+
+		if (netlist_cell_types.count(cell))
+			continue;
+
+		bool is4 = false, is12 = false;
+
+		for (auto &seg : net_to_segments[dst]) {
+			if (seg.segment_name.substr(0, 4) == "sp4_") is4 = true;
+			if (seg.segment_name.substr(0, 5) == "sp12_") is12 = true;
+		}
+
+		assert(is4 != is12);
+		netlist_cell_types[cell] = is4 ? "Odrv4" : "Odrv12";
+		netlist_cells[cell]["I"] = stringf("net_%d", src);
+		netlist_cells[cell]["O"] = stringf("net_%d", dst);
+	}
+}
+
+void make_inmux(int x, int y, int dst)
+{
+	for (int src : net_rbuffers[dst])
+	{
+		auto cell = stringf("inmux_%d_%d_%d_%d", x, y, src, dst);
+
+		if (netlist_cell_types.count(cell))
+			continue;
+
+		netlist_cell_types[cell] = config_tile_type[x][y] == "io" ? "IoInMux" : "InMux";
+		netlist_cells[cell]["I"] = stringf("net_%d", src);
+		netlist_cells[cell]["O"] = stringf("net_%d", dst);
+	}
+}
+
 void make_seg_cell(int net, const net_segment_name &seg)
 {
 	int a, b;
@@ -311,12 +349,14 @@ void make_seg_cell(int net, const net_segment_name &seg)
 	if (sscanf(seg.segment_name.c_str(), "io_%d/D_IN_%d", &a, &b) == 2) {
 		auto cell = make_seg_pre_io(seg.tile_x, seg.tile_y, a);
 		netlist_cells[cell][stringf("DIN%d", b)] = stringf("net_%d", net);
+		make_odrv(seg.tile_x, seg.tile_y, net);
 		return;
 	}
 
 	if (sscanf(seg.segment_name.c_str(), "io_%d/D_OUT_%d", &a, &b) == 2) {
 		auto cell = make_seg_pre_io(seg.tile_x, seg.tile_y, a);
 		netlist_cells[cell][stringf("DOUT%d", b)] = stringf("net_%d", net);
+		make_inmux(seg.tile_x, seg.tile_y, net);
 		return;
 	}
 }
@@ -372,7 +412,7 @@ int main(int argc, char **argv)
 	fprintf(fout, "module chip;\n");
 
 	for (int net : used_nets)
-		fprintf(fout, "  wire net_%d;\n", net);
+		fprintf(fout, "  (* keep *) wire net_%d;\n", net);
 
 	for (int net : used_nets)
 	for (auto seg : net_to_segments[net])
