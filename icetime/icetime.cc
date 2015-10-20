@@ -3,8 +3,12 @@
 #include <unistd.h>
 #include <assert.h>
 #include <string.h> 
+#include <stdarg.h>
+
+#include <functional>
 #include <string>
 #include <vector>
+#include <tuple>
 #include <map>
 #include <set>
 
@@ -14,32 +18,41 @@ std::string config_device;
 std::vector<std::vector<std::string>> config_tile_type;
 std::vector<std::vector<std::vector<std::vector<bool>>>> config_bits;
 
-struct net_segment_name
+struct net_segment_t
 {
-	int tile_x, tile_y;
-	std::string segment_name;
+	int x, y, net;
+	std::string name;
 
-	net_segment_name(int x, int y, std::string n) :
-		tile_x(x), tile_y(y), segment_name(n) { }
+	net_segment_t() :
+		x(-1), y(-1), net(-1) { }
+
+	net_segment_t(int x, int y, int net, std::string name) :
+		x(x), y(y), net(net), name(name) { }
 	
-	bool operator<(const net_segment_name &other) const {
-		if (tile_x != other.tile_x)
-			return tile_x < other.tile_x;
-		if (tile_y != other.tile_y)
-			return tile_y < other.tile_y;
-		return segment_name < other.segment_name;
+	bool operator<(const net_segment_t &other) const {
+		if (x != other.x)
+			return x < other.x;
+		if (y != other.y)
+			return y < other.y;
+		return name < other.name;
 	}
 };
 
-std::map<net_segment_name, int> segment_to_net;
-std::map<int, std::set<net_segment_name>> net_to_segments;
+std::set<net_segment_t> segments;
+std::map<int, std::set<net_segment_t>> net_to_segments;
+std::map<std::tuple<int, int, int>, net_segment_t> x_y_net_segment;
 std::map<int, std::set<int>> net_buffers, net_rbuffers, net_routing;
 std::map<std::pair<int, int>, std::pair<int, int>> connection_pos;
 std::set<int> used_nets;
 
+std::set<net_segment_t> interconn_src, interconn_dst;
+
 // netlist_cells[cell_name][port_name] = port_expr
 std::map<std::string, std::map<std::string, std::string>> netlist_cells;
 std::map<std::string, std::string> netlist_cell_types;
+
+std::vector<std::string> extra_vlog;
+std::set<int> declared_nets;
 
 std::string vstringf(const char *fmt, va_list ap)
 {
@@ -81,6 +94,12 @@ std::string stringf(const char *fmt, ...)
 	va_end(ap);
 
 	return string;
+}
+
+std::string net_name(int net)
+{
+	declared_nets.insert(net);
+	return stringf("net_%d", net);
 }
 
 void read_config()
@@ -196,9 +215,9 @@ void read_chipdb()
 			int tile_x = atoi(tok);
 			int tile_y = atoi(strtok(nullptr, " \t\r\n"));
 			std::string segment_name = strtok(nullptr, " \t\r\n");
-			net_segment_name seg(tile_x, tile_y, segment_name);
-			segment_to_net[seg] = current_net;
+			net_segment_t seg(tile_x, tile_y, current_net, segment_name);
 			net_to_segments[current_net].insert(seg);
+			segments.insert(seg);
 		}
 
 		if (mode == ".buffer" && !strcmp(tok, thiscfg.c_str())) {
@@ -234,7 +253,7 @@ void read_chipdb()
 			continue;
 
 		for (auto seg : net_to_segments[net])
-			segment_to_net.erase(seg);
+			segments.erase(seg);
 		net_to_segments.erase(net);
 
 		for (auto other : net_buffers[net])
@@ -250,12 +269,18 @@ void read_chipdb()
 		net_routing.erase(net);
 	}
 
+	// create index
+	for (auto seg : segments) {
+		std::tuple<int, int, int> key(seg.x, seg.y, seg.net);
+		x_y_net_segment[key] = seg;
+	}
+
 #if 1
 	for (int net : used_nets)
 	{
 		printf("// NET %d:\n", net);
 		for (auto seg : net_to_segments[net])
-			printf("//  SEG %d %d %s\n", seg.tile_x, seg.tile_y, seg.segment_name.c_str());
+			printf("//  SEG %d %d %s\n", seg.x, seg.y, seg.name.c_str());
 		for (auto other : net_buffers[net])
 			printf("//  BUFFER %d %d %d\n", connection_pos[std::pair<int, int>(net, other)].first,
 					connection_pos[std::pair<int, int>(net, other)].second, other);
@@ -267,6 +292,18 @@ void read_chipdb()
 					connection_pos[std::pair<int, int>(net, other)].second, other);
 	}
 #endif
+}
+
+void register_interconn_src(int x, int y, int net)
+{
+	std::tuple<int, int, int> key(x, y, net);
+	interconn_src.insert(x_y_net_segment.at(key));
+}
+
+void register_interconn_dst(int x, int y, int net)
+{
+	std::tuple<int, int, int> key(x, y, net);
+	interconn_dst.insert(x_y_net_segment.at(key));
 }
 
 std::string make_seg_pre_io(int x, int y, int z)
@@ -290,16 +327,16 @@ std::string make_seg_pre_io(int x, int y, int z)
 	netlist_cells[cell]["DIN1"] = "";
 	netlist_cells[cell]["DIN0"] = "";
 
-	fprintf(fout, "  wire io_pad_%d_%d_%d_din;\n", x, y, z);
-	fprintf(fout, "  wire io_pad_%d_%d_%d_dout;\n", x, y, z);
-	fprintf(fout, "  wire io_pad_%d_%d_%d_oe;\n", x, y, z);
-	fprintf(fout, "  (* keep *) wire io_pad_%d_%d_%d_pin;\n", x, y, z);
-	fprintf(fout, "  IO_PAD io_pad_%d_%d_%d (\n", x, y, z);
-	fprintf(fout, "    .DIN(io_pad_%d_%d_%d_din),\n", x, y, z);
-	fprintf(fout, "    .DOUT(io_pad_%d_%d_%d_dout),\n", x, y, z);
-	fprintf(fout, "    .OE(io_pad_%d_%d_%d_oe),\n", x, y, z);
-	fprintf(fout, "    .PACKAGEPIN(io_pad_%d_%d_%d_pin)\n", x, y, z);
-	fprintf(fout, "  );\n");
+	extra_vlog.push_back(stringf("  wire io_pad_%d_%d_%d_din;\n", x, y, z));
+	extra_vlog.push_back(stringf("  wire io_pad_%d_%d_%d_dout;\n", x, y, z));
+	extra_vlog.push_back(stringf("  wire io_pad_%d_%d_%d_oe;\n", x, y, z));
+	extra_vlog.push_back(stringf("  (* keep *) wire io_pad_%d_%d_%d_pin;\n", x, y, z));
+	extra_vlog.push_back(stringf("  IO_PAD io_pad_%d_%d_%d (\n", x, y, z));
+	extra_vlog.push_back(stringf("    .DIN(io_pad_%d_%d_%d_din),\n", x, y, z));
+	extra_vlog.push_back(stringf("    .DOUT(io_pad_%d_%d_%d_dout),\n", x, y, z));
+	extra_vlog.push_back(stringf("    .OE(io_pad_%d_%d_%d_oe),\n", x, y, z));
+	extra_vlog.push_back(stringf("    .PACKAGEPIN(io_pad_%d_%d_%d_pin)\n", x, y, z));
+	extra_vlog.push_back(stringf("  );\n"));
 
 	return cell;
 }
@@ -316,14 +353,15 @@ void make_odrv(int x, int y, int src)
 		bool is4 = false, is12 = false;
 
 		for (auto &seg : net_to_segments[dst]) {
-			if (seg.segment_name.substr(0, 4) == "sp4_") is4 = true;
-			if (seg.segment_name.substr(0, 5) == "sp12_") is12 = true;
+			if (seg.name.substr(0, 4) == "sp4_") is4 = true;
+			if (seg.name.substr(0, 5) == "sp12_") is12 = true;
 		}
 
 		assert(is4 != is12);
 		netlist_cell_types[cell] = is4 ? "Odrv4" : "Odrv12";
-		netlist_cells[cell]["I"] = stringf("net_%d", src);
-		netlist_cells[cell]["O"] = stringf("net_%d", dst);
+		netlist_cells[cell]["I"] = net_name(src);
+		netlist_cells[cell]["O"] = net_name(dst);
+		register_interconn_src(x, y, dst);
 	}
 }
 
@@ -337,28 +375,149 @@ void make_inmux(int x, int y, int dst)
 			continue;
 
 		netlist_cell_types[cell] = config_tile_type[x][y] == "io" ? "IoInMux" : "InMux";
-		netlist_cells[cell]["I"] = stringf("net_%d", src);
-		netlist_cells[cell]["O"] = stringf("net_%d", dst);
+		netlist_cells[cell]["I"] = net_name(src);
+		netlist_cells[cell]["O"] = net_name(dst);
+		register_interconn_dst(x, y, src);
 	}
 }
 
-void make_seg_cell(int net, const net_segment_name &seg)
+void make_seg_cell(int net, const net_segment_t &seg)
 {
 	int a, b;
 
-	if (sscanf(seg.segment_name.c_str(), "io_%d/D_IN_%d", &a, &b) == 2) {
-		auto cell = make_seg_pre_io(seg.tile_x, seg.tile_y, a);
-		netlist_cells[cell][stringf("DIN%d", b)] = stringf("net_%d", net);
-		make_odrv(seg.tile_x, seg.tile_y, net);
+	if (sscanf(seg.name.c_str(), "io_%d/D_IN_%d", &a, &b) == 2) {
+		auto cell = make_seg_pre_io(seg.x, seg.y, a);
+		netlist_cells[cell][stringf("DIN%d", b)] = net_name(net);
+		make_odrv(seg.x, seg.y, net);
 		return;
 	}
 
-	if (sscanf(seg.segment_name.c_str(), "io_%d/D_OUT_%d", &a, &b) == 2) {
-		auto cell = make_seg_pre_io(seg.tile_x, seg.tile_y, a);
-		netlist_cells[cell][stringf("DOUT%d", b)] = stringf("net_%d", net);
-		make_inmux(seg.tile_x, seg.tile_y, net);
+	if (sscanf(seg.name.c_str(), "io_%d/D_OUT_%d", &a, &b) == 2) {
+		auto cell = make_seg_pre_io(seg.x, seg.y, a);
+		netlist_cells[cell][stringf("DOUT%d", b)] = net_name(net);
+		make_inmux(seg.x, seg.y, net);
 		return;
 	}
+}
+
+struct make_interconn_worker_t
+{
+	std::map<int, std::set<int>> net_tree;
+	std::map<net_segment_t, std::set<net_segment_t>> seg_tree;
+
+	void build_net_tree(int src)
+	{
+		auto &children = net_tree[src];
+
+		for (auto &other : net_buffers[src])
+			if (!net_tree.count(other)) {
+				build_net_tree(other);
+				children.insert(other);
+			}
+
+		for (auto &other : net_routing[src])
+			if (!net_tree.count(other)) {
+				build_net_tree(other);
+				children.insert(other);
+			}
+	}
+
+	void build_seg_tree(const net_segment_t &src)
+	{
+		std::set<net_segment_t> queue, targets;
+		std::map<net_segment_t, int> distances;
+		std::map<net_segment_t, net_segment_t> reverse_edges;
+		queue.insert(src);
+
+		std::map<net_segment_t, std::set<net_segment_t>> seg_connections;
+
+		for (auto &it: net_tree)
+		for (int child : it.second) {
+			auto pos = connection_pos.at(std::pair<int, int>(it.first, child));
+			std::tuple<int, int, int> key_parent(pos.first, pos.second, it.first);
+			std::tuple<int, int, int> key_child(pos.first, pos.second, child);
+			seg_connections[x_y_net_segment.at(key_parent)].insert(x_y_net_segment.at(key_child));
+		}
+
+		for (int distance_counter = 0; !queue.empty(); distance_counter++)
+		{
+			std::set<net_segment_t> next_queue;
+
+			for (auto &seg : queue)
+				distances[seg] = distance_counter;
+
+			for (auto &seg : queue)
+			{
+				if (interconn_dst.count(seg))
+					targets.insert(seg);
+
+				if (seg_connections.count(seg))
+					for (auto &child : seg_connections.at(seg))
+					{
+						if (distances.count(child) != 0)
+							continue;
+
+						reverse_edges[child] = seg;
+						next_queue.insert(child);
+					}
+
+				for (int x = seg.x-1; x <= seg.x+1; x++)
+				for (int y = seg.y-1; y <= seg.y+1; y++)
+				{
+					std::tuple<int, int, int> key(x, y, seg.net);
+
+					if (x_y_net_segment.count(key) == 0)
+						continue;
+
+					auto &child = x_y_net_segment.at(key);
+
+					if (distances.count(child) != 0)
+						continue;
+
+					reverse_edges[child] = seg;
+					next_queue.insert(child);
+				}
+			}
+
+			queue.swap(next_queue);
+		}
+
+		for (auto &trg : targets)
+			seg_tree[trg];
+
+		while (!targets.empty()) {
+			std::set<net_segment_t> next_targets;
+			for (auto &trg : targets)
+				if (reverse_edges.count(trg)) {
+					seg_tree[reverse_edges.at(trg)].insert(trg);
+					next_targets.insert(reverse_edges.at(trg));
+				}
+			targets.swap(next_targets);
+		}
+	}
+};
+
+void make_interconn(const net_segment_t &src)
+{
+	make_interconn_worker_t worker;
+	worker.build_net_tree(src.net);
+	worker.build_seg_tree(src);
+
+#if 1
+	printf("// INTERCONN %d %d %s %d\n", src.x, src.y, src.name.c_str(), src.net);
+	std::function<void(int,int)> print_net_tree = [&] (int net, int indent) {
+		printf("// %*sNET_TREE %d\n", 2*indent, "", net);
+		for (int child : worker.net_tree.at(net))
+			print_net_tree(child, indent+1);
+	};
+	std::function<void(const net_segment_t&,int)> print_seg_tree = [&] (const net_segment_t &seg, int indent) {
+		printf("// %*sSEG_TREE %d %d %s %d\n", 2*indent, "", seg.x, seg.y, seg.name.c_str(), seg.net);
+		for (auto &child : worker.seg_tree.at(seg))
+			print_seg_tree(child, indent+1);
+	};
+	print_net_tree(src.net, 1);
+	print_seg_tree(src, 1);
+#endif
 }
 
 void help(const char *cmd)
@@ -409,14 +568,20 @@ int main(int argc, char **argv)
 	printf("// Reading chipdb file..\n");
 	read_chipdb();
 
+	for (int net : used_nets)
+	for (auto &seg : net_to_segments[net])
+		make_seg_cell(net, seg);
+
+	for (auto &seg : interconn_src)
+		make_interconn(seg);
+
 	fprintf(fout, "module chip;\n");
 
-	for (int net : used_nets)
+	for (int net : declared_nets)
 		fprintf(fout, "  (* keep *) wire net_%d;\n", net);
 
-	for (int net : used_nets)
-	for (auto seg : net_to_segments[net])
-		make_seg_cell(net, seg);
+	for (auto &str : extra_vlog)
+		fprintf(fout, "%s", str.c_str());
 
 	for (auto it : netlist_cell_types) {
 		const char *sep = "";
