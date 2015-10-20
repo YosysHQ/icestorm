@@ -46,6 +46,7 @@ std::map<std::pair<int, int>, std::pair<int, int>> connection_pos;
 std::set<int> used_nets;
 
 std::set<net_segment_t> interconn_src, interconn_dst;
+std::set<int> no_interconn_net;
 
 // netlist_cells[cell_name][port_name] = port_expr
 std::map<std::string, std::map<std::string, std::string>> netlist_cells;
@@ -341,6 +342,29 @@ std::string make_seg_pre_io(int x, int y, int z)
 	return cell;
 }
 
+std::string make_lc40(int x, int y, int z)
+{
+	auto cell = stringf("lc40_%d_%d_%d", x, y, z);
+
+	if (netlist_cell_types.count(cell))
+		return cell;
+
+	netlist_cell_types[cell] = "LogicCell40";
+	netlist_cells[cell]["carryin"] = "";
+	netlist_cells[cell]["ce"] = "";
+	netlist_cells[cell]["clk"] = "";
+	netlist_cells[cell]["in0"] = "";
+	netlist_cells[cell]["in1"] = "";
+	netlist_cells[cell]["in2"] = "";
+	netlist_cells[cell]["in3"] = "";
+	netlist_cells[cell]["sr"] = "";
+	netlist_cells[cell]["carryout"] = "";
+	netlist_cells[cell]["lcout"] = "";
+	netlist_cells[cell]["ltout"] = "";
+
+	return cell;
+}
+
 void make_odrv(int x, int y, int src)
 {
 	for (int dst : net_buffers[src])
@@ -355,6 +379,11 @@ void make_odrv(int x, int y, int src)
 		for (auto &seg : net_to_segments[dst]) {
 			if (seg.name.substr(0, 4) == "sp4_") is4 = true;
 			if (seg.name.substr(0, 5) == "sp12_") is12 = true;
+		}
+
+		if (!is4 && !is12) {
+			register_interconn_src(x, y, src);
+			continue;
 		}
 
 		assert(is4 != is12);
@@ -378,12 +407,14 @@ void make_inmux(int x, int y, int dst)
 		netlist_cells[cell]["I"] = net_name(src);
 		netlist_cells[cell]["O"] = net_name(dst);
 		register_interconn_dst(x, y, src);
+		no_interconn_net.insert(dst);
 	}
 }
 
 void make_seg_cell(int net, const net_segment_t &seg)
 {
-	int a, b;
+	int a = -1, b = -1;
+	char c = 0;
 
 	if (sscanf(seg.name.c_str(), "io_%d/D_IN_%d", &a, &b) == 2) {
 		auto cell = make_seg_pre_io(seg.x, seg.y, a);
@@ -398,6 +429,20 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		make_inmux(seg.x, seg.y, net);
 		return;
 	}
+
+	if (sscanf(seg.name.c_str(), "lutff_%d/in_%d", &a, &b) == 2) {
+		auto cell = make_lc40(seg.x, seg.y, a);
+		netlist_cells[cell][stringf("in%d", b)] = net_name(net);
+		make_inmux(seg.x, seg.y, net);
+		return;
+	}
+
+	if (sscanf(seg.name.c_str(), "lutff_%d/ou%c", &a, &c) == 2 && c == 't') {
+		auto cell = make_lc40(seg.x, seg.y, a);
+		netlist_cells[cell]["lcout"] = net_name(net);
+		make_odrv(seg.x, seg.y, net);
+		return;
+	}
 }
 
 struct make_interconn_worker_t
@@ -410,13 +455,13 @@ struct make_interconn_worker_t
 		auto &children = net_tree[src];
 
 		for (auto &other : net_buffers[src])
-			if (!net_tree.count(other)) {
+			if (!net_tree.count(other) && !no_interconn_net.count(other)) {
 				build_net_tree(other);
 				children.insert(other);
 			}
 
 		for (auto &other : net_routing[src])
-			if (!net_tree.count(other)) {
+			if (!net_tree.count(other) && !no_interconn_net.count(other)) {
 				build_net_tree(other);
 				children.insert(other);
 			}
@@ -506,18 +551,27 @@ void make_interconn(const net_segment_t &src)
 #if 1
 	printf("// INTERCONN %d %d %s %d\n", src.x, src.y, src.name.c_str(), src.net);
 	std::function<void(int,int)> print_net_tree = [&] (int net, int indent) {
-		printf("// %*sNET_TREE %d\n", 2*indent, "", net);
+		printf("// %*sNET_TREE %d\n", indent, "", net);
 		for (int child : worker.net_tree.at(net))
-			print_net_tree(child, indent+1);
+			print_net_tree(child, indent+2);
 	};
-	std::function<void(const net_segment_t&,int)> print_seg_tree = [&] (const net_segment_t &seg, int indent) {
-		printf("// %*sSEG_TREE %d %d %s %d\n", 2*indent, "", seg.x, seg.y, seg.name.c_str(), seg.net);
-		for (auto &child : worker.seg_tree.at(seg))
-			print_seg_tree(child, indent+1);
+	std::function<void(const net_segment_t&,int,bool)> print_seg_tree = [&] (const net_segment_t &seg, int indent, bool chain) {
+		printf("// %*sSEG_TREE %d %d %s %d\n", indent, chain ? "`" : "", seg.x, seg.y, seg.name.c_str(), seg.net);
+		auto &children = worker.seg_tree.at(seg);
+		bool child_chain = children.size() == 1;
+		for (auto &child : children)
+			print_seg_tree(child, child_chain ? (chain ? indent : indent+1) : indent+2, child_chain);
 	};
-	print_net_tree(src.net, 1);
-	print_seg_tree(src, 1);
+	print_net_tree(src.net, 2);
+	print_seg_tree(src, 2, false);
 #endif
+
+	// FIXME: interconnect cells
+	for (auto &it : worker.net_tree)
+	for (auto &dst : it.second)
+		if (declared_nets.count(dst))
+			extra_vlog.push_back(stringf("  INTERCONN conn_%d_%d (.I(%s), .O(%s));\n",
+					src.net, dst, net_name(src.net).c_str(), net_name(dst).c_str()));
 }
 
 void help(const char *cmd)
