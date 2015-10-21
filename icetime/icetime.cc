@@ -14,9 +14,12 @@
 
 FILE *fin, *fout;
 
-std::string config_device;
+std::string config_device, selected_package;
 std::vector<std::vector<std::string>> config_tile_type;
 std::vector<std::vector<std::vector<std::vector<bool>>>> config_bits;
+std::map<std::tuple<int, int, int>, std::string> pin_pos;
+std::map<std::string, std::string> pin_names;
+std::set<std::string> io_names;
 
 struct net_segment_t
 {
@@ -103,6 +106,39 @@ std::string net_name(int net)
 	return stringf("net_%d", net);
 }
 
+void read_pcf(const char *filename)
+{
+	FILE *f = fopen(filename, "r");
+	if (f == nullptr) {
+		perror("Can't open pcf file");
+		exit(1);
+	}
+
+	char buffer[128];
+
+	while (fgets(buffer, 128, f))
+	{
+		if (buffer[0] == '#')
+			continue;
+
+		const char *tok = strtok(buffer, " \t\r\n");
+		if (tok == nullptr || strcmp(tok, "set_io"))
+			continue;
+
+		std::vector<std::string> args;
+		while ((tok = strtok(nullptr, " \t\r\n")) != nullptr) {
+			if (!strcmp(tok, "--warn-no-port"))
+				continue;
+			args.push_back(tok);
+		}
+
+		assert(args.size() == 2);
+		pin_names[args[1]] = args[0];
+	}
+
+	fclose(f);
+}
+
 void read_config()
 {
 	char buffer[128];
@@ -187,6 +223,13 @@ void read_chipdb()
 		{
 			mode = tok;
 
+			if (mode == ".pins")
+			{
+				if (strtok(nullptr, " \t\r\n") != selected_package)
+					mode = "";
+				continue;
+			}
+
 			if (mode == ".net")
 			{
 				current_net = atoi(strtok(nullptr, " \t\r\n"));
@@ -210,6 +253,14 @@ void read_chipdb()
 			}
 
 			continue;
+		}
+
+		if (mode == ".pins") {
+			int pos_x = atoi(strtok(nullptr, " \t\r\n"));
+			int pos_y = atoi(strtok(nullptr, " \t\r\n"));
+			int pos_z = atoi(strtok(nullptr, " \t\r\n"));
+			std::tuple<int, int, int> key(pos_x, pos_y, pos_z);
+			pin_pos[key] = tok;
 		}
 
 		if (mode == ".net") {
@@ -328,15 +379,26 @@ std::string make_seg_pre_io(int x, int y, int z)
 	netlist_cells[cell]["DIN1"] = "";
 	netlist_cells[cell]["DIN0"] = "";
 
+	std::string io_name;
+	std::tuple<int, int, int> key(x, y, z);
+
+	if (pin_pos.count(key)) {
+		io_name = pin_pos.at(key);
+		io_name = pin_names.count(io_name) ? pin_names.at(io_name) : "io_" + io_name;
+	} else {
+		io_name = stringf("io_%d_%d_%d", x, y, z);
+	}
+
+	io_names.insert(io_name);
+	extra_vlog.push_back(stringf("  inout %s;\n", io_name.c_str()));
 	extra_vlog.push_back(stringf("  wire io_pad_%d_%d_%d_din;\n", x, y, z));
 	extra_vlog.push_back(stringf("  wire io_pad_%d_%d_%d_dout;\n", x, y, z));
 	extra_vlog.push_back(stringf("  wire io_pad_%d_%d_%d_oe;\n", x, y, z));
-	extra_vlog.push_back(stringf("  (* keep *) wire io_pad_%d_%d_%d_pin;\n", x, y, z));
 	extra_vlog.push_back(stringf("  IO_PAD io_pad_%d_%d_%d (\n", x, y, z));
 	extra_vlog.push_back(stringf("    .DIN(io_pad_%d_%d_%d_din),\n", x, y, z));
 	extra_vlog.push_back(stringf("    .DOUT(io_pad_%d_%d_%d_dout),\n", x, y, z));
 	extra_vlog.push_back(stringf("    .OE(io_pad_%d_%d_%d_oe),\n", x, y, z));
-	extra_vlog.push_back(stringf("    .PACKAGEPIN(io_pad_%d_%d_%d_pin)\n", x, y, z));
+	extra_vlog.push_back(stringf("    .PACKAGEPIN(%s)\n", io_name.c_str()));
 	extra_vlog.push_back(stringf("  );\n"));
 
 	return cell;
@@ -579,16 +641,27 @@ void help(const char *cmd)
 	printf("\n");
 	printf("Usage: %s [options] input.txt [output.v]\n", cmd);
 	printf("\n");
+	printf("    -p <pcf_file>\n");
+	printf("    -P <chip_package>\n");
+	printf("         provide this two options for correct IO pin names\n");
+	printf("\n");
 	exit(1);
 }
 
 int main(int argc, char **argv)
 {
 	int opt;
-	while ((opt = getopt(argc, argv, "")) != -1)
+	while ((opt = getopt(argc, argv, "p:P:")) != -1)
 	{
 		switch (opt)
 		{
+		case 'p':
+			printf("// Reading input .pcf file..\n");
+			read_pcf(optarg);
+			break;
+		case 'P':
+			selected_package = optarg;
+			break;
 		default:
 			help(argv[0]);
 		}
@@ -629,7 +702,13 @@ int main(int argc, char **argv)
 	for (auto &seg : interconn_src)
 		make_interconn(seg);
 
-	fprintf(fout, "module chip;\n");
+	fprintf(fout, "module chip (");
+	const char *io_sep = "";
+	for (auto io : io_names) {
+		fprintf(fout, "%s%s", io_sep, io.c_str());
+		io_sep = ", ";
+	}
+	fprintf(fout, ");\n");
 
 	for (int net : declared_nets)
 		fprintf(fout, "  (* keep *) wire net_%d;\n", net);

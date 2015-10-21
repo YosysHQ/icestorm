@@ -1,3 +1,4 @@
 icetime
+test[0-9]*
 *.d
 *.o
