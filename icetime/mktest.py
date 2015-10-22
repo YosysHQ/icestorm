@@ -22,11 +22,25 @@ with open("%s.pcf" % sys.argv[1], "w") as f:
     print("set_io o2 %s" % pins[3], file=f)
     print("set_io o3 %s" % pins[4], file=f)
 
+with open("%s.ys" % sys.argv[1], "w") as f:
+    print("echo on", file=f)
+    print("read_verilog -lib cells.v", file=f)
+    print("read_verilog %s_ref.v" % sys.argv[1], file=f)
+    print("read_verilog %s_out.v" % sys.argv[1], file=f)
+    print("prep", file=f)
+    print("equiv_make top chip equiv", file=f)
+    print("hierarchy -top equiv", file=f)
+    print("equiv_struct", file=f)
+    print("equiv_purge", file=f)
+    print("opt_clean -purge", file=f)
+    print("show -format dot -prefix %s" % sys.argv[1], file=f)
+
 os.system("bash ../icefuzz/icecube.sh %s.v" % sys.argv[1])
 os.rename("%s.v" % sys.argv[1], "%s_in.v" % sys.argv[1])
-os.rename("%s.vsb" % sys.argv[1], "%s_ref.v" % sys.argv[1])
+os.system("grep -v defparam %s.vsb > %s_ref.v" % (sys.argv[1], sys.argv[1]))
 
 os.remove("%s.bin" % sys.argv[1])
+os.remove("%s.vsb" % sys.argv[1])
 os.remove("%s.glb" % sys.argv[1])
 os.remove("%s.psb" % sys.argv[1])
 os.remove("%s.sdf" % sys.argv[1])

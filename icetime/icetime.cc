@@ -711,7 +711,7 @@ int main(int argc, char **argv)
 	fprintf(fout, ");\n");
 
 	for (int net : declared_nets)
-		fprintf(fout, "  (* keep *) wire net_%d;\n", net);
+		fprintf(fout, "  wire net_%d;\n", net);
 
 	for (auto &str : extra_vlog)
 		fprintf(fout, "%s", str.c_str());

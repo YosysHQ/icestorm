@@ -21,6 +21,7 @@ uninstall:
 test0 test1 test2 test3 test4 test5 test6 test7 test8 test9: icetime
 	python3 mktest.py $@
 	./icetime -P tq144 -p $@.pcf $@.txt $@_out.v
+	yosys $@.ys
 
 mktest: test0 test1 test2 test3 test4 test5 test6 test7 test8 test9
 
