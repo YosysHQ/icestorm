@@ -30,14 +30,62 @@ with open("%s.ys" % sys.argv[1], "w") as f:
     print("prep", file=f)
     print("equiv_make top chip equiv", file=f)
     print("hierarchy -top equiv", file=f)
+    print("rename -hide w:N_*", file=f)
     print("equiv_struct", file=f)
-    print("equiv_purge", file=f)
+    print("# equiv_purge", file=f)
     print("opt_clean -purge", file=f)
     print("show -format dot -prefix %s" % sys.argv[1], file=f)
 
 os.system("bash ../icefuzz/icecube.sh %s.v" % sys.argv[1])
 os.rename("%s.v" % sys.argv[1], "%s_in.v" % sys.argv[1])
-os.system("grep -v defparam %s.vsb > %s_ref.v" % (sys.argv[1], sys.argv[1]))
+
+with open("%s_ref.v" % sys.argv[1], "w") as f:
+    for line in open("%s.vsb" % sys.argv[1], "r"):
+        if line.find("defparam") >= 0:
+            continue
+
+        line = line.replace(" Span4Mux_s0_h ",   " Span4Mux_h0 ")
+        line = line.replace(" Span4Mux_s1_h ",   " Span4Mux_h1 ")
+        line = line.replace(" Span4Mux_s2_h ",   " Span4Mux_h2 ")
+        line = line.replace(" Span4Mux_s3_h ",   " Span4Mux_h3 ")
+        line = line.replace(" Span4Mux_h ",      " Span4Mux_h4 ")
+
+        line = line.replace(" Span4Mux_s0_v ",   " Span4Mux_v0 ")
+        line = line.replace(" Span4Mux_s1_v ",   " Span4Mux_v1 ")
+        line = line.replace(" Span4Mux_s2_v ",   " Span4Mux_v2 ")
+        line = line.replace(" Span4Mux_s3_v ",   " Span4Mux_v3 ")
+        line = line.replace(" Span4Mux_v ",      " Span4Mux_v4 ")
+        line = line.replace(" Span4Mux ",        " Span4Mux_v4 ")
+
+        line = line.replace(" Span12Mux_s0_h ",  " Span12Mux_h0 ")
+        line = line.replace(" Span12Mux_s1_h ",  " Span12Mux_h1 ")
+        line = line.replace(" Span12Mux_s2_h ",  " Span12Mux_h2 ")
+        line = line.replace(" Span12Mux_s3_h ",  " Span12Mux_h3 ")
+        line = line.replace(" Span12Mux_s4_h ",  " Span12Mux_h4 ")
+        line = line.replace(" Span12Mux_s5_h ",  " Span12Mux_h5 ")
+        line = line.replace(" Span12Mux_s6_h ",  " Span12Mux_h6 ")
+        line = line.replace(" Span12Mux_s7_h ",  " Span12Mux_h7 ")
+        line = line.replace(" Span12Mux_s8_h ",  " Span12Mux_h8 ")
+        line = line.replace(" Span12Mux_s9_h ",  " Span12Mux_h9 ")
+        line = line.replace(" Span12Mux_s10_h ", " Span12Mux_h10 ")
+        line = line.replace(" Span12Mux_s11_h ", " Span12Mux_h11 ")
+        line = line.replace(" Span12Mux ",       " Span12Mux_h12 ")
+
+        line = line.replace(" Span12Mux_s0_v ",  " Span12Mux_v0 ")
+        line = line.replace(" Span12Mux_s1_v ",  " Span12Mux_v1 ")
+        line = line.replace(" Span12Mux_s2_v ",  " Span12Mux_v2 ")
+        line = line.replace(" Span12Mux_s3_v ",  " Span12Mux_v3 ")
+        line = line.replace(" Span12Mux_s4_v ",  " Span12Mux_v4 ")
+        line = line.replace(" Span12Mux_s5_v ",  " Span12Mux_v5 ")
+        line = line.replace(" Span12Mux_s6_v ",  " Span12Mux_v6 ")
+        line = line.replace(" Span12Mux_s7_v ",  " Span12Mux_v7 ")
+        line = line.replace(" Span12Mux_s8_v ",  " Span12Mux_v8 ")
+        line = line.replace(" Span12Mux_s9_v ",  " Span12Mux_v9 ")
+        line = line.replace(" Span12Mux_s10_v ", " Span12Mux_v10 ")
+        line = line.replace(" Span12Mux_s11_v ", " Span12Mux_v11 ")
+        line = line.replace(" Span12Mux_v ",     " Span12Mux_v12 ")
+
+        f.write(line)
 
 os.remove("%s.bin" % sys.argv[1])
 os.remove("%s.vsb" % sys.argv[1])

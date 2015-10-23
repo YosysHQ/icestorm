@@ -672,6 +672,186 @@ module sync_clk_enable(D, NC, Q);
   output Q;
 endmodule
 
+module Span4Mux_h0(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span4Mux_h1(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span4Mux_h2(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span4Mux_h3(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span4Mux_h4(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span4Mux_v0(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span4Mux_v1(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span4Mux_v2(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span4Mux_v3(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span4Mux_v4(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h0(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h1(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h2(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h3(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h4(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h5(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h6(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h7(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h8(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h9(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h10(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h11(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_h12(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v0(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v1(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v2(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v3(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v4(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v5(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v6(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v7(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v8(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v9(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v10(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v11(I, O);
+  input I;
+  output O;
+endmodule
+
+module Span12Mux_v12(I, O);
+  input I;
+  output O;
+endmodule
+
 module GND(Y);
   output Y;
 endmodule
