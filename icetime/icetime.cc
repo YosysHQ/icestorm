@@ -441,6 +441,8 @@ void make_odrv(int x, int y, int src)
 		for (auto &seg : net_to_segments[dst]) {
 			if (seg.name.substr(0, 4) == "sp4_") is4 = true;
 			if (seg.name.substr(0, 5) == "sp12_") is12 = true;
+			if (seg.name.substr(0, 6) == "span4_") is4 = true;
+			if (seg.name.substr(0, 7) == "span12_") is12 = true;
 		}
 
 		if (!is4 && !is12) {
@@ -511,6 +513,8 @@ struct make_interconn_worker_t
 {
 	std::map<int, std::set<int>> net_tree;
 	std::map<net_segment_t, std::set<net_segment_t>> seg_tree;
+	std::map<net_segment_t, net_segment_t> seg_parents;
+	std::set<net_segment_t> target_segs;
 
 	void build_net_tree(int src)
 	{
@@ -589,8 +593,10 @@ struct make_interconn_worker_t
 			queue.swap(next_queue);
 		}
 
-		for (auto &trg : targets)
+		for (auto &trg : targets) {
+			target_segs.insert(trg);
 			seg_tree[trg];
+		}
 
 		while (!targets.empty()) {
 			std::set<net_segment_t> next_targets;
@@ -601,6 +607,58 @@ struct make_interconn_worker_t
 				}
 			targets.swap(next_targets);
 		}
+
+		for (auto &it : seg_tree)
+		for (auto &child : it.second) {
+			assert(seg_parents.count(child) == 0);
+			seg_parents[child] = it.first;
+		}
+	}
+
+	void create_cells(const net_segment_t &trg)
+	{
+		if (seg_parents.count(trg) == 0)
+			return;
+
+		const net_segment_t *cursor = &seg_parents.at(trg);
+
+		if (trg.name.substr(0, 6) == "local_")
+		{
+			extra_vlog.push_back(stringf("  LocalMux conn_%d_%d (.I(%s), .O(%s));\n",
+					cursor->net, trg.net, net_name(cursor->net).c_str(), net_name(trg.net).c_str()));
+
+			declared_nets.insert(cursor->net);
+			create_cells(*cursor);
+			return;
+		}
+
+		if (trg.name.substr(0, 6) == "span4_")
+		{
+			while (seg_parents.count(*cursor) && cursor->net == trg.net)
+				cursor = &seg_parents.at(*cursor);
+
+			if (cursor->net == trg.net)
+				return;
+
+			extra_vlog.push_back(stringf("  IoSpan4Mux conn_%d_%d (.I(%s), .O(%s));\n",
+					cursor->net, trg.net, net_name(cursor->net).c_str(), net_name(trg.net).c_str()));
+
+			declared_nets.insert(cursor->net);
+			create_cells(*cursor);
+			return;
+		}
+
+		// Default handler
+
+		while (seg_parents.count(*cursor))
+			cursor = &seg_parents.at(*cursor);
+
+		if (cursor->net == trg.net)
+			return;
+
+		extra_vlog.push_back(stringf("  INTERCONN conn_%d_%d (.I(%s), .O(%s));\n",
+				cursor->net, trg.net, net_name(cursor->net).c_str(), net_name(trg.net).c_str()));
+		declared_nets.insert(cursor->net);
 	}
 };
 
@@ -628,12 +686,8 @@ void make_interconn(const net_segment_t &src)
 	print_seg_tree(src, 2, false);
 #endif
 
-	// FIXME: interconnect cells
-	for (auto &it : worker.net_tree)
-	for (auto &dst : it.second)
-		if (declared_nets.count(dst))
-			extra_vlog.push_back(stringf("  INTERCONN conn_%d_%d (.I(%s), .O(%s));\n",
-					src.net, dst, net_name(src.net).c_str(), net_name(dst).c_str()));
+	for (auto &seg : worker.target_segs)
+		worker.create_cells(seg);
 }
 
 void help(const char *cmd)
