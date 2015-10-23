@@ -423,14 +423,14 @@ std::string make_lc40(int x, int y, int z)
 		return cell;
 
 	netlist_cell_types[cell] = "LogicCell40";
-	netlist_cells[cell]["carryin"] = "";
+	netlist_cells[cell]["carryin"] = "gnd";
 	netlist_cells[cell]["ce"] = "";
-	netlist_cells[cell]["clk"] = "";
-	netlist_cells[cell]["in0"] = "";
-	netlist_cells[cell]["in1"] = "";
-	netlist_cells[cell]["in2"] = "";
-	netlist_cells[cell]["in3"] = "";
-	netlist_cells[cell]["sr"] = "";
+	netlist_cells[cell]["clk"] = "gnd";
+	netlist_cells[cell]["in0"] = "gnd";
+	netlist_cells[cell]["in1"] = "gnd";
+	netlist_cells[cell]["in2"] = "gnd";
+	netlist_cells[cell]["in3"] = "gnd";
+	netlist_cells[cell]["sr"] = "gnd";
 	netlist_cells[cell]["carryout"] = "";
 	netlist_cells[cell]["lcout"] = "";
 	netlist_cells[cell]["ltout"] = "";
@@ -653,15 +653,13 @@ struct make_interconn_worker_t
 
 		if (trg.name.substr(0, 6) == "span4_" || trg.name.substr(0, 4) == "sp4_")
 		{
-			bool non_io = trg.name.substr(0, 4) == "sp4_";
-			bool horiz_non_io = trg.name.substr(0, 6) == "sp4_h_";
-			int count_length = -1;
+			bool horiz = trg.name.substr(0, 6) == "sp4_h_";
+			int count_length = 0;
 
 			while (seg_parents.count(*cursor) && cursor->net == trg.net) {
-				non_io = non_io || (cursor->name.substr(0, 4) == "sp4_");
-				horiz_non_io = horiz_non_io || (cursor->name.substr(0, 6) == "sp4_h_");
+				horiz = horiz || (cursor->name.substr(0, 6) == "sp4_h_");
 				cursor = &seg_parents.at(*cursor);
-				count_length++;
+				// count_length++;
 			}
 
 			if (cursor->net == trg.net)
@@ -671,14 +669,35 @@ struct make_interconn_worker_t
 				extra_vlog.push_back(stringf("  Sp12to4 conn_%d (.I(%s), .O(%s));\n",
 						iconn_cell_cnt++, seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 			} else
-			if (non_io) {
-				extra_vlog.push_back(stringf("  Span4Mux_%c%d conn_%d (.I(%s), .O(%s));\n",
-						horiz_non_io ? 'h' : 'v', count_length, iconn_cell_cnt++,
-						seg_name(*cursor).c_str(), seg_name(trg).c_str()));
-			} else {
+			if (cursor->name.substr(0, 6) == "span4_") {
 				extra_vlog.push_back(stringf("  IoSpan4Mux conn_%d (.I(%s), .O(%s));\n",
 						iconn_cell_cnt++, seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+			} else {
+				extra_vlog.push_back(stringf("  Span4Mux_%c%d conn_%d (.I(%s), .O(%s));\n",
+						horiz ? 'h' : 'v', count_length, iconn_cell_cnt++,
+						seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 			}
+
+			goto continue_at_cursor;
+		}
+
+		if (trg.name.substr(0, 7) == "span12_" || trg.name.substr(0, 5) == "sp12_")
+		{
+			bool horiz = trg.name.substr(0, 7) == "sp12_h_";
+			int count_length = 0;
+
+			while (seg_parents.count(*cursor) && cursor->net == trg.net) {
+				horiz = horiz || (cursor->name.substr(0, 7) == "sp12_h_");
+				cursor = &seg_parents.at(*cursor);
+				// count_length++;
+			}
+
+			if (cursor->net == trg.net)
+				goto skip_to_cursor;
+
+			extra_vlog.push_back(stringf("  Span12Mux_%c%d conn_%d (.I(%s), .O(%s));\n",
+					horiz ? 'h' : 'v', count_length, iconn_cell_cnt++,
+					seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 
 			goto continue_at_cursor;
 		}
@@ -811,6 +830,10 @@ int main(int argc, char **argv)
 
 	for (auto net : extra_wires)
 		fprintf(fout, "  wire %s;\n", net.c_str());
+
+	fprintf(fout, "  wire gnd, vcc;\n");
+	fprintf(fout, "  GND gnd_cell (.Y(gnd));\n");
+	fprintf(fout, "  VCC vcc_cell (.Y(vcc));\n");
 
 	for (auto &str : extra_vlog)
 		fprintf(fout, "%s", str.c_str());
