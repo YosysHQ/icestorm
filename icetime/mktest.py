@@ -11,16 +11,22 @@ pins = np.random.permutation("""
 """.split())
 
 with open("%s.v" % sys.argv[1], "w") as f:
-    print("module top(input i0, output o0, o1, o2, o3);", file=f)
-    print("  assign {o0, o1, o2, o3} = {i0, i0, !i0, !i0};", file=f)
+    print("module top(input i0, i1, i2, i3, output o0, o1, o2, o3);", file=f)
+    print("  assign o0 = i0 || i1 && i2;", file=f)
+    print("  assign o1 = i1 || i2 && i3;", file=f)
+    print("  assign o2 = i0 || i2 && i3;", file=f)
+    print("  assign o3 = i0 || i1 && i3;", file=f)
     print("endmodule", file=f)
 
 with open("%s.pcf" % sys.argv[1], "w") as f:
     print("set_io i0 %s" % pins[0], file=f)
-    print("set_io o0 %s" % pins[1], file=f)
-    print("set_io o1 %s" % pins[2], file=f)
-    print("set_io o2 %s" % pins[3], file=f)
-    print("set_io o3 %s" % pins[4], file=f)
+    print("set_io i1 %s" % pins[1], file=f)
+    print("set_io i2 %s" % pins[2], file=f)
+    print("set_io i3 %s" % pins[3], file=f)
+    print("set_io o0 %s" % pins[4], file=f)
+    print("set_io o1 %s" % pins[5], file=f)
+    print("set_io o2 %s" % pins[6], file=f)
+    print("set_io o3 %s" % pins[7], file=f)
 
 with open("%s.ys" % sys.argv[1], "w") as f:
     print("echo on", file=f)
@@ -36,7 +42,7 @@ with open("%s.ys" % sys.argv[1], "w") as f:
     print("write_ilang %s.il" % sys.argv[1], file=f)
     print("equiv_status -assert", file=f)
 
-os.system("bash ../icefuzz/icecube.sh %s.v" % sys.argv[1])
+assert os.system("bash ../icefuzz/icecube.sh %s.v" % sys.argv[1]) == 0
 os.rename("%s.v" % sys.argv[1], "%s_in.v" % sys.argv[1])
 
 with open("%s_ref.v" % sys.argv[1], "w") as f:

@@ -507,7 +507,15 @@ void make_seg_cell(int net, const net_segment_t &seg)
 
 	if (sscanf(seg.name.c_str(), "lutff_%d/in_%d", &a, &b) == 2) {
 		auto cell = make_lc40(seg.x, seg.y, a);
-		netlist_cells[cell][stringf("in%d", b)] = net_name(net);
+		if (b == 2) {
+			// Lattice tools always put a CascadeMux on in2
+			extra_wires.insert(net_name(net) + "_cascademuxed");
+			extra_vlog.push_back(stringf("  CascadeMux conn_%d (.I(%s), .O(%s));\n",
+					iconn_cell_cnt++, net_name(net).c_str(), (net_name(net) + "_cascademuxed").c_str()));
+			netlist_cells[cell][stringf("in%d", b)] = net_name(net) + "_cascademuxed";
+		} else {
+			netlist_cells[cell][stringf("in%d", b)] = net_name(net);
+		}
 		make_inmux(seg.x, seg.y, net);
 		return;
 	}
@@ -680,6 +688,8 @@ struct make_interconn_worker_t
 
 			goto continue_at_cursor;
 		}
+
+		// Span12Mux
 
 		if (trg.name.substr(0, 7) == "span12_" || trg.name.substr(0, 5) == "sp12_")
 		{
