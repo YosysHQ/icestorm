@@ -19,6 +19,7 @@ std::vector<std::vector<std::string>> config_tile_type;
 std::vector<std::vector<std::vector<std::vector<bool>>>> config_bits;
 std::map<std::tuple<int, int, int>, std::string> pin_pos;
 std::map<std::string, std::string> pin_names;
+std::set<std::tuple<int, int, int>> extra_bits;
 std::set<std::string> io_names;
 
 struct net_segment_t
@@ -43,6 +44,7 @@ struct net_segment_t
 
 std::set<net_segment_t> segments;
 std::map<int, std::set<net_segment_t>> net_to_segments;
+std::map<std::tuple<int, int, std::string>, int> x_y_name_net;
 std::map<std::tuple<int, int, int>, net_segment_t> x_y_net_segment;
 std::map<int, std::set<int>> net_buffers, net_rbuffers, net_routing;
 std::map<std::pair<int, int>, std::pair<int, int>> connection_pos;
@@ -191,6 +193,13 @@ void read_config()
 					config_tile_type.at(tile_x).at(tile_y) = "ramb";
 				if (!strcmp(tok, ".ramt_tile"))
 					config_tile_type.at(tile_x).at(tile_y) = "ramt";
+			} else
+			if (!strcmp(tok, ".extra_bit")) {
+				int b = atoi(strtok(nullptr, " \t\r\n"));
+				int x = atoi(strtok(nullptr, " \t\r\n"));
+				int y = atoi(strtok(nullptr, " \t\r\n"));
+				std::tuple<int, int, int> key(b, x, y);
+				extra_bits.insert(key);
 			}
 		} else
 		if (line_nr >= 0)
@@ -220,6 +229,10 @@ void read_chipdb()
 	int current_net = -1;
 	int tile_x = -1, tile_y = -1;
 	std::string thiscfg;
+
+	std::vector<std::vector<int>> gbufin;
+	std::vector<std::vector<int>> gbufpin;
+	std::set<std::string> extrabitfunc;
 
 	while (fgets(buffer, 1024, fdb))
 	{
@@ -279,6 +292,7 @@ void read_chipdb()
 			int tile_y = atoi(strtok(nullptr, " \t\r\n"));
 			std::string segment_name = strtok(nullptr, " \t\r\n");
 			net_segment_t seg(tile_x, tile_y, current_net, segment_name);
+			std::tuple<int, int, std::string> x_y_name(tile_x, tile_y, segment_name);
 			net_to_segments[current_net].insert(seg);
 			segments.insert(seg);
 		}
@@ -303,6 +317,27 @@ void read_chipdb()
 					std::pair<int, int>(tile_x, tile_y);
 			used_nets.insert(current_net);
 			used_nets.insert(other_net);
+		}
+
+		if (mode == ".gbufin" || mode == ".gbufpin") {
+			std::vector<int> items;
+			while (tok != nullptr) {
+				items.push_back(atoi(tok));
+				tok = strtok(nullptr, " \t\r\n");
+			}
+			if (mode == ".gbufin")
+				gbufin.push_back(items);
+			else
+				gbufpin.push_back(items);
+		}
+
+		if (mode == ".extra_bits") {
+			int b = atoi(strtok(nullptr, " \t\r\n"));
+			int x = atoi(strtok(nullptr, " \t\r\n"));
+			int y = atoi(strtok(nullptr, " \t\r\n"));
+			std::tuple<int, int, int> key(b, x, y);
+			if (extra_bits.count(key))
+				extrabitfunc.insert(tok);
 		}
 	}
 
@@ -337,6 +372,34 @@ void read_chipdb()
 		std::tuple<int, int, int> key(seg.x, seg.y, seg.net);
 		x_y_net_segment[key] = seg;
 	}
+	for (auto seg : segments) {
+		std::tuple<int, int, std::string> key(seg.x, seg.y, seg.name);
+		x_y_name_net[key] = seg.net;
+	}
+
+	for (auto &it : gbufin)
+	{
+		int x = it[0], y = it[1], g = it[2];
+
+		std::tuple<int, int, std::string> fabout_x_y_name(x, y, "fabout");
+		std::tuple<int, int, std::string> glbl_x_y_name(x, y, stringf("glb_netwk_%d", g));
+
+		if (!x_y_name_net.count(fabout_x_y_name) || !x_y_name_net.count(glbl_x_y_name))
+			continue;
+
+		int fabout_net = x_y_name_net.at(fabout_x_y_name);
+		int glbl_net = x_y_name_net.at(glbl_x_y_name);
+
+		assert(used_nets.count(fabout_net));
+		assert(used_nets.count(glbl_net));
+
+		net_rbuffers[glbl_net].insert(fabout_net);
+		net_buffers[fabout_net].insert(glbl_net);
+		connection_pos[std::pair<int, int>(glbl_net, fabout_net)] =
+				connection_pos[std::pair<int, int>(fabout_net, glbl_net)] =
+				std::pair<int, int>(x, y);
+	}
+
 
 #if 1
 	for (int net : used_nets)
@@ -469,18 +532,34 @@ void make_odrv(int x, int y, int src)
 	}
 }
 
-void make_inmux(int x, int y, int dst)
+void make_inmux(int x, int y, int dst, std::string muxtype = "")
 {
 	for (int src : net_rbuffers[dst])
 	{
+		std::tuple<int, int, int> key(x, y, src);
+		std::string src_name = x_y_net_segment.at(key).name;
+		int cascade_n = 0;
+
+		if (src_name.size() > 6) {
+			cascade_n = src_name[6] - '0';
+			src_name[6] = 'X';
+		}
+
+		if (src_name == "lutff_X/out") {
+			auto cell = make_lc40(x, y, cascade_n);
+			netlist_cells[cell]["ltout"] = net_name(dst);
+			continue;
+		}
+
 		auto cell = stringf("inmux_%d_%d_%d_%d", x, y, src, dst);
 
 		if (netlist_cell_types.count(cell))
 			continue;
 
-		netlist_cell_types[cell] = config_tile_type[x][y] == "io" ? "IoInMux" : "InMux";
+		netlist_cell_types[cell] = muxtype.empty() ? (config_tile_type[x][y] == "io" ? "IoInMux" : "InMux") : muxtype;
 		netlist_cells[cell]["I"] = net_name(src);
 		netlist_cells[cell]["O"] = net_name(dst);
+
 		register_interconn_dst(x, y, src);
 		no_interconn_net.insert(dst);
 	}
@@ -520,10 +599,35 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		return;
 	}
 
-	if (sscanf(seg.name.c_str(), "lutff_%d/ou%c", &a, &c) == 2 && c == 't') {
+	if (sscanf(seg.name.c_str(), "lutff_%d/ou%c", &a, &c) == 2 && c == 't')
+	{
+		for (int dst_net : net_buffers.at(seg.net))
+		for (auto &dst_seg : net_to_segments.at(dst_net)) {
+			std::string n = dst_seg.name;
+			if (n.size() > 6) n[6] = 'X';
+			if (n != "lutff_X/in_2")
+				goto use_lcout;
+		}
+		return;
+
+	use_lcout:
 		auto cell = make_lc40(seg.x, seg.y, a);
 		netlist_cells[cell]["lcout"] = net_name(net);
 		make_odrv(seg.x, seg.y, net);
+		return;
+	}
+
+	if (seg.name == "lutff_global/clk")
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			std::tuple<int, int, std::string> key(seg.x, seg.y, stringf("lutff_%d/out", i));
+			if (x_y_name_net.count(key)) {
+				auto cell = make_lc40(seg.x, seg.y, i);
+				make_inmux(seg.x, seg.y, net, "ClkMux");
+				netlist_cells[cell]["clk"] = net_name(seg.net);
+			}
+		}
 		return;
 	}
 }
@@ -746,10 +850,14 @@ void make_interconn(const net_segment_t &src)
 	};
 	std::function<void(const net_segment_t&,int,bool)> print_seg_tree = [&] (const net_segment_t &seg, int indent, bool chain) {
 		printf("// %*sSEG_TREE %d %d %s %d\n", indent, chain ? "`" : "", seg.x, seg.y, seg.name.c_str(), seg.net);
-		auto &children = worker.seg_tree.at(seg);
-		bool child_chain = children.size() == 1;
-		for (auto &child : children)
-			print_seg_tree(child, child_chain ? (chain ? indent : indent+1) : indent+2, child_chain);
+		if (worker.seg_tree.count(seg)) {
+			auto &children = worker.seg_tree.at(seg);
+			bool child_chain = children.size() == 1;
+			for (auto &child : children)
+				print_seg_tree(child, child_chain ? (chain ? indent : indent+1) : indent+2, child_chain);
+		} else {
+			printf("// %*s  DEAD_END (!)\n", indent, "");
+		}
 	};
 	print_net_tree(src.net, 2);
 	print_seg_tree(src, 2, false);

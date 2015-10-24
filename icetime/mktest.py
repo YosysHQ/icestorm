@@ -11,22 +11,23 @@ pins = np.random.permutation("""
 """.split())
 
 with open("%s.v" % sys.argv[1], "w") as f:
-    print("module top(input i0, i1, i2, i3, output o0, o1, o2, o3);", file=f)
-    print("  assign o0 = i0 || i1 && i2;", file=f)
-    print("  assign o1 = i1 || i2 && i3;", file=f)
-    print("  assign o2 = i0 || i2 && i3;", file=f)
-    print("  assign o3 = i0 || i1 && i3;", file=f)
+    print("module top(input clk, i0, i1, i2, i3, output o0, o1, o2, o3);", file=f)
+    print("  reg [15:0] din, dout;", file=f)
+    print("  always @(posedge clk) din <= {din, i3, i2, i1, i0};", file=f)
+    print("  always @(posedge clk) dout <= din + {din[7:0], din[15:8]};", file=f)
+    print("  assign {o3, o2, o1, o0} = dout >> din;", file=f)
     print("endmodule", file=f)
 
 with open("%s.pcf" % sys.argv[1], "w") as f:
-    print("set_io i0 %s" % pins[0], file=f)
-    print("set_io i1 %s" % pins[1], file=f)
-    print("set_io i2 %s" % pins[2], file=f)
-    print("set_io i3 %s" % pins[3], file=f)
-    print("set_io o0 %s" % pins[4], file=f)
-    print("set_io o1 %s" % pins[5], file=f)
-    print("set_io o2 %s" % pins[6], file=f)
-    print("set_io o3 %s" % pins[7], file=f)
+    print("set_io clk %s" % pins[0], file=f)
+    print("set_io i0 %s" % pins[1], file=f)
+    print("set_io i1 %s" % pins[2], file=f)
+    print("set_io i2 %s" % pins[3], file=f)
+    print("set_io i3 %s" % pins[4], file=f)
+    print("set_io o0 %s" % pins[5], file=f)
+    print("set_io o1 %s" % pins[6], file=f)
+    print("set_io o2 %s" % pins[7], file=f)
+    print("set_io o3 %s" % pins[8], file=f)
 
 with open("%s.ys" % sys.argv[1], "w") as f:
     print("echo on", file=f)
