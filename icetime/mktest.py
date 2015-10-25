@@ -17,10 +17,9 @@ with open("%s.v" % sys.argv[1], "w") as f:
     if mode == "test0":
         io_names = [ "clk", "i0", "o0", "o1", "o2" ]
         print("module top(input clk, i0, output o0, o1, o2);", file=f)
-        print("  reg [3:0] state;", file=f)
-        # print("  always @(posedge clk) state <= (state << 7) ^ (state >> 13) ^ i0;", file=f)
-        print("  always @(posedge clk) state <= (state << 1) ^ i0;", file=f)
-        print("  assign o0 = ^state, o1 = |state, o2 = &state;", file=f)
+        print("  reg [31:0] state;", file=f)
+        print("  always @(posedge clk) state <= ((state << 5) + state) ^ i0;", file=f)
+        print("  assign o0 = ^state, o1 = |state, o2 = state[31:16] + state[15:0];", file=f)
         print("endmodule", file=f)
     if mode == "test1":
         io_names = [ "clk", "i0", "i1", "i2", "i3", "o0", "o1", "o2", "o3" ]
@@ -42,10 +41,11 @@ with open("%s.ys" % sys.argv[1], "w") as f:
     print("read_verilog %s_out.v" % sys.argv[1], file=f)
     print("prep", file=f)
     print("equiv_make top chip equiv", file=f)
-    print("hierarchy -top equiv", file=f)
+    print("cd equiv", file=f)
+    print("script %s.lc" % sys.argv[1], file=f)
     print("rename -hide w:N_*", file=f)
     print("equiv_struct", file=f)
-    print("opt_clean", file=f)
+    print("opt_clean -purge", file=f)
     print("write_ilang %s.il" % sys.argv[1], file=f)
     print("equiv_status -assert", file=f)
 
@@ -96,6 +96,9 @@ with open("%s_ref.v" % sys.argv[1], "w") as f:
         line = line.replace(" Span12Mux_v ",     " Span12Mux_v0 ") # " Span12Mux_v12 ")
 
         f.write(line)
+
+assert os.system("yosys -qp 'select -write %s.lc t:LogicCell40' %s_ref.v" % (sys.argv[1], sys.argv[1])) == 0
+assert os.system(r"sed -i -r 's,.*/(.*)LC_(.*),equiv_add -cell \1LC_\2_gold lc40_\2_gate,' %s.lc" % sys.argv[1]) == 0
 
 os.remove("%s.bin" % sys.argv[1])
 os.remove("%s.vsb" % sys.argv[1])

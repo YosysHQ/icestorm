@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <assert.h>
-#include <string.h> 
+#include <string.h>
 #include <stdarg.h>
 
 #include <functional>
@@ -32,7 +32,7 @@ struct net_segment_t
 
 	net_segment_t(int x, int y, int net, std::string name) :
 		x(x), y(y), net(net), name(name) { }
-	
+
 	bool operator<(const net_segment_t &other) const {
 		if (x != other.x)
 			return x < other.x;
@@ -52,7 +52,7 @@ std::set<int> used_nets;
 
 std::set<net_segment_t> interconn_src, interconn_dst;
 std::set<int> no_interconn_net;
-int iconn_cell_cnt = 0;
+int tname_cnt = 0;
 
 // netlist_cells[cell_name][port_name] = port_expr
 std::map<std::string, std::map<std::string, std::string>> netlist_cells;
@@ -108,17 +108,24 @@ std::string stringf(const char *fmt, ...)
 	return string;
 }
 
+std::string tname()
+{
+	return stringf("t%d", tname_cnt++);
+}
+
 std::string net_name(int net)
 {
 	declared_nets.insert(net);
 	return stringf("net_%d", net);
 }
 
-std::string seg_name(const net_segment_t &seg)
+std::string seg_name(const net_segment_t &seg, int idx = 0)
 {
 	std::string str = stringf("seg_%d_%d_%s_%d", seg.x, seg.y, seg.name.c_str(), seg.net);
 	for (auto &ch : str)
 		if (ch == '/') ch = '_';
+	if (idx != 0)
+		str += stringf("_i%d", idx);
 	extra_wires.insert(str);
 	return str;
 }
@@ -544,7 +551,7 @@ std::string make_lc40(int x, int y, int z)
 		lcbits[i] = config_bits[x][y][lcbits_pos[i].first][lcbits_pos[i].second] ? '1' : '0';
 
 	// FIXME: fill in the '0'
-	netlist_cell_params[cell]["C_ON"] = stringf("1'b%c", '0');
+	netlist_cell_params[cell]["C_ON"] = stringf("1'b%c", lcbits[8]);
 	netlist_cell_params[cell]["SEQ_MODE"] = stringf("4'b%c%c%c%c", lcbits[9], '0', '0', '0');
 	netlist_cell_params[cell]["LUT_INIT"] = stringf("16'b%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",
 			lcbits[0], lcbits[10], lcbits[11], lcbits[1],
@@ -552,7 +559,60 @@ std::string make_lc40(int x, int y, int z)
 			lcbits[7], lcbits[17], lcbits[16], lcbits[6],
 			lcbits[5], lcbits[15], lcbits[14], lcbits[4]);
 
+	if (lcbits[8] == '1')
+	{
+		if (z == 0)
+		{
+			auto co_cell = make_lc40(x, y-1, 7);
+			std::string n1, n2;
+
+			char cinit_1 = config_bits[x][y][1][49] ? '1' : '0';
+			char cinit_0 = config_bits[x][y][1][50] ? '1' : '0';
+
+			if (cinit_1 == '1') {
+				std::tuple<int, int, std::string> key(x, y-1, "lutff_7/cout");
+				if (x_y_name_net.count(key)) {
+					n1 = net_name(x_y_name_net.at(key));
+				} else {
+					n1 = tname();
+					netlist_cells[co_cell]["carryout"] = n1;
+					extra_wires.insert(n1);
+				}
+			}
+
+			std::tuple<int, int, std::string> key(x, y, "carry_in_mux");
+			if (x_y_name_net.count(key)) {
+				n2 = net_name(x_y_name_net.at(key));
+			} else {
+				n2 = tname();
+				extra_wires.insert(n2);
+			}
+
+			extra_vlog.push_back(stringf("  ICE_CARRY_IN_MUX #(.C_INIT(2'b%c%c)) %s (.carryinitin(%s), "
+					".carryinitout(%s));\n", cinit_1, cinit_0, tname().c_str(), n1.c_str(), n2.c_str()));
+			netlist_cells[cell]["carryin"] = n2;
+		}
+		else
+		{
+			auto co_cell = make_lc40(x, y, z-1);
+			std::tuple<int, int, std::string> key(x, y, stringf("lutff_%d/cout", z-1));
+			auto n = x_y_name_net.count(key) ? net_name(x_y_name_net.at(key)) : tname();
+
+			netlist_cells[co_cell]["carryout"] = n;
+			netlist_cells[cell]["carryin"] = n;
+			extra_wires.insert(n);
+		}
+
+		std::tuple<int, int, std::string> key(x, y, stringf("lutff_%d/cout", z-1));
+	}
+
 	return cell;
+}
+
+bool dff_uses_clock(int x, int y, int z)
+{
+	auto bitpos = logic_tile_bits[stringf("LC_%d", z)][9];
+	return config_bits[x][y][bitpos.first][bitpos.second];
 }
 
 void make_odrv(int x, int y, int src)
@@ -643,8 +703,8 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		if (b == 2) {
 			// Lattice tools always put a CascadeMux on in2
 			extra_wires.insert(net_name(net) + "_cascademuxed");
-			extra_vlog.push_back(stringf("  CascadeMux conn_%d (.I(%s), .O(%s));\n",
-					iconn_cell_cnt++, net_name(net).c_str(), (net_name(net) + "_cascademuxed").c_str()));
+			extra_vlog.push_back(stringf("  CascadeMux %s (.I(%s), .O(%s));\n",
+					tname().c_str(), net_name(net).c_str(), (net_name(net) + "_cascademuxed").c_str()));
 			netlist_cells[cell][stringf("in%d", b)] = net_name(net) + "_cascademuxed";
 		} else {
 			netlist_cells[cell][stringf("in%d", b)] = net_name(net);
@@ -682,6 +742,9 @@ void make_seg_cell(int net, const net_segment_t &seg)
 	{
 		for (int i = 0; i < 8; i++)
 		{
+			if (!dff_uses_clock(seg.x, seg.y, i))
+				continue;
+
 			std::tuple<int, int, std::string> key(seg.x, seg.y, stringf("lutff_%d/out", i));
 			if (x_y_name_net.count(key)) {
 				auto cell = make_lc40(seg.x, seg.y, i);
@@ -699,6 +762,7 @@ struct make_interconn_worker_t
 	std::map<net_segment_t, std::set<net_segment_t>> seg_tree;
 	std::map<net_segment_t, net_segment_t> seg_parents;
 	std::set<net_segment_t> target_segs, handled_segs;
+	std::set<int> handled_global_nets;
 
 	void build_net_tree(int src)
 	{
@@ -801,7 +865,7 @@ struct make_interconn_worker_t
 
 	void create_cells(const net_segment_t &trg)
 	{
-		if (handled_segs.count(trg))
+		if (handled_segs.count(trg) || handled_global_nets.count(trg.net))
 			return;
 
 		handled_segs.insert(trg);
@@ -817,8 +881,8 @@ struct make_interconn_worker_t
 
 		if (trg.name.substr(0, 6) == "local_")
 		{
-			extra_vlog.push_back(stringf("  LocalMux conn_%d (.I(%s), .O(%s));\n",
-					iconn_cell_cnt++, seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+			extra_vlog.push_back(stringf("  LocalMux %s (.I(%s), .O(%s));\n",
+					tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 			goto continue_at_cursor;
 		}
 
@@ -839,15 +903,15 @@ struct make_interconn_worker_t
 				goto skip_to_cursor;
 
 			if (cursor->name.substr(0, 7) == "span12_" || cursor->name.substr(0, 5) == "sp12_") {
-				extra_vlog.push_back(stringf("  Sp12to4 conn_%d (.I(%s), .O(%s));\n",
-						iconn_cell_cnt++, seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+				extra_vlog.push_back(stringf("  Sp12to4 %s (.I(%s), .O(%s));\n",
+						tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 			} else
 			if (cursor->name.substr(0, 6) == "span4_") {
-				extra_vlog.push_back(stringf("  IoSpan4Mux conn_%d (.I(%s), .O(%s));\n",
-						iconn_cell_cnt++, seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+				extra_vlog.push_back(stringf("  IoSpan4Mux %s (.I(%s), .O(%s));\n",
+						tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 			} else {
-				extra_vlog.push_back(stringf("  Span4Mux_%c%d conn_%d (.I(%s), .O(%s));\n",
-						horiz ? 'h' : 'v', count_length, iconn_cell_cnt++,
+				extra_vlog.push_back(stringf("  Span4Mux_%c%d %s (.I(%s), .O(%s));\n",
+						horiz ? 'h' : 'v', count_length, tname().c_str(),
 						seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 			}
 
@@ -870,23 +934,49 @@ struct make_interconn_worker_t
 			if (cursor->net == trg.net)
 				goto skip_to_cursor;
 
-			extra_vlog.push_back(stringf("  Span12Mux_%c%d conn_%d (.I(%s), .O(%s));\n",
-					horiz ? 'h' : 'v', count_length, iconn_cell_cnt++,
+			extra_vlog.push_back(stringf("  Span12Mux_%c%d %s (.I(%s), .O(%s));\n",
+					horiz ? 'h' : 'v', count_length, tname().c_str(),
 					seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 
 			goto continue_at_cursor;
 		}
 
+		// Global nets
+
+		if (trg.name.substr(0, 10) == "glb_netwk_")
+		{
+			while (seg_parents.count(*cursor) && (cursor->net == trg.net || cursor->name == "fabout"))
+				cursor = &seg_parents.at(*cursor);
+
+			if (cursor->net == trg.net)
+				goto skip_to_cursor;
+
+			extra_vlog.push_back(stringf("  GlobalMux %s (.I(%s), .O(%s));\n",
+					tname().c_str(), seg_name(*cursor, 3).c_str(), seg_name(trg).c_str()));
+
+			extra_vlog.push_back(stringf("  gio2CtrlBuf %s (.I(%s), .O(%s));\n",
+					tname().c_str(), seg_name(*cursor, 2).c_str(), seg_name(*cursor, 3).c_str()));
+
+			extra_vlog.push_back(stringf("  ICE_GB %s (.USERSIGNALTOGLOBALBUFFER(%s), .GLOBALBUFFEROUTPUT(%s));\n",
+					tname().c_str(), seg_name(*cursor, 1).c_str(), seg_name(*cursor, 2).c_str()));
+
+			extra_vlog.push_back(stringf("  IoInMux %s (.I(%s), .O(%s));\n",
+					tname().c_str(), seg_name(*cursor).c_str(), seg_name(*cursor, 1).c_str()));
+
+			handled_global_nets.insert(trg.net);
+			goto continue_at_cursor;
+		}
+
 		// Default handler
 
-		while (seg_parents.count(*cursor))
+		while (seg_parents.count(*cursor) && cursor->net == trg.net)
 			cursor = &seg_parents.at(*cursor);
 
 		if (cursor->net == trg.net)
 			goto skip_to_cursor;
 
-		extra_vlog.push_back(stringf("  INTERCONN conn_%d (.I(%s), .O(%s));\n",
-				iconn_cell_cnt++, seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+		extra_vlog.push_back(stringf("  INTERCONN %s (.I(%s), .O(%s));\n",
+				tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 		goto continue_at_cursor;
 
 	skip_to_cursor:
