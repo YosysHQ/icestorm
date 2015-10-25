@@ -10,24 +10,30 @@ pins = np.random.permutation("""
     112 113 114 115 116 117 118 119 120 121 122 134 135 136 137 138 139 141 142 143 144
 """.split())
 
+io_names = None
+mode = "test0" # sys.argv[1]
+
 with open("%s.v" % sys.argv[1], "w") as f:
-    print("module top(input clk, i0, i1, i2, i3, output o0, o1, o2, o3);", file=f)
-    print("  reg [15:0] din, dout;", file=f)
-    print("  always @(posedge clk) din <= {din, i3, i2, i1, i0};", file=f)
-    print("  always @(posedge clk) dout <= din + {din[7:0], din[15:8]};", file=f)
-    print("  assign {o3, o2, o1, o0} = dout >> din;", file=f)
-    print("endmodule", file=f)
+    if mode == "test0":
+        io_names = [ "clk", "i0", "o0", "o1", "o2" ]
+        print("module top(input clk, i0, output o0, o1, o2);", file=f)
+        print("  reg [3:0] state;", file=f)
+        # print("  always @(posedge clk) state <= (state << 7) ^ (state >> 13) ^ i0;", file=f)
+        print("  always @(posedge clk) state <= (state << 1) ^ i0;", file=f)
+        print("  assign o0 = ^state, o1 = |state, o2 = &state;", file=f)
+        print("endmodule", file=f)
+    if mode == "test1":
+        io_names = [ "clk", "i0", "i1", "i2", "i3", "o0", "o1", "o2", "o3" ]
+        print("module top(input clk, i0, i1, i2, i3, output o0, o1, o2, o3);", file=f)
+        print("  reg [15:0] din, dout;", file=f)
+        print("  always @(posedge clk) din <= {din, i3, i2, i1, i0};", file=f)
+        print("  always @(posedge clk) dout <= din + {din[7:0], din[15:8]};", file=f)
+        print("  assign {o3, o2, o1, o0} = dout >> din;", file=f)
+        print("endmodule", file=f)
 
 with open("%s.pcf" % sys.argv[1], "w") as f:
-    print("set_io clk %s" % pins[0], file=f)
-    print("set_io i0 %s" % pins[1], file=f)
-    print("set_io i1 %s" % pins[2], file=f)
-    print("set_io i2 %s" % pins[3], file=f)
-    print("set_io i3 %s" % pins[4], file=f)
-    print("set_io o0 %s" % pins[5], file=f)
-    print("set_io o1 %s" % pins[6], file=f)
-    print("set_io o2 %s" % pins[7], file=f)
-    print("set_io o3 %s" % pins[8], file=f)
+    for i, name in enumerate(io_names):
+        print("set_io %s %s" % (name, pins[i]), file=f)
 
 with open("%s.ys" % sys.argv[1], "w") as f:
     print("echo on", file=f)
@@ -48,9 +54,6 @@ os.rename("%s.v" % sys.argv[1], "%s_in.v" % sys.argv[1])
 
 with open("%s_ref.v" % sys.argv[1], "w") as f:
     for line in open("%s.vsb" % sys.argv[1], "r"):
-        if line.find("defparam") >= 0:
-            continue
-
         line = line.replace(" Span4Mux_s0_h ",   " Span4Mux_h0 ")  # " Span4Mux_h0 ")
         line = line.replace(" Span4Mux_s1_h ",   " Span4Mux_h0 ")  # " Span4Mux_h1 ")
         line = line.replace(" Span4Mux_s2_h ",   " Span4Mux_h0 ")  # " Span4Mux_h2 ")

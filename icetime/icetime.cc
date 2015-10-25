@@ -56,11 +56,15 @@ int iconn_cell_cnt = 0;
 
 // netlist_cells[cell_name][port_name] = port_expr
 std::map<std::string, std::map<std::string, std::string>> netlist_cells;
+std::map<std::string, std::map<std::string, std::string>> netlist_cell_params;
 std::map<std::string, std::string> netlist_cell_types;
 
 std::set<std::string> extra_wires;
 std::vector<std::string> extra_vlog;
 std::set<int> declared_nets;
+
+std::map<std::string, std::vector<std::pair<int, int>>> logic_tile_bits,
+		io_tile_bits, ramb_tile_bits, ramt_tile_bits;
 
 std::string vstringf(const char *fmt, va_list ap)
 {
@@ -331,6 +335,27 @@ void read_chipdb()
 				gbufpin.push_back(items);
 		}
 
+		if (mode == ".logic_tile_bits" || mode == ".io_tile_bits" || mode == ".ramb_tile_bits" || mode == ".ramt_tile_bits") {
+			std::vector<std::pair<int, int>> items;
+			while (1) {
+				const char *s = strtok(nullptr, " \t\r\n");
+				if (s == nullptr)
+					break;
+				std::pair<int, int> item;
+				int rc = sscanf(s, "B%d[%d]", &item.first, &item.second);
+				assert(rc == 2);
+				items.push_back(item);
+			}
+			if (mode == ".logic_tile_bits")
+				logic_tile_bits[tok] = items;
+			if (mode == ".io_tile_bits")
+				io_tile_bits[tok] = items;
+			if (mode == ".ramb_tile_bits")
+				ramb_tile_bits[tok] = items;
+			if (mode == ".ramt_tile_bits")
+				ramt_tile_bits[tok] = items;
+		}
+
 		if (mode == ".extra_bits") {
 			int b = atoi(strtok(nullptr, " \t\r\n"));
 			int x = atoi(strtok(nullptr, " \t\r\n"));
@@ -453,6 +478,20 @@ std::string make_seg_pre_io(int x, int y, int z)
 	netlist_cells[cell]["DIN1"] = "";
 	netlist_cells[cell]["DIN0"] = "";
 
+	std::string pintype;
+	std::pair<int, int> bitpos;
+
+	for (int i = 0; i < 6; i++) {
+		bitpos = io_tile_bits[stringf("IOB_%d.PINTYPE_%d", z, 5-i)][0];
+		pintype.push_back(config_bits[x][y][bitpos.first][bitpos.second] ? '1' : '0');
+	}
+
+	bitpos = io_tile_bits["NegClk"][0];
+	char negclk = config_bits[x][y][bitpos.first][bitpos.second] ? '1' : '0';
+
+	netlist_cell_params[cell]["NEG_TRIGGER"] = stringf("1'b%c", negclk);
+	netlist_cell_params[cell]["PIN_TYPE"] = stringf("6'b%s", pintype.c_str());
+
 	std::string io_name;
 	std::tuple<int, int, int> key(x, y, z);
 
@@ -497,6 +536,21 @@ std::string make_lc40(int x, int y, int z)
 	netlist_cells[cell]["carryout"] = "";
 	netlist_cells[cell]["lcout"] = "";
 	netlist_cells[cell]["ltout"] = "";
+
+	char lcbits[20];
+	auto &lcbits_pos = logic_tile_bits[stringf("LC_%d", z)];
+
+	for (int i = 0; i < 20; i++)
+		lcbits[i] = config_bits[x][y][lcbits_pos[i].first][lcbits_pos[i].second] ? '1' : '0';
+
+	// FIXME: fill in the '0'
+	netlist_cell_params[cell]["C_ON"] = stringf("1'b%c", '0');
+	netlist_cell_params[cell]["SEQ_MODE"] = stringf("4'b%c%c%c%c", lcbits[9], '0', '0', '0');
+	netlist_cell_params[cell]["LUT_INIT"] = stringf("16'b%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",
+			lcbits[0], lcbits[10], lcbits[11], lcbits[1],
+			lcbits[2], lcbits[12], lcbits[13], lcbits[3],
+			lcbits[7], lcbits[17], lcbits[16], lcbits[6],
+			lcbits[5], lcbits[15], lcbits[14], lcbits[4]);
 
 	return cell;
 }
@@ -614,6 +668,13 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		auto cell = make_lc40(seg.x, seg.y, a);
 		netlist_cells[cell]["lcout"] = net_name(net);
 		make_odrv(seg.x, seg.y, net);
+		return;
+	}
+
+	if (sscanf(seg.name.c_str(), "lutff_%d/cou%c", &a, &c) == 2 && c == 't')
+	{
+		auto cell = make_lc40(seg.x, seg.y, a);
+		netlist_cells[cell]["carryout"] = net_name(net);
 		return;
 	}
 
@@ -958,7 +1019,17 @@ int main(int argc, char **argv)
 
 	for (auto it : netlist_cell_types) {
 		const char *sep = "";
-		fprintf(fout, "  %s %s (", it.second.c_str(), it.first.c_str());
+		fprintf(fout, "  %s ", it.second.c_str());
+		if (netlist_cell_params.count(it.first)) {
+			fprintf(fout, "#(");
+			for (auto port : netlist_cell_params[it.first]) {
+				fprintf(fout, "%s\n    .%s(%s)", sep, port.first.c_str(), port.second.c_str());
+				sep = ",";
+			}
+			fprintf(fout, "\n  ) ");
+			sep = "";
+		}
+		fprintf(fout, "%s (", it.first.c_str());
 		for (auto port : netlist_cells[it.first]) {
 			fprintf(fout, "%s\n    .%s(%s)", sep, port.first.c_str(), port.second.c_str());
 			sep = ",";
