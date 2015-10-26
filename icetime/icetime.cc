@@ -12,6 +12,8 @@
 #include <map>
 #include <set>
 
+#define ZSPAN 1
+
 FILE *fin, *fout;
 
 std::string config_device, selected_package;
@@ -32,6 +34,14 @@ struct net_segment_t
 
 	net_segment_t(int x, int y, int net, std::string name) :
 		x(x), y(y), net(net), name(name) { }
+
+	bool operator==(const net_segment_t &other) const {
+		return (x == other.x) && (y == other.y) && (name == other.name);
+	}
+
+	bool operator!=(const net_segment_t &other) const {
+		return (x != other.x) || (y != other.y) || (name != other.name);
+	}
 
 	bool operator<(const net_segment_t &other) const {
 		if (x != other.x)
@@ -807,13 +817,16 @@ struct make_interconn_worker_t
 
 			for (auto &seg : queue)
 			{
+				if (seg != src)
+					assert(interconn_src.count(seg) == 0);
+
 				if (interconn_dst.count(seg))
 					targets.insert(seg);
 
 				if (seg_connections.count(seg))
 					for (auto &child : seg_connections.at(seg))
 					{
-						if (distances.count(child) != 0)
+						if (distances.count(child) != 0 || interconn_src.count(child) != 0)
 							continue;
 
 						reverse_edges[child] = seg;
@@ -891,12 +904,12 @@ struct make_interconn_worker_t
 		if (trg.name.substr(0, 6) == "span4_" || trg.name.substr(0, 4) == "sp4_")
 		{
 			bool horiz = trg.name.substr(0, 6) == "sp4_h_";
-			int count_length = 0;
+			int count_length = -1;
 
 			while (seg_parents.count(*cursor) && cursor->net == trg.net) {
 				horiz = horiz || (cursor->name.substr(0, 6) == "sp4_h_");
 				cursor = &seg_parents.at(*cursor);
-				// count_length++;
+				count_length++;
 			}
 
 			if (cursor->net == trg.net)
@@ -911,7 +924,7 @@ struct make_interconn_worker_t
 						tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 			} else {
 				extra_vlog.push_back(stringf("  Span4Mux_%c%d %s (.I(%s), .O(%s));\n",
-						horiz ? 'h' : 'v', count_length, tname().c_str(),
+						horiz ? 'h' : 'v', ZSPAN ? 0 : count_length, tname().c_str(),
 						seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 			}
 
@@ -923,19 +936,19 @@ struct make_interconn_worker_t
 		if (trg.name.substr(0, 7) == "span12_" || trg.name.substr(0, 5) == "sp12_")
 		{
 			bool horiz = trg.name.substr(0, 7) == "sp12_h_";
-			int count_length = 0;
+			int count_length = -1;
 
 			while (seg_parents.count(*cursor) && cursor->net == trg.net) {
 				horiz = horiz || (cursor->name.substr(0, 7) == "sp12_h_");
 				cursor = &seg_parents.at(*cursor);
-				// count_length++;
+				count_length++;
 			}
 
 			if (cursor->net == trg.net)
 				goto skip_to_cursor;
 
 			extra_vlog.push_back(stringf("  Span12Mux_%c%d %s (.I(%s), .O(%s));\n",
-					horiz ? 'h' : 'v', count_length, tname().c_str(),
+					horiz ? 'h' : 'v', ZSPAN ? 0 : count_length, tname().c_str(),
 					seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 
 			goto continue_at_cursor;
