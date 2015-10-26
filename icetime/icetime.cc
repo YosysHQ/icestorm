@@ -12,7 +12,7 @@
 #include <map>
 #include <set>
 
-#define ZSPAN 1
+#define ZSPAN_HACK 1
 
 FILE *fin, *fout;
 
@@ -59,6 +59,7 @@ std::map<std::tuple<int, int, int>, net_segment_t> x_y_net_segment;
 std::map<int, std::set<int>> net_buffers, net_rbuffers, net_routing;
 std::map<std::pair<int, int>, std::pair<int, int>> connection_pos;
 std::set<int> used_nets;
+int graph_net = -1;
 
 std::set<net_segment_t> interconn_src, interconn_dst;
 std::set<int> no_interconn_net;
@@ -774,6 +775,8 @@ struct make_interconn_worker_t
 	std::set<net_segment_t> target_segs, handled_segs;
 	std::set<int> handled_global_nets;
 
+	std::map<net_segment_t, std::pair<net_segment_t, std::string>> cell_log;
+
 	void build_net_tree(int src)
 	{
 		auto &children = net_tree[src];
@@ -896,6 +899,7 @@ struct make_interconn_worker_t
 		{
 			extra_vlog.push_back(stringf("  LocalMux %s (.I(%s), .O(%s));\n",
 					tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+			cell_log[trg] = std::make_pair(*cursor, "LocalMux");
 			goto continue_at_cursor;
 		}
 
@@ -918,14 +922,17 @@ struct make_interconn_worker_t
 			if (cursor->name.substr(0, 7) == "span12_" || cursor->name.substr(0, 5) == "sp12_") {
 				extra_vlog.push_back(stringf("  Sp12to4 %s (.I(%s), .O(%s));\n",
 						tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+				cell_log[trg] = std::make_pair(*cursor, "Sp12to4");
 			} else
 			if (cursor->name.substr(0, 6) == "span4_") {
 				extra_vlog.push_back(stringf("  IoSpan4Mux %s (.I(%s), .O(%s));\n",
 						tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+				cell_log[trg] = std::make_pair(*cursor, "IoSpan4Mux");
 			} else {
 				extra_vlog.push_back(stringf("  Span4Mux_%c%d %s (.I(%s), .O(%s));\n",
-						horiz ? 'h' : 'v', ZSPAN ? 0 : count_length, tname().c_str(),
+						horiz ? 'h' : 'v', ZSPAN_HACK ? 0 : count_length, tname().c_str(),
 						seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+				cell_log[trg] = std::make_pair(*cursor, stringf("Span4Mux_%c%d", horiz ? 'h' : 'v', count_length));
 			}
 
 			goto continue_at_cursor;
@@ -948,8 +955,9 @@ struct make_interconn_worker_t
 				goto skip_to_cursor;
 
 			extra_vlog.push_back(stringf("  Span12Mux_%c%d %s (.I(%s), .O(%s));\n",
-					horiz ? 'h' : 'v', ZSPAN ? 0 : count_length, tname().c_str(),
+					horiz ? 'h' : 'v', ZSPAN_HACK ? 0 : count_length, tname().c_str(),
 					seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+			cell_log[trg] = std::make_pair(*cursor, stringf("Span12Mux_%c%d", horiz ? 'h' : 'v', count_length));
 
 			goto continue_at_cursor;
 		}
@@ -976,6 +984,8 @@ struct make_interconn_worker_t
 			extra_vlog.push_back(stringf("  IoInMux %s (.I(%s), .O(%s));\n",
 					tname().c_str(), seg_name(*cursor).c_str(), seg_name(*cursor, 1).c_str()));
 
+			cell_log[trg] = std::make_pair(*cursor, "GlobalMux -> ICE_GB -> IoInMux");
+
 			handled_global_nets.insert(trg.net);
 			goto continue_at_cursor;
 		}
@@ -990,12 +1000,73 @@ struct make_interconn_worker_t
 
 		extra_vlog.push_back(stringf("  INTERCONN %s (.I(%s), .O(%s));\n",
 				tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+		cell_log[trg] = std::make_pair(*cursor, "INTERCONN");
 		goto continue_at_cursor;
 
 	skip_to_cursor:
 		extra_vlog.push_back(stringf("  assign %s = %s;\n", seg_name(trg).c_str(), seg_name(*cursor).c_str()));
 	continue_at_cursor:
 		create_cells(*cursor);
+	}
+
+	void show_seg_tree_worker(FILE *f, const net_segment_t &src, std::vector<std::string> &global_lines)
+	{
+		fprintf(f, "    seg_%d_%d_%s [ shape=octagon, label=\"%d %d\\n%s\" ];\n",
+				src.x, src.y, src.name.c_str(), src.x, src.y, src.name.c_str());
+
+		std::vector<net_segment_t> other_net_children;
+
+		for (auto &child : seg_tree.at(src)) {
+			if (child.net != src.net) {
+				other_net_children.push_back(child);
+			} else
+				show_seg_tree_worker(f, child, global_lines);
+			global_lines.push_back(stringf("  seg_%d_%d_%s -> seg_%d_%d_%s;\n",
+					src.x, src.y, src.name.c_str(), child.x, child.y, child.name.c_str()));
+		}
+
+		if (!other_net_children.empty()) {
+			for (auto &child : other_net_children) {
+				fprintf(f, "  }\n");
+				fprintf(f, "  subgraph cluster_net_%d {\n", child.net);
+				fprintf(f, "    label = \"net %d\";\n", child.net);
+				show_seg_tree_worker(f, child, global_lines);
+			}
+		}
+
+		if (cell_log.count(src)) {
+			auto &cell = cell_log.at(src);
+			global_lines.push_back(stringf("  cell_%d_%d_%s [ label=\"%s\" ];\n",
+					src.x, src.y, src.name.c_str(), cell.second.c_str()));
+			global_lines.push_back(stringf("  seg_%d_%d_%s -> cell_%d_%d_%s;\n",
+					cell.first.x, cell.first.y, cell.first.name.c_str(), src.x, src.y, src.name.c_str()));
+			global_lines.push_back(stringf("  cell_%d_%d_%s -> seg_%d_%d_%s;\n",
+					src.x, src.y, src.name.c_str(), src.x, src.y, src.name.c_str()));
+		}
+	}
+
+	void show_seg_tree(const net_segment_t &src)
+	{
+		FILE *f = fopen("icetime_graph.dot", "w");
+		if (f == nullptr) {
+			perror("Can't open 'icetime_graph.dot' for writing");
+			exit(1);
+		}
+
+		fprintf(f, "digraph \"icetime graph for net %d\" {\n", graph_net);
+		fprintf(f, "  rankdir = \"LR\";\n");
+		fprintf(f, "  subgraph cluster_net_%d {\n", src.net);
+		fprintf(f, "    label = \"net %d\";\n", src.net);
+
+		std::vector<std::string> global_lines;
+		show_seg_tree_worker(f, src, global_lines);
+		fprintf(f, "    }\n");
+
+		for (auto &line : global_lines)
+			fprintf(f, "%s", line.c_str());
+
+		fprintf(f, "}\n");
+		fclose(f);
 	}
 };
 
@@ -1031,6 +1102,9 @@ void make_interconn(const net_segment_t &src)
 		extra_vlog.push_back(stringf("  assign %s = %s;\n", net_name(seg.net).c_str(), seg_name(seg).c_str()));
 		worker.create_cells(seg);
 	}
+
+	if (worker.net_tree.count(graph_net))
+		worker.show_seg_tree(src);
 }
 
 void help(const char *cmd)
@@ -1040,7 +1114,11 @@ void help(const char *cmd)
 	printf("\n");
 	printf("    -p <pcf_file>\n");
 	printf("    -P <chip_package>\n");
-	printf("         provide this two options for correct IO pin names\n");
+	printf("        provide this two options for correct IO pin names\n");
+	printf("\n");
+	printf("    -g <net_index>\n");
+	printf("        write a graphviz description of the interconnect tree\n");
+	printf("        that includes the given net to 'icetime_graph.dot'.\n");
 	printf("\n");
 	exit(1);
 }
@@ -1048,7 +1126,7 @@ void help(const char *cmd)
 int main(int argc, char **argv)
 {
 	int opt;
-	while ((opt = getopt(argc, argv, "p:P:")) != -1)
+	while ((opt = getopt(argc, argv, "p:P:g:")) != -1)
 	{
 		switch (opt)
 		{
@@ -1058,6 +1136,9 @@ int main(int argc, char **argv)
 			break;
 		case 'P':
 			selected_package = optarg;
+			break;
+		case 'g':
+			graph_net = atoi(optarg);
 			break;
 		default:
 			help(argv[0]);
