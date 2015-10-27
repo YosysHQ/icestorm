@@ -55,7 +55,7 @@ os.rename("%s.v" % sys.argv[1], "%s_in.v" % sys.argv[1])
 
 with open("%s_ref.v" % sys.argv[1], "w") as f:
     for line in open("%s.vsb" % sys.argv[1], "r"):
-        zspan_hack = True
+        zspan_hack = False
 
         line = line.replace(" Span4Mux_s0_h ",   " Span4Mux_h0 "  if zspan_hack else " Span4Mux_h0 ")
         line = line.replace(" Span4Mux_s1_h ",   " Span4Mux_h0 "  if zspan_hack else " Span4Mux_h1 ")

@@ -12,7 +12,7 @@
 #include <map>
 #include <set>
 
-#define ZSPAN_HACK 1
+#define ZSPAN_HACK 0
 
 FILE *fin, *fout;
 
@@ -58,8 +58,7 @@ std::map<std::tuple<int, int, std::string>, int> x_y_name_net;
 std::map<std::tuple<int, int, int>, net_segment_t> x_y_net_segment;
 std::map<int, std::set<int>> net_buffers, net_rbuffers, net_routing;
 std::map<std::pair<int, int>, std::pair<int, int>> connection_pos;
-std::set<int> used_nets;
-int graph_net = -1;
+std::set<int> used_nets, graph_nets;
 
 std::set<net_segment_t> interconn_src, interconn_dst;
 std::set<int> no_interconn_net;
@@ -1045,16 +1044,8 @@ struct make_interconn_worker_t
 		}
 	}
 
-	void show_seg_tree(const net_segment_t &src)
+	void show_seg_tree(const net_segment_t &src, FILE *f)
 	{
-		FILE *f = fopen("icetime_graph.dot", "w");
-		if (f == nullptr) {
-			perror("Can't open 'icetime_graph.dot' for writing");
-			exit(1);
-		}
-
-		fprintf(f, "digraph \"icetime graph for net %d\" {\n", graph_net);
-		fprintf(f, "  rankdir = \"LR\";\n");
 		fprintf(f, "  subgraph cluster_net_%d {\n", src.net);
 		fprintf(f, "    label = \"net %d\";\n", src.net);
 
@@ -1064,13 +1055,10 @@ struct make_interconn_worker_t
 
 		for (auto &line : global_lines)
 			fprintf(f, "%s", line.c_str());
-
-		fprintf(f, "}\n");
-		fclose(f);
 	}
 };
 
-void make_interconn(const net_segment_t &src)
+void make_interconn(const net_segment_t &src, FILE *graph_f)
 {
 	make_interconn_worker_t worker;
 	worker.build_net_tree(src.net);
@@ -1103,8 +1091,11 @@ void make_interconn(const net_segment_t &src)
 		worker.create_cells(seg);
 	}
 
-	if (worker.net_tree.count(graph_net))
-		worker.show_seg_tree(src);
+	for (int n : graph_nets)
+		if (worker.net_tree.count(n)) {
+			worker.show_seg_tree(src, graph_f);
+			break;
+		}
 }
 
 void help(const char *cmd)
@@ -1138,7 +1129,7 @@ int main(int argc, char **argv)
 			selected_package = optarg;
 			break;
 		case 'g':
-			graph_net = atoi(optarg);
+			graph_nets.insert(atoi(optarg));
 			break;
 		default:
 			help(argv[0]);
@@ -1177,8 +1168,27 @@ int main(int argc, char **argv)
 	for (auto &seg : net_to_segments[net])
 		make_seg_cell(net, seg);
 
+	FILE *graph_f = nullptr;
+
+	if (!graph_nets.empty())
+	{
+		graph_f = fopen("icetime_graph.dot", "w");
+		if (graph_f == nullptr) {
+			perror("Can't open 'icetime_graph.dot' for writing");
+			exit(1);
+		}
+
+		fprintf(graph_f, "digraph \"icetime net-segment graph \" {\n");
+		fprintf(graph_f, "  rankdir = \"LR\";\n");
+	}
+
 	for (auto &seg : interconn_src)
-		make_interconn(seg);
+		make_interconn(seg, graph_f);
+
+	if (graph_f) {
+		fprintf(graph_f, "}\n");
+		fclose(graph_f);
+	}
 
 	fprintf(fout, "module chip (");
 	const char *io_sep = "";
