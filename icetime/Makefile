@@ -33,6 +33,8 @@ show0 show1 show2 show3 show4 show5 show6 show7 show8 show9: icetime
 
 test: test0 test1 test2 test3 test4 test5 test6 test7 test8 test9
 
+show: show0 show1 show2 show3 show4 show5 show6 show7 show8 show9
+
 clean:
 	rm -f icetime *.o *.d
 	rm -rf test[0-9]*

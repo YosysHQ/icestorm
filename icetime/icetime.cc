@@ -771,6 +771,7 @@ struct make_interconn_worker_t
 	std::map<int, std::set<int>> net_tree;
 	std::map<net_segment_t, std::set<net_segment_t>> seg_tree;
 	std::map<net_segment_t, net_segment_t> seg_parents;
+	std::map<net_segment_t, int> porch_segs;
 	std::set<net_segment_t> target_segs, handled_segs;
 	std::set<int> handled_global_nets;
 
@@ -801,13 +802,22 @@ struct make_interconn_worker_t
 		queue.insert(src);
 
 		std::map<net_segment_t, std::set<net_segment_t>> seg_connections;
+		porch_segs[src] = 1;
 
 		for (auto &it: net_tree)
-		for (int child : it.second) {
+		for (int child : it.second)
+		{
 			auto pos = connection_pos.at(std::pair<int, int>(it.first, child));
 			std::tuple<int, int, int> key_parent(pos.first, pos.second, it.first);
 			std::tuple<int, int, int> key_child(pos.first, pos.second, child);
 			seg_connections[x_y_net_segment.at(key_parent)].insert(x_y_net_segment.at(key_child));
+
+
+			const std::string &parent_name = x_y_net_segment.at(key_parent).name;
+			const std::string &child_name = x_y_net_segment.at(key_child).name;
+			if (parent_name.substr(0, 7) == "span12_" || parent_name.substr(0, 5) == "sp12_")
+				if (child_name.substr(0, 6) == "span4_" || child_name.substr(0, 4) == "sp4_")
+					porch_segs[x_y_net_segment.at(key_child)] = 1;
 		}
 
 		for (int distance_counter = 0; !queue.empty(); distance_counter++)
@@ -847,6 +857,9 @@ struct make_interconn_worker_t
 
 					if (distances.count(child) != 0)
 						continue;
+
+					if (porch_segs.count(seg))
+						porch_segs[child] = porch_segs[seg]+1;
 
 					reverse_edges[child] = seg;
 					next_queue.insert(child);
@@ -918,6 +931,11 @@ struct make_interconn_worker_t
 			if (cursor->net == trg.net)
 				goto skip_to_cursor;
 
+			count_length = std::max(count_length, 0);
+
+			if (porch_segs.count(*cursor))
+				count_length = 4;
+
 			if (cursor->name.substr(0, 7) == "span12_" || cursor->name.substr(0, 5) == "sp12_") {
 				extra_vlog.push_back(stringf("  Sp12to4 %s (.I(%s), .O(%s));\n",
 						tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
@@ -952,6 +970,8 @@ struct make_interconn_worker_t
 
 			if (cursor->net == trg.net)
 				goto skip_to_cursor;
+
+			count_length = std::max(count_length, 0);
 
 			extra_vlog.push_back(stringf("  Span12Mux_%c%d %s (.I(%s), .O(%s));\n",
 					horiz ? 'h' : 'v', ZSPAN_HACK ? 0 : count_length, tname().c_str(),
@@ -1026,8 +1046,10 @@ struct make_interconn_worker_t
 
 	void show_seg_tree_worker(FILE *f, const net_segment_t &src, std::vector<std::string> &global_lines)
 	{
-		fprintf(f, "    %s [ shape=octagon, label=\"%d %d\\n%s\" ];\n",
-				graph_seg_name(src).c_str(), src.x, src.y, src.name.c_str());
+		std::string porch_str = porch_segs.count(src) ? stringf("\\n[P%d]", porch_segs.at(src)) : "";
+
+		fprintf(f, "    %s [ shape=octagon, label=\"%d %d\\n%s%s\" ];\n",
+				graph_seg_name(src).c_str(), src.x, src.y, src.name.c_str(), porch_str.c_str());
 
 		std::vector<net_segment_t> other_net_children;
 
