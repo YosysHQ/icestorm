@@ -1008,10 +1008,26 @@ struct make_interconn_worker_t
 		create_cells(*cursor);
 	}
 
+	static std::string graph_seg_name(const net_segment_t &seg)
+	{
+		std::string str = stringf("seg_%d_%d_%s", seg.x, seg.y, seg.name.c_str());
+		for (auto &ch : str)
+			if (ch == '/') ch = '_';
+		return str;
+	}
+
+	static std::string graph_cell_name(const net_segment_t &seg)
+	{
+		std::string str = stringf("cell_%d_%d_%s", seg.x, seg.y, seg.name.c_str());
+		for (auto &ch : str)
+			if (ch == '/') ch = '_';
+		return str;
+	}
+
 	void show_seg_tree_worker(FILE *f, const net_segment_t &src, std::vector<std::string> &global_lines)
 	{
-		fprintf(f, "    seg_%d_%d_%s [ shape=octagon, label=\"%d %d\\n%s\" ];\n",
-				src.x, src.y, src.name.c_str(), src.x, src.y, src.name.c_str());
+		fprintf(f, "    %s [ shape=octagon, label=\"%d %d\\n%s\" ];\n",
+				graph_seg_name(src).c_str(), src.x, src.y, src.name.c_str());
 
 		std::vector<net_segment_t> other_net_children;
 
@@ -1020,8 +1036,8 @@ struct make_interconn_worker_t
 				other_net_children.push_back(child);
 			} else
 				show_seg_tree_worker(f, child, global_lines);
-			global_lines.push_back(stringf("  seg_%d_%d_%s -> seg_%d_%d_%s;\n",
-					src.x, src.y, src.name.c_str(), child.x, child.y, child.name.c_str()));
+			global_lines.push_back(stringf("  %s -> %s;\n",
+					graph_seg_name(src).c_str(), graph_seg_name(child).c_str()));
 		}
 
 		if (!other_net_children.empty()) {
@@ -1035,12 +1051,12 @@ struct make_interconn_worker_t
 
 		if (cell_log.count(src)) {
 			auto &cell = cell_log.at(src);
-			global_lines.push_back(stringf("  cell_%d_%d_%s [ label=\"%s\" ];\n",
-					src.x, src.y, src.name.c_str(), cell.second.c_str()));
-			global_lines.push_back(stringf("  seg_%d_%d_%s -> cell_%d_%d_%s;\n",
-					cell.first.x, cell.first.y, cell.first.name.c_str(), src.x, src.y, src.name.c_str()));
-			global_lines.push_back(stringf("  cell_%d_%d_%s -> seg_%d_%d_%s;\n",
-					src.x, src.y, src.name.c_str(), src.x, src.y, src.name.c_str()));
+			global_lines.push_back(stringf("  %s [ label=\"%s\" ];\n",
+					graph_cell_name(src).c_str(), cell.second.c_str()));
+			global_lines.push_back(stringf("  %s -> %s;\n",
+					graph_seg_name(cell.first).c_str(), graph_cell_name(src).c_str()));
+			global_lines.push_back(stringf("  %s -> %s;\n",
+					graph_cell_name(src).c_str(), graph_seg_name(src).c_str()));
 		}
 	}
 
@@ -1053,8 +1069,9 @@ struct make_interconn_worker_t
 		show_seg_tree_worker(f, src, global_lines);
 		fprintf(f, "    }\n");
 
-		for (auto &line : global_lines)
+		for (auto &line : global_lines) {
 			fprintf(f, "%s", line.c_str());
+		}
 	}
 };
 
