@@ -803,7 +803,7 @@ for lut in luts_queue:
             always_stmts.append("/* FF %2d %2d %2d */ always @(%sedge %s, posedge %s) if (%s) %s <= 1'b%s; else if (%s) %s <= %s;" %
                     (lut[0], lut[1], lut[2], "neg" if icebox.get_negclk_bit(tile) == "1" else "pos",
                     net_clk, net_sr, net_sr, net_out, seq_bits[2], net_cen, net_out, n))
-        wire_to_reg.add(net_out)
+        wire_to_reg.add(net_out.strip())
         net_out = n
     if not "1" in lut_bits:
         const_assigns.append([net_out, "1'b0"])
