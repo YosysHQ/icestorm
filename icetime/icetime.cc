@@ -933,9 +933,6 @@ struct make_interconn_worker_t
 
 			count_length = std::max(count_length, 0);
 
-			if (porch_segs.count(*cursor))
-				count_length = 4;
-
 			if (cursor->name.substr(0, 7) == "span12_" || cursor->name.substr(0, 5) == "sp12_") {
 				extra_vlog.push_back(stringf("  Sp12to4 %s (.I(%s), .O(%s));\n",
 						tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
