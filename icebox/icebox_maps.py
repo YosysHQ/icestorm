@@ -93,7 +93,7 @@ def print_db_nets(stmt, db, pos):
             if icebox.pos_has_net(pos[0], entry[2]): netnames.add(entry[2])
             if icebox.pos_has_net(pos[0], entry[3]): netnames.add(entry[3])
     last_prefix = ""
-    for net in sorted(netnames, icebox.cmp_netnames):
+    for net in sorted(netnames, key=icebox.key_netname):
         match = re.match(r"(.*?)(\d+)$", net)
         if match:
             if last_prefix == match.group(1):

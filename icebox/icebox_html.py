@@ -457,7 +457,7 @@ The entries titled "routing" configure transfer gates, the entries titled
         print('<h5>Connectivity Matrix</h5>')
         print('<table style="font-size:x-small">')
         dst_net_prefix = ""
-        dst_net_list = sorted(dst_nets, icebox.cmp_netnames)
+        dst_net_list = sorted(dst_nets, key=icebox.key_netname)
         if len(dst_net_list) > 1:
             while len(set([n[0] for n in dst_net_list])) == 1:
                 dst_net_prefix += dst_net_list[0][0]
@@ -472,10 +472,10 @@ The entries titled "routing" configure transfer gates, the entries titled
         for dn in dst_net_list:
             print('<td>%s</td>' % dn)
         print("</tr>")
-        for sn in sorted(src_nets, icebox.cmp_netnames):
+        for sn in sorted(src_nets, key=icebox.key_netname):
             print("<tr>")
             print('<td>%s</td>' % sn)
-            for dn in sorted(dst_nets, icebox.cmp_netnames):
+            for dn in sorted(dst_nets, key=icebox.key_netname):
                 if (sn, dn) in links:
                     print(links[(sn, dn)])
                 else:
@@ -563,7 +563,10 @@ if outdir is not None:
                 print_tile(x, y)
 
     print("Writing %s/%s..." % (outdir, chipdbfile), file=stdout)
-    os.system("python3 icebox_chipdb.py > %s/%s" % (outdir, chipdbfile))
+    if os.access("icebox_chipdb.py", os.R_OK):
+        os.system("python3 icebox_chipdb.py %s > %s/%s" % ("-8" if mode8k else "", outdir, chipdbfile))
+    else:
+        os.system("icebox_chipdb %s > %s/%s" % ("-8" if mode8k else "", outdir, chipdbfile))
 
     sys.stdout = stdout
     

@@ -940,10 +940,8 @@ def get_carry_bit(tile):
 def get_negclk_bit(tile):
     return tile[0][0]
 
-def cmp_netnames(a, b):
-    a = re.sub(r"\d+", lambda m: "%09d" % int(m.group(0)), a)
-    b = re.sub(r"\d+", lambda m: "%09d" % int(m.group(0)), b)
-    return cmp(a, b)
+def key_netname(netname):
+    return re.sub(r"\d+", lambda m: "%09d" % int(m.group(0)), netname)
 
 def run_checks_neigh():
     print("Running consistency checks on neighbour finder..")
