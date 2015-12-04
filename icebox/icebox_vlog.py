@@ -770,6 +770,7 @@ for lut in luts_queue:
     net_in2 = seg_to_net((lut[0], lut[1], "lutff_%d/in_2" % lut[2]), "1'b0")
     net_in3 = seg_to_net((lut[0], lut[1], "lutff_%d/in_3" % lut[2]), "1'b0")
     net_out = seg_to_net((lut[0], lut[1], "lutff_%d/out" % lut[2]))
+    net_lout = seg_to_net((lut[0], lut[1], "lutff_%d/lout" % lut[2]))
     if seq_bits[0] == "1":
         net_cout = seg_to_net((lut[0], lut[1], "lutff_%d/cout" % lut[2]))
         net_in1 = seg_to_net((lut[0], lut[1], "lutff_%d/in_1" % lut[2]), "1'b0")
@@ -787,24 +788,20 @@ for lut in luts_queue:
         carry_assigns.append([net_cout, "/* CARRY %2d %2d %2d */ (%s & %s) | ((%s | %s) & %s)" %
                 (lut[0], lut[1], lut[2], net_in1, net_in2, net_in1, net_in2, net_cin)])
     if seq_bits[1] == "1":
-        n = next_netname()
-        text_wires.append("wire %s;" % n)
-        if not strip_comments:
-            text_wires.append("// FF %s" % (lut,))
-            text_wires.append("")
         net_cen = seg_to_net((lut[0], lut[1], "lutff_global/cen"), "1'b1")
         net_clk = seg_to_net((lut[0], lut[1], "lutff_global/clk"), "1'b0")
         net_sr  = seg_to_net((lut[0], lut[1], "lutff_global/s_r"), "1'b0")
         if seq_bits[3] == "0":
             always_stmts.append("/* FF %2d %2d %2d */ always @(%sedge %s) if (%s) %s <= %s ? 1'b%s : %s;" %
                     (lut[0], lut[1], lut[2], "neg" if icebox.get_negclk_bit(tile) == "1" else "pos",
-                    net_clk, net_cen, net_out, net_sr, seq_bits[2], n))
+                    net_clk, net_cen, net_out, net_sr, seq_bits[2], net_lout))
         else:
             always_stmts.append("/* FF %2d %2d %2d */ always @(%sedge %s, posedge %s) if (%s) %s <= 1'b%s; else if (%s) %s <= %s;" %
                     (lut[0], lut[1], lut[2], "neg" if icebox.get_negclk_bit(tile) == "1" else "pos",
-                    net_clk, net_sr, net_sr, net_out, seq_bits[2], net_cen, net_out, n))
+                    net_clk, net_sr, net_sr, net_out, seq_bits[2], net_cen, net_out, net_lout))
         wire_to_reg.add(net_out.strip())
-        net_out = n
+    else:
+        always_stmts.append("/* FF %2d %2d %2d */ assign %s = %s;" % (lut[0], lut[1], lut[2], net_out, net_lout))
     if not "1" in lut_bits:
         const_assigns.append([net_out, "1'b0"])
     elif not "0" in lut_bits:
@@ -822,8 +819,8 @@ for lut in luts_queue:
             if h_expr == "0" and l_expr == "1": return "!" + sigs[0]
             return "%s ? %s : %s" % (sigs[0], h_expr, l_expr)
         lut_expr = make_lut_expr(lut_bits, [net_in3, net_in2, net_in1, net_in0])
-        lut_assigns.append([net_out, "/* LUT   %2d %2d %2d */ %s" % (lut[0], lut[1], lut[2], lut_expr)])
-    max_net_len = max(max_net_len, len(net_out))
+        lut_assigns.append([net_lout, "/* LUT   %2d %2d %2d */ %s" % (lut[0], lut[1], lut[2], lut_expr)])
+    max_net_len = max(max_net_len, len(net_lout))
 
 for a in const_assigns + lut_assigns + carry_assigns:
     text_func.append("assign %-*s = %s;" % (max_net_len, a[0], a[1]))

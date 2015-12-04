@@ -228,8 +228,10 @@ or asynchronous exist for each logic cell individually.
 Each LUT <i>i</i> has four input wires <span style="font-family:monospace">lutff_<i>i</i>/in_0</span> to <span style="font-family:monospace">lutff_<i>i</i>/in_3</span>. Input
 <span style="font-family:monospace">lutff_<i>i</i>/in_3</span> can be configured to be driven by the carry output of the previous logic cell,
 or by <span style="font-family:monospace">carry_in_mux</span> in case of <i>i</i>=0. Input <span style="font-family:monospace">lutff_<i>i</i>/in_2</span> can be configured to
-be driven by the output of the previous LUT for <i>i</i>&gt;0. The LUT uses its 4 input signals to
-calculate <span style="font-family:monospace">lutff_<i>i</i>/out</span>.
+be driven by the output of the previous LUT for <i>i</i>&gt;0 (LUT cascade). The LUT uses its 4 input signals to
+calculate <span style="font-family:monospace">lutff_<i>i</i>/lout</span>. The signal is then passed through the built-in FF
+and becomes <span style="font-family:monospace">lutff_<i>i</i>/out</span>. With the exception of LUT cascades, only the signal
+after the FF is visible from outside the logic block.
 </p>
 
 <p>
@@ -294,7 +296,7 @@ The LUT implements the following truth table:
 </p>
 
 <table class="ctab">
-<tr><th>in_3</th><th>in_2</th><th>in_1</th><th>in_0</th><th>out</th></tr>
+<tr><th>in_3</th><th>in_2</th><th>in_1</th><th>in_0</th><th>lout</th></tr>
 <tr><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">0</td><td><span style="font-family:monospace">LC_<i>i</i>[4]</span></td></tr>
 <tr><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">1</td><td><span style="font-family:monospace">LC_<i>i</i>[14]</span></td></tr>
 <tr><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">1</td><td style="text-align:center">0</td><td><span style="font-family:monospace">LC_<i>i</i>[15]</span></td></tr>

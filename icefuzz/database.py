@@ -51,7 +51,7 @@ def read_database(filename, tile_type):
             elif line[0] == "Cascade":
                 match = re.match("LH_LC0(\d)_inmux02_5", line[1])
                 if match:
-                    raw_db.append((bit, ("buffer", "wire_logic_cluster/lc_%d/out" % (int(match.group(1))-1), "input_2_%s" % match.group(1))))
+                    raw_db.append((bit, ("buffer", "wire_logic_cluster/lc_%d/lout" % (int(match.group(1))-1), "input_2_%s" % match.group(1))))
                 else:
                     raw_db.append((bit, (line[0], line[1])))
             elif line[0] == "RamConfig":
