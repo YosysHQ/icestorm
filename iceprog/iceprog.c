@@ -261,7 +261,7 @@ void flash_wait()
 			fprintf(stderr, ".");
 			fflush(stdout);
 		}
-		usleep(250000);
+		usleep(1000);
 	}
 
 	if (verbose)
