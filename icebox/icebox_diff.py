@@ -19,6 +19,12 @@ import icebox
 import sys
 import re
 
+if len(sys.argv) != 3:
+    print("""
+Usage: icebox_diff bitmap1.txt bitmap2.txt
+""")
+    sys.exit(0)
+
 print("Reading file '%s'.." % sys.argv[1])
 ic1 = icebox.iceconfig()
 ic1.read_file(sys.argv[1])
