@@ -30,7 +30,6 @@ int log_level = 0;
 static const int NUM_IMAGES = 4;
 static const int NUM_HEADERS = NUM_IMAGES + 1;
 static const int HEADER_SIZE = 32;
-static const int HEADERS_SIZE = NUM_HEADERS * HEADER_SIZE;
 
 static void write_byte(std::ostream &ofs, uint32_t &file_offset, uint8_t byte)
 {
