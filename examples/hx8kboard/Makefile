@@ -13,8 +13,8 @@ all: $(PROJ).bin
 %.bin: %.txt
 	icepack $< $@
 
-prog:
-	iceprog $(PROJ).bin
+prog: $(PROJ).bin
+	iceprog $<
 
 clean:
 	rm -f *.blif *.txt *.bin
