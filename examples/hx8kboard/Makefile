@@ -1,18 +1,22 @@
-all: example.bin
+PROJ = example
+PIN_DEF = hx8kboard.pcf
+DEVICE = 8k
 
-example.blif: example.v
-	yosys -p 'synth_ice40 -top top -blif example.blif' example.v
+all: $(PROJ).bin
 
-example.txt: example.blif hx8kboard.pcf
-	arachne-pnr -d 8k -o example.txt -p hx8kboard.pcf example.blif
+%.blif: %.v
+	yosys -p 'synth_ice40 -top top -blif $@' $<
 
-example.bin: example.txt
-	icepack example.txt example.bin
+%.txt: $(PIN_DEF) %.blif
+	arachne-pnr -d $(DEVICE) -o $@ -p $^
+
+%.bin: %.txt
+	icepack $< $@
 
 prog:
-	iceprog example.bin
+	iceprog $(PROJ).bin
 
 clean:
-	rm -f example.blif example.txt example.bin
+	rm -f *.blif *.txt *.bin
 
 .PHONY: all prog clean
