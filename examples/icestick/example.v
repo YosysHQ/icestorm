@@ -17,6 +17,6 @@ module top (
 		counter <= counter + 1;
 		outcnt <= counter >> LOG2DELAY;
 	end
-	
+
 	assign {LED1, LED2, LED3, LED4, LED5} = outcnt ^ (outcnt >> 1);
 endmodule
