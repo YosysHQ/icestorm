@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 # Installing iCEcube2:
-#  - Install iCEcube2.2014.08 in /opt/lscc/iCEcube2.2014.08
-#  - Install License in /opt/lscc/iCEcube2.2014.08/license.dat
+#  - Install iCEcube2.2014.08 in /opt/lscc/iCEcube2.2015.08
+#  - Install License in /opt/lscc/iCEcube2.2015.08/license.dat
 #
 # Creating a project:
 #  - <project_name>.v    ## HDL sources (use "top" as name for the top module)
@@ -33,7 +33,7 @@ if [ -z "$scriptdir" ]; then scriptdir="."; fi
 
 set -ex
 set -- ${1%.v}
-icecubedir="${ICECUBEDIR:-/opt/lscc/iCEcube2.2014.08}"
+icecubedir="${ICECUBEDIR:-/home/juan/lscc/iCEcube2.2015.08}"
 export SBT_DIR="$icecubedir/sbt_backend"
 export SYNPLIFY_PATH="$icecubedir/synpbase"
 export LM_LICENSE_FILE="$icecubedir/license.dat"
@@ -68,6 +68,10 @@ case "${ICEDEV:-hx1k-tq144}" in
 		iCEPACKAGE="CB132"
 		iCE40DEV="iCE40HX8K"
 		;;
+        lp1k-qn84)
+                iCEPACKAGE="QN84"
+                iCE40DEV="iCE40LP1K"
+                ;;
 	*)
 		echo "ERROR: Invalid \$ICEDEV device config '$ICEDEV'."
 		exit 1
@@ -81,6 +85,10 @@ case "$iCE40DEV" in
 	iCE40HX8K)
 		libfile="ice40HX8K.lib"
 		devfile="ICE40P08.dev"
+		;;
+	iCE40LP1K)
+		libfile="ice40LP1K.lib"
+		devfile="ICE40P01.dev"
 		;;
 esac
 
