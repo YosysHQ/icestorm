@@ -271,7 +271,7 @@ void flash_wait()
 void help(const char *progname)
 {
 	fprintf(stderr, "\n");
-	fprintf(stderr, "iceprog -- simple programming tool for FTDI-based Lattice iCE programmers\n");
+	fprintf(stderr, "%s -- simple programming tool for FTDI-based Lattice iCE programmers\n", progname);
 	fprintf(stderr, "\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "Notes for iCEstick (iCE40HX-1k devel board):\n");
@@ -322,7 +322,7 @@ void help(const char *progname)
 	fprintf(stderr, "        just read the flash ID sequence\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "    -v\n");
-	fprintf(stderr, "        verbose output\n");
+	fprintf(stderr, "        enable verbose output\n");
 	fprintf(stderr, "\n");
 	exit(1);
 }
