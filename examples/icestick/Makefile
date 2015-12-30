@@ -16,7 +16,11 @@ all: $(PROJ).bin
 prog: $(PROJ).bin
 	iceprog $<
 
+sudo-prog: $(PROJ).bin
+	@echo 'Executing prog as root!!!'
+	iceprog $<
+
 clean:
-	rm -f *.blif *.txt *.bin
+	rm -f $(PROJ).blif $(PROJ).txt $(PROJ).bin
 
 .PHONY: all prog clean
