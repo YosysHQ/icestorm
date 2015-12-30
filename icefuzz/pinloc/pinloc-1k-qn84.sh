@@ -21,7 +21,7 @@ pins="
 		echo "module top(output y); assign y = 0; endmodule" > ${id}.v
 		echo "set_io y ${pin}" >> ${id}.pcf
 		echo; echo "${id}.exp:"
-		echo "	ICEDEV=lp1k-qn84 bash ../icecube2.sh ${id} > ${id}.log 2>&1"
+		echo "	ICEDEV=lp1k-qn84 bash ../icecube.sh ${id} > ${id}.log 2>&1"
 		echo "	../../icebox/icebox_explain.py ${id}.txt > ${id}.exp.new"
 		echo "	rm -rf ${id}.tmp"
 		echo "	mv ${id}.exp.new ${id}.exp"

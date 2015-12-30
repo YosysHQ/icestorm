@@ -33,7 +33,7 @@ if [ -z "$scriptdir" ]; then scriptdir="."; fi
 
 set -ex
 set -- ${1%.v}
-icecubedir="${ICECUBEDIR:-/home/juan/lscc/iCEcube2.2015.08}"
+icecubedir="${ICECUBEDIR:-/opt/lscc/iCEcube2.2015.08}"
 export SBT_DIR="$icecubedir/sbt_backend"
 export SYNPLIFY_PATH="$icecubedir/synpbase"
 export LM_LICENSE_FILE="$icecubedir/license.dat"
