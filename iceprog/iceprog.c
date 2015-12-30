@@ -412,7 +412,7 @@ int main(int argc, char **argv)
 		}
 	} else {
 		if (ftdi_usb_open(&ftdic, 0x0403, 0x6010)) {
-			fprintf(stderr, "Can't find iCE FTDI USB device (vedor_id 0x0403, device_id 0x6010).\n");
+			fprintf(stderr, "Can't find iCE FTDI USB device (vendor_id 0x0403, device_id 0x6010).\n");
 			error();
 		}
 	}
