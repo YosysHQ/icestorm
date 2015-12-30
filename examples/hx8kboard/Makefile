@@ -1,18 +1,26 @@
-all: example.bin
+PROJ = example
+PIN_DEF = hx8kboard.pcf
+DEVICE = 8k
 
-example.blif: example.v
-	yosys -p 'synth_ice40 -top top -blif example.blif' example.v
+all: $(PROJ).bin
 
-example.txt: example.blif hx8kboard.pcf
-	arachne-pnr -d 8k -o example.txt -p hx8kboard.pcf example.blif
+%.blif: %.v
+	yosys -p 'synth_ice40 -top top -blif $@' $<
 
-example.bin: example.txt
-	icepack example.txt example.bin
+%.txt: $(PIN_DEF) %.blif
+	arachne-pnr -d $(DEVICE) -o $@ -p $^
 
-prog:
-	iceprog example.bin
+%.bin: %.txt
+	icepack $< $@
+
+prog: $(PROJ).bin
+	iceprog $<
+
+sudo-prog: $(PROJ).bin
+	@echo 'Executing prog as root!!!'
+	sudo iceprog $<
 
 clean:
-	rm -f example.blif example.txt example.bin
+	rm -f $(PROJ).blif $(PROJ).txt $(PROJ).bin
 
 .PHONY: all prog clean
