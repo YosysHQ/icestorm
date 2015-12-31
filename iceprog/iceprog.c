@@ -202,7 +202,7 @@ void flash_64kB_sector_erase(int addr)
 {
 	fprintf(stderr, "erase 64kB sector at 0x%06X..\n", addr);
 
-	uint8_t command[4] = { 0xd8, addr >> 16, addr >> 8, addr };
+	uint8_t command[4] = { 0xd8, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 	set_gpio(0, 0);
 	send_spi(command, 4);
 	set_gpio(1, 0);
@@ -213,7 +213,7 @@ void flash_prog(int addr, uint8_t *data, int n)
 	if (verbose)
 		fprintf(stderr, "prog 0x%06X +0x%03X..\n", addr, n);
 
-	uint8_t command[4] = { 0x02, addr >> 16, addr >> 8, addr };
+	uint8_t command[4] = { 0x02, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 	set_gpio(0, 0);
 	send_spi(command, 4);
 	send_spi(data, n);
@@ -229,7 +229,7 @@ void flash_read(int addr, uint8_t *data, int n)
 	if (verbose)
 		fprintf(stderr, "read 0x%06X +0x%03X..\n", addr, n);
 
-	uint8_t command[4] = { 0x03, addr >> 16, addr >> 8, addr };
+	uint8_t command[4] = { 0x03, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 	set_gpio(0, 0);
 	send_spi(command, 4);
 	memset(data, 0, n);
@@ -338,7 +338,7 @@ int main(int argc, char **argv)
 	bool test_mode = false;
 	const char *filename = NULL;
 	const char *devstr = NULL;
-	int ifnum = INTERFACE_A;
+	enum ftdi_interface ifnum = INTERFACE_A;
 
 	int opt;
 	while ((opt = getopt(argc, argv, "d:I:rRcbnStv")) != -1)

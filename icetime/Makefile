@@ -1,18 +1,17 @@
-# CXX = clang
+include ../config.mk
 LDLIBS = -lm -lstdc++
 CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include
-CC = $(CXX)
-DESTDIR = /usr/local
 
 all: icetime
 
 icetime: icetime.o
 
 install: all
-	cp icetime $(DESTDIR)/bin/icetime
+	mkdir -p $(DESTDIR)$(PREFIX)/bin
+	cp icetime $(DESTDIR)$(PREFIX)/bin/icetime
 
 uninstall:
-	rm -f $(DESTDIR)/bin/icetime
+	rm -f $(DESTDIR)$(PREFIX)/bin/icetime
 
 
 # View timing netlist:

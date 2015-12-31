@@ -1,4 +1,4 @@
-
+include ../config.mk
 export LC_ALL=C
 
 TESTS =
