@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 # Installing iCEcube2:
-#  - Install iCEcube2.2014.08 in /opt/lscc/iCEcube2.2015.08
-#  - Install License in /opt/lscc/iCEcube2.2015.08/license.dat
+#  - Install iCEcube2.2014.08 in /opt/lscc/iCEcube2.2014.08
+#  - Install License in /opt/lscc/iCEcube2.2014.08/license.dat
 #
 # Creating a project:
 #  - <project_name>.v    ## HDL sources (use "top" as name for the top module)
@@ -33,7 +33,7 @@ if [ -z "$scriptdir" ]; then scriptdir="."; fi
 
 set -ex
 set -- ${1%.v}
-icecubedir="${ICECUBEDIR:-/opt/lscc/iCEcube2.2015.08}"
+icecubedir="${ICECUBEDIR:-/opt/lscc/iCEcube2.2014.08}"
 export SBT_DIR="$icecubedir/sbt_backend"
 export SYNPLIFY_PATH="$icecubedir/synpbase"
 export LM_LICENSE_FILE="$icecubedir/license.dat"

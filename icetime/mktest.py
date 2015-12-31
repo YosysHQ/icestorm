@@ -29,6 +29,26 @@ with open("%s.v" % sys.argv[1], "w") as f:
         print("  always @(posedge clk) dout <= din + {din[7:0], din[15:8]};", file=f)
         print("  assign {o3, o2, o1, o0} = dout >> din;", file=f)
         print("endmodule", file=f)
+    if mode == "test2":
+        io_names = [ "clk", "i0", "i1", "i2", "i3", "o0", "o1", "o2", "o3", "o4" ]
+        print("""
+          module top(input clk, i0, i1, i2, i3, output reg o0, o1, o2, o3, o4);
+            reg [9:0] raddr, waddr, rdata, wdata;
+            reg [9:0] memory [0:1023];
+            always @(posedge clk) begin
+              case ({i0, i1, i2})
+                0: raddr <= {raddr, i3};
+                1: waddr <= {waddr, i3};
+                2: wdata <= {wdata, i3};
+                3: rdata <= memory[raddr];
+                4: memory[waddr] <= wdata;
+                5: rdata <= memory[waddr];
+                6: {o0, o1, o2, o3, o4} <= rdata[4:0];
+                7: {o0, o1, o2, o3, o4} <= rdata[9:5];
+              endcase
+            end
+          endmodule
+        """, file=f)
 
 with open("%s.pcf" % sys.argv[1], "w") as f:
     for i, name in enumerate(io_names):
@@ -55,48 +75,48 @@ os.rename("%s.v" % sys.argv[1], "%s_in.v" % sys.argv[1])
 
 with open("%s_ref.v" % sys.argv[1], "w") as f:
     for line in open("%s.vsb" % sys.argv[1], "r"):
-        zspan_hack = False
+        max_span_hack = True
 
-        line = line.replace(" Span4Mux_s0_h ",   " Span4Mux_h0 "  if zspan_hack else " Span4Mux_h0 ")
-        line = line.replace(" Span4Mux_s1_h ",   " Span4Mux_h0 "  if zspan_hack else " Span4Mux_h1 ")
-        line = line.replace(" Span4Mux_s2_h ",   " Span4Mux_h0 "  if zspan_hack else " Span4Mux_h2 ")
-        line = line.replace(" Span4Mux_s3_h ",   " Span4Mux_h0 "  if zspan_hack else " Span4Mux_h3 ")
-        line = line.replace(" Span4Mux_h ",      " Span4Mux_h0 "  if zspan_hack else " Span4Mux_h4 ")
+        line = line.replace(" Span4Mux_s0_h ",   " Span4Mux_h4 "  if max_span_hack else " Span4Mux_h0 ")
+        line = line.replace(" Span4Mux_s1_h ",   " Span4Mux_h4 "  if max_span_hack else " Span4Mux_h1 ")
+        line = line.replace(" Span4Mux_s2_h ",   " Span4Mux_h4 "  if max_span_hack else " Span4Mux_h2 ")
+        line = line.replace(" Span4Mux_s3_h ",   " Span4Mux_h4 "  if max_span_hack else " Span4Mux_h3 ")
+        line = line.replace(" Span4Mux_h ",      " Span4Mux_h4 "  if max_span_hack else " Span4Mux_h4 ")
 
-        line = line.replace(" Span4Mux_s0_v ",   " Span4Mux_v0 "  if zspan_hack else " Span4Mux_v0 ")
-        line = line.replace(" Span4Mux_s1_v ",   " Span4Mux_v0 "  if zspan_hack else " Span4Mux_v1 ")
-        line = line.replace(" Span4Mux_s2_v ",   " Span4Mux_v0 "  if zspan_hack else " Span4Mux_v2 ")
-        line = line.replace(" Span4Mux_s3_v ",   " Span4Mux_v0 "  if zspan_hack else " Span4Mux_v3 ")
-        line = line.replace(" Span4Mux_v ",      " Span4Mux_v0 "  if zspan_hack else " Span4Mux_v4 ")
-        line = line.replace(" Span4Mux ",        " Span4Mux_v0 "  if zspan_hack else " Span4Mux_v4 ")
+        line = line.replace(" Span4Mux_s0_v ",   " Span4Mux_v4 "  if max_span_hack else " Span4Mux_v0 ")
+        line = line.replace(" Span4Mux_s1_v ",   " Span4Mux_v4 "  if max_span_hack else " Span4Mux_v1 ")
+        line = line.replace(" Span4Mux_s2_v ",   " Span4Mux_v4 "  if max_span_hack else " Span4Mux_v2 ")
+        line = line.replace(" Span4Mux_s3_v ",   " Span4Mux_v4 "  if max_span_hack else " Span4Mux_v3 ")
+        line = line.replace(" Span4Mux_v ",      " Span4Mux_v4 "  if max_span_hack else " Span4Mux_v4 ")
+        line = line.replace(" Span4Mux ",        " Span4Mux_v4 "  if max_span_hack else " Span4Mux_v4 ")
 
-        line = line.replace(" Span12Mux_s0_h ",  " Span12Mux_h0 " if zspan_hack else " Span12Mux_h0 ")
-        line = line.replace(" Span12Mux_s1_h ",  " Span12Mux_h0 " if zspan_hack else " Span12Mux_h1 ")
-        line = line.replace(" Span12Mux_s2_h ",  " Span12Mux_h0 " if zspan_hack else " Span12Mux_h2 ")
-        line = line.replace(" Span12Mux_s3_h ",  " Span12Mux_h0 " if zspan_hack else " Span12Mux_h3 ")
-        line = line.replace(" Span12Mux_s4_h ",  " Span12Mux_h0 " if zspan_hack else " Span12Mux_h4 ")
-        line = line.replace(" Span12Mux_s5_h ",  " Span12Mux_h0 " if zspan_hack else " Span12Mux_h5 ")
-        line = line.replace(" Span12Mux_s6_h ",  " Span12Mux_h0 " if zspan_hack else " Span12Mux_h6 ")
-        line = line.replace(" Span12Mux_s7_h ",  " Span12Mux_h0 " if zspan_hack else " Span12Mux_h7 ")
-        line = line.replace(" Span12Mux_s8_h ",  " Span12Mux_h0 " if zspan_hack else " Span12Mux_h8 ")
-        line = line.replace(" Span12Mux_s9_h ",  " Span12Mux_h0 " if zspan_hack else " Span12Mux_h9 ")
-        line = line.replace(" Span12Mux_s10_h ", " Span12Mux_h0 " if zspan_hack else " Span12Mux_h10 ")
-        line = line.replace(" Span12Mux_s11_h ", " Span12Mux_h0 " if zspan_hack else " Span12Mux_h11 ")
-        line = line.replace(" Span12Mux ",       " Span12Mux_h0 " if zspan_hack else " Span12Mux_h12 ")
+        line = line.replace(" Span12Mux_s0_h ",  " Span12Mux_h12 " if max_span_hack else " Span12Mux_h0 ")
+        line = line.replace(" Span12Mux_s1_h ",  " Span12Mux_h12 " if max_span_hack else " Span12Mux_h1 ")
+        line = line.replace(" Span12Mux_s2_h ",  " Span12Mux_h12 " if max_span_hack else " Span12Mux_h2 ")
+        line = line.replace(" Span12Mux_s3_h ",  " Span12Mux_h12 " if max_span_hack else " Span12Mux_h3 ")
+        line = line.replace(" Span12Mux_s4_h ",  " Span12Mux_h12 " if max_span_hack else " Span12Mux_h4 ")
+        line = line.replace(" Span12Mux_s5_h ",  " Span12Mux_h12 " if max_span_hack else " Span12Mux_h5 ")
+        line = line.replace(" Span12Mux_s6_h ",  " Span12Mux_h12 " if max_span_hack else " Span12Mux_h6 ")
+        line = line.replace(" Span12Mux_s7_h ",  " Span12Mux_h12 " if max_span_hack else " Span12Mux_h7 ")
+        line = line.replace(" Span12Mux_s8_h ",  " Span12Mux_h12 " if max_span_hack else " Span12Mux_h8 ")
+        line = line.replace(" Span12Mux_s9_h ",  " Span12Mux_h12 " if max_span_hack else " Span12Mux_h9 ")
+        line = line.replace(" Span12Mux_s10_h ", " Span12Mux_h12 " if max_span_hack else " Span12Mux_h10 ")
+        line = line.replace(" Span12Mux_s11_h ", " Span12Mux_h12 " if max_span_hack else " Span12Mux_h11 ")
+        line = line.replace(" Span12Mux ",       " Span12Mux_h12 " if max_span_hack else " Span12Mux_h12 ")
 
-        line = line.replace(" Span12Mux_s0_v ",  " Span12Mux_v0 " if zspan_hack else " Span12Mux_v0 ")
-        line = line.replace(" Span12Mux_s1_v ",  " Span12Mux_v0 " if zspan_hack else " Span12Mux_v1 ")
-        line = line.replace(" Span12Mux_s2_v ",  " Span12Mux_v0 " if zspan_hack else " Span12Mux_v2 ")
-        line = line.replace(" Span12Mux_s3_v ",  " Span12Mux_v0 " if zspan_hack else " Span12Mux_v3 ")
-        line = line.replace(" Span12Mux_s4_v ",  " Span12Mux_v0 " if zspan_hack else " Span12Mux_v4 ")
-        line = line.replace(" Span12Mux_s5_v ",  " Span12Mux_v0 " if zspan_hack else " Span12Mux_v5 ")
-        line = line.replace(" Span12Mux_s6_v ",  " Span12Mux_v0 " if zspan_hack else " Span12Mux_v6 ")
-        line = line.replace(" Span12Mux_s7_v ",  " Span12Mux_v0 " if zspan_hack else " Span12Mux_v7 ")
-        line = line.replace(" Span12Mux_s8_v ",  " Span12Mux_v0 " if zspan_hack else " Span12Mux_v8 ")
-        line = line.replace(" Span12Mux_s9_v ",  " Span12Mux_v0 " if zspan_hack else " Span12Mux_v9 ")
-        line = line.replace(" Span12Mux_s10_v ", " Span12Mux_v0 " if zspan_hack else " Span12Mux_v10 ")
-        line = line.replace(" Span12Mux_s11_v ", " Span12Mux_v0 " if zspan_hack else " Span12Mux_v11 ")
-        line = line.replace(" Span12Mux_v ",     " Span12Mux_v0 " if zspan_hack else " Span12Mux_v12 ")
+        line = line.replace(" Span12Mux_s0_v ",  " Span12Mux_v12 " if max_span_hack else " Span12Mux_v0 ")
+        line = line.replace(" Span12Mux_s1_v ",  " Span12Mux_v12 " if max_span_hack else " Span12Mux_v1 ")
+        line = line.replace(" Span12Mux_s2_v ",  " Span12Mux_v12 " if max_span_hack else " Span12Mux_v2 ")
+        line = line.replace(" Span12Mux_s3_v ",  " Span12Mux_v12 " if max_span_hack else " Span12Mux_v3 ")
+        line = line.replace(" Span12Mux_s4_v ",  " Span12Mux_v12 " if max_span_hack else " Span12Mux_v4 ")
+        line = line.replace(" Span12Mux_s5_v ",  " Span12Mux_v12 " if max_span_hack else " Span12Mux_v5 ")
+        line = line.replace(" Span12Mux_s6_v ",  " Span12Mux_v12 " if max_span_hack else " Span12Mux_v6 ")
+        line = line.replace(" Span12Mux_s7_v ",  " Span12Mux_v12 " if max_span_hack else " Span12Mux_v7 ")
+        line = line.replace(" Span12Mux_s8_v ",  " Span12Mux_v12 " if max_span_hack else " Span12Mux_v8 ")
+        line = line.replace(" Span12Mux_s9_v ",  " Span12Mux_v12 " if max_span_hack else " Span12Mux_v9 ")
+        line = line.replace(" Span12Mux_s10_v ", " Span12Mux_v12 " if max_span_hack else " Span12Mux_v10 ")
+        line = line.replace(" Span12Mux_s11_v ", " Span12Mux_v12 " if max_span_hack else " Span12Mux_v11 ")
+        line = line.replace(" Span12Mux_v ",     " Span12Mux_v12 " if max_span_hack else " Span12Mux_v12 ")
 
         f.write(line)
 

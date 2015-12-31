@@ -12,7 +12,7 @@
 #include <map>
 #include <set>
 
-#define ZSPAN_HACK 0
+#define MAX_SPAN_HACK 1
 
 FILE *fin, *fout;
 
@@ -944,7 +944,7 @@ struct make_interconn_worker_t
 				cell_log[trg] = std::make_pair(*cursor, "IoSpan4Mux");
 			} else {
 				extra_vlog.push_back(stringf("  Span4Mux_%c%d %s (.I(%s), .O(%s));\n",
-						horiz ? 'h' : 'v', ZSPAN_HACK ? 0 : count_length, tname().c_str(),
+						horiz ? 'h' : 'v', MAX_SPAN_HACK ? 4 : count_length, tname().c_str(),
 						seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 				cell_log[trg] = std::make_pair(*cursor, stringf("Span4Mux_%c%d", horiz ? 'h' : 'v', count_length));
 			}
@@ -971,7 +971,7 @@ struct make_interconn_worker_t
 			count_length = std::max(count_length, 0);
 
 			extra_vlog.push_back(stringf("  Span12Mux_%c%d %s (.I(%s), .O(%s));\n",
-					horiz ? 'h' : 'v', ZSPAN_HACK ? 0 : count_length, tname().c_str(),
+					horiz ? 'h' : 'v', MAX_SPAN_HACK ? 12 : count_length, tname().c_str(),
 					seg_name(*cursor).c_str(), seg_name(trg).c_str()));
 			cell_log[trg] = std::make_pair(*cursor, stringf("Span12Mux_%c%d", horiz ? 'h' : 'v', count_length));
 

@@ -864,3 +864,12 @@ module INTERCONN(I, O);
   input I;
   output O;
 endmodule
+
+module SB_RAM40_4K(RDATA, RCLK, RCLKE, RE, RADDR, WCLK, WCLKE, WE, WADDR, MASK, WDATA);
+  output [15:0] RDATA;
+  input RCLK, RCLKE, RE;
+  input [10:0] RADDR;
+  input WCLK, WCLKE, WE;
+  input [10:0] WADDR;
+  input [15:0] MASK, WDATA;
+endmodule
