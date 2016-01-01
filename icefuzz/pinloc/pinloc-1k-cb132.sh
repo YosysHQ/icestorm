@@ -23,7 +23,7 @@ pins="
 		echo "set_io y ${pin}" >> ${id}.pcf
 		echo; echo "${id}.exp:"
 		echo "	ICEDEV=hx1k-cb132 bash ../icecube.sh ${id} > ${id}.log 2>&1"
-		echo "	../../icebox/icebox_explain.py ${id}.txt > ${id}.exp.new"
+		echo "	../../icebox/icebox_explain.py ${id}.asc > ${id}.exp.new"
 		echo "	rm -rf ${id}.tmp"
 		echo "	mv ${id}.exp.new ${id}.exp"
 	done

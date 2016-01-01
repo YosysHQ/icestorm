@@ -22,7 +22,7 @@ mode_8k = False
 
 def usage():
     print("""
-Usage: icebox_chipdb [options] [bitmap.txt]
+Usage: icebox_chipdb [options] [bitmap.asc]
 
     -8
         create chipdb for 8k device

@@ -51,7 +51,7 @@ for y in {1..32}; do
 	echo "set_io oc 1" >> ${pf}.pcf
 	echo "set_io c $gpin" >> ${pf}.pcf
 	ICEDEV=hx8k-ct256 bash ../../icecube.sh ${pf}.v > ${pf}.log 2>&1
-	../../../icebox/icebox_explain.py ${pf}.txt > ${pf}.exp
+	../../../icebox/icebox_explain.py ${pf}.asc > ${pf}.exp
 	rm -rf ${pf}.tmp
 done; done
 

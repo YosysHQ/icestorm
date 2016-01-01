@@ -9,7 +9,7 @@ yosys -p '
 	show -prefix equiv_graph -format dot a:equiv_region!=0 %co2 a:equiv_region!=0 %ci2
 ' $1.il
 
-./icetime -P tq144 -p $1.pcf $1.txt $( sed 's,_gate$,,; s,.*_,-g ,;' < equiv_graph.segs ) > /dev/null
+./icetime -P tq144 -p $1.pcf $1.asc $( sed 's,_gate$,,; s,.*_,-g ,;' < equiv_graph.segs ) > /dev/null
 
 {
 	egrep -v '^}' icetime_graph.dot

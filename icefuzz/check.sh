@@ -8,8 +8,8 @@ for id; do
 	if test -f $id.pcf; then icebox_vlog_opts="$icebox_vlog_opts -p $id.pcf"; fi
 	if test -f $id.psb; then icebox_vlog_opts="$icebox_vlog_opts -P $id.psb"; fi
 
-	../icepack/iceunpack $id.bin $id.txt
-	../icebox/icebox_vlog.py $icebox_vlog_opts $id.txt > $id.ve
+	../icepack/iceunpack $id.bin $id.asc
+	../icebox/icebox_vlog.py $icebox_vlog_opts $id.asc > $id.ve
 
 	yosys -p "
 		read_verilog $id.v

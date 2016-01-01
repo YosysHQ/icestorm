@@ -21,7 +21,7 @@ import re
 
 if len(sys.argv) != 3:
     print("""
-Usage: icebox_diff bitmap1.txt bitmap2.txt
+Usage: icebox_diff bitmap1.asc bitmap2.asc
 """)
     sys.exit(0)
 

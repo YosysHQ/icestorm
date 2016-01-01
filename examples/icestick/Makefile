@@ -7,10 +7,10 @@ all: $(PROJ).bin
 %.blif: %.v
 	yosys -p 'synth_ice40 -top top -blif $@' $<
 
-%.txt: $(PIN_DEF) %.blif
+%.asc: $(PIN_DEF) %.blif
 	arachne-pnr -d $(DEVICE) -o $@ -p $^
 
-%.bin: %.txt
+%.bin: %.asc
 	icepack $< $@
 
 prog: $(PROJ).bin
@@ -21,6 +21,6 @@ sudo-prog: $(PROJ).bin
 	iceprog $<
 
 clean:
-	rm -f $(PROJ).blif $(PROJ).txt $(PROJ).bin
+	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).bin
 
 .PHONY: all prog clean

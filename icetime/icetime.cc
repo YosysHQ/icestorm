@@ -1137,7 +1137,7 @@ void make_interconn(const net_segment_t &src, FILE *graph_f)
 void help(const char *cmd)
 {
 	printf("\n");
-	printf("Usage: %s [options] input.txt [output.v]\n", cmd);
+	printf("Usage: %s [options] input.asc [output.v]\n", cmd);
 	printf("\n");
 	printf("    -p <pcf_file>\n");
 	printf("    -P <chip_package>\n");
@@ -1194,7 +1194,7 @@ int main(int argc, char **argv)
 	} else
 		help(argv[0]);
 
-	printf("// Reading input .txt file..\n");
+	printf("// Reading input .asc file..\n");
 	read_config();
 
 	printf("// Reading chipdb file..\n");

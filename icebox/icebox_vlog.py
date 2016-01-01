@@ -32,7 +32,7 @@ modname = "chip"
 
 def usage():
     print("""
-Usage: icebox_vlog [options] [bitmap.txt]
+Usage: icebox_vlog [options] [bitmap.asc]
 
     -s
         strip comments from output

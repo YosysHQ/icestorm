@@ -198,5 +198,5 @@ cp "$1.tmp"/outputs/bitmap/top_bitmap_glb.txt "$1.glb"
 cp "$1.tmp"/outputs/placer/top_sbt.pcf "$1.psb"
 cp "$1.tmp"/outputs/netlist/top_sbt.v "$1.vsb"
 cp "$1.tmp"/outputs/netlist/top_sbt.sdf "$1.sdf"
-$scriptdir/../icepack/iceunpack "$1.bin" "$1.txt"
+$scriptdir/../icepack/iceunpack "$1.bin" "$1.asc"
 

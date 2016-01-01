@@ -61,8 +61,8 @@ arachne-pnr</a> (this example targets the iCEstick development board):
 </p>
 
 <pre style="padding-left: 3em">yosys -p "synth_ice40 -blif rot.blif" rot.v
-arachne-pnr -d 1k -p rot.pcf rot.blif -o rot.txt
-icepack rot.txt rot.bin
+arachne-pnr -d 1k -p rot.pcf rot.blif -o rot.asc
+icepack rot.asc rot.bin
 iceprog rot.bin</pre>
 
 <h2>Where are the Tools? How to install?</h2>
@@ -263,16 +263,16 @@ And run them through Yosys, Arachne-PNR and IcePack:
 </p>
 
 <pre style="padding-left: 3em">$ yosys -p 'synth_ice40 -top top -blif example.blif' example.v
-$ arachne-pnr -d 1k -o example.txt -p example.pcf example.blif
-$ icepack example.txt example.bin
+$ arachne-pnr -d 1k -o example.asc -p example.pcf example.blif
+$ icepack example.asc example.bin
 </pre>
 
 <p>
 We would get something like the following <span style="font-family:monospace">icebox_explain</span> output:
 </p>
 
-<pre style="padding-left: 3em">$ icebox_explain example.txt
-Reading file 'example.txt'..
+<pre style="padding-left: 3em">$ icebox_explain example.asc
+Reading file 'example.asc'..
 Fabric size (without IO tiles): 12 x 16
 
 .io_tile 0 10
@@ -308,8 +308,8 @@ buffer sp4_h_r_24 local_g3_0</pre>
 And something like the following <span style="font-family:monospace">icebox_vlog</span> output:
 </p>
 
-<pre style="padding-left: 3em">$ icebox_vlog -p example.pcf example.txt
-// Reading file 'example.txt'..
+<pre style="padding-left: 3em">$ icebox_vlog -p example.pcf example.asc
+// Reading file 'example.asc'..
 
 module chip (output y, input b, input a);
 
