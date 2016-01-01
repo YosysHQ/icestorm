@@ -2,7 +2,7 @@
 
 i=0
 while true; do
-	echo; svn diff cached_*.txt | diffstat
+	echo; git diff cached_*.txt | diffstat
 	echo; echo -n "[$(date '+%H:%M:%S')] Iteration $(( ++i )) "
 	{ echo; echo; echo; echo; echo; echo; echo "Iteration $i"; date; } >> runloop.log
 	if make clean > >( gawk '{ print >> "runloop.log"; printf("x"); fflush(""); }'; ) 2>&1 &&
