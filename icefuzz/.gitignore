@@ -3,6 +3,7 @@
 *.psb
 *.tmp/
 *.txt
+*.asc
 *.vsb
 *.sdf
 /work_*/

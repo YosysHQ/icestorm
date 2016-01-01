@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 # Installing iCEcube2:
-#  - Install iCEcube2.2014.08 in /opt/lscc/iCEcube2.2014.08
-#  - Install License in /opt/lscc/iCEcube2.2014.08/license.dat
+#  - Install iCEcube2.2015.08 in /opt/lscc/iCEcube2.2015.08
+#  - Install License in /opt/lscc/iCEcube2.2015.08/license.dat
 #
 # Creating a project:
 #  - <project_name>.v    ## HDL sources (use "top" as name for the top module)
@@ -21,7 +21,7 @@
 # sudo apt-get install libxcursor1:i386 libXinerama.so.1:i386 libXinerama1:i386 libfreetype6:i386
 # sudo apt-get install libfontconfig1:i386 libglib2.0-0:i386 libstdc++6:i386 libelf1:i386
 #
-# icecubedir="/opt/lscc/iCEcube2.2014.08"
+# icecubedir="/opt/lscc/iCEcube2.2015.08"
 # sudo sed -ri "1 s,/bin/sh,/bin/bash,;" $icecubedir/synpbase/bin/synplify_pro
 # sudo sed -ri "1 s,/bin/sh,/bin/bash,;" $icecubedir/synpbase/bin/c_hdl
 # sudo sed -ri "1 s,/bin/sh,/bin/bash,;" $icecubedir/synpbase/bin/syn_nfilter
@@ -33,7 +33,8 @@ if [ -z "$scriptdir" ]; then scriptdir="."; fi
 
 set -ex
 set -- ${1%.v}
-icecubedir="${ICECUBEDIR:-/opt/lscc/iCEcube2.2014.08}"
+icecubedir="${ICECUBEDIR:-/opt/lscc/iCEcube2.2015.08}"
+export FOUNDRY="$icecubedir/LSE"
 export SBT_DIR="$icecubedir/sbt_backend"
 export SYNPLIFY_PATH="$icecubedir/synpbase"
 export LM_LICENSE_FILE="$icecubedir/license.dat"
@@ -72,6 +73,14 @@ case "${ICEDEV:-hx1k-tq144}" in
                 iCEPACKAGE="QN84"
                 iCE40DEV="iCE40LP1K"
                 ;;
+	ul1k-cm36a)
+                iCEPACKAGE="CM36A"
+                iCE40DEV="iCE40UL1K"
+		;;
+	ul1k-swg16)
+                iCEPACKAGE="CM36A"
+                iCE40DEV="iCE40UL1K"
+		;;
 	*)
 		echo "ERROR: Invalid \$ICEDEV device config '$ICEDEV'."
 		exit 1
@@ -79,16 +88,24 @@ esac
 
 case "$iCE40DEV" in
 	iCE40HX1K)
+		icetech="SBTiCE40"
 		libfile="ice40HX1K.lib"
 		devfile="ICE40P01.dev"
 		;;
 	iCE40HX8K)
+		icetech="SBTiCE40"
 		libfile="ice40HX8K.lib"
 		devfile="ICE40P08.dev"
 		;;
 	iCE40LP1K)
+		icetech="SBTiCE40"
 		libfile="ice40LP1K.lib"
 		devfile="ICE40P01.dev"
+		;;
+	iCE40UL1K)
+		icetech="SBTiCE40UL"
+		libfile="ice40BT1K.lib"
+		devfile="ICE40T01.dev"
 		;;
 esac
 
@@ -119,7 +136,7 @@ set_option -vlog_std v2001
 set_option -project_relative_includes 1
 
 # device options
-set_option -technology SBTiCE40
+set_option -technology $icetech
 set_option -part $iCE40DEV
 set_option -package $iCEPACKAGE
 set_option -speed_grade
@@ -161,6 +178,43 @@ impl -active impl
 project -run synthesis -clean
 EOT
 
+cat > impl_lse.prj << EOT
+#device
+-a $icetech
+-d $iCE40DEV
+-t $iCEPACKAGE
+#constraint file
+
+#options
+-optimization_goal Area
+-twr_paths 3
+-bram_utilization 100.00
+-ramstyle Auto
+-romstyle Auto
+-use_carry_chain 1
+-carry_chain_length 0
+-resource_sharing 1
+-propagate_constants 1
+-remove_duplicate_regs 1
+-max_fanout 10000
+-fsm_encoding_style Auto
+-use_io_insertion 1
+-use_io_reg auto
+-resolve_mixed_drivers 0
+-RWCheckOnRam 0
+-fix_gated_clocks 1
+-loop_limit 1950
+
+-ver "input.v"
+-p "$PWD"
+
+#set result format/file last
+-output_edif impl/impl.edf
+
+#set log file
+-logfile "impl_lse.log"
+EOT
+
 try_rerun() {
 	for i in {0..3}; do
 		if "$@"; then return 0; fi
@@ -168,8 +222,15 @@ try_rerun() {
 	return 1
 }
 
-# synthesis
-"$icecubedir"/sbt_backend/bin/linux/opt/synpwrap/synpwrap -prj impl_syn.prj -log impl.srr
+# synthesis (Synplify Pro)
+if false; then
+	"$icecubedir"/sbt_backend/bin/linux/opt/synpwrap/synpwrap -prj impl_syn.prj -log impl.srr
+fi
+
+# synthesis (Lattice LSE)
+if true; then
+	"$icecubedir"/LSE/bin/lin/synthesis -f "impl_lse.prj"
+fi
 
 # convert netlist
 "$icecubedir"/sbt_backend/bin/linux/opt/edifparser "$icecubedir"/sbt_backend/devices/$devfile impl/impl.edf netlist -p$iCEPACKAGE -yinput.pcf -sinput.sdc -c --devicename $iCE40DEV
