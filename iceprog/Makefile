@@ -1,6 +1,6 @@
 # CC = clang
-LDLIBS = -L/usr/local/lib -lftdi -lm
-CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
+LDLIBS = -L/usr/local/lib -lftdi -lm -L/opt/local/lib
+CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include -I/opt/local/include
 MXEGCC = /usr/local/src/mxe/usr/bin/i686-pc-mingw32-gcc
 DESTDIR = /usr/local
 

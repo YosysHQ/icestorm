@@ -271,7 +271,7 @@ void flash_wait()
 void help(const char *progname)
 {
 	fprintf(stderr, "\n");
-	fprintf(stderr, "%s -- simple programming tool for FTDI-based Lattice iCE programmers\n", progname);
+	fprintf(stderr, "iceprog -- simple programming tool for FTDI-based Lattice iCE programmers\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "Notes for iCEstick (iCE40HX-1k devel board):\n");
@@ -322,7 +322,7 @@ void help(const char *progname)
 	fprintf(stderr, "        just read the flash ID sequence\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "    -v\n");
-	fprintf(stderr, "        enable verbose output\n");
+	fprintf(stderr, "        verbose output\n");
 	fprintf(stderr, "\n");
 	exit(1);
 }
@@ -412,7 +412,7 @@ int main(int argc, char **argv)
 		}
 	} else {
 		if (ftdi_usb_open(&ftdic, 0x0403, 0x6010)) {
-			fprintf(stderr, "Can't find iCE FTDI USB device (vendor_id 0x0403, device_id 0x6010).\n");
+			fprintf(stderr, "Can't find iCE FTDI USB device (vedor_id 0x0403, device_id 0x6010).\n");
 			error();
 		}
 	}
