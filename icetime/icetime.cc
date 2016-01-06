@@ -685,7 +685,7 @@ void make_inmux(int x, int y, int dst, std::string muxtype = "")
 			src_name[6] = 'X';
 		}
 
-		if (src_name == "lutff_X/out") {
+		if (src_name == "lutff_X/lout") {
 			auto cell = make_lc40(x, y, cascade_n);
 			netlist_cells[cell]["ltout"] = net_name(dst);
 			continue;
@@ -779,6 +779,33 @@ void make_seg_cell(int net, const net_segment_t &seg)
 			}
 		}
 		return;
+	}
+
+	if (seg.name == "io_global/inclk" || seg.name == "io_global/outclk")
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			std::tuple<int, int, std::string> din0_key(seg.x, seg.y, stringf("io_%d/D_IN_%d", i, 0));
+			std::tuple<int, int, std::string> din1_key(seg.x, seg.y, stringf("io_%d/D_IN_%d", i, 1));
+
+			std::tuple<int, int, std::string> dout0_key(seg.x, seg.y, stringf("io_%d/D_OUT_%d", i, 0));
+			std::tuple<int, int, std::string> dout1_key(seg.x, seg.y, stringf("io_%d/D_OUT_%d", i, 1));
+
+			if (x_y_name_net.count(din0_key) == 0 && x_y_name_net.count(din1_key) == 0 &&
+					x_y_name_net.count(dout0_key) == 0 && x_y_name_net.count(dout1_key) == 0)
+				continue;
+
+			auto cell = make_seg_pre_io(seg.x, seg.y, i);
+
+			if (seg.name == "io_global/inclk")
+				netlist_cells[cell]["INPUTCLK"] = net_name(seg.net);
+
+			if (seg.name == "io_global/outclk")
+				netlist_cells[cell]["OUTPUTCLK"] = net_name(seg.net);
+
+			if (netlist_cells[cell]["CLOCKENABLE"] == "")
+				netlist_cells[cell]["CLOCKENABLE"] = "vcc";
+		}
 	}
 }
 

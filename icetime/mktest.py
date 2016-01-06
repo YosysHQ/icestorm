@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
-import sys, os, shutil
+import sys, os, re, shutil
 import numpy as np
+
+max_span_hack = True
 
 pins = np.random.permutation("""
     1 2 3 4 7 8 9 10 11 12 19 22 23 24 25 26 28 29 31 32 33 34
@@ -11,7 +13,7 @@ pins = np.random.permutation("""
 """.split())
 
 io_names = None
-mode = "test0" # sys.argv[1]
+mode = sys.argv[1]
 
 with open("%s.v" % sys.argv[1], "w") as f:
     if mode == "test0":
@@ -30,6 +32,25 @@ with open("%s.v" % sys.argv[1], "w") as f:
         print("  assign {o3, o2, o1, o0} = dout >> din;", file=f)
         print("endmodule", file=f)
     if mode == "test2":
+        io_names = [ "clk", "i0", "i1", "i2", "i3", "o0", "o1", "o2", "o3" ]
+        print("""
+          module top(input clk, i0, i1, i2, i3, output reg o0, o1, o2, o3);
+            reg [7:0] raddr, waddr, rdata, wdata;
+            reg [7:0] memory [0:255];
+            always @(posedge clk) begin
+              case ({i0, i1, i2})
+                0: raddr <= {raddr, i3};
+                1: waddr <= {waddr, i3};
+                2: wdata <= {wdata, i3};
+                3: rdata <= memory[raddr];
+                4: memory[waddr] <= wdata;
+                5: {o0, o1, o2, o3} <= rdata[3:0];
+                6: {o0, o1, o2, o3} <= rdata[7:4];
+              endcase
+            end
+          endmodule
+        """, file=f)
+    if mode == "test3":
         io_names = [ "clk", "i0", "i1", "i2", "i3", "o0", "o1", "o2", "o3", "o4" ]
         print("""
           module top(input clk, i0, i1, i2, i3, output reg o0, o1, o2, o3, o4);
@@ -61,11 +82,11 @@ with open("%s.ys" % sys.argv[1], "w") as f:
     print("read_verilog %s_out.v" % sys.argv[1], file=f)
     print("prep", file=f)
     print("equiv_make top chip equiv", file=f)
-    print("check -assert", file=f)
+    print("# check -assert", file=f)
     print("cd equiv", file=f)
     print("script %s.lc" % sys.argv[1], file=f)
     print("rename -hide w:N_*", file=f)
-    print("equiv_struct", file=f)
+    print("equiv_struct -maxiter 100", file=f)
     print("opt_clean -purge", file=f)
     print("write_ilang %s.il" % sys.argv[1], file=f)
     print("equiv_status -assert", file=f)
@@ -75,7 +96,8 @@ os.rename("%s.v" % sys.argv[1], "%s_in.v" % sys.argv[1])
 
 with open("%s_ref.v" % sys.argv[1], "w") as f:
     for line in open("%s.vsb" % sys.argv[1], "r"):
-        max_span_hack = True
+        if re.match(r" *defparam .*\.(IO_STANDARD|PULLUP)=", line):
+            continue
 
         line = line.replace(" Span4Mux_s0_h ",   " Span4Mux_h4 "  if max_span_hack else " Span4Mux_h0 ")
         line = line.replace(" Span4Mux_s1_h ",   " Span4Mux_h4 "  if max_span_hack else " Span4Mux_h1 ")
@@ -121,7 +143,7 @@ with open("%s_ref.v" % sys.argv[1], "w") as f:
         f.write(line)
 
 assert os.system("yosys -qp 'select -write %s.lc t:LogicCell40' %s_ref.v" % (sys.argv[1], sys.argv[1])) == 0
-assert os.system(r"sed -i -r 's,.*/(.*)LC_(.*),equiv_add -cell \1LC_\2_gold lc40_\2_gate,' %s.lc" % sys.argv[1]) == 0
+assert os.system(r"sed -i -r 's,.*/(.*)LC_(.*),equiv_add -try -cell \1LC_\2_gold lc40_\2_gate,' %s.lc" % sys.argv[1]) == 0
 
 os.remove("%s.bin" % sys.argv[1])
 os.remove("%s.vsb" % sys.argv[1])
