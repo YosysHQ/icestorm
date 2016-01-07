@@ -852,38 +852,66 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		return;
 	}
 
-	if (seg.name == "io_global/inclk" || seg.name == "io_global/outclk")
+	if (seg.name == "io_global/inclk" || seg.name == "io_global/outclk" || seg.name == "io_global/cen")
 	{
-		for (int i = 0; i < 2; i++)
+		for (int z = 0; z < 2; z++)
 		{
-			if (seg.name == "io_global/inclk")
-			{
-				std::tuple<int, int, std::string> din0_key(seg.x, seg.y, stringf("io_%d/D_IN_%d", i, 0));
-				std::tuple<int, int, std::string> din1_key(seg.x, seg.y, stringf("io_%d/D_IN_%d", i, 1));
+			std::string pintype;
+			std::pair<int, int> bitpos;
 
-				if (x_y_name_net.count(din0_key) == 0 && x_y_name_net.count(din1_key) == 0)
-					continue;
+			for (int i = 0; i < 6; i++) {
+				bitpos = io_tile_bits[stringf("IOB_%d.PINTYPE_%d", z, 5-i)][0];
+				pintype.push_back(config_bits[seg.x][seg.y][bitpos.first][bitpos.second] ? '1' : '0');
 			}
 
-			if (seg.name == "io_global/outclk")
-			{
-				std::tuple<int, int, std::string> dout0_key(seg.x, seg.y, stringf("io_%d/D_OUT_%d", i, 0));
-				std::tuple<int, int, std::string> dout1_key(seg.x, seg.y, stringf("io_%d/D_OUT_%d", i, 1));
+			bool use_inclk = false;
+			bool use_outclk = false;
 
-				if (x_y_name_net.count(dout0_key) == 0 && x_y_name_net.count(dout1_key) == 0)
-					continue;
+			if (pintype[5-0] == '0')
+				use_inclk = true;
+
+			if (pintype[5-5] == '1' && pintype[5-4] == '1')
+				use_outclk = true;
+
+			if (pintype[5-5] == '1' || pintype[5-4] == '1') {
+				if (pintype[5-2] == '1' || pintype[5-3] == '0')
+					use_outclk = true;
 			}
 
-			auto cell = make_seg_pre_io(seg.x, seg.y, i);
+			std::tuple<int, int, std::string> din0_key(seg.x, seg.y, stringf("io_%d/D_IN_%d", z, 0));
+			std::tuple<int, int, std::string> din1_key(seg.x, seg.y, stringf("io_%d/D_IN_%d", z, 1));
 
-			if (seg.name == "io_global/inclk")
+			if (x_y_name_net.count(din0_key) == 0 && x_y_name_net.count(din1_key) == 0)
+				use_inclk = false;
+
+			std::tuple<int, int, std::string> dout0_key(seg.x, seg.y, stringf("io_%d/D_OUT_%d", z, 0));
+			std::tuple<int, int, std::string> dout1_key(seg.x, seg.y, stringf("io_%d/D_OUT_%d", z, 1));
+
+			if (x_y_name_net.count(dout0_key) == 0 && x_y_name_net.count(dout1_key) == 0)
+				use_outclk = false;
+
+			if (!use_inclk && !use_outclk)
+				continue;
+
+			auto cell = make_seg_pre_io(seg.x, seg.y, z);
+
+			if (seg.name == "io_global/inclk" && use_inclk) {
 				netlist_cells[cell]["INPUTCLK"] = net_name(seg.net);
+				make_inmux(seg.x, seg.y, seg.net, "ClkMux");
+			}
 
-			if (seg.name == "io_global/outclk")
+			if (seg.name == "io_global/outclk" && use_outclk) {
 				netlist_cells[cell]["OUTPUTCLK"] = net_name(seg.net);
+				make_inmux(seg.x, seg.y, seg.net, "ClkMux");
+			}
 
-			if (netlist_cells[cell]["CLOCKENABLE"] == "")
-				netlist_cells[cell]["CLOCKENABLE"] = "vcc";
+			if (seg.name == "io_global/cen") {
+				netlist_cells[cell]["CLOCKENABLE"] = net_name(seg.net);
+				make_inmux(seg.x, seg.y, seg.net, "CEMux");
+			} else {
+				if (netlist_cells[cell]["CLOCKENABLE"] == "")
+					netlist_cells[cell]["CLOCKENABLE"] = "vcc";
+			}
 		}
 	}
 }
