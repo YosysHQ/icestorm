@@ -88,6 +88,7 @@ std::map<std::string, std::string> netlist_cell_types;
 std::set<std::string> extra_wires;
 std::vector<std::string> extra_vlog;
 std::set<int> declared_nets;
+int dangling_cnt = 0;
 
 std::map<std::string, std::vector<std::pair<int, int>>> logic_tile_bits,
 		io_tile_bits, ramb_tile_bits, ramt_tile_bits;
@@ -635,6 +636,37 @@ std::string make_lc40(int x, int y, int z)
 	return cell;
 }
 
+std::string make_ram(int x, int y)
+{
+	auto cell = stringf("ram_%d_%d", x, y);
+
+	if (netlist_cell_types.count(cell))
+		return cell;
+
+	netlist_cell_types[cell] = "SB_RAM40_4K";
+
+	for (int i = 0; i < 16; i++) {
+		netlist_cells[cell][stringf("MASK[%d]", i)] = "";
+		netlist_cells[cell][stringf("RDATA[%d]", i)] = "";
+		netlist_cells[cell][stringf("WDATA[%d]", i)] = "";
+	}
+
+	for (int i = 0; i < 11; i++) {
+		netlist_cells[cell][stringf("RADDR[%d]", i)] = "";
+		netlist_cells[cell][stringf("WADDR[%d]", i)] = "";
+	}
+
+	netlist_cells[cell]["RE"] = "";
+	netlist_cells[cell]["RCLK"] = "";
+	netlist_cells[cell]["RCLKE"] = "";
+
+	netlist_cells[cell]["WE"] = "";
+	netlist_cells[cell]["WCLK"] = "";
+	netlist_cells[cell]["WCLKE"] = "";
+
+	return cell;
+}
+
 bool dff_uses_clock(int x, int y, int z)
 {
 	auto bitpos = logic_tile_bits[stringf("LC_%d", z)][9];
@@ -705,6 +737,14 @@ void make_inmux(int x, int y, int dst, std::string muxtype = "")
 	}
 }
 
+std::string cascademuxed(std::string n)
+{
+	std::string nc = n + "_cascademuxed";
+	extra_wires.insert(nc);
+	extra_vlog.push_back(stringf("  CascadeMux %s (.I(%s), .O(%s));\n", tname().c_str(), n.c_str(), nc.c_str()));
+	return nc;
+}
+
 void make_seg_cell(int net, const net_segment_t &seg)
 {
 	int a = -1, b = -1;
@@ -728,10 +768,7 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		auto cell = make_lc40(seg.x, seg.y, a);
 		if (b == 2) {
 			// Lattice tools always put a CascadeMux on in2
-			extra_wires.insert(net_name(net) + "_cascademuxed");
-			extra_vlog.push_back(stringf("  CascadeMux %s (.I(%s), .O(%s));\n",
-					tname().c_str(), net_name(net).c_str(), (net_name(net) + "_cascademuxed").c_str()));
-			netlist_cells[cell][stringf("in%d", b)] = net_name(net) + "_cascademuxed";
+			netlist_cells[cell][stringf("in%d", b)] = cascademuxed(net_name(net));
 		} else {
 			netlist_cells[cell][stringf("in%d", b)] = net_name(net);
 		}
@@ -764,6 +801,40 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		return;
 	}
 
+	if (seg.name.substr(0, 4) == "ram/")
+	{
+		auto cell = make_ram(seg.x, 2*((seg.y-1) >> 1) + 1);
+
+		if (sscanf(seg.name.c_str(), "ram/MASK_%d", &a) == 1) {
+			netlist_cells[cell][stringf("MASK[%d]", a)] = net_name(net);
+			make_inmux(seg.x, seg.y, net);
+		} else
+		if (sscanf(seg.name.c_str(), "ram/RADDR_%d", &a) == 1) {
+			netlist_cells[cell][stringf("RADDR[%d]", a)] = cascademuxed(net_name(net));
+			make_inmux(seg.x, seg.y, net);
+		} else
+		if (sscanf(seg.name.c_str(), "ram/RDATA_%d", &a) == 1) {
+			netlist_cells[cell][stringf("RDATA[%d]", a)] = net_name(net);
+			make_odrv(seg.x, seg.y, net);
+		} else
+		if (sscanf(seg.name.c_str(), "ram/WADDR_%d", &a) == 1) {
+			netlist_cells[cell][stringf("WADDR[%d]", a)] = cascademuxed(net_name(net));
+			make_inmux(seg.x, seg.y, net);
+		} else
+		if (sscanf(seg.name.c_str(), "ram/WDATA_%d", &a) == 1) {
+			netlist_cells[cell][stringf("WDATA[%d]", a)] = net_name(net);
+			make_inmux(seg.x, seg.y, net);
+		} else {
+			netlist_cells[cell][seg.name.substr(4)] = net_name(net);
+			if (seg.name == "ram/RCLK" || seg.name == "ram/WCLK")
+				make_inmux(seg.x, seg.y, net, "ClkMux");
+			else
+				make_inmux(seg.x, seg.y, net, "SRMux");
+		}
+
+		return;
+	}
+
 	if (seg.name == "lutff_global/clk")
 	{
 		for (int i = 0; i < 8; i++)
@@ -785,15 +856,23 @@ void make_seg_cell(int net, const net_segment_t &seg)
 	{
 		for (int i = 0; i < 2; i++)
 		{
-			std::tuple<int, int, std::string> din0_key(seg.x, seg.y, stringf("io_%d/D_IN_%d", i, 0));
-			std::tuple<int, int, std::string> din1_key(seg.x, seg.y, stringf("io_%d/D_IN_%d", i, 1));
+			if (seg.name == "io_global/inclk")
+			{
+				std::tuple<int, int, std::string> din0_key(seg.x, seg.y, stringf("io_%d/D_IN_%d", i, 0));
+				std::tuple<int, int, std::string> din1_key(seg.x, seg.y, stringf("io_%d/D_IN_%d", i, 1));
 
-			std::tuple<int, int, std::string> dout0_key(seg.x, seg.y, stringf("io_%d/D_OUT_%d", i, 0));
-			std::tuple<int, int, std::string> dout1_key(seg.x, seg.y, stringf("io_%d/D_OUT_%d", i, 1));
+				if (x_y_name_net.count(din0_key) == 0 && x_y_name_net.count(din1_key) == 0)
+					continue;
+			}
 
-			if (x_y_name_net.count(din0_key) == 0 && x_y_name_net.count(din1_key) == 0 &&
-					x_y_name_net.count(dout0_key) == 0 && x_y_name_net.count(dout1_key) == 0)
-				continue;
+			if (seg.name == "io_global/outclk")
+			{
+				std::tuple<int, int, std::string> dout0_key(seg.x, seg.y, stringf("io_%d/D_OUT_%d", i, 0));
+				std::tuple<int, int, std::string> dout1_key(seg.x, seg.y, stringf("io_%d/D_OUT_%d", i, 1));
+
+				if (x_y_name_net.count(dout0_key) == 0 && x_y_name_net.count(dout1_key) == 0)
+					continue;
+			}
 
 			auto cell = make_seg_pre_io(seg.x, seg.y, i);
 
@@ -1290,7 +1369,8 @@ int main(int argc, char **argv)
 	for (auto &str : extra_vlog)
 		fprintf(fout, "%s", str.c_str());
 
-	for (auto it : netlist_cell_types) {
+	for (auto it : netlist_cell_types)
+	{
 		const char *sep = "";
 		fprintf(fout, "  %s ", it.second.c_str());
 		if (netlist_cell_params.count(it.first)) {
@@ -1302,11 +1382,42 @@ int main(int argc, char **argv)
 			fprintf(fout, "\n  ) ");
 			sep = "";
 		}
+
 		fprintf(fout, "%s (", it.first.c_str());
-		for (auto port : netlist_cells[it.first]) {
+		std::map<std::string, std::vector<std::string>> multibit_ports;
+
+		for (auto port : netlist_cells[it.first])
+		{
+			size_t open_bracket_pos = port.first.find('[');
+			if (open_bracket_pos != std::string::npos) {
+				std::string base_name = port.first.substr(0, open_bracket_pos);
+				int bit_index = atoi(port.first.substr(open_bracket_pos+1).c_str());
+				if (multibit_ports[base_name].size() <= bit_index)
+					multibit_ports[base_name].resize(bit_index+1);
+				multibit_ports[base_name][bit_index] = port.second;
+				continue;
+			}
+
 			fprintf(fout, "%s\n    .%s(%s)", sep, port.first.c_str(), port.second.c_str());
 			sep = ",";
 		}
+
+		for (auto it : multibit_ports)
+		{
+			fprintf(fout, "%s\n    .%s({", sep, it.first.c_str());
+			sep = ",";
+
+			const char *sepsep = "";
+			for (int i = int(it.second.size())-1; i >= 0; i--) {
+				std::string wire_name = it.second[i];
+				if (wire_name == "")
+					wire_name = stringf("dangling_wire_%d", dangling_cnt++);
+				fprintf(fout, "%s%s", sepsep, wire_name.c_str());
+				sepsep = ", ";
+			}
+			fprintf(fout, "})");
+		}
+
 		fprintf(fout, "\n  );\n");
 	}
 

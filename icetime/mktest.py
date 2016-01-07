@@ -96,7 +96,7 @@ os.rename("%s.v" % sys.argv[1], "%s_in.v" % sys.argv[1])
 
 with open("%s_ref.v" % sys.argv[1], "w") as f:
     for line in open("%s.vsb" % sys.argv[1], "r"):
-        if re.match(r" *defparam .*\.(IO_STANDARD|PULLUP)=", line):
+        if re.match(r" *defparam .*\.(IO_STANDARD|PULLUP|INIT_.|WRITE_MODE|READ_MODE)=", line):
             continue
 
         line = line.replace(" Span4Mux_s0_h ",   " Span4Mux_h4 "  if max_span_hack else " Span4Mux_h0 ")
