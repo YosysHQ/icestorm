@@ -15,6 +15,7 @@ TESTS += gbio2
 TESTS += prim
 TESTS += fflogic
 TESTS += ram40
+TESTS += mem
 TESTS += pll
 
 EIGTHK = _8k

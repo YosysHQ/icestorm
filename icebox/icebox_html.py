@@ -254,6 +254,8 @@ configuration bits it has and how it is connected to its neighbourhood.</p>""" %
                     bitmap_cells[idx1][idx2]["label"] = "A"
                 elif entry[1].startswith("RamConfig"):
                     bitmap_cells[idx1][idx2]["label"] = "M"
+                elif entry[1].startswith("RamCascade"):
+                    bitmap_cells[idx1][idx2]["label"] = "M"
                 elif entry[1].startswith("PLL"):
                     bitmap_cells[idx1][idx2]["label"] = "P"
                 else:

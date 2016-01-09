@@ -3459,6 +3459,42 @@
 (7 1) Ram config bit: MEMT_bram_cbit_0
 (7 2) Ram config bit: MEMT_bram_cbit_3
 (7 3) Ram config bit: MEMT_bram_cbit_2
+(7 4) Cascade buffer Enable bit: MEMT_LC00_inmux00_bram_cbit_5
+(7 4) Cascade buffer Enable bit: MEMT_LC01_inmux00_bram_cbit_5
+(7 4) Cascade buffer Enable bit: MEMT_LC01_inmux02_bram_cbit_5
+(7 4) Cascade buffer Enable bit: MEMT_LC02_inmux00_bram_cbit_5
+(7 4) Cascade buffer Enable bit: MEMT_LC04_inmux00_bram_cbit_5
+(7 4) Cascade buffer Enable bit: MEMT_LC05_inmux00_bram_cbit_5
+(7 4) Cascade buffer Enable bit: MEMT_LC06_inmux00_bram_cbit_5
+(7 4) Cascade buffer Enable bit: MEMT_LC07_inmux00_bram_cbit_5
+(7 5) Cascade bit: MEMT_LC00_inmux00_bram_cbit_4
+(7 5) Cascade bit: MEMT_LC01_inmux00_bram_cbit_4
+(7 5) Cascade bit: MEMT_LC01_inmux02_bram_cbit_4
+(7 5) Cascade bit: MEMT_LC02_inmux00_bram_cbit_4
+(7 5) Cascade bit: MEMT_LC04_inmux00_bram_cbit_4
+(7 5) Cascade bit: MEMT_LC05_inmux00_bram_cbit_4
+(7 5) Cascade bit: MEMT_LC06_inmux00_bram_cbit_4
+(7 5) Cascade bit: MEMT_LC07_inmux00_bram_cbit_4
+(7 6) Cascade buffer Enable bit: MEMT_LC00_inmux00_bram_cbit_7
+(7 6) Cascade buffer Enable bit: MEMT_LC00_inmux02_bram_cbit_7
+(7 6) Cascade buffer Enable bit: MEMT_LC01_inmux00_bram_cbit_7
+(7 6) Cascade buffer Enable bit: MEMT_LC01_inmux02_bram_cbit_7
+(7 6) Cascade buffer Enable bit: MEMT_LC02_inmux00_bram_cbit_7
+(7 6) Cascade buffer Enable bit: MEMT_LC03_inmux00_bram_cbit_7
+(7 6) Cascade buffer Enable bit: MEMT_LC04_inmux00_bram_cbit_7
+(7 6) Cascade buffer Enable bit: MEMT_LC05_inmux00_bram_cbit_7
+(7 6) Cascade buffer Enable bit: MEMT_LC06_inmux00_bram_cbit_7
+(7 6) Cascade buffer Enable bit: MEMT_LC07_inmux00_bram_cbit_7
+(7 7) Cascade bit: MEMT_LC00_inmux00_bram_cbit_6
+(7 7) Cascade bit: MEMT_LC00_inmux02_bram_cbit_6
+(7 7) Cascade bit: MEMT_LC01_inmux00_bram_cbit_6
+(7 7) Cascade bit: MEMT_LC01_inmux02_bram_cbit_6
+(7 7) Cascade bit: MEMT_LC02_inmux00_bram_cbit_6
+(7 7) Cascade bit: MEMT_LC03_inmux00_bram_cbit_6
+(7 7) Cascade bit: MEMT_LC04_inmux00_bram_cbit_6
+(7 7) Cascade bit: MEMT_LC05_inmux00_bram_cbit_6
+(7 7) Cascade bit: MEMT_LC06_inmux00_bram_cbit_6
+(7 7) Cascade bit: MEMT_LC07_inmux00_bram_cbit_6
 (8 0) routing sp4_h_l_36 <X> sp4_h_r_1
 (8 0) routing sp4_h_l_40 <X> sp4_h_r_1
 (8 0) routing sp4_v_b_1 <X> sp4_h_r_1

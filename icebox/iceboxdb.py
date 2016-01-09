@@ -3896,6 +3896,10 @@ B8[4],B8[6],!B9[5]	routing	sp4_v_t_47	sp4_v_b_6
 """
 database_ramt_txt = """
 B0[0]	NegClk
+B5[7]	RamCascade	CBIT_4
+B4[7]	RamCascade	CBIT_5
+B7[7]	RamCascade	CBIT_6
+B6[7]	RamCascade	CBIT_7
 B1[7]	RamConfig	CBIT_0
 B0[7]	RamConfig	CBIT_1
 B3[7]	RamConfig	CBIT_2
@@ -6759,6 +6763,10 @@ B12[7]	ColBufCtrl	8k_glb_netwk_5
 B15[7]	ColBufCtrl	8k_glb_netwk_6
 B14[7]	ColBufCtrl	8k_glb_netwk_7
 B0[0]	NegClk
+B5[7]	RamCascade	CBIT_4
+B4[7]	RamCascade	CBIT_5
+B7[7]	RamCascade	CBIT_6
+B6[7]	RamCascade	CBIT_7
 B1[7]	RamConfig	CBIT_0
 B0[7]	RamConfig	CBIT_1
 B3[7]	RamConfig	CBIT_2
