@@ -70,6 +70,62 @@ with open("%s.v" % sys.argv[1], "w") as f:
             end
           endmodule
         """, file=f)
+    if mode == "test4":
+        io_names = [ "clk", "i", "s", "o" ]
+        print("""
+          module top(input clk, i, s, output reg o);
+            reg re1, rclke1, we1, wclke1;
+            reg [7:0] raddr1, waddr1;
+            reg [15:0] rdata1, wdata1, mask1;
+            wire [15:0] rdata1_unreg;
+
+            reg re2, rclke2, we2, wclke2;
+            reg [7:0] raddr2, waddr2;
+            reg [15:0] rdata2, wdata2, mask2;
+            wire [15:0] rdata2_unreg;
+
+            always @(posedge clk) begin
+              o <= rdata1[15];
+              {rdata1, rdata2} <= {rdata1, rdata2} << 1;
+              {raddr1, waddr1, wdata1, mask1, re1, rclke1, we1, wclke1,
+               raddr2, waddr2, wdata2, mask2, re2, rclke2, we2, wclke2} <=
+                ({raddr1, waddr1, wdata1, mask1, re1, rclke1, we1, wclke1,
+                  raddr2, waddr2, wdata2, mask2, re2, rclke2, we2, wclke2} << 1) | i;
+              if (s) begin
+                rdata1 <= rdata1_unreg;
+                rdata2 <= rdata2_unreg;
+              end
+            end
+
+            SB_RAM40_4K mem1 (
+              .RDATA(rdata1_unreg),
+              .RCLK(clk),
+              .RCLKE(rclke1),
+              .RE(re1),
+              .RADDR(raddr1),
+              .WCLK(clk),
+              .WCLKE(wclke1),
+              .WE(we1),
+              .WADDR(waddr1),
+              .MASK(mask1),
+              .WDATA(wdata1)
+            );
+
+            SB_RAM40_4K mem2 (
+              .RDATA(rdata2_unreg),
+              .RCLK(clk),
+              .RCLKE(rclke2),
+              .RE(re2),
+              .RADDR(raddr1), // <- cascade
+              .WCLK(clk),
+              .WCLKE(wclke2),
+              .WE(we2),
+              .WADDR(waddr1), // <- cascade
+              .MASK(mask2),
+              .WDATA(wdata2)
+            );
+          endmodule
+        """, file=f)
 
 with open("%s.pcf" % sys.argv[1], "w") as f:
     for i, name in enumerate(io_names):
@@ -93,6 +149,9 @@ with open("%s.ys" % sys.argv[1], "w") as f:
 
 assert os.system("bash ../icefuzz/icecube.sh %s.v" % sys.argv[1]) == 0
 os.rename("%s.v" % sys.argv[1], "%s_in.v" % sys.argv[1])
+
+if False:
+    assert os.system("python3 ../icebox/icebox_explain.py %s.asc > %s.ex" % (sys.argv[1], sys.argv[1])) == 0
 
 with open("%s_ref.v" % sys.argv[1], "w") as f:
     for line in open("%s.vsb" % sys.argv[1], "r"):

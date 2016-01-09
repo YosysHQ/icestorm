@@ -828,6 +828,8 @@ void make_seg_cell(int net, const net_segment_t &seg)
 			netlist_cells[cell][seg.name.substr(4)] = net_name(net);
 			if (seg.name == "ram/RCLK" || seg.name == "ram/WCLK")
 				make_inmux(seg.x, seg.y, net, "ClkMux");
+			else if (seg.name == "ram/RCLKE" || seg.name == "ram/WCLKE")
+				make_inmux(seg.x, seg.y, net, "CEMux");
 			else
 				make_inmux(seg.x, seg.y, net, "SRMux");
 		}
@@ -1353,6 +1355,58 @@ int main(int argc, char **argv)
 	for (int net : used_nets)
 	for (auto &seg : net_to_segments[net])
 		make_seg_cell(net, seg);
+
+	for (int x = 0; x < int(config_tile_type.size()); x++)
+	for (int y = 0; y < int(config_tile_type[x].size()); y++)
+	{
+		auto const &tile_type = config_tile_type[x][y];
+
+		if (tile_type == "ramb")
+		{
+			bool cascade_cbits[4] = {false, false, false, false};
+			bool &cascade_cbit_4 = cascade_cbits[0];
+			// bool &cascade_cbit_5 = cascade_cbits[1];
+			bool &cascade_cbit_6 = cascade_cbits[2];
+			// bool &cascade_cbit_7 = cascade_cbits[3];
+			std::pair<int, int> bitpos;
+
+			for (int i = 0; i < 4; i++) {
+				std::string cbit_name = stringf("RamCascade.CBIT_%d", i+4);
+				if (ramb_tile_bits.count(cbit_name)) {
+					bitpos = ramb_tile_bits.at(cbit_name)[0];
+					cascade_cbits[i] = config_bits[x][y][bitpos.first][bitpos.second];
+				}
+				if (ramt_tile_bits.count(cbit_name)) {
+					bitpos = ramt_tile_bits.at(cbit_name)[0];
+					cascade_cbits[i] = config_bits[x][y+1][bitpos.first][bitpos.second];
+				}
+			}
+
+			if (cascade_cbit_4 && cascade_cbit_6)
+			{
+				std::string src_cell = stringf("ram_%d_%d", x, y+2);
+				std::string dst_cell = stringf("ram_%d_%d", x, y);
+
+				for (int rw = 0; rw < 2; rw++)
+				for (int i = 0; i < 11; i++)
+				{
+					std::string port = stringf("%cADDR[%d]", rw ? 'R' : 'W', i);
+
+					if (netlist_cells[src_cell][port] == "")
+						continue;
+
+					std::string srcnet = netlist_cells[src_cell][port];
+					std::string tmpnet = tname();
+					extra_wires.insert(tmpnet);
+
+					extra_vlog.push_back(stringf("  CascadeBuf %s (.I(%s), .O(%s));\n",
+							tname().c_str(), srcnet.c_str(), tmpnet.c_str()));
+
+					netlist_cells[dst_cell][port] = cascademuxed(tmpnet);
+				}
+			}
+		}
+	}
 
 	FILE *graph_f = nullptr;
 
