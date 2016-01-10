@@ -1382,15 +1382,37 @@ int main(int argc, char **argv)
 				}
 			}
 
-			if (cascade_cbit_4 && cascade_cbit_6)
+			if (cascade_cbit_4)
 			{
 				std::string src_cell = stringf("ram_%d_%d", x, y+2);
 				std::string dst_cell = stringf("ram_%d_%d", x, y);
 
-				for (int rw = 0; rw < 2; rw++)
 				for (int i = 0; i < 11; i++)
 				{
-					std::string port = stringf("%cADDR[%d]", rw ? 'R' : 'W', i);
+					std::string port = stringf("WADDR[%d]", i);
+
+					if (netlist_cells[src_cell][port] == "")
+						continue;
+
+					std::string srcnet = netlist_cells[src_cell][port];
+					std::string tmpnet = tname();
+					extra_wires.insert(tmpnet);
+
+					extra_vlog.push_back(stringf("  CascadeBuf %s (.I(%s), .O(%s));\n",
+							tname().c_str(), srcnet.c_str(), tmpnet.c_str()));
+
+					netlist_cells[dst_cell][port] = cascademuxed(tmpnet);
+				}
+			}
+
+			if (cascade_cbit_6)
+			{
+				std::string src_cell = stringf("ram_%d_%d", x, y+2);
+				std::string dst_cell = stringf("ram_%d_%d", x, y);
+
+				for (int i = 0; i < 11; i++)
+				{
+					std::string port = stringf("RADDR[%d]", i);
 
 					if (netlist_cells[src_cell][port] == "")
 						continue;
@@ -1429,6 +1451,16 @@ int main(int argc, char **argv)
 		fprintf(graph_f, "}\n");
 		fclose(graph_f);
 	}
+
+	for (auto it : netlist_cell_types)
+	for (auto &port : netlist_cells[it.first])
+		if (port.second == "") {
+			size_t open_bracket_pos = port.first.find('[');
+			if (open_bracket_pos == std::string::npos)
+				continue;
+			port.second = stringf("dangling_wire_%d", dangling_cnt++);
+			extra_wires.insert(port.second);
+		}
 
 	fprintf(fout, "module chip (");
 	const char *io_sep = "";
@@ -1492,8 +1524,6 @@ int main(int argc, char **argv)
 			const char *sepsep = "";
 			for (int i = int(it.second.size())-1; i >= 0; i--) {
 				std::string wire_name = it.second[i];
-				if (wire_name == "")
-					wire_name = stringf("dangling_wire_%d", dangling_cnt++);
 				fprintf(fout, "%s%s", sepsep, wire_name.c_str());
 				sepsep = ", ";
 			}
