@@ -80,13 +80,14 @@ std::set<net_segment_t> interconn_src, interconn_dst;
 std::set<int> no_interconn_net;
 int tname_cnt = 0;
 
-// netlist_cells[cell_name][port_name] = port_expr
-std::map<std::string, std::map<std::string, std::string>> netlist_cells;
+// netlist_cell_ports[cell_name][port_name] = port_expr
+std::map<std::string, std::map<std::string, std::string>> netlist_cell_ports;
 std::map<std::string, std::map<std::string, std::string>> netlist_cell_params;
 std::map<std::string, std::string> netlist_cell_types;
 
 std::set<std::string> extra_wires;
 std::vector<std::string> extra_vlog;
+std::map<std::string, std::string> net_assignments;
 std::set<int> declared_nets;
 int dangling_cnt = 0;
 
@@ -479,6 +480,240 @@ void read_chipdb()
 #endif
 }
 
+bool is_primary(std::string cell_name, std::string out_port)
+{
+	return false;
+}
+
+const std::set<std::string> &get_inports(std::string cell_type)
+{
+	static bool first_call = true;
+	static std::map<std::string, std::set<std::string>> inports_map;
+
+	if (first_call)
+	{
+		first_call = false;
+
+		inports_map["Span4Mux_h0"] = { "I" };
+		inports_map["Span4Mux_h1"] = { "I" };
+		inports_map["Span4Mux_h2"] = { "I" };
+		inports_map["Span4Mux_h3"] = { "I" };
+		inports_map["Span4Mux_h4"] = { "I" };
+
+		inports_map["Span4Mux_v0"] = { "I" };
+		inports_map["Span4Mux_v1"] = { "I" };
+		inports_map["Span4Mux_v2"] = { "I" };
+		inports_map["Span4Mux_v3"] = { "I" };
+		inports_map["Span4Mux_v4"] = { "I" };
+
+		inports_map["Span12Mux_h0"] = { "I" };
+		inports_map["Span12Mux_h1"] = { "I" };
+		inports_map["Span12Mux_h2"] = { "I" };
+		inports_map["Span12Mux_h3"] = { "I" };
+		inports_map["Span12Mux_h4"] = { "I" };
+		inports_map["Span12Mux_h5"] = { "I" };
+		inports_map["Span12Mux_h6"] = { "I" };
+		inports_map["Span12Mux_h7"] = { "I" };
+		inports_map["Span12Mux_h8"] = { "I" };
+		inports_map["Span12Mux_h9"] = { "I" };
+		inports_map["Span12Mux_h10"] = { "I" };
+		inports_map["Span12Mux_h11"] = { "I" };
+		inports_map["Span12Mux_h12"] = { "I" };
+
+		inports_map["Span12Mux_v0"] = { "I" };
+		inports_map["Span12Mux_v1"] = { "I" };
+		inports_map["Span12Mux_v2"] = { "I" };
+		inports_map["Span12Mux_v3"] = { "I" };
+		inports_map["Span12Mux_v4"] = { "I" };
+		inports_map["Span12Mux_v5"] = { "I" };
+		inports_map["Span12Mux_v6"] = { "I" };
+		inports_map["Span12Mux_v7"] = { "I" };
+		inports_map["Span12Mux_v8"] = { "I" };
+		inports_map["Span12Mux_v9"] = { "I" };
+		inports_map["Span12Mux_v10"] = { "I" };
+		inports_map["Span12Mux_v11"] = { "I" };
+		inports_map["Span12Mux_v12"] = { "I" };
+
+		inports_map["Odrv4"] = { "I" };
+		inports_map["Odrv12"] = { "I" };
+		inports_map["Sp12to4"] = { "I" };
+
+		inports_map["InMux"] = { "I" };
+		inports_map["IoInMux"] = { "I" };
+		inports_map["IoSpan4Mux"] = { "I" };
+		inports_map["IpInMux"] = { "I" };
+		inports_map["IpOutMux"] = { "I" };
+		inports_map["LocalMux"] = { "I" };
+		inports_map["CEMux"] = { "I" };
+		inports_map["SRMux"] = { "I" };
+		inports_map["ClkMux"] = { "I" };
+		inports_map["CascadeBuf"] = { "I" };
+		inports_map["CascadeMux"] = { "I" };
+		inports_map["GlobalMux"] = { "I" };
+		inports_map["gio2CtrlBuf"] = { "I" };
+
+		inports_map["ICE_GB"] = { "USERSIGNALTOGLOBALBUFFER" };
+		inports_map["ICE_CARRY_IN_MUX"] = { "carryinitin" };
+
+		inports_map["LogicCell40"] = { "clk", "carryin", "in0", "in1", "in2", "in3", "sr", "ce" };
+		inports_map["PRE_IO"] = { "INPUTCLK", "OUTPUTCLK", "LATCHINPUTVALUE", "CLOCKENABLE", "OUTPUTENABLE", "DOUT1", "DOUT0" };
+
+		inports_map["SB_RAM40_4K"] = { "RCLK", "RCLKE", "RE", "WCLK", "WCLKE", "WE" };
+
+		for (int i = 0; i < 16; i++) {
+			inports_map["SB_RAM40_4K"].insert(stringf("MASK[%d]", i));
+			inports_map["SB_RAM40_4K"].insert(stringf("WDATA[%d]", i));
+		}
+
+		for (int i = 0; i < 11; i++) {
+			inports_map["SB_RAM40_4K"].insert(stringf("RADDR[%d]", i));
+			inports_map["SB_RAM40_4K"].insert(stringf("WADDR[%d]", i));
+		}
+	}
+
+	if (inports_map.count(cell_type) == 0) {
+		fprintf(stderr, "Missing entry in inports_map for cell type %s!\n", cell_type.c_str());
+		exit(1);
+	}
+
+	return inports_map.at(cell_type);
+}
+
+double get_delay(std::string cell_type, std::string in_port, std::string out_port)
+{
+	return 1.0;
+}
+
+struct TimingAnalysis
+{
+	// net_driver[<net_name>] = { <cell_name>, <cell_port> }
+	std::map<std::string, std::pair<std::string, std::string>> net_driver;
+
+	// net_max_path_parent[<net_name>] = { <parent_net>, <cell_name>, <inport>, <outport>, <delay> }
+	std::map<std::string, std::tuple<std::string, std::string, std::string, std::string, double>> net_max_path_parent;
+
+	std::map<std::string, double> net_max_path_delay;
+	std::string global_max_path_net;
+	double global_max_path_delay;
+
+	double calc_net_max_path_delay(const std::string &net)
+	{
+		if (net_max_path_delay.count(net))
+			return net_max_path_delay.at(net);
+
+		if (net_driver.count(net) == 0)
+			return 0;
+
+		double max_path_delay = 0;
+		net_max_path_delay[net] = 1e6;
+
+		auto &driver_cell = net_driver.at(net).first;
+		auto &driver_port = net_driver.at(net).second;
+
+		if (is_primary(driver_cell, driver_port)) {
+			net_max_path_delay[net] = 0;
+			return 0;
+		}
+
+		auto &driver_type = netlist_cell_types.at(driver_cell);
+		auto &driver_inputs = get_inports(driver_type);
+
+		for (auto &inport : driver_inputs)
+		{
+			if (inport == "clk" || inport == "INPUTCLK" || inport == "OUTPUTCLK")
+				continue;
+
+			std::string *in_net = &netlist_cell_ports.at(driver_cell).at(inport);
+			while (net_assignments.count(*in_net))
+				in_net = &net_assignments.at(*in_net);
+
+			if (*in_net == "" || *in_net == "vcc" || *in_net == "gnd")
+				continue;
+
+			double this_cell_delay = get_delay(driver_type, inport, driver_port);
+			double this_path_delay = calc_net_max_path_delay(*in_net) + this_cell_delay;
+
+			if (this_path_delay >= max_path_delay) {
+				net_max_path_parent[net] = std::make_tuple(*in_net, driver_cell, inport, driver_port, this_cell_delay);
+				max_path_delay = this_path_delay;
+			}
+		}
+
+		net_max_path_delay[net] = max_path_delay;
+		return net_max_path_delay.at(net);
+	}
+
+	TimingAnalysis()
+	{
+		std::set<std::string> all_nets;
+
+		for (auto &it : netlist_cell_ports)
+		for (auto &it2 : it.second)
+		{
+			auto &cell_name = it.first;
+			auto &port_name = it2.first;
+			auto &net_name = it2.second;
+
+			if (net_name == "")
+				continue;
+
+			if (get_inports(netlist_cell_types.at(cell_name)).count(port_name))
+				continue;
+
+			net_driver[net_name] = { cell_name, port_name };
+			all_nets.insert(net_name);
+		}
+
+		global_max_path_delay = 0;
+
+		for (auto &net : all_nets) {
+			double d = calc_net_max_path_delay(net);
+			if (d > global_max_path_delay) {
+				global_max_path_delay = d;
+				global_max_path_net = net;
+			}
+		}
+	}
+
+	void report()
+	{
+		std::vector<std::string> lines;
+		std::set<std::string> visited_nets;
+
+		std::string n = global_max_path_net;
+		bool last_line = true;
+
+		while (1)
+		{
+			if (net_max_path_parent.count(n) == 0) {
+				lines.push_back(stringf("%10.3f ns %s", calc_net_max_path_delay(n), n.c_str()));
+				break;
+			}
+
+			if (visited_nets.count(n)) {
+				lines.push_back(stringf("loop-start at %s", n.c_str()));
+				break;
+			}
+
+			auto &entry = net_max_path_parent.at(n);
+
+			if (last_line || netlist_cell_types.at(std::get<1>(entry)) == "LogicCell40")
+				lines.push_back(stringf("%10.3f ns %s", calc_net_max_path_delay(n), n.c_str()));
+
+			lines.push_back(stringf("        %s (%s) %s -> %s: %.3f ns", std::get<1>(entry).c_str(),
+					netlist_cell_types.at(std::get<1>(entry)).c_str(), std::get<2>(entry).c_str(),
+					std::get<3>(entry).c_str(), std::get<4>(entry)));
+
+			visited_nets.insert(n);
+			n = std::get<0>(entry);
+			last_line = false;
+		}
+
+		for (int i = int(lines.size())-1; i >= 0; i--)
+			printf("%s\n", lines[i].c_str());
+	}
+};
+
 void register_interconn_src(int x, int y, int net)
 {
 	std::tuple<int, int, int> key(x, y, net);
@@ -499,18 +734,18 @@ std::string make_seg_pre_io(int x, int y, int z)
 		return cell;
 
 	netlist_cell_types[cell] = "PRE_IO";
-	netlist_cells[cell]["PADIN"] = stringf("io_pad_%d_%d_%d_dout", x, y, z);
-	netlist_cells[cell]["PADOUT"] = stringf("io_pad_%d_%d_%d_din", x, y, z);
-	netlist_cells[cell]["PADOEN"] = stringf("io_pad_%d_%d_%d_oe", x, y, z);
-	netlist_cells[cell]["LATCHINPUTVALUE"] = "";
-	netlist_cells[cell]["CLOCKENABLE"] = "";
-	netlist_cells[cell]["INPUTCLK"] = "";
-	netlist_cells[cell]["OUTPUTCLK"] = "";
-	netlist_cells[cell]["OUTPUTENABLE"] = "";
-	netlist_cells[cell]["DOUT1"] = "";
-	netlist_cells[cell]["DOUT0"] = "";
-	netlist_cells[cell]["DIN1"] = "";
-	netlist_cells[cell]["DIN0"] = "";
+	netlist_cell_ports[cell]["PADIN"] = stringf("io_pad_%d_%d_%d_dout", x, y, z);
+	netlist_cell_ports[cell]["PADOUT"] = stringf("io_pad_%d_%d_%d_din", x, y, z);
+	netlist_cell_ports[cell]["PADOEN"] = stringf("io_pad_%d_%d_%d_oe", x, y, z);
+	netlist_cell_ports[cell]["LATCHINPUTVALUE"] = "";
+	netlist_cell_ports[cell]["CLOCKENABLE"] = "";
+	netlist_cell_ports[cell]["INPUTCLK"] = "";
+	netlist_cell_ports[cell]["OUTPUTCLK"] = "";
+	netlist_cell_ports[cell]["OUTPUTENABLE"] = "";
+	netlist_cell_ports[cell]["DOUT1"] = "";
+	netlist_cell_ports[cell]["DOUT0"] = "";
+	netlist_cell_ports[cell]["DIN1"] = "";
+	netlist_cell_ports[cell]["DIN0"] = "";
 
 	std::string pintype;
 	std::pair<int, int> bitpos;
@@ -559,17 +794,17 @@ std::string make_lc40(int x, int y, int z)
 		return cell;
 
 	netlist_cell_types[cell] = "LogicCell40";
-	netlist_cells[cell]["carryin"] = "gnd";
-	netlist_cells[cell]["ce"] = "";
-	netlist_cells[cell]["clk"] = "gnd";
-	netlist_cells[cell]["in0"] = "gnd";
-	netlist_cells[cell]["in1"] = "gnd";
-	netlist_cells[cell]["in2"] = "gnd";
-	netlist_cells[cell]["in3"] = "gnd";
-	netlist_cells[cell]["sr"] = "gnd";
-	netlist_cells[cell]["carryout"] = "";
-	netlist_cells[cell]["lcout"] = "";
-	netlist_cells[cell]["ltout"] = "";
+	netlist_cell_ports[cell]["carryin"] = "gnd";
+	netlist_cell_ports[cell]["ce"] = "";
+	netlist_cell_ports[cell]["clk"] = "gnd";
+	netlist_cell_ports[cell]["in0"] = "gnd";
+	netlist_cell_ports[cell]["in1"] = "gnd";
+	netlist_cell_ports[cell]["in2"] = "gnd";
+	netlist_cell_ports[cell]["in3"] = "gnd";
+	netlist_cell_ports[cell]["sr"] = "gnd";
+	netlist_cell_ports[cell]["carryout"] = "";
+	netlist_cell_ports[cell]["lcout"] = "";
+	netlist_cell_ports[cell]["ltout"] = "";
 
 	char lcbits[20];
 	auto &lcbits_pos = logic_tile_bits[stringf("LC_%d", z)];
@@ -602,7 +837,7 @@ std::string make_lc40(int x, int y, int z)
 					n1 = net_name(x_y_name_net.at(key));
 				} else {
 					n1 = tname();
-					netlist_cells[co_cell]["carryout"] = n1;
+					netlist_cell_ports[co_cell]["carryout"] = n1;
 					extra_wires.insert(n1);
 				}
 			}
@@ -615,9 +850,13 @@ std::string make_lc40(int x, int y, int z)
 				extra_wires.insert(n2);
 			}
 
-			extra_vlog.push_back(stringf("  ICE_CARRY_IN_MUX #(.C_INIT(2'b%c%c)) %s (.carryinitin(%s), "
-					".carryinitout(%s));\n", cinit_1, cinit_0, tname().c_str(), n1.c_str(), n2.c_str()));
-			netlist_cells[cell]["carryin"] = n2;
+			std::string tn = tname();
+			netlist_cell_types[tn] = "ICE_CARRY_IN_MUX";
+			netlist_cell_params[tn]["C_INIT"] = stringf("2'b%c%c", cinit_1, cinit_0);
+			netlist_cell_ports[tn]["carryinitin"] = n1;
+			netlist_cell_ports[tn]["carryinitout"] = n2;
+
+			netlist_cell_ports[cell]["carryin"] = n2;
 		}
 		else
 		{
@@ -625,8 +864,8 @@ std::string make_lc40(int x, int y, int z)
 			std::tuple<int, int, std::string> key(x, y, stringf("lutff_%d/cout", z-1));
 			auto n = x_y_name_net.count(key) ? net_name(x_y_name_net.at(key)) : tname();
 
-			netlist_cells[co_cell]["carryout"] = n;
-			netlist_cells[cell]["carryin"] = n;
+			netlist_cell_ports[co_cell]["carryout"] = n;
+			netlist_cell_ports[cell]["carryin"] = n;
 			extra_wires.insert(n);
 		}
 
@@ -646,23 +885,23 @@ std::string make_ram(int x, int y)
 	netlist_cell_types[cell] = "SB_RAM40_4K";
 
 	for (int i = 0; i < 16; i++) {
-		netlist_cells[cell][stringf("MASK[%d]", i)] = "";
-		netlist_cells[cell][stringf("RDATA[%d]", i)] = "";
-		netlist_cells[cell][stringf("WDATA[%d]", i)] = "";
+		netlist_cell_ports[cell][stringf("MASK[%d]", i)] = "";
+		netlist_cell_ports[cell][stringf("RDATA[%d]", i)] = "";
+		netlist_cell_ports[cell][stringf("WDATA[%d]", i)] = "";
 	}
 
 	for (int i = 0; i < 11; i++) {
-		netlist_cells[cell][stringf("RADDR[%d]", i)] = "";
-		netlist_cells[cell][stringf("WADDR[%d]", i)] = "";
+		netlist_cell_ports[cell][stringf("RADDR[%d]", i)] = "";
+		netlist_cell_ports[cell][stringf("WADDR[%d]", i)] = "";
 	}
 
-	netlist_cells[cell]["RE"] = "";
-	netlist_cells[cell]["RCLK"] = "";
-	netlist_cells[cell]["RCLKE"] = "";
+	netlist_cell_ports[cell]["RE"] = "";
+	netlist_cell_ports[cell]["RCLK"] = "";
+	netlist_cell_ports[cell]["RCLKE"] = "";
 
-	netlist_cells[cell]["WE"] = "";
-	netlist_cells[cell]["WCLK"] = "";
-	netlist_cells[cell]["WCLKE"] = "";
+	netlist_cell_ports[cell]["WE"] = "";
+	netlist_cell_ports[cell]["WCLK"] = "";
+	netlist_cell_ports[cell]["WCLKE"] = "";
 
 	return cell;
 }
@@ -698,8 +937,8 @@ void make_odrv(int x, int y, int src)
 
 		assert(is4 != is12);
 		netlist_cell_types[cell] = is4 ? "Odrv4" : "Odrv12";
-		netlist_cells[cell]["I"] = net_name(src);
-		netlist_cells[cell]["O"] = net_name(dst);
+		netlist_cell_ports[cell]["I"] = net_name(src);
+		netlist_cell_ports[cell]["O"] = net_name(dst);
 		register_interconn_src(x, y, dst);
 	}
 }
@@ -719,7 +958,7 @@ void make_inmux(int x, int y, int dst, std::string muxtype = "")
 
 		if (src_name == "lutff_X/lout") {
 			auto cell = make_lc40(x, y, cascade_n);
-			netlist_cells[cell]["ltout"] = net_name(dst);
+			netlist_cell_ports[cell]["ltout"] = net_name(dst);
 			continue;
 		}
 
@@ -729,8 +968,8 @@ void make_inmux(int x, int y, int dst, std::string muxtype = "")
 			continue;
 
 		netlist_cell_types[cell] = muxtype.empty() ? (config_tile_type[x][y] == "io" ? "IoInMux" : "InMux") : muxtype;
-		netlist_cells[cell]["I"] = net_name(src);
-		netlist_cells[cell]["O"] = net_name(dst);
+		netlist_cell_ports[cell]["I"] = net_name(src);
+		netlist_cell_ports[cell]["O"] = net_name(dst);
 
 		register_interconn_dst(x, y, src);
 		no_interconn_net.insert(dst);
@@ -741,7 +980,12 @@ std::string cascademuxed(std::string n)
 {
 	std::string nc = n + "_cascademuxed";
 	extra_wires.insert(nc);
-	extra_vlog.push_back(stringf("  CascadeMux %s (.I(%s), .O(%s));\n", tname().c_str(), n.c_str(), nc.c_str()));
+
+	std::string tn = tname();
+	netlist_cell_types[tn] = "CascadeMux";
+	netlist_cell_ports[tn]["I"] = n;
+	netlist_cell_ports[tn]["O"] = nc;
+
 	return nc;
 }
 
@@ -752,14 +996,14 @@ void make_seg_cell(int net, const net_segment_t &seg)
 
 	if (sscanf(seg.name.c_str(), "io_%d/D_IN_%d", &a, &b) == 2) {
 		auto cell = make_seg_pre_io(seg.x, seg.y, a);
-		netlist_cells[cell][stringf("DIN%d", b)] = net_name(net);
+		netlist_cell_ports[cell][stringf("DIN%d", b)] = net_name(net);
 		make_odrv(seg.x, seg.y, net);
 		return;
 	}
 
 	if (sscanf(seg.name.c_str(), "io_%d/D_OUT_%d", &a, &b) == 2) {
 		auto cell = make_seg_pre_io(seg.x, seg.y, a);
-		netlist_cells[cell][stringf("DOUT%d", b)] = net_name(net);
+		netlist_cell_ports[cell][stringf("DOUT%d", b)] = net_name(net);
 		make_inmux(seg.x, seg.y, net);
 		return;
 	}
@@ -768,9 +1012,9 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		auto cell = make_lc40(seg.x, seg.y, a);
 		if (b == 2) {
 			// Lattice tools always put a CascadeMux on in2
-			netlist_cells[cell][stringf("in%d", b)] = cascademuxed(net_name(net));
+			netlist_cell_ports[cell][stringf("in%d", b)] = cascademuxed(net_name(net));
 		} else {
-			netlist_cells[cell][stringf("in%d", b)] = net_name(net);
+			netlist_cell_ports[cell][stringf("in%d", b)] = net_name(net);
 		}
 		make_inmux(seg.x, seg.y, net);
 		return;
@@ -789,7 +1033,7 @@ void make_seg_cell(int net, const net_segment_t &seg)
 
 	use_lcout:
 		auto cell = make_lc40(seg.x, seg.y, a);
-		netlist_cells[cell]["lcout"] = net_name(net);
+		netlist_cell_ports[cell]["lcout"] = net_name(net);
 		make_odrv(seg.x, seg.y, net);
 		return;
 	}
@@ -797,7 +1041,7 @@ void make_seg_cell(int net, const net_segment_t &seg)
 	if (sscanf(seg.name.c_str(), "lutff_%d/cou%c", &a, &c) == 2 && c == 't')
 	{
 		auto cell = make_lc40(seg.x, seg.y, a);
-		netlist_cells[cell]["carryout"] = net_name(net);
+		netlist_cell_ports[cell]["carryout"] = net_name(net);
 		return;
 	}
 
@@ -806,26 +1050,26 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		auto cell = make_ram(seg.x, 2*((seg.y-1) >> 1) + 1);
 
 		if (sscanf(seg.name.c_str(), "ram/MASK_%d", &a) == 1) {
-			netlist_cells[cell][stringf("MASK[%d]", a)] = net_name(net);
+			netlist_cell_ports[cell][stringf("MASK[%d]", a)] = net_name(net);
 			make_inmux(seg.x, seg.y, net);
 		} else
 		if (sscanf(seg.name.c_str(), "ram/RADDR_%d", &a) == 1) {
-			netlist_cells[cell][stringf("RADDR[%d]", a)] = cascademuxed(net_name(net));
+			netlist_cell_ports[cell][stringf("RADDR[%d]", a)] = cascademuxed(net_name(net));
 			make_inmux(seg.x, seg.y, net);
 		} else
 		if (sscanf(seg.name.c_str(), "ram/RDATA_%d", &a) == 1) {
-			netlist_cells[cell][stringf("RDATA[%d]", a)] = net_name(net);
+			netlist_cell_ports[cell][stringf("RDATA[%d]", a)] = net_name(net);
 			make_odrv(seg.x, seg.y, net);
 		} else
 		if (sscanf(seg.name.c_str(), "ram/WADDR_%d", &a) == 1) {
-			netlist_cells[cell][stringf("WADDR[%d]", a)] = cascademuxed(net_name(net));
+			netlist_cell_ports[cell][stringf("WADDR[%d]", a)] = cascademuxed(net_name(net));
 			make_inmux(seg.x, seg.y, net);
 		} else
 		if (sscanf(seg.name.c_str(), "ram/WDATA_%d", &a) == 1) {
-			netlist_cells[cell][stringf("WDATA[%d]", a)] = net_name(net);
+			netlist_cell_ports[cell][stringf("WDATA[%d]", a)] = net_name(net);
 			make_inmux(seg.x, seg.y, net);
 		} else {
-			netlist_cells[cell][seg.name.substr(4)] = net_name(net);
+			netlist_cell_ports[cell][seg.name.substr(4)] = net_name(net);
 			if (seg.name == "ram/RCLK" || seg.name == "ram/WCLK")
 				make_inmux(seg.x, seg.y, net, "ClkMux");
 			else if (seg.name == "ram/RCLKE" || seg.name == "ram/WCLKE")
@@ -848,7 +1092,7 @@ void make_seg_cell(int net, const net_segment_t &seg)
 			if (x_y_name_net.count(key)) {
 				auto cell = make_lc40(seg.x, seg.y, i);
 				make_inmux(seg.x, seg.y, net, "ClkMux");
-				netlist_cells[cell]["clk"] = net_name(seg.net);
+				netlist_cell_ports[cell]["clk"] = net_name(seg.net);
 			}
 		}
 		return;
@@ -898,21 +1142,21 @@ void make_seg_cell(int net, const net_segment_t &seg)
 			auto cell = make_seg_pre_io(seg.x, seg.y, z);
 
 			if (seg.name == "io_global/inclk" && use_inclk) {
-				netlist_cells[cell]["INPUTCLK"] = net_name(seg.net);
+				netlist_cell_ports[cell]["INPUTCLK"] = net_name(seg.net);
 				make_inmux(seg.x, seg.y, seg.net, "ClkMux");
 			}
 
 			if (seg.name == "io_global/outclk" && use_outclk) {
-				netlist_cells[cell]["OUTPUTCLK"] = net_name(seg.net);
+				netlist_cell_ports[cell]["OUTPUTCLK"] = net_name(seg.net);
 				make_inmux(seg.x, seg.y, seg.net, "ClkMux");
 			}
 
 			if (seg.name == "io_global/cen") {
-				netlist_cells[cell]["CLOCKENABLE"] = net_name(seg.net);
+				netlist_cell_ports[cell]["CLOCKENABLE"] = net_name(seg.net);
 				make_inmux(seg.x, seg.y, seg.net, "CEMux");
 			} else {
-				if (netlist_cells[cell]["CLOCKENABLE"] == "")
-					netlist_cells[cell]["CLOCKENABLE"] = "vcc";
+				if (netlist_cell_ports[cell]["CLOCKENABLE"] == "")
+					netlist_cell_ports[cell]["CLOCKENABLE"] = "vcc";
 			}
 		}
 	}
@@ -1051,18 +1295,22 @@ struct make_interconn_worker_t
 		handled_segs.insert(trg);
 
 		if (seg_parents.count(trg) == 0) {
-			extra_vlog.push_back(stringf("  assign %s = %s;\n", seg_name(trg).c_str(), net_name(trg.net).c_str()));
+			net_assignments[seg_name(trg)] = net_name(trg.net);
 			return;
 		}
 
 		const net_segment_t *cursor = &seg_parents.at(trg);
+		std::string tn;
 
 		// Local Mux
 
 		if (trg.name.substr(0, 6) == "local_")
 		{
-			extra_vlog.push_back(stringf("  LocalMux %s (.I(%s), .O(%s));\n",
-					tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+			tn = tname();
+			netlist_cell_types[tn] = "LocalMux";
+			netlist_cell_ports[tn]["I"] = seg_name(*cursor);
+			netlist_cell_ports[tn]["O"] = seg_name(trg);
+
 			cell_log[trg] = std::make_pair(*cursor, "LocalMux");
 			goto continue_at_cursor;
 		}
@@ -1086,18 +1334,23 @@ struct make_interconn_worker_t
 			count_length = std::max(count_length, 0);
 
 			if (cursor->name.substr(0, 7) == "span12_" || cursor->name.substr(0, 5) == "sp12_") {
-				extra_vlog.push_back(stringf("  Sp12to4 %s (.I(%s), .O(%s));\n",
-						tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+				tn = tname();
+				netlist_cell_types[tn] = "Sp12to4";
+				netlist_cell_ports[tn]["I"] = seg_name(*cursor);
+				netlist_cell_ports[tn]["O"] = seg_name(trg);
 				cell_log[trg] = std::make_pair(*cursor, "Sp12to4");
 			} else
 			if (cursor->name.substr(0, 6) == "span4_") {
-				extra_vlog.push_back(stringf("  IoSpan4Mux %s (.I(%s), .O(%s));\n",
-						tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+				tn = tname();
+				netlist_cell_types[tn] = "IoSpan4Mux";
+				netlist_cell_ports[tn]["I"] = seg_name(*cursor);
+				netlist_cell_ports[tn]["O"] = seg_name(trg);
 				cell_log[trg] = std::make_pair(*cursor, "IoSpan4Mux");
 			} else {
-				extra_vlog.push_back(stringf("  Span4Mux_%c%d %s (.I(%s), .O(%s));\n",
-						horiz ? 'h' : 'v', MAX_SPAN_HACK ? 4 : count_length, tname().c_str(),
-						seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+				tn = tname();
+				netlist_cell_types[tn] = stringf("Span4Mux_%c%d", horiz ? 'h' : 'v', MAX_SPAN_HACK ? 4 : count_length);
+				netlist_cell_ports[tn]["I"] = seg_name(*cursor);
+				netlist_cell_ports[tn]["O"] = seg_name(trg);
 				cell_log[trg] = std::make_pair(*cursor, stringf("Span4Mux_%c%d", horiz ? 'h' : 'v', count_length));
 			}
 
@@ -1122,9 +1375,10 @@ struct make_interconn_worker_t
 
 			count_length = std::max(count_length, 0);
 
-			extra_vlog.push_back(stringf("  Span12Mux_%c%d %s (.I(%s), .O(%s));\n",
-					horiz ? 'h' : 'v', MAX_SPAN_HACK ? 12 : count_length, tname().c_str(),
-					seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+			tn = tname();
+			netlist_cell_types[tn] = stringf("Span12Mux_%c%d", horiz ? 'h' : 'v', MAX_SPAN_HACK ? 12 : count_length);
+			netlist_cell_ports[tn]["I"] = seg_name(*cursor);
+			netlist_cell_ports[tn]["O"] = seg_name(trg);
 			cell_log[trg] = std::make_pair(*cursor, stringf("Span12Mux_%c%d", horiz ? 'h' : 'v', count_length));
 
 			goto continue_at_cursor;
@@ -1140,17 +1394,25 @@ struct make_interconn_worker_t
 			if (cursor->net == trg.net)
 				goto skip_to_cursor;
 
-			extra_vlog.push_back(stringf("  GlobalMux %s (.I(%s), .O(%s));\n",
-					tname().c_str(), seg_name(*cursor, 3).c_str(), seg_name(trg).c_str()));
+			tn = tname();
+			netlist_cell_types[tn] = "GlobalMux";
+			netlist_cell_ports[tn]["I"] = seg_name(*cursor, 3);
+			netlist_cell_ports[tn]["O"] = seg_name(trg);
 
-			extra_vlog.push_back(stringf("  gio2CtrlBuf %s (.I(%s), .O(%s));\n",
-					tname().c_str(), seg_name(*cursor, 2).c_str(), seg_name(*cursor, 3).c_str()));
+			tn = tname();
+			netlist_cell_types[tn] = "gio2CtrlBuf";
+			netlist_cell_ports[tn]["I"] = seg_name(*cursor, 2);
+			netlist_cell_ports[tn]["O"] = seg_name(*cursor, 3);
 
-			extra_vlog.push_back(stringf("  ICE_GB %s (.USERSIGNALTOGLOBALBUFFER(%s), .GLOBALBUFFEROUTPUT(%s));\n",
-					tname().c_str(), seg_name(*cursor, 1).c_str(), seg_name(*cursor, 2).c_str()));
+			tn = tname();
+			netlist_cell_types[tn] = "ICE_GB";
+			netlist_cell_ports[tn]["USERSIGNALTOGLOBALBUFFER"] = seg_name(*cursor, 1);
+			netlist_cell_ports[tn]["GLOBALBUFFEROUTPUT"] = seg_name(*cursor, 2);
 
-			extra_vlog.push_back(stringf("  IoInMux %s (.I(%s), .O(%s));\n",
-					tname().c_str(), seg_name(*cursor).c_str(), seg_name(*cursor, 1).c_str()));
+			tn = tname();
+			netlist_cell_types[tn] = "IoInMux";
+			netlist_cell_ports[tn]["I"] = seg_name(*cursor);
+			netlist_cell_ports[tn]["O"] = seg_name(*cursor, 1);
 
 			cell_log[trg] = std::make_pair(*cursor, "GlobalMux -> ICE_GB -> IoInMux");
 
@@ -1166,13 +1428,16 @@ struct make_interconn_worker_t
 		if (cursor->net == trg.net)
 			goto skip_to_cursor;
 
-		extra_vlog.push_back(stringf("  INTERCONN %s (.I(%s), .O(%s));\n",
-				tname().c_str(), seg_name(*cursor).c_str(), seg_name(trg).c_str()));
+		tn = tname();
+		netlist_cell_types[tn] = "INTERCONN";
+		netlist_cell_ports[tn]["I"] = seg_name(*cursor);
+		netlist_cell_ports[tn]["O"] = seg_name(trg);
+
 		cell_log[trg] = std::make_pair(*cursor, "INTERCONN");
 		goto continue_at_cursor;
 
 	skip_to_cursor:
-		extra_vlog.push_back(stringf("  assign %s = %s;\n", seg_name(trg).c_str(), seg_name(*cursor).c_str()));
+		net_assignments[seg_name(trg)] = seg_name(*cursor);
 	continue_at_cursor:
 		create_cells(*cursor);
 	}
@@ -1275,7 +1540,7 @@ void make_interconn(const net_segment_t &src, FILE *graph_f)
 #endif
 
 	for (auto &seg : worker.target_segs) {
-		extra_vlog.push_back(stringf("  assign %s = %s;\n", net_name(seg.net).c_str(), seg_name(seg).c_str()));
+		net_assignments[net_name(seg.net)] = seg_name(seg);
 		worker.create_cells(seg);
 	}
 
@@ -1391,17 +1656,19 @@ int main(int argc, char **argv)
 				{
 					std::string port = stringf("WADDR[%d]", i);
 
-					if (netlist_cells[src_cell][port] == "")
+					if (netlist_cell_ports[src_cell][port] == "")
 						continue;
 
-					std::string srcnet = netlist_cells[src_cell][port];
+					std::string srcnet = netlist_cell_ports[src_cell][port];
 					std::string tmpnet = tname();
 					extra_wires.insert(tmpnet);
 
-					extra_vlog.push_back(stringf("  CascadeBuf %s (.I(%s), .O(%s));\n",
-							tname().c_str(), srcnet.c_str(), tmpnet.c_str()));
+					std::string tn = tname();
+					netlist_cell_types[tn] = "CascadeBuf";
+					netlist_cell_ports[tn]["I"] = srcnet;
+					netlist_cell_ports[tn]["O"] = tmpnet;
 
-					netlist_cells[dst_cell][port] = cascademuxed(tmpnet);
+					netlist_cell_ports[dst_cell][port] = cascademuxed(tmpnet);
 				}
 			}
 
@@ -1414,17 +1681,19 @@ int main(int argc, char **argv)
 				{
 					std::string port = stringf("RADDR[%d]", i);
 
-					if (netlist_cells[src_cell][port] == "")
+					if (netlist_cell_ports[src_cell][port] == "")
 						continue;
 
-					std::string srcnet = netlist_cells[src_cell][port];
+					std::string srcnet = netlist_cell_ports[src_cell][port];
 					std::string tmpnet = tname();
 					extra_wires.insert(tmpnet);
 
-					extra_vlog.push_back(stringf("  CascadeBuf %s (.I(%s), .O(%s));\n",
-							tname().c_str(), srcnet.c_str(), tmpnet.c_str()));
+					std::string tn = tname();
+					netlist_cell_types[tn] = "CascadeBuf";
+					netlist_cell_ports[tn]["I"] = srcnet;
+					netlist_cell_ports[tn]["O"] = tmpnet;
 
-					netlist_cells[dst_cell][port] = cascademuxed(tmpnet);
+					netlist_cell_ports[dst_cell][port] = cascademuxed(tmpnet);
 				}
 			}
 		}
@@ -1453,7 +1722,7 @@ int main(int argc, char **argv)
 	}
 
 	for (auto it : netlist_cell_types)
-	for (auto &port : netlist_cells[it.first])
+	for (auto &port : netlist_cell_ports[it.first])
 		if (port.second == "") {
 			size_t open_bracket_pos = port.first.find('[');
 			if (open_bracket_pos == std::string::npos)
@@ -1475,6 +1744,9 @@ int main(int argc, char **argv)
 
 	for (auto net : extra_wires)
 		fprintf(fout, "  wire %s;\n", net.c_str());
+	
+	for (auto &it : net_assignments)
+		fprintf(fout, "  assign %s = %s;\n", it.first.c_str(), it.second.c_str());
 
 	fprintf(fout, "  wire gnd, vcc;\n");
 	fprintf(fout, "  GND gnd_cell (.Y(gnd));\n");
@@ -1500,7 +1772,7 @@ int main(int argc, char **argv)
 		fprintf(fout, "%s (", it.first.c_str());
 		std::map<std::string, std::vector<std::string>> multibit_ports;
 
-		for (auto port : netlist_cells[it.first])
+		for (auto port : netlist_cell_ports[it.first])
 		{
 			size_t open_bracket_pos = port.first.find('[');
 			if (open_bracket_pos != std::string::npos) {
@@ -1534,6 +1806,9 @@ int main(int argc, char **argv)
 	}
 
 	fprintf(fout, "endmodule\n");
+
+	TimingAnalysis ta;
+	ta.report();
 
 	return 0;
 }
