@@ -6,7 +6,7 @@ all:
 	$(MAKE) -C iceprog
 	$(MAKE) -C icemulti
 	$(MAKE) -C icepll
-	# $(MAKE) -C icetime
+	$(MAKE) -C icetime
 
 clean:
 	$(MAKE) -C icebox clean
@@ -14,7 +14,7 @@ clean:
 	$(MAKE) -C iceprog clean
 	$(MAKE) -C icemulti clean
 	$(MAKE) -C icepll clean
-	# $(MAKE) -C icetime clean
+	$(MAKE) -C icetime clean
 
 install:
 	$(MAKE) -C icebox install
@@ -22,7 +22,7 @@ install:
 	$(MAKE) -C iceprog install
 	$(MAKE) -C icemulti install
 	$(MAKE) -C icepll install
-	# $(MAKE) -C icetime install
+	$(MAKE) -C icetime install
 
 uninstall:
 	$(MAKE) -C icebox uninstall
@@ -30,7 +30,7 @@ uninstall:
 	$(MAKE) -C iceprog uninstall
 	$(MAKE) -C icemulti uninstall
 	$(MAKE) -C icepll uninstall
-	# $(MAKE) -C icetime uninstall
+	$(MAKE) -C icetime uninstall
 
 .PHONY: all clean install uninstall
 

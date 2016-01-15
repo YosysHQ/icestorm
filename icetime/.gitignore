@@ -1,4 +1,5 @@
 icetime
+timings.inc
 test[0-9]*
 *.d
 *.o
