@@ -30,6 +30,9 @@
 
 #define MAX_SPAN_HACK 1
 
+// add this number of ns as estimation for clock distribution mismatch
+#define GLOBAL_CLK_DIST_JITTER 0.1
+
 FILE *fin, *fout;
 bool verbose = false;
 
@@ -40,6 +43,8 @@ std::map<std::tuple<int, int, int>, std::string> pin_pos;
 std::map<std::string, std::string> pin_names;
 std::set<std::tuple<int, int, int>> extra_bits;
 std::set<std::string> io_names;
+
+std::map<int, std::string> net_symbols;
 
 struct net_segment_t
 {
@@ -240,6 +245,11 @@ void read_config()
 				int y = atoi(strtok(nullptr, " \t\r\n"));
 				std::tuple<int, int, int> key(b, x, y);
 				extra_bits.insert(key);
+			} else
+			if (!strcmp(tok, ".sym")) {
+				int net = atoi(strtok(nullptr, " \t\r\n"));
+				const char *name = strtok(nullptr, " \t\r\n");
+				net_symbols[net] = name;
 			}
 		} else
 		if (line_nr >= 0)
@@ -645,7 +655,7 @@ struct TimingAnalysis
 		auto &driver_type = netlist_cell_types.at(driver_cell);
 
 		if (is_primary(driver_cell, driver_port)) {
-			net_max_path_delay[net] = get_delay(driver_type, "*clkedge*", driver_port);
+			net_max_path_delay[net] = get_delay(driver_type, "*clkedge*", driver_port) + GLOBAL_CLK_DIST_JITTER;
 			return 0;
 		}
 
@@ -747,27 +757,59 @@ struct TimingAnalysis
 
 		double delay = net_max_path_delay.at(n);
 
+		std::string net_sym;
+		std::vector<std::pair<double, std::string>> sym_list;
+		std::map<std::string, std::string> outsym_list;
+
 		int logic_levels = 0;
 		bool last_line = true;
 
 		auto &user = net_max_setup[n];
 
-		if (!std::get<1>(user).empty()) {
+		if (!std::get<1>(user).empty())
+		{
 			lines.push_back(stringf("        %s (%s) %s [setup]: %.3f ns", std::get<1>(user).c_str(),
 					netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), std::get<0>(user)));
 			delay += std::get<0>(user);
+
+			auto &inports = get_inports(netlist_cell_types.at(std::get<1>(user)));
+
+			for (auto &it : netlist_cell_ports.at(std::get<1>(user)))
+			{
+				if (inports.count(it.first) || it.second.empty())
+					continue;
+
+				int netidx;
+				char dummy_ch;
+				if (sscanf(it.second.c_str(), "net_%d%c", &netidx, &dummy_ch) == 1 && net_symbols.count(netidx))
+					outsym_list[it.first] = net_symbols[netidx];
+			}
 		}
 
 		while (1)
 		{
+			int netidx;
+			char dummy_ch;
+
+			if (sscanf(n.c_str(), "net_%d%c", &netidx, &dummy_ch) == 1 && net_symbols.count(netidx)) {
+				sym_list.push_back(std::make_pair(calc_net_max_path_delay(n), net_symbols[netidx]));
+				if (net_sym.empty() || net_sym[0] == '$')
+					net_sym = sym_list.back().second;
+			}
+
 			if (net_max_path_parent.count(n) == 0)
 			{
 				lines.push_back(stringf("%10.3f ns %s", calc_net_max_path_delay(n), n.c_str()));
 
+				if (!net_sym.empty()) {
+					lines.back() += stringf(" (%s)", net_sym.c_str());
+					net_sym.clear();
+				}
+
 				auto &driver_cell = net_driver.at(n).first;
 				auto &driver_port = net_driver.at(n).second;
 				auto &driver_type = netlist_cell_types.at(driver_cell);
-				lines.push_back(stringf("        %s (%s) [clkedge] -> %s: %.3f ns", driver_cell.c_str(),
+				lines.push_back(stringf("        %s (%s) [clk] -> %s: %.3f ns", driver_cell.c_str(),
 						driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
 				break;
 			}
@@ -779,9 +821,15 @@ struct TimingAnalysis
 
 			auto &entry = net_max_path_parent.at(n);
 
-			if (last_line || netlist_cell_types.at(std::get<1>(entry)) == "LogicCell40") {
+			if (last_line || netlist_cell_types.at(std::get<1>(entry)) == "LogicCell40")
+			{
 				lines.push_back(stringf("%10.3f ns %s", calc_net_max_path_delay(n), n.c_str()));
 				logic_levels++;
+
+				if (!net_sym.empty()) {
+					lines.back() += stringf(" (%s)", net_sym.c_str());
+					net_sym.clear();
+				}
 			}
 
 			lines.push_back(stringf("        %s (%s) %s -> %s: %.3f ns", std::get<1>(entry).c_str(),
@@ -795,6 +843,31 @@ struct TimingAnalysis
 
 		for (int i = int(lines.size())-1; i >= 0; i--)
 			printf("%s\n", lines[i].c_str());
+
+		if (!sym_list.empty() || !outsym_list.empty())
+		{
+			printf("\n");
+			printf("Resolvable net names on path:\n");
+
+			std::string last_net;
+			double first_time, last_time;
+
+			for (int i = int(sym_list.size())-1; i >= 0; i--) {
+				if (last_net != sym_list[i].second) {
+					if (!last_net.empty())
+						printf("%10.3f ns ..%7.3f ns %s\n", first_time, last_time, last_net.c_str());
+					first_time = sym_list[i].first;
+					last_net = sym_list[i].second;
+				}
+				last_time = sym_list[i].first;
+			}
+
+			if (!last_net.empty())
+				printf("%10.3f ns ..%7.3f ns %s\n", first_time, last_time, last_net.c_str());
+
+			for (auto &it : outsym_list)
+				printf("%23s -> %s\n", it.first.c_str(), it.second.c_str());
+		}
 
 		printf("\n");
 		printf("Total number of logic levels: %d\n", logic_levels);
@@ -1931,6 +2004,8 @@ int main(int argc, char **argv)
 		printf("\n");
 		printf("icetime topological timing analysis report\n");
 		printf("==========================================\n");
+		printf("\n");
+		printf("Warning: This timing analysis report is an estimate!\n");
 		printf("\n");
 
 		TimingAnalysis ta;
