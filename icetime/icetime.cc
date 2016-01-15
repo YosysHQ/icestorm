@@ -28,13 +28,12 @@
 #include <map>
 #include <set>
 
-#define MAX_SPAN_HACK 1
-
 // add this number of ns as estimation for clock distribution mismatch
 #define GLOBAL_CLK_DIST_JITTER 0.1
 
 FILE *fin, *fout;
 bool verbose = false;
+bool max_span_hack = false;
 
 std::string config_device, selected_package;
 std::vector<std::vector<std::string>> config_tile_type;
@@ -1510,7 +1509,7 @@ struct make_interconn_worker_t
 				cell_log[trg] = std::make_pair(*cursor, "IoSpan4Mux");
 			} else {
 				tn = tname();
-				netlist_cell_types[tn] = stringf("Span4Mux_%c%d", horiz ? 'h' : 'v', MAX_SPAN_HACK ? 4 : count_length);
+				netlist_cell_types[tn] = stringf("Span4Mux_%c%d", horiz ? 'h' : 'v', max_span_hack ? 4 : count_length);
 				netlist_cell_ports[tn]["I"] = seg_name(*cursor);
 				netlist_cell_ports[tn]["O"] = seg_name(trg);
 				cell_log[trg] = std::make_pair(*cursor, stringf("Span4Mux_%c%d", horiz ? 'h' : 'v', count_length));
@@ -1538,7 +1537,7 @@ struct make_interconn_worker_t
 			count_length = std::max(count_length, 0);
 
 			tn = tname();
-			netlist_cell_types[tn] = stringf("Span12Mux_%c%d", horiz ? 'h' : 'v', MAX_SPAN_HACK ? 12 : count_length);
+			netlist_cell_types[tn] = stringf("Span12Mux_%c%d", horiz ? 'h' : 'v', max_span_hack ? 12 : count_length);
 			netlist_cell_ports[tn]["I"] = seg_name(*cursor);
 			netlist_cell_ports[tn]["O"] = seg_name(trg);
 			cell_log[trg] = std::make_pair(*cursor, stringf("Span12Mux_%c%d", horiz ? 'h' : 'v', count_length));
@@ -1727,6 +1726,9 @@ void help(const char *cmd)
 	printf("        write a graphviz description of the interconnect tree\n");
 	printf("        that includes the given net to 'icetime_graph.dot'.\n");
 	printf("\n");
+	printf("    -m\n");
+	printf("        enable max_span_hack for conservative estimates\n");
+	printf("\n");
 	printf("    -t\n");
 	printf("        print a timing estimate (based on topological timing\n");
 	printf("        analysis)\n");
@@ -1746,7 +1748,7 @@ int main(int argc, char **argv)
 	std::vector<std::string> print_timing_nets;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "p:P:g:tT:v")) != -1)
+	while ((opt = getopt(argc, argv, "p:P:g:mtT:v")) != -1)
 	{
 		switch (opt)
 		{
@@ -1759,6 +1761,9 @@ int main(int argc, char **argv)
 			break;
 		case 'g':
 			graph_nets.insert(atoi(optarg));
+			break;
+		case 'm':
+			max_span_hack = true;
 			break;
 		case 't':
 			print_timing = true;
@@ -2006,6 +2011,8 @@ int main(int argc, char **argv)
 		printf("==========================================\n");
 		printf("\n");
 		printf("Warning: This timing analysis report is an estimate!\n");
+		if (max_span_hack)
+			printf("Info: max_span_hack is enabled: estimate is conservative.\n");
 		printf("\n");
 
 		TimingAnalysis ta;
