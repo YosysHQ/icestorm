@@ -28,7 +28,7 @@
 #include <map>
 #include <set>
 
-// add this number of ns as estimation for clock distribution mismatch
+// add this number of ns as estimate for clock distribution mismatch
 #define GLOBAL_CLK_DIST_JITTER 0.1
 
 FILE *fin, *fout;
@@ -638,6 +638,9 @@ struct TimingAnalysis
 	std::string global_max_path_net;
 	double global_max_path_delay;
 
+	bool interior_timing;
+	std::set<std::string> interior_nets;
+
 	double calc_net_max_path_delay(const std::string &net)
 	{
 		if (net_max_path_delay.count(net))
@@ -646,7 +649,7 @@ struct TimingAnalysis
 		if (net_driver.count(net) == 0)
 			return 0;
 
-		double max_path_delay = 0;
+		double max_path_delay = -1e6;
 		net_max_path_delay[net] = 1e6;
 
 		auto &driver_cell = net_driver.at(net).first;
@@ -654,8 +657,11 @@ struct TimingAnalysis
 		auto &driver_type = netlist_cell_types.at(driver_cell);
 
 		if (is_primary(driver_cell, driver_port)) {
-			net_max_path_delay[net] = get_delay(driver_type, "*clkedge*", driver_port) + GLOBAL_CLK_DIST_JITTER;
-			return 0;
+			if (interior_timing && driver_type == "PRE_IO")
+				net_max_path_delay[net] = -1e3;
+			else
+				net_max_path_delay[net] = get_delay(driver_type, "*clkedge*", driver_port) + GLOBAL_CLK_DIST_JITTER;
+			return net_max_path_delay[net];
 		}
 
 		for (auto &inport : get_inports(driver_type))
@@ -680,6 +686,9 @@ struct TimingAnalysis
 			if (*in_net == "" || *in_net == "vcc" || *in_net == "gnd")
 				continue;
 
+			if (interior_timing && interior_nets.count(*in_net) == 0)
+				continue;
+
 			double this_cell_delay = get_delay(driver_type, inport, driver_port);
 			double this_path_delay = calc_net_max_path_delay(*in_net) + this_cell_delay;
 
@@ -693,7 +702,33 @@ struct TimingAnalysis
 		return net_max_path_delay.at(net);
 	}
 
-	TimingAnalysis()
+	void mark_interior(std::string net)
+	{
+		while (net_assignments.count(net)) {
+			interior_nets.insert(net);
+			net = net_assignments.at(net);
+		}
+
+		if (interior_nets.count(net))
+			return;
+
+		interior_nets.insert(net);
+
+		if (!net_driver.count(net))
+			return;
+
+		auto &driver_cell = net_driver.at(net).first;
+		auto &driver_port = net_driver.at(net).second;
+		auto &driver_type = netlist_cell_types.at(driver_cell);
+
+		if (is_primary(driver_cell, driver_port))
+			return;
+
+		for (auto &inport : get_inports(driver_type))
+			mark_interior(netlist_cell_ports.at(driver_cell).at(inport));
+	}
+
+	TimingAnalysis(bool interior_timing) : interior_timing(interior_timing)
 	{
 		std::set<std::string> all_nets;
 
@@ -719,6 +754,8 @@ struct TimingAnalysis
 						break;
 					n = net_assignments.at(n);
 				}
+				if (interior_timing && cell_type != "PRE_IO" && is_primary(cell_name, "lcout"))
+					mark_interior(net_name);
 				continue;
 			}
 
@@ -1727,7 +1764,10 @@ void help(const char *cmd)
 	printf("        that includes the given net to 'icetime_graph.dot'.\n");
 	printf("\n");
 	printf("    -m\n");
-	printf("        enable max_span_hack for conservative estimates\n");
+	printf("        enable max_span_hack for conservative timing estimates\n");
+	printf("\n");
+	printf("    -i\n");
+	printf("        only consider interior timing paths (not to/from IOs)\n");
 	printf("\n");
 	printf("    -t\n");
 	printf("        print a timing estimate (based on topological timing\n");
@@ -1745,10 +1785,11 @@ void help(const char *cmd)
 int main(int argc, char **argv)
 {
 	bool print_timing = false;
+	bool interior_timing = false;
 	std::vector<std::string> print_timing_nets;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "p:P:g:mtT:v")) != -1)
+	while ((opt = getopt(argc, argv, "p:P:g:mitT:v")) != -1)
 	{
 		switch (opt)
 		{
@@ -1764,6 +1805,9 @@ int main(int argc, char **argv)
 			break;
 		case 'm':
 			max_span_hack = true;
+			break;
+		case 'i':
+			interior_timing = true;
 			break;
 		case 't':
 			print_timing = true;
@@ -1808,8 +1852,10 @@ int main(int argc, char **argv)
 	printf("// Reading input .asc file..\n");
 	read_config();
 
-	printf("// Reading chipdb file..\n");
+	printf("// Reading %s chipdb file..\n", config_device.c_str());
 	read_chipdb();
+
+	printf("// Creating timing netlist..\n");
 
 	for (int net : used_nets)
 	for (auto &seg : net_to_segments[net])
@@ -2015,14 +2061,16 @@ int main(int argc, char **argv)
 			printf("Info: max_span_hack is enabled: estimate is conservative.\n");
 		printf("\n");
 
-		TimingAnalysis ta;
+		TimingAnalysis ta(interior_timing);
 		for (auto &n : print_timing_nets)
 			ta.report(n);
-		ta.report();
+
+		if (print_timing)
+			ta.report();
 	}
 	else
 	{
-		TimingAnalysis ta;
+		TimingAnalysis ta(interior_timing);
 		printf("// Timing estimate: %.2f ns (%.2f MHz)\n", ta.global_max_path_delay, 1000.0 / ta.global_max_path_delay);
 	}
 
