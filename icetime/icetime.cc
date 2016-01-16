@@ -686,9 +686,6 @@ struct TimingAnalysis
 			if (*in_net == "" || *in_net == "vcc" || *in_net == "gnd")
 				continue;
 
-			if (interior_timing && interior_nets.count(*in_net) == 0)
-				continue;
-
 			double this_cell_delay = get_delay(driver_type, inport, driver_port);
 			double this_path_delay = calc_net_max_path_delay(*in_net) + this_cell_delay;
 
@@ -704,28 +701,15 @@ struct TimingAnalysis
 
 	void mark_interior(std::string net)
 	{
+		if (net.empty())
+			return;
+
 		while (net_assignments.count(net)) {
 			interior_nets.insert(net);
 			net = net_assignments.at(net);
 		}
 
-		if (interior_nets.count(net))
-			return;
-
 		interior_nets.insert(net);
-
-		if (!net_driver.count(net))
-			return;
-
-		auto &driver_cell = net_driver.at(net).first;
-		auto &driver_port = net_driver.at(net).second;
-		auto &driver_type = netlist_cell_types.at(driver_cell);
-
-		if (is_primary(driver_cell, driver_port))
-			return;
-
-		for (auto &inport : get_inports(driver_type))
-			mark_interior(netlist_cell_ports.at(driver_cell).at(inport));
 	}
 
 	TimingAnalysis(bool interior_timing) : interior_timing(interior_timing)
@@ -766,6 +750,8 @@ struct TimingAnalysis
 		global_max_path_delay = 0;
 
 		for (auto &net : all_nets) {
+			if (interior_timing && interior_nets.count(net) == 0)
+				continue;
 			double d = calc_net_max_path_delay(net) + std::get<0>(net_max_setup[net]);
 			if (d > global_max_path_delay) {
 				global_max_path_delay = d;
