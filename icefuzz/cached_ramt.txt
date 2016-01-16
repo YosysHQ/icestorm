@@ -3460,17 +3460,21 @@
 (7 2) Ram config bit: MEMT_bram_cbit_3
 (7 3) Ram config bit: MEMT_bram_cbit_2
 (7 4) Cascade buffer Enable bit: MEMT_LC00_inmux00_bram_cbit_5
+(7 4) Cascade buffer Enable bit: MEMT_LC00_inmux02_bram_cbit_5
 (7 4) Cascade buffer Enable bit: MEMT_LC01_inmux00_bram_cbit_5
 (7 4) Cascade buffer Enable bit: MEMT_LC01_inmux02_bram_cbit_5
 (7 4) Cascade buffer Enable bit: MEMT_LC02_inmux00_bram_cbit_5
+(7 4) Cascade buffer Enable bit: MEMT_LC03_inmux00_bram_cbit_5
 (7 4) Cascade buffer Enable bit: MEMT_LC04_inmux00_bram_cbit_5
 (7 4) Cascade buffer Enable bit: MEMT_LC05_inmux00_bram_cbit_5
 (7 4) Cascade buffer Enable bit: MEMT_LC06_inmux00_bram_cbit_5
 (7 4) Cascade buffer Enable bit: MEMT_LC07_inmux00_bram_cbit_5
 (7 5) Cascade bit: MEMT_LC00_inmux00_bram_cbit_4
+(7 5) Cascade bit: MEMT_LC00_inmux02_bram_cbit_4
 (7 5) Cascade bit: MEMT_LC01_inmux00_bram_cbit_4
 (7 5) Cascade bit: MEMT_LC01_inmux02_bram_cbit_4
 (7 5) Cascade bit: MEMT_LC02_inmux00_bram_cbit_4
+(7 5) Cascade bit: MEMT_LC03_inmux00_bram_cbit_4
 (7 5) Cascade bit: MEMT_LC04_inmux00_bram_cbit_4
 (7 5) Cascade bit: MEMT_LC05_inmux00_bram_cbit_4
 (7 5) Cascade bit: MEMT_LC06_inmux00_bram_cbit_4

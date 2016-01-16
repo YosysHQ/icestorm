@@ -320,6 +320,8 @@
 (14 1) routing span4_horz_l_12 <X> span4_horz_r_0
 (14 1) routing span4_vert_1 <X> span4_horz_r_0
 (14 1) routing span4_vert_t_12 <X> span4_vert_b_0
+(14 10) routing glb_netwk_3 <X> wire_io_cluster/io_1/cen
+(14 10) routing glb_netwk_7 <X> wire_io_cluster/io_1/cen
 (14 10) routing lc_trk_g0_5 <X> wire_io_cluster/io_1/cen
 (14 10) routing lc_trk_g1_5 <X> wire_io_cluster/io_1/cen
 (14 11) routing lc_trk_g0_2 <X> wire_io_cluster/io_1/cen
@@ -374,10 +376,16 @@
 (14 8) routing glb_netwk_5 <X> wire_io_cluster/io_1/inclk
 (14 8) routing glb_netwk_6 <X> wire_io_cluster/io_1/inclk
 (14 8) routing glb_netwk_7 <X> wire_io_cluster/io_1/inclk
+(15 10) Enable bit of Mux _clock_links/ceb_mux => glb_netwk_1 wire_io_cluster/io_1/cen
+(15 10) Enable bit of Mux _clock_links/ceb_mux => glb_netwk_3 wire_io_cluster/io_1/cen
+(15 10) Enable bit of Mux _clock_links/ceb_mux => glb_netwk_5 wire_io_cluster/io_1/cen
+(15 10) Enable bit of Mux _clock_links/ceb_mux => glb_netwk_7 wire_io_cluster/io_1/cen
 (15 10) Enable bit of Mux _clock_links/ceb_mux => lc_trk_g0_2 wire_io_cluster/io_1/cen
 (15 10) Enable bit of Mux _clock_links/ceb_mux => lc_trk_g0_5 wire_io_cluster/io_1/cen
 (15 10) Enable bit of Mux _clock_links/ceb_mux => lc_trk_g1_2 wire_io_cluster/io_1/cen
 (15 10) Enable bit of Mux _clock_links/ceb_mux => lc_trk_g1_5 wire_io_cluster/io_1/cen
+(15 11) routing glb_netwk_5 <X> wire_io_cluster/io_1/cen
+(15 11) routing glb_netwk_7 <X> wire_io_cluster/io_1/cen
 (15 11) routing lc_trk_g1_2 <X> wire_io_cluster/io_1/cen
 (15 11) routing lc_trk_g1_5 <X> wire_io_cluster/io_1/cen
 (15 15) Enable bit of Mux _clock_links/clk_mux => glb_netwk_0 wire_io_cluster/io_1/outclk

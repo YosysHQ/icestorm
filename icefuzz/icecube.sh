@@ -215,13 +215,6 @@ cat > impl_lse.prj << EOT
 -logfile "impl_lse.log"
 EOT
 
-try_rerun() {
-	for i in {0..3}; do
-		if "$@"; then return 0; fi
-	done
-	return 1
-}
-
 # synthesis (Synplify Pro)
 if false; then
 	"$icecubedir"/sbt_backend/bin/linux/opt/synpwrap/synpwrap -prj impl_syn.prj -log impl.srr
@@ -236,7 +229,7 @@ fi
 "$icecubedir"/sbt_backend/bin/linux/opt/edifparser "$icecubedir"/sbt_backend/devices/$devfile "$PWD"/impl/impl.edf "$PWD"/netlist -p$iCEPACKAGE -yinput.pcf -sinput.sdc -c --devicename $iCE40DEV
 
 # run placer
-try_rerun "$icecubedir"/sbt_backend/bin/linux/opt/sbtplacer --des-lib "$PWD"/netlist/oadb-top --outdir "$PWD"/outputs/placer --device-file "$icecubedir"/sbt_backend/devices/$devfile --package $iCEPACKAGE --deviceMarketName $iCE40DEV --sdc-file "$PWD"/Temp/sbt_temp.sdc --lib-file "$icecubedir"/sbt_backend/devices/$libfile --effort_level std --out-sdc-file "$PWD"/outputs/placer/top_pl.sdc
+"$icecubedir"/sbt_backend/bin/linux/opt/sbtplacer --des-lib "$PWD"/netlist/oadb-top --outdir "$PWD"/outputs/placer --device-file "$icecubedir"/sbt_backend/devices/$devfile --package $iCEPACKAGE --deviceMarketName $iCE40DEV --sdc-file "$PWD"/Temp/sbt_temp.sdc --lib-file "$icecubedir"/sbt_backend/devices/$libfile --effort_level std --out-sdc-file "$PWD"/outputs/placer/top_pl.sdc
 
 # run packer
 "$icecubedir"/sbt_backend/bin/linux/opt/packer "$icecubedir"/sbt_backend/devices/$devfile "$PWD"/netlist/oadb-top --package $iCEPACKAGE --outdir "$PWD"/outputs/packer --translator "$icecubedir"/sbt_backend/bin/sdc_translator.tcl --src_sdc_file "$PWD"/outputs/placer/top_pl.sdc --dst_sdc_file "$PWD"/outputs/packer/top_pk.sdc --devicename $iCE40DEV

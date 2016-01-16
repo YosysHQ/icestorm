@@ -17,6 +17,7 @@ TESTS += fflogic
 TESTS += ram40
 TESTS += mem
 TESTS += pll
+TESTS += aig
 
 EIGTHK = _8k
 

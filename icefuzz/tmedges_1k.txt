@@ -39,6 +39,7 @@ GND.Y LogicCell40.in2
 GND.Y LogicCell40.in3
 GND.Y LogicCell40.sr
 GND.Y PRE_IO.DOUT0
+GND.Y SB_RAM40_4K.WCLK
 Glb2LocalMux.O LocalMux.I
 GlobalMux.O CEMux.I
 GlobalMux.O ClkMux.I

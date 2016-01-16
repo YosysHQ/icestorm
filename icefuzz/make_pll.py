@@ -9,8 +9,8 @@ from numpy.random import randint, choice, permutation
 def randbin(n):
     return  "".join([choice(["0", "1"]) for i in range(n)])
 
-pins.remove("49")
-pins.remove("50")
+for p in gpins:
+    if p in pins: pins.remove(p)
 
 os.system("rm -rf work_pll")
 os.mkdir("work_pll")
