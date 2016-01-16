@@ -54,6 +54,7 @@ endif
 
 timings_html:
 	python3 timings.py -h tmedges_1k.txt -t timings_1k.txt -l "HX1K with default temp/volt settings" > timings_1k.html
+	python3 timings.py -h tmedges_8k.txt -t timings_8k.txt -l "HX8K with default temp/volt settings" > timings_8k.html
 
 data_cached.txt: cached_io.txt cached_logic.txt cached_ramb$(EIGTHK).txt cached_ramt$(EIGTHK).txt
 	gawk '{ print "io", $$0; }' cached_io.txt > data_cached.new

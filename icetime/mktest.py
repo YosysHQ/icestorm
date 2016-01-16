@@ -148,7 +148,6 @@ with open("%s.ys" % sys.argv[1], "w") as f:
     print("equiv_status -assert", file=f)
 
 assert os.system("bash ../icefuzz/icecube.sh %s.v" % sys.argv[1]) == 0
-os.rename("%s.tmp/outputs/netlist/top_timing.rpt" % sys.argv[1], "%s.rpt" % sys.argv[1])
 os.rename("%s.v" % sys.argv[1], "%s_in.v" % sys.argv[1])
 
 if False:

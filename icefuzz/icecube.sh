@@ -233,25 +233,53 @@ if true; then
 fi
 
 # convert netlist
-"$icecubedir"/sbt_backend/bin/linux/opt/edifparser "$icecubedir"/sbt_backend/devices/$devfile impl/impl.edf netlist -p$iCEPACKAGE -yinput.pcf -sinput.sdc -c --devicename $iCE40DEV
+"$icecubedir"/sbt_backend/bin/linux/opt/edifparser "$icecubedir"/sbt_backend/devices/$devfile "$PWD"/impl/impl.edf "$PWD"/netlist -p$iCEPACKAGE -yinput.pcf -sinput.sdc -c --devicename $iCE40DEV
 
 # run placer
-try_rerun "$icecubedir"/sbt_backend/bin/linux/opt/sbtplacer --des-lib netlist/oadb-top --outdir outputs/placer --device-file "$icecubedir"/sbt_backend/devices/$devfile --package $iCEPACKAGE --deviceMarketName $iCE40DEV --sdc-file netlist/Temp/sbt_temp.sdc --lib-file "$icecubedir"/sbt_backend/devices/$libfile --effort_level std --out-sdc-file outputs/placer/top_pl.sdc
+try_rerun "$icecubedir"/sbt_backend/bin/linux/opt/sbtplacer --des-lib "$PWD"/netlist/oadb-top --outdir "$PWD"/outputs/placer --device-file "$icecubedir"/sbt_backend/devices/$devfile --package $iCEPACKAGE --deviceMarketName $iCE40DEV --sdc-file "$PWD"/Temp/sbt_temp.sdc --lib-file "$icecubedir"/sbt_backend/devices/$libfile --effort_level std --out-sdc-file "$PWD"/outputs/placer/top_pl.sdc
 
 # run packer
-"$icecubedir"/sbt_backend/bin/linux/opt/packer "$icecubedir"/sbt_backend/devices/$devfile netlist/oadb-top --package $iCEPACKAGE --outdir outputs/packer --translator "$icecubedir"/sbt_backend/bin/sdc_translator.tcl --src_sdc_file outputs/placer/top_pl.sdc --dst_sdc_file outputs/packer/top_pk.sdc --devicename $iCE40DEV
+"$icecubedir"/sbt_backend/bin/linux/opt/packer "$icecubedir"/sbt_backend/devices/$devfile "$PWD"/netlist/oadb-top --package $iCEPACKAGE --outdir "$PWD"/outputs/packer --translator "$icecubedir"/sbt_backend/bin/sdc_translator.tcl --src_sdc_file "$PWD"/outputs/placer/top_pl.sdc --dst_sdc_file "$PWD"/outputs/packer/top_pk.sdc --devicename $iCE40DEV
 
 # run router
-"$icecubedir"/sbt_backend/bin/linux/opt/sbrouter "$icecubedir"/sbt_backend/devices/$devfile netlist/oadb-top "$icecubedir"/sbt_backend/devices/$libfile outputs/packer/top_pk.sdc --outdir outputs/router --sdf_file outputs/netlist/top_sbt.sdf --pin_permutation
+"$icecubedir"/sbt_backend/bin/linux/opt/sbrouter "$icecubedir"/sbt_backend/devices/$devfile "$PWD"/netlist/oadb-top "$icecubedir"/sbt_backend/devices/$libfile "$PWD"/outputs/packer/top_pk.sdc --outdir "$PWD"/outputs/router --sdf_file "$PWD"/outputs/netlist/top_sbt.sdf --pin_permutation
 
 # run netlister
-"$icecubedir"/sbt_backend/bin/linux/opt/netlister --verilog outputs/netlist/top_sbt.v --vhdl outputs/netlist/top_sbt.vhd --lib netlist/oadb-top --view rt --device "$icecubedir"/sbt_backend/devices/$devfile --splitio --in-sdc-file outputs/packer/top_pk.sdc --out-sdc-file outputs/netlist/top_sbt.sdc
+"$icecubedir"/sbt_backend/bin/linux/opt/netlister --verilog "$PWD"/outputs/netlist/top_sbt.v --vhdl "$PWD"/outputs/netlist/top_sbt.vhd --lib "$PWD"/netlist/oadb-top --view rt --device "$icecubedir"/sbt_backend/devices/$devfile --splitio --in-sdc-file "$PWD"/outputs/packer/top_pk.sdc --out-sdc-file "$PWD"/outputs/netlist/top_sbt.sdc
+
+# hacks for sbtimer so it knows what device we are dealing with
+ln -fs . sbt
+ln -fs . foobar_Implmnt
+cat > foobar_sbt.project << EOT
+[Project]
+Implementations=foobar_Implmnt
+
+[foobar_Implmnt]
+DeviceFamily=$( echo $iCE40DEV | sed -re 's,(HX).*,,'; )
+Device=$( echo $iCE40DEV | sed -re 's,iCE40,,'; )
+DevicePackage=$iCEPACKAGE
+Devicevoltage=1.14
+DevicevoltagePerformance=+/-5%(datasheet default)
+DeviceTemperature=85
+TimingAnalysisBasedOn=Worst
+OperationRange=Commercial
+IOBankVoltages=topBank,2.5 bottomBank,2.5 leftBank,2.5 rightBank,2.5
+derValue=0.701346
+EOT
 
 # run timer
-"$icecubedir"/sbt_backend/bin/linux/opt/sbtimer --des-lib netlist/oadb-top --lib-file "$icecubedir"/sbt_backend/devices/$libfile --sdc-file outputs/netlist/top_sbt.sdc --sdf-file outputs/netlist/top_sbt.sdf --report-file outputs/netlist/top_timing.rpt --device-file "$icecubedir"/sbt_backend/devices/$devfile --timing-summary
+"$icecubedir"/sbt_backend/bin/linux/opt/sbtimer --des-lib "$PWD"/foobar_Implmnt/sbt/netlist/oadb-top --lib-file "$icecubedir"/sbt_backend/devices/$libfile --sdc-file "$PWD"/outputs/netlist/top_sbt.sdc --sdf-file "$PWD"/outputs/netlist/top_sbt.sdf --report-file "$PWD"/outputs/netlist/top_timing.rpt --device-file "$icecubedir"/sbt_backend/devices/$devfile --timing-summary
 
 # make bitmap
-"$icecubedir"/sbt_backend/bin/linux/opt/bitmap "$icecubedir"/sbt_backend/devices/$devfile --design netlist/oadb-top --device_name $iCE40DEV --package $iCEPACKAGE --outdir outputs/bitmap --debug --low_power on --init_ram on --init_ram_bank 1111 --frequency low --warm_boot on
+"$icecubedir"/sbt_backend/bin/linux/opt/bitmap "$icecubedir"/sbt_backend/devices/$devfile --design "$PWD"/netlist/oadb-top --device_name $iCE40DEV --package $iCEPACKAGE --outdir "$PWD"/outputs/bitmap --debug --low_power on --init_ram on --init_ram_bank 1111 --frequency low --warm_boot on
+)
+
+(
+set +x
+echo "export FOUNDRY=\"$FOUNDRY\""
+echo "export SBT_DIR=\"$SBT_DIR\""
+echo "export TCL_LIBRARY=\"$TCL_LIBRARY\""
+echo "export LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH\""
 )
 
 cp "$1.tmp"/outputs/bitmap/top_bitmap.bin "$1.bin"
@@ -259,5 +287,7 @@ cp "$1.tmp"/outputs/bitmap/top_bitmap_glb.txt "$1.glb"
 cp "$1.tmp"/outputs/placer/top_sbt.pcf "$1.psb"
 cp "$1.tmp"/outputs/netlist/top_sbt.v "$1.vsb"
 cp "$1.tmp"/outputs/netlist/top_sbt.sdf "$1.sdf"
+cp "$1.tmp"/outputs/netlist/top_timing.rpt "$1.rpt"
+
 $scriptdir/../icepack/iceunpack "$1.bin" "$1.asc"
 
