@@ -10,7 +10,7 @@
 #  - <project_name>.pcf  ## physical constraint file
 #
 # Running iCEcube2:
-#  - bash icecuberun.sh <project_name>  ## creates <project_name>.bin
+#  - bash icecube.sh [-1k|-8k] <project_name>  ## creates <project_name>.bin
 #
 #
 #
@@ -30,6 +30,16 @@
 
 scriptdir=${BASH_SOURCE%/*}
 if [ -z "$scriptdir" ]; then scriptdir="."; fi
+
+if [ "$1" == "-1k" ]; then
+	ICEDEV=hx1k-tq144
+	shift
+fi
+
+if [ "$1" == "-8k" ]; then
+	ICEDEV=hx8k-ct256
+	shift
+fi
 
 set -ex
 set -- ${1%.v}
