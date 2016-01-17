@@ -31,7 +31,7 @@
 // add this number of ns as estimate for clock distribution mismatch
 #define GLOBAL_CLK_DIST_JITTER 0.1
 
-FILE *fin, *fout;
+FILE *fin = nullptr, *fout = nullptr, *frpt = nullptr;
 bool verbose = false;
 bool max_span_hack = false;
 
@@ -767,14 +767,18 @@ struct TimingAnalysis
 
 		if (n.empty()) {
 			n = global_max_path_net;
-			printf("Report for longest path:\n\n");
+			int i = fprintf(frpt, "Report for critical path:\n");
+			while (--i) fputc('-', frpt);
+			fprintf(frpt, "\n\n");
 		} else {
-			printf("Requested report for net %s:\n\n", n.c_str());
+			int i = fprintf(frpt, "Report for %s:\n", n.c_str());
+			while (--i) fputc('-', frpt);
+			fprintf(frpt, "\n\n");
 		}
 
 		if (net_max_path_delay.count(n) == 0) {
-			printf("Net not found: %s\n", n.c_str());
-			return;
+			fprintf(stderr, "Net not found: %s\n", n.c_str());
+			exit(1);
 		}
 
 		double delay = net_max_path_delay.at(n);
@@ -864,12 +868,12 @@ struct TimingAnalysis
 		}
 
 		for (int i = int(lines.size())-1; i >= 0; i--)
-			printf("%s\n", lines[i].c_str());
+			fprintf(frpt, "%s\n", lines[i].c_str());
 
 		if (!sym_list.empty() || !outsym_list.empty())
 		{
-			printf("\n");
-			printf("Resolvable net names on path:\n");
+			fprintf(frpt, "\n");
+			fprintf(frpt, "Resolvable net names on path:\n");
 
 			std::string last_net;
 			double first_time, last_time;
@@ -877,7 +881,7 @@ struct TimingAnalysis
 			for (int i = int(sym_list.size())-1; i >= 0; i--) {
 				if (last_net != sym_list[i].second) {
 					if (!last_net.empty())
-						printf("%10.3f ns ..%7.3f ns %s\n", first_time, last_time, last_net.c_str());
+						fprintf(frpt, "%10.3f ns ..%7.3f ns %s\n", first_time, last_time, last_net.c_str());
 					first_time = sym_list[i].first;
 					last_net = sym_list[i].second;
 				}
@@ -885,16 +889,16 @@ struct TimingAnalysis
 			}
 
 			if (!last_net.empty())
-				printf("%10.3f ns ..%7.3f ns %s\n", first_time, last_time, last_net.c_str());
+				fprintf(frpt, "%10.3f ns ..%7.3f ns %s\n", first_time, last_time, last_net.c_str());
 
 			for (auto &it : outsym_list)
-				printf("%23s -> %s\n", it.first.c_str(), it.second.c_str());
+				fprintf(frpt, "%23s -> %s\n", it.first.c_str(), it.second.c_str());
 		}
 
-		printf("\n");
-		printf("Total number of logic levels: %d\n", logic_levels);
-		printf("Total path delay: %.2f ns (%.2f MHz)\n", delay, 1000.0 / delay);
-		printf("\n");
+		fprintf(frpt, "\n");
+		fprintf(frpt, "Total number of logic levels: %d\n", logic_levels);
+		fprintf(frpt, "Total path delay: %.2f ns (%.2f MHz)\n", delay, 1000.0 / delay);
+		fprintf(frpt, "\n");
 	}
 };
 
@@ -1739,7 +1743,7 @@ void make_interconn(const net_segment_t &src, FILE *graph_f)
 void help(const char *cmd)
 {
 	printf("\n");
-	printf("Usage: %s [options] input.asc [output.v]\n", cmd);
+	printf("Usage: %s [options] input.asc\n", cmd);
 	printf("\n");
 	printf("    -p <pcf_file>\n");
 	printf("    -P <chip_package>\n");
@@ -1748,6 +1752,12 @@ void help(const char *cmd)
 	printf("    -g <net_index>\n");
 	printf("        write a graphviz description of the interconnect tree\n");
 	printf("        that includes the given net to 'icetime_graph.dot'.\n");
+	printf("\n");
+	printf("    -o <output_file>\n");
+	printf("        write verilog netlist to the file. use '-' for stdout\n");
+	printf("\n");
+	printf("    -r <output_file>\n");
+	printf("        write timing report to the file (instead of stdout)\n");
 	printf("\n");
 	printf("    -m\n");
 	printf("        enable max_span_hack for conservative timing estimates\n");
@@ -1775,7 +1785,7 @@ int main(int argc, char **argv)
 	std::vector<std::string> print_timing_nets;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "p:P:g:mitT:v")) != -1)
+	while ((opt = getopt(argc, argv, "p:P:g:o:r:mitT:v")) != -1)
 	{
 		switch (opt)
 		{
@@ -1790,6 +1800,22 @@ int main(int argc, char **argv)
 		case 'g':
 			graph_nets.insert(atoi(optarg));
 			break;
+		case 'o':
+			if (!strcmp(optarg, "-")) {
+				fout = stdout;
+			} else {
+				fout = fopen(optarg, "w");
+				if (fout == nullptr) {
+					perror("Can't open output file");
+					exit(1);
+				}
+			}
+		case 'r':
+			frpt = fopen(optarg, "w");
+			if (frpt == nullptr) {
+				perror("Can't open report file");
+				exit(1);
+			}
 		case 'm':
 			max_span_hack = true;
 			break;
@@ -1815,23 +1841,6 @@ int main(int argc, char **argv)
 		if (fin == nullptr) {
 			perror("Can't open input file");
 			exit(1);
-		}
-		fout = nullptr;
-	} else
-	if (optind+2 == argc) {
-		fin = fopen(argv[optind], "r");
-		if (fin == nullptr) {
-			perror("Can't open input file");
-			exit(1);
-		}
-		if (std::string(argv[optind+1]) == "-") {
-			fout = stdout;
-		} else {
-			fout = fopen(argv[optind+1], "w");
-			if (fout == nullptr) {
-				perror("Can't open output file");
-				exit(1);
-			}
 		}
 	} else
 		help(argv[0]);
@@ -2042,16 +2051,22 @@ int main(int argc, char **argv)
 
 	if (print_timing || !print_timing_nets.empty())
 	{
-		printf("\n");
-		printf("icetime topological timing analysis report\n");
-		printf("==========================================\n");
-		printf("\n");
-		printf("Warning: This timing analysis report is an estimate!\n");
-		if (max_span_hack)
-			printf("Info: max_span_hack is enabled: estimate is conservative.\n");
-		printf("\n");
-
 		TimingAnalysis ta(interior_timing);
+
+		if (frpt == nullptr)
+			frpt = stdout;
+		else
+			printf("// Timing estimate: %.2f ns (%.2f MHz)\n", ta.global_max_path_delay, 1000.0 / ta.global_max_path_delay);
+
+		fprintf(frpt, "\n");
+		fprintf(frpt, "icetime topological timing analysis report\n");
+		fprintf(frpt, "==========================================\n");
+		fprintf(frpt, "\n");
+		fprintf(frpt, "Warning: This timing analysis report is an estimate!\n");
+		if (max_span_hack)
+			fprintf(frpt, "Info: max_span_hack is enabled: estimate is conservative.\n");
+		fprintf(frpt, "\n");
+
 		for (auto &n : print_timing_nets)
 			ta.report(n);
 

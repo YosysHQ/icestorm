@@ -14,7 +14,7 @@ all: $(PROJ).rpt $(PROJ).bin
 	icepack $< $@
 
 %.rpt: %.asc
-	icetime -mt $< | tee $@
+	icetime -mtr $@ $<
 
 prog: $(PROJ).bin
 	iceprog $<
