@@ -261,7 +261,8 @@ for filename in txt_inputs:
 # Filter database
 
 for celltype in ignore_cells:
-    del database[celltype]
+    if celltype in database:
+        del database[celltype]
 
 
 ###########################################
