@@ -2,7 +2,7 @@ PROJ = example
 PIN_DEF = icestick.pcf
 DEVICE = 1k
 
-all: $(PROJ).bin
+all: $(PROJ).rpt $(PROJ).bin
 
 %.blif: %.v
 	yosys -p 'synth_ice40 -top top -blif $@' $<
@@ -13,14 +13,18 @@ all: $(PROJ).bin
 %.bin: %.asc
 	icepack $< $@
 
+%.rpt: %.asc
+	icetime -mt $< | tee $@
+
 prog: $(PROJ).bin
 	iceprog $<
 
 sudo-prog: $(PROJ).bin
 	@echo 'Executing prog as root!!!'
-	iceprog $<
+	sudo iceprog $<
 
 clean:
-	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).bin
+	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).rpt $(PROJ).bin
 
+.SECONDARY:
 .PHONY: all prog clean

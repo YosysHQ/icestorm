@@ -1781,6 +1781,7 @@ int main(int argc, char **argv)
 		{
 		case 'p':
 			printf("// Reading input .pcf file..\n");
+			fflush(stdout);
 			read_pcf(optarg);
 			break;
 		case 'P':
@@ -1836,12 +1837,15 @@ int main(int argc, char **argv)
 		help(argv[0]);
 
 	printf("// Reading input .asc file..\n");
+	fflush(stdout);
 	read_config();
 
 	printf("// Reading %s chipdb file..\n", config_device.c_str());
+	fflush(stdout);
 	read_chipdb();
 
 	printf("// Creating timing netlist..\n");
+	fflush(stdout);
 
 	for (int net : used_nets)
 	for (auto &seg : net_to_segments[net])

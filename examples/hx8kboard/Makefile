@@ -2,7 +2,7 @@ PROJ = example
 PIN_DEF = hx8kboard.pcf
 DEVICE = 8k
 
-all: $(PROJ).bin
+all: $(PROJ).rpt $(PROJ).bin
 
 %.blif: %.v
 	yosys -p 'synth_ice40 -top top -blif $@' $<
@@ -13,6 +13,9 @@ all: $(PROJ).bin
 %.bin: %.asc
 	icepack $< $@
 
+%.rpt: %.asc
+	icetime -mt $< | tee $@
+
 prog: $(PROJ).bin
 	iceprog $<
 
@@ -21,6 +24,7 @@ sudo-prog: $(PROJ).bin
 	sudo iceprog $<
 
 clean:
-	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).bin
+	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).rpt $(PROJ).bin
 
+.SECONDARY:
 .PHONY: all prog clean
