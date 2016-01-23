@@ -1,6 +1,6 @@
 include ../config.mk
 LDLIBS = -lm -lstdc++
-CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include
+CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include -DPREFIX=$(PREFIX)
 
 all: icetime
 
