@@ -31,6 +31,9 @@
 // add this number of ns as estimate for clock distribution mismatch
 #define GLOBAL_CLK_DIST_JITTER 0.1
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
 FILE *fin = nullptr, *fout = nullptr, *frpt = nullptr;
 bool verbose = false;
 bool max_span_hack = false;
@@ -265,7 +268,7 @@ void read_config()
 void read_chipdb()
 {
 	char buffer[1024];
-	snprintf(buffer, 1024, "/usr/local/share/icebox/chipdb-%s.txt", config_device.c_str());
+	snprintf(buffer, 1024, TOSTRING(PREFIX) "/share/icebox/chipdb-%s.txt", config_device.c_str());
 
 	FILE *fdb = fopen(buffer, "r");
 	if (fdb == nullptr) {
