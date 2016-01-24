@@ -2019,7 +2019,7 @@ int main(int argc, char **argv)
 				if (open_bracket_pos != std::string::npos) {
 					std::string base_name = port.first.substr(0, open_bracket_pos);
 					int bit_index = atoi(port.first.substr(open_bracket_pos+1).c_str());
-					if (multibit_ports[base_name].size() <= bit_index)
+					if (int(multibit_ports[base_name].size()) <= bit_index)
 						multibit_ports[base_name].resize(bit_index+1);
 					multibit_ports[base_name][bit_index] = port.second;
 					continue;
