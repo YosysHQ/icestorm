@@ -1508,7 +1508,7 @@ struct make_interconn_worker_t
 		if (trg.name.substr(0, 6) == "span4_" || trg.name.substr(0, 4) == "sp4_")
 		{
 			bool horiz = trg.name.substr(0, 6) == "sp4_h_";
-			int count_length = -1;
+			int count_length = 0;
 
 			while (seg_parents.count(*cursor) && cursor->net == trg.net) {
 				horiz = horiz || (cursor->name.substr(0, 6) == "sp4_h_");
@@ -1519,7 +1519,10 @@ struct make_interconn_worker_t
 			if (cursor->net == trg.net)
 				goto skip_to_cursor;
 
-			count_length = std::max(count_length, 0);
+			count_length = std::min(std::max(count_length, 0), 4);
+
+			if (max_span_hack)
+				count_length = 4;
 
 			if (cursor->name.substr(0, 7) == "span12_" || cursor->name.substr(0, 5) == "sp12_") {
 				tn = tname();
@@ -1536,7 +1539,7 @@ struct make_interconn_worker_t
 				cell_log[trg] = std::make_pair(*cursor, "IoSpan4Mux");
 			} else {
 				tn = tname();
-				netlist_cell_types[tn] = stringf("Span4Mux_%c%d", horiz ? 'h' : 'v', max_span_hack ? 4 : count_length);
+				netlist_cell_types[tn] = stringf("Span4Mux_%c%d", horiz ? 'h' : 'v', count_length);
 				netlist_cell_ports[tn]["I"] = seg_name(*cursor);
 				netlist_cell_ports[tn]["O"] = seg_name(trg);
 				cell_log[trg] = std::make_pair(*cursor, stringf("Span4Mux_%c%d", horiz ? 'h' : 'v', count_length));
@@ -1550,7 +1553,7 @@ struct make_interconn_worker_t
 		if (trg.name.substr(0, 7) == "span12_" || trg.name.substr(0, 5) == "sp12_")
 		{
 			bool horiz = trg.name.substr(0, 7) == "sp12_h_";
-			int count_length = -1;
+			int count_length = 0;
 
 			while (seg_parents.count(*cursor) && cursor->net == trg.net) {
 				horiz = horiz || (cursor->name.substr(0, 7) == "sp12_h_");
@@ -1561,10 +1564,13 @@ struct make_interconn_worker_t
 			if (cursor->net == trg.net)
 				goto skip_to_cursor;
 
-			count_length = std::max(count_length, 0);
+			count_length = std::min(std::max(count_length, 0), 12);
+
+			if (max_span_hack)
+				count_length = 12;
 
 			tn = tname();
-			netlist_cell_types[tn] = stringf("Span12Mux_%c%d", horiz ? 'h' : 'v', max_span_hack ? 12 : count_length);
+			netlist_cell_types[tn] = stringf("Span12Mux_%c%d", horiz ? 'h' : 'v', count_length);
 			netlist_cell_ports[tn]["I"] = seg_name(*cursor);
 			netlist_cell_ports[tn]["O"] = seg_name(trg);
 			cell_log[trg] = std::make_pair(*cursor, stringf("Span12Mux_%c%d", horiz ? 'h' : 'v', count_length));

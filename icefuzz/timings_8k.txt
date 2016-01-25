@@ -1,3 +1,6 @@
+CELL CascadeBuf
+IOPATH  I  O  137.402:178.5:217.075  170.116:221:268.76
+
 CELL CascadeMux
 IOPATH  I  O  0:0:0  0:0:0
 
