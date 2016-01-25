@@ -670,7 +670,7 @@ struct TimingAnalysis
 				continue;
 
 			if (driver_type == "LogicCell40" && driver_port == "carryout") {
-				if (inport == "in0" || inport == "in3")
+				if (inport == "in0" || inport == "in3" || inport == "ce" || inport == "sr")
 					continue;
 			}
 
@@ -1269,7 +1269,7 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		return;
 	}
 
-	if (seg.name == "lutff_global/clk")
+	if (seg.name == "lutff_global/clk" || seg.name == "lutff_global/cen" || seg.name == "lutff_global/s_r")
 	{
 		for (int i = 0; i < 8; i++)
 		{
@@ -1277,10 +1277,22 @@ void make_seg_cell(int net, const net_segment_t &seg)
 				continue;
 
 			std::tuple<int, int, std::string> key(seg.x, seg.y, stringf("lutff_%d/out", i));
-			if (x_y_name_net.count(key)) {
+			if (x_y_name_net.count(key))
+			{
 				auto cell = make_lc40(seg.x, seg.y, i);
-				make_inmux(seg.x, seg.y, net, "ClkMux");
-				netlist_cell_ports[cell]["clk"] = net_name(seg.net);
+
+				if (seg.name == "lutff_global/clk") {
+					make_inmux(seg.x, seg.y, net, "ClkMux");
+					netlist_cell_ports[cell]["clk"] = net_name(seg.net);
+				}
+				if (seg.name == "lutff_global/cen") {
+					make_inmux(seg.x, seg.y, net, "CEMux");
+					netlist_cell_ports[cell]["ce"] = net_name(seg.net);
+				}
+				if (seg.name == "lutff_global/s_r") {
+					make_inmux(seg.x, seg.y, net, "SRMux");
+					netlist_cell_ports[cell]["sr"] = net_name(seg.net);
+				}
 			}
 		}
 		return;
@@ -1816,12 +1828,14 @@ int main(int argc, char **argv)
 					exit(1);
 				}
 			}
+			break;
 		case 'r':
 			frpt = fopen(optarg, "w");
 			if (frpt == nullptr) {
 				perror("Can't open report file");
 				exit(1);
 			}
+			break;
 		case 'm':
 			max_span_hack = true;
 			break;
