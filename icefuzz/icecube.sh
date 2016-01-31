@@ -67,6 +67,10 @@ case "${ICEDEV:-hx1k-tq144}" in
 		iCEPACKAGE="TQ144"
 		iCE40DEV="iCE40HX1K"
 		;;
+	hx4k-cb132)
+		iCEPACKAGE="CB132"
+		iCE40DEV="iCE40HX4K"
+		;;
 	hx8k-cm225)
 		iCEPACKAGE="CM225"
 		iCE40DEV="iCE40HX8K"
@@ -101,6 +105,11 @@ case "$iCE40DEV" in
 		icetech="SBTiCE40"
 		libfile="ice40HX1K.lib"
 		devfile="ICE40P01.dev"
+		;;
+	iCE40HX4K)
+		icetech="SBTiCE40"
+		libfile="ice40HX8K.lib"
+		devfile="ICE40P04.dev"
 		;;
 	iCE40HX8K)
 		icetech="SBTiCE40"
