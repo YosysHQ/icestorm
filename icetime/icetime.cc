@@ -35,7 +35,7 @@ FILE *fin = nullptr, *fout = nullptr, *frpt = nullptr;
 bool verbose = false;
 bool max_span_hack = false;
 
-std::string config_device, selected_package;
+std::string config_device, device_type, selected_package;
 std::vector<std::vector<std::string>> config_tile_type;
 std::vector<std::vector<std::vector<std::vector<bool>>>> config_bits;
 std::map<std::tuple<int, int, int>, std::string> pin_pos;
@@ -613,13 +613,19 @@ double get_delay(std::string cell_type, std::string in_port, std::string out_por
 	if (cell_type == "INTERCONN")
 		return 0;
 
-	if (config_device == "1k")
-		return get_delay_1k(cell_type, in_port, out_port);
+	if (device_type == "lp1k")
+		return get_delay_lp1k(cell_type, in_port, out_port);
 
-	if (config_device == "8k")
-		return get_delay_8k(cell_type, in_port, out_port);
+	if (device_type == "lp8k")
+		return get_delay_lp8k(cell_type, in_port, out_port);
 
-	fprintf(stderr, "No built-in timing database for '%s' devices!\n", config_device.c_str());
+	if (device_type == "hx1k")
+		return get_delay_hx1k(cell_type, in_port, out_port);
+
+	if (device_type == "hx8k")
+		return get_delay_hx8k(cell_type, in_port, out_port);
+
+	fprintf(stderr, "No built-in timing database for '%s' devices!\n", device_type.c_str());
 	exit(1);
 }
 
@@ -1777,6 +1783,9 @@ void help(const char *cmd)
 	printf("    -r <output_file>\n");
 	printf("        write timing report to the file (instead of stdout)\n");
 	printf("\n");
+	printf("    -d lp1k|hx1k|lp8k|hx8k\n");
+	printf("        select the device type (default = lp variant)\n");
+	printf("\n");
 	printf("    -m\n");
 	printf("        enable max_span_hack for conservative timing estimates\n");
 	printf("\n");
@@ -1803,7 +1812,7 @@ int main(int argc, char **argv)
 	std::vector<std::string> print_timing_nets;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "p:P:g:o:r:mitT:v")) != -1)
+	while ((opt = getopt(argc, argv, "p:P:g:o:r:d:mitT:v")) != -1)
 	{
 		switch (opt)
 		{
@@ -1835,6 +1844,9 @@ int main(int argc, char **argv)
 				perror("Can't open report file");
 				exit(1);
 			}
+			break;
+		case 'd':
+			device_type = optarg;
 			break;
 		case 'm':
 			max_span_hack = true;
@@ -1868,6 +1880,29 @@ int main(int argc, char **argv)
 	printf("// Reading input .asc file..\n");
 	fflush(stdout);
 	read_config();
+
+	if (device_type.empty()) {
+		device_type = "lp" + config_device;
+		printf("// Warning: Missing -d paramter. Assuming '%s' device.\n", device_type.c_str());
+	}
+
+	if (device_type == "lp1k" || device_type == "hx1k") {
+		if (config_device != "1k")
+			goto device_chip_mismatch;
+	} else
+	if (device_type == "lp8k" || device_type == "hx8k") {
+		if (config_device != "8k")
+			goto device_chip_mismatch;
+	} else {
+		fprintf(stderr, "Error: Invalid device type '%s'.\n", device_type.c_str());
+		exit(1);
+	}
+
+	if (0) {
+device_chip_mismatch:
+		printf("// Warning: Device type '%s' and chip '%s' do not match.\n", device_type.c_str(), config_device.c_str());
+		fflush(stdout);
+	}
 
 	printf("// Reading %s chipdb file..\n", config_device.c_str());
 	fflush(stdout);

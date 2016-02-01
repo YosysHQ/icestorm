@@ -263,6 +263,10 @@ fi
 # run netlister
 "$icecubedir"/sbt_backend/bin/linux/opt/netlister --verilog "$PWD"/outputs/netlist/top_sbt.v --vhdl "$PWD"/outputs/netlist/top_sbt.vhd --lib "$PWD"/netlist/oadb-top --view rt --device "$icecubedir"/sbt_backend/devices/$devfile --splitio --in-sdc-file "$PWD"/outputs/packer/top_pk.sdc --out-sdc-file "$PWD"/outputs/netlist/top_sbt.sdc
 
+if [ -n "$ICE_SBTIMER_LP" ]; then
+	"$icecubedir"/sbt_backend/bin/linux/opt/sbtimer --des-lib "$PWD"/netlist/oadb-top --lib-file "$icecubedir"/sbt_backend/devices/$libfile --sdc-file "$PWD"/outputs/netlist/top_sbt.sdc --sdf-file "$PWD"/outputs/netlist/top_sbt_lp.sdf --report-file "$PWD"/outputs/netlist/top_timing_lp.rpt --device-file "$icecubedir"/sbt_backend/devices/$devfile --timing-summary
+fi
+
 # hacks for sbtimer so it knows what device we are dealing with
 ln -fs . sbt
 ln -fs . foobar_Implmnt
@@ -304,6 +308,10 @@ cp "$1.tmp"/outputs/placer/top_sbt.pcf "$1.psb"
 cp "$1.tmp"/outputs/netlist/top_sbt.v "$1.vsb"
 cp "$1.tmp"/outputs/netlist/top_sbt.sdf "$1.sdf"
 cp "$1.tmp"/outputs/netlist/top_timing.rpt "$1.rpt"
+if [ -n "$ICE_SBTIMER_LP" ]; then
+	cp "$1.tmp"/outputs/netlist/top_sbt_lp.sdf "$1.slp"
+	cp "$1.tmp"/outputs/netlist/top_timing_lp.rpt "$1.rlp"
+fi
 
 $scriptdir/../icepack/iceunpack "$1.bin" "$1.asc"
 

@@ -1,6 +1,6 @@
 PROJ = example
 PIN_DEF = hx8kboard.pcf
-DEVICE = 8k
+DEVICE = hx8k
 
 all: $(PROJ).rpt $(PROJ).bin
 
@@ -8,13 +8,13 @@ all: $(PROJ).rpt $(PROJ).bin
 	yosys -p 'synth_ice40 -top top -blif $@' $<
 
 %.asc: $(PIN_DEF) %.blif
-	arachne-pnr -d $(DEVICE) -o $@ -p $^
+	arachne-pnr -d $(subst hx,,$(subst lp,,$(DEVICE))) -o $@ -p $^
 
 %.bin: %.asc
 	icepack $< $@
 
 %.rpt: %.asc
-	icetime -mtr $@ $<
+	icetime -d $(DEVICE) -mtr $@ $<
 
 prog: $(PROJ).bin
 	iceprog $<

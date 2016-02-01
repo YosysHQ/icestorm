@@ -41,9 +41,7 @@ def timings_to_c(chip, f):
     print("  exit(1);")
     print("}")
 
-with open("../icefuzz/timings_1k.txt", "r") as f:
-    timings_to_c("1k", f);
-
-with open("../icefuzz/timings_8k.txt", "r") as f:
-    timings_to_c("8k", f);
+for db in "lp1k lp8k hx1k hx8k".split():
+    with open("../icefuzz/timings_%s.txt" % db, "r") as f:
+        timings_to_c(db, f);
 

@@ -8,7 +8,7 @@ icetime: icetime.o
 
 icetime.o: icetime.cc timings.inc
 
-timings.inc: timings.py
+timings.inc: timings.py ../icefuzz/timings_*.txt
 	python3 timings.py > timings.inc.new
 	mv timings.inc.new timings.inc
 
@@ -26,11 +26,11 @@ uninstall:
 
 test0 test1 test2 test3 test4 test5 test6 test7 test8 test9: icetime
 	test -f $@_ref.v || python3 mktest.py $@
-	./icetime -m -P tq144 -p $@.pcf -o $@_out.v $@.asc
+	./icetime -m -d hx1k -P tq144 -p $@.pcf -o $@_out.v $@.asc
 	yosys $@.ys
 
 run0 run1 run2 run3 run4 run5 run6 run7 run8 run9: icetime
-	./icetime -t -P tq144 -p $(subst run,test,$@).pcf $(subst run,test,$@).asc
+	./icetime -t -d hx1k -P tq144 -p $(subst run,test,$@).pcf $(subst run,test,$@).asc
 
 show0 show1 show2 show3 show4 show5 show6 show7 show8 show9: icetime
 	bash show.sh $(subst show,test,$@)
