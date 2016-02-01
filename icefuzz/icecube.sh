@@ -71,6 +71,10 @@ case "${ICEDEV:-hx1k-tq144}" in
 		iCEPACKAGE="CB132"
 		iCE40DEV="iCE40HX4K"
 		;;
+	hx4k-tq144)
+		iCEPACKAGE="TQ144"
+		iCE40DEV="iCE40HX4K"
+		;;
 	hx8k-cm225)
 		iCEPACKAGE="CM225"
 		iCE40DEV="iCE40HX8K"

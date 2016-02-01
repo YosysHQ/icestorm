@@ -32,12 +32,12 @@ for arg in argv[1:]:
 print()
 print("# ieren_db")
 for entry in sorted(ieren_db):
-    print("(%2d, %2d, %d, %2d, %2d, %d)," % entry)
+    print("        (%2d, %2d, %d, %2d, %2d, %d)," % entry)
 
 print()
 print("# pinloc_db")
-for entry in sorted(pinloc_db):
-    print("(%5s, %2d, %2d, %d)," % entry)
+for entry in sorted(pinloc_db, key=lambda n: re.sub(r"[0-9]+", lambda d: "%03d" % int(d.group(0)), n[0])):
+    print("        (%5s, %2d, %2d, %d)," % entry)
 
 print()
 

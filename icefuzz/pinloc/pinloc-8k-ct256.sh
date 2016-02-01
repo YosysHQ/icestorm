@@ -19,6 +19,11 @@ pins="
 	T1  T2  T3      T5  T6  T7  T8  T9  T10 T11     T13 T14 T15 T16
 "
 
+if [ $(echo $pins | wc -w) -ne 206 ]; then
+	echo "Incorrect number of pins:" $(echo $pins | wc -w)
+	exit 1
+fi
+
 {
 	echo -n "all:"
 	for pin in $pins; do
@@ -34,6 +39,7 @@ pins="
 		echo; echo "${id}.exp:"
 		echo "	ICEDEV=hx8k-ct256 bash ../icecube.sh ${id} > ${id}.log 2>&1"
 		echo "	../../icebox/icebox_explain.py ${id}.asc > ${id}.exp.new"
+		echo "	! grep '^Warning: pin' ${id}.log"
 		echo "	rm -rf ${id}.tmp"
 		echo "	mv ${id}.exp.new ${id}.exp"
 	done
