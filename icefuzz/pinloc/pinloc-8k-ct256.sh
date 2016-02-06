@@ -1,5 +1,8 @@
 #!/bin/bash
 
+mkdir -p pinloc-8k-ct256
+cd pinloc-8k-ct256
+
 pins="
 	A1  A2          A5  A6  A7      A9  A10 A11             A15 A16
 	B1  B2  B3  B4  B5  B6  B7  B8  B9  B10 B11 B12 B13 B14 B15 B16
@@ -37,8 +40,8 @@ fi
 		echo "module top(output y); assign y = 0; endmodule" > ${id}.v
 		echo "set_io y ${pin}" >> ${id}.pcf
 		echo; echo "${id}.exp:"
-		echo "	ICEDEV=hx8k-ct256 bash ../icecube.sh ${id} > ${id}.log 2>&1"
-		echo "	../../icebox/icebox_explain.py ${id}.asc > ${id}.exp.new"
+		echo "	ICEDEV=hx8k-ct256 bash ../../icecube.sh ${id} > ${id}.log 2>&1"
+		echo "	../../../icebox/icebox_explain.py ${id}.asc > ${id}.exp.new"
 		echo "	! grep '^Warning: pin' ${id}.log"
 		echo "	rm -rf ${id}.tmp"
 		echo "	mv ${id}.exp.new ${id}.exp"
@@ -47,4 +50,5 @@ fi
 
 set -ex
 make -f pinloc-8k-ct256.mk -j4
-python3 pinlocdb.py pinloc-8k-ct256_*.exp > pinloc-8k-ct256.txt
+python3 ../pinlocdb.py pinloc-8k-ct256_*.exp > ../pinloc-8k-ct256.txt
+

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+mkdir -p pinloc-1k-vq100
+cd pinloc-1k-vq100
+
 pins="
 	1 2 3 4 7 8 9 10 12 13 15 16 18 19 20 21 24 25
 	26 27 28 29 30 33 34 36 37 40 41 42 45 46 48 49
@@ -25,8 +28,8 @@ fi
 		echo "module top(output y); assign y = 0; endmodule" > ${id}.v
 		echo "set_io y ${pin}" >> ${id}.pcf
 		echo; echo "${id}.exp:"
-		echo "	ICEDEV=hx1k-vq100 bash ../icecube.sh ${id} > ${id}.log 2>&1"
-		echo "	../../icebox/icebox_explain.py ${id}.asc > ${id}.exp.new"
+		echo "	ICEDEV=hx1k-vq100 bash ../../icecube.sh ${id} > ${id}.log 2>&1"
+		echo "	../../../icebox/icebox_explain.py ${id}.asc > ${id}.exp.new"
 		echo "	! grep '^Warning: pin' ${id}.log"
 		echo "	rm -rf ${id}.tmp"
 		echo "	mv ${id}.exp.new ${id}.exp"
@@ -35,5 +38,5 @@ fi
 
 set -ex
 make -f pinloc-1k-vq100.mk -j4
-python3 pinlocdb.py pinloc-1k-vq100_*.exp > pinloc-1k-vq100.txt
+python3 ../pinlocdb.py pinloc-1k-vq100_*.exp > ../pinloc-1k-vq100.txt
 

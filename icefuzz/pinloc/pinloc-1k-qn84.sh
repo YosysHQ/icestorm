@@ -1,5 +1,8 @@
 #!/bin/bash
 
+mkdir -p pinloc-1k-qn84
+cd pinloc-1k-qn84
+
 pins="
 	A1  B1  A2  B2  A3  B3  A4  B4  A5  B5  A8  A9  B7  A10 B8  A11 B9  A12
 	A13 B10 B11 A14 B12 A16 B13 B14 A19 B15 A20 B17 A22 A23 B18 B19 A25 A26
@@ -26,8 +29,8 @@ fi
 		echo "module top(output y); assign y = 0; endmodule" > ${id}.v
 		echo "set_io y ${pin}" >> ${id}.pcf
 		echo; echo "${id}.exp:"
-		echo "	ICEDEV=lp1k-qn84 bash ../icecube.sh ${id} > ${id}.log 2>&1"
-		echo "	../../icebox/icebox_explain.py ${id}.asc > ${id}.exp.new"
+		echo "	ICEDEV=lp1k-qn84 bash ../../icecube.sh ${id} > ${id}.log 2>&1"
+		echo "	../../../icebox/icebox_explain.py ${id}.asc > ${id}.exp.new"
 		echo "	! grep '^Warning: pin' ${id}.log"
 		echo "	rm -rf ${id}.tmp"
 		echo "	mv ${id}.exp.new ${id}.exp"
@@ -36,5 +39,5 @@ fi
 
 set -ex
 make -f pinloc-1k-qn84.mk -j4
-python3 pinlocdb.py pinloc-1k-qn84_*.exp > pinloc-1k-qn84.txt
+python3 ../pinlocdb.py pinloc-1k-qn84_*.exp > ../pinloc-1k-qn84.txt
 
