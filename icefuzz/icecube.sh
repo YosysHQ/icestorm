@@ -119,6 +119,30 @@ case "${ICEDEV:-hx1k-tq144}" in
                 iCEPACKAGE="CB121"
                 iCE40DEV="iCE40LP1K"
                 ;;
+	lp4k-cm81)
+		iCEPACKAGE="CM81"
+		iCE40DEV="iCE40LP4K"
+		;;
+	lp4k-cm121)
+		iCEPACKAGE="CM121"
+		iCE40DEV="iCE40LP4K"
+		;;
+	lp4k-cm225)
+		iCEPACKAGE="CM225"
+		iCE40DEV="iCE40LP4K"
+		;;
+	lp8k-cm81)
+		iCEPACKAGE="CM81"
+		iCE40DEV="iCE40LP8K"
+		;;
+	lp8k-cm121)
+		iCEPACKAGE="CM121"
+		iCE40DEV="iCE40LP8K"
+		;;
+	lp8k-cm225)
+		iCEPACKAGE="CM225"
+		iCE40DEV="iCE40LP8K"
+		;;
 	ul1k-cm36a)
                 iCEPACKAGE="CM36A"
                 iCE40DEV="iCE40UL1K"
@@ -152,6 +176,16 @@ case "$iCE40DEV" in
 		icetech="SBTiCE40"
 		libfile="ice40LP1K.lib"
 		devfile="ICE40P01.dev"
+		;;
+	iCE40LP4K)
+		icetech="SBTiCE40"
+		libfile="ice40LP8K.lib"
+		devfile="ICE40P04.dev"
+		;;
+	iCE40LP8K)
+		icetech="SBTiCE40"
+		libfile="ice40LP8K.lib"
+		devfile="ICE40P08.dev"
 		;;
 	iCE40UL1K)
 		icetech="SBTiCE40UL"
