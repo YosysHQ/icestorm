@@ -1,5 +1,16 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8">
+<style>
+.ctab {
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid gray;
+}
+.ctab td, .ctab th {
+	padding: 3px;
+	border: 1px solid gray;
+}
+</style>
 <title>Project IceStorm</title>
 </head><body>
 <h1>Project IceStorm</h1>
@@ -48,11 +59,41 @@ HX1K-TQ144 and the iCE40 HX8K-CT256 using our <tt>icebox_vlog</tt> tool.
 </p>
 
 <p>
-Current work focuses on improvements in our timing analysis flow and support
-for all iCE40 LP/HX 1K, 4K, and 8K devices.
+Here is a list of currently supported parts and the corresponding options for arachne-pnr (place and route) and icetime (timing analysis):
 </p>
 
-<h2>What is the Status of the Fully Open Source iCE40 Flow?</h2>
+<table class="ctab">
+<tr><th>Part</th><th>Package</th><th>Pin Spacing</th><th>I/Os</th><th>arachne-pnr opts</th><th>icetime opts</th></tr>
+<tr><td>iCE40-LP1K-SWG16TR</td><td>16-ball WLCSP (1.40 x 1.48 mm)</td><td>0.35 mm</td><td>10</td><td>-d 1k -P swg16tr</td><td>-d lp1k</td></tr>
+<tr><td>iCE40-LP1K-CM36</td><td>36-ball ucBGA (2.5 x 2.5 mm)</td><td>0.40 mm</td><td>25</td><td>-d 1k -P cm36</td><td>-d lp1k</td></tr>
+<tr><td>iCE40-LP1K-CM49</td><td>49-ball ucBGA (3 x 3 mm)</td><td>0.40 mm</td><td>35</td><td>-d 1k -P cm49</td><td>-d lp1k</td></tr>
+<tr><td>iCE40-LP1K-CM81</td><td>81-ball ucBGA (4 x 4 mm)</td><td>0.40 mm</td><td>63</td><td>-d 1k -P cm81</td><td>-d lp1k</td></tr>
+<tr><td>iCE40-LP4K-CM81</td><td>81-ball ucBGA (4 x 4 mm)</td><td>0.40 mm</td><td>63</td><td>-d 8k -P cm81:4k</td><td>-d lp8k</td></tr>
+<tr><td>iCE40-LP8K-CM81</td><td>81-ball ucBGA (4 x 4 mm)</td><td>0.40 mm</td><td>63</td><td>-d 8k -P cm81</td><td>-d lp8k</td></tr>
+<tr><td>iCE40-LP1K-CM121</td><td>121-ball ucBGA (5 x 5 mm)</td><td>0.40 mm</td><td>95</td><td>-d 1k -P cm121</td><td>-d lp1k</td></tr>
+<tr><td>iCE40-LP4K-CM121</td><td>121-ball ucBGA (5 x 5 mm)</td><td>0.40 mm</td><td>93</td><td>-d 8k -P cm121:4k</td><td>-d lp8k</td></tr>
+<tr><td>iCE40-LP8K-CM121</td><td>121-ball ucBGA (5 x 5 mm)</td><td>0.40 mm</td><td>93</td><td>-d 8k -P cm121</td><td>-d lp8k</td></tr>
+<tr><td>iCE40-LP4K-CM225</td><td>225-ball ucBGA (7 x 7 mm)</td><td>0.40 mm</td><td>167</td><td>-d 8k -P cm225:4k</td><td>-d lp8k</td></tr>
+<tr><td>iCE40-LP8K-CM225</td><td>225-ball ucBGA (7 x 7 mm)</td><td>0.40 mm</td><td>178</td><td>-d 8k -P cm225</td><td>-d lp8k</td></tr>
+<tr><td>iCE40-HX8K-CM225</td><td>225-ball ucBGA (7 x 7 mm)</td><td>0.40 mm</td><td>178</td><td>-d 8k -P cm225</td><td>-d hx8k</td></tr>
+<tr><td>iCE40-LP1K-QN84</td><td>84-pin QFNS (7 x 7 mm)</td><td>0.50 mm</td><td>67</td><td>-d 1k -P qn84</td><td>-d lp1k</td></tr>
+<tr><td>iCE40-LP1K-CB81</td><td>81-ball csBGA (5 x 5 mm)</td><td>0.50 mm</td><td>62</td><td>-d 1k -P cb81</td><td>-d lp1k</td></tr>
+<tr><td>iCE40-LP1K-CB121</td><td>121-ball csBGA (6 x 6 mm)</td><td>0.50 mm</td><td>92</td><td>-d 1k -P cb121</td><td>-d lp1k</td></tr>
+<tr><td>iCE40-LP1K-CB121</td><td>121-ball csBGA (6 x 6 mm)</td><td>0.50 mm</td><td>92</td><td>-d 1k -P cb121</td><td>-d lp1k</td></tr>
+<tr><td>iCE40-HX1K-CB132</td><td>132-ball csBGA (8 x 8 mm)</td><td>0.50 mm</td><td>95</td><td>-d 1k -P cb132</td><td>-d hx1k</td></tr>
+<tr><td>iCE40-HX4K-CB132</td><td>132-ball csBGA (8 x 8 mm)</td><td>0.50 mm</td><td>95</td><td>-d 8k -P cb132:4k</td><td>-d hx8k</td></tr>
+<tr><td>iCE40-HX8K-CB132</td><td>132-ball csBGA (8 x 8 mm)</td><td>0.50 mm</td><td>95</td><td>-d 8k -P cb132</td><td>-d hx8k</td></tr>
+<tr><td>iCE40-HX1K-VQ100</td><td>100-pin VQFP (14 x 14 mm)</td><td>0.50 mm</td><td>72</td><td>-d 1k -P vq100</td><td>-d hx1k</td></tr>
+<tr><td>iCE40-HX1K-TQ144</td><td>144-pin TQFP (20 x 20 mm)</td><td>0.50 mm</td><td>96</td><td>-d 1k -P tq144</td><td>-d hx1k</td></tr>
+<tr><td>iCE40-HX4K-TQ144</td><td>144-pin TQFP (20 x 20 mm)</td><td>0.50 mm</td><td>107</td><td>-d 8k -P tq144:4k</td><td>-d hx8k</td></tr>
+<tr><td>iCE40-HX8K-CT256</td><td>256-ball caBGA (14 x 14 mm)</td><td>0.80 mm</td><td>206</td><td>-d 8k -P ct256</td><td>-d hx8k</td></tr>
+</table>
+
+<p>
+Current work focuses on further improving our timing analysis flow.
+</p>
+
+<h2>How do I use the Fully Open Source iCE40 Flow?</h2>
 
 <p>
 Synthesis for iCE40 FPGAs can be done with <a href="http://www.clifford.at/yosys/">Yosys</a>.
@@ -86,7 +127,7 @@ sudo apt-get install build-essential clang bison flex libreadline-dev \
 </pre>
 
 <p>
-Installing the <a href="https://github.com/cliffordwolf/icestorm">IceStorm Tools</a> (icepack, icebox, iceprog):
+Installing the <a href="https://github.com/cliffordwolf/icestorm">IceStorm Tools</a> (icepack, icebox, iceprog, icetime, chip databases):
 </p>
 
 <pre style="padding-left: 3em">git clone https://github.com/cliffordwolf/icestorm.git icestorm
@@ -113,7 +154,7 @@ make -j$(nproc)
 sudo make install</pre>
 
 <p>
-Note: The Arachne-PNR build depends on files installed by IceStorm. Always rebuild Arachne-PNR
+The Arachne-PNR build converts the IceStorm text chip databases into the arachne-pnr binary chip databases. Always rebuild Arachne-PNR
 after updating your IceStorm installation.
 </p>
 
@@ -192,6 +233,23 @@ create an IceStorm ASCII file for the placed and routed design.
 
 <p>
 <i>The IcePack/IceUnpack, IceBox, and IceProg are written by Clifford Wolf. IcePack/IceUnpack is based on a reference implementation provided by Mathias Lasser. IceMulti is written by Marcus Comstedt.</i>
+</p>
+
+<h2>Where do I get support or meet other IceStorm users?</h2>
+
+<p>
+If you have a question regarding the IceStorm flow, use the <a href="http://stackoverflow.com/questions/tagged/yosys">yosys tag on stackoverflow</a>
+to ask your question. If your question is a general question about Verilog HDL design, please consider using the
+<a href="http://stackoverflow.com/questions/tagged/verilog">verilog tag on stackoverflow</a> instead.
+</p>
+
+<p>
+For general discussions go to the <a href="https://www.reddit.com/r/yosys/">Yosys Subreddit</a> or <a href="http://webchat.freenode.net/?channels=yosys">#yosys on freenode IRC</a>.
+</p>
+
+<p>
+If you have a bug report please file an issue on github. (<a href="https://github.com/cliffordwolf/icestorm/issues">IceStorm Issue Tracker</a>,
+<a href="https://github.com/cliffordwolf/yosys/issues">Yosys Issue Tracker</a>, <a href="https://github.com/cseed/arachne-pnr/issues">Arachne-PNR Issue Tracker</a>)
 </p>
 
 <h2>Where is the Documentation?</h2>
