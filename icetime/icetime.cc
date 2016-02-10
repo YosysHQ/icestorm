@@ -265,7 +265,17 @@ void read_config()
 void read_chipdb()
 {
 	char buffer[1024];
-	snprintf(buffer, 1024, PREFIX "/share/icebox/chipdb-%s.txt", config_device.c_str());
+	char path[1024];
+
+	//-- If the PREFIX initial character is ~ expand it the
+	//-- home directory
+	if (strlen(PREFIX)>0 && PREFIX[0]=='~')
+	  snprintf(path, 1024, "%s%s", getenv("HOME"), &PREFIX[1]);
+	else
+	  snprintf(path, 1024, "%s", PREFIX);
+
+    //-- Chipdb file with full path
+	snprintf(buffer, 1024, "%s/share/icebox/chipdb-%s.txt", path, config_device.c_str());
 
 	FILE *fdb = fopen(buffer, "r");
 	if (fdb == nullptr) {
