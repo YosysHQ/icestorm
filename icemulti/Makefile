@@ -2,9 +2,10 @@ include ../config.mk
 LDLIBS = -lm -lstdc++
 CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11
 
-all: icemulti
+all: icemulti$(EXE)
 
-icemulti: icemulti.o
+icemulti$(EXE): icemulti.o
+	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
@@ -15,6 +16,7 @@ uninstall:
 
 clean:
 	rm -f icemulti
+	rm -f icemulti.exe
 	rm -f *.o *.d
 
 -include *.d

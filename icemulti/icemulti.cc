@@ -20,6 +20,7 @@
 #include <memory>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define log(...) fprintf(stderr, __VA_ARGS__);
 #define info(...) do { if (log_level > 0) fprintf(stderr, __VA_ARGS__); } while (0)

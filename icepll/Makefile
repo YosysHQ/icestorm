@@ -2,9 +2,10 @@ include ../config.mk
 LDLIBS = -lm -lstdc++
 CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include
 
-all: icepll
+all: icepll$(EXE)
 
-icepll: icepll.o
+icepll$(EXE): icepll.o
+	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
@@ -14,7 +15,9 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/icepll
 
 clean:
-	rm -f icepll *.o *.d
+	rm -f icepll
+	rm -f icepll.exe
+	rm -f *.o *.d
 
 -include *.d
 

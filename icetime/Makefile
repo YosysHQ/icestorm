@@ -2,9 +2,10 @@ include ../config.mk
 LDLIBS = -lm -lstdc++
 CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include -DPREFIX='"$(PREFIX)"'
 
-all: icetime
+all: icetime$(EXE)
 
-icetime: icetime.o
+icetime$(EXE): icetime.o
+	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 icetime.o: icetime.cc timings.inc
 
@@ -41,7 +42,7 @@ test: test0 test1 test2 test3 test4 test5 test6 test7 test8 test9
 show: show0 show1 show2 show3 show4 show5 show6 show7 show8 show9
 
 clean:
-	rm -f icetime timings.inc *.o *.d
+	rm -f icetime icetime.exe timings.inc *.o *.d
 	rm -rf test[0-9]*
 
 -include *.d

@@ -3,15 +3,16 @@ LDLIBS = -lm -lstdc++
 CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include
 MXEGCC = /usr/local/src/mxe/usr/bin/i686-pc-mingw32-gcc
 
-all: icepack iceunpack
+all: icepack$(EXE) iceunpack$(EXE)
 
-icepack: icepack.o
-
-icepack.exe: icepack.cc
-	$(MXEGCC) -std=c++11 -o icepack.exe -Os icepack.cc -lm -lstdc++
+icepack$(EXE): icepack.o
+	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 iceunpack: icepack
 	ln -sf icepack iceunpack
+
+iceunpack.exe:
+	# no iceunpack.exe, use icepack -u
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin

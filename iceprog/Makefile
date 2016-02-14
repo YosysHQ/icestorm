@@ -1,14 +1,15 @@
 include ../config.mk
 LDLIBS = -L/usr/local/lib -lftdi -lm
 CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
-MXEGCC = /usr/local/src/mxe/usr/bin/i686-pc-mingw32-gcc
 
-all: iceprog
+ifeq ($(MXE),1)
+LDLIBS += -lusb
+endif
 
-iceprog: iceprog.o
+all: iceprog$(EXE)
 
-iceprog.exe: iceprog.c
-	$(MXEGCC) -std=c99 -o iceprog.exe -Os iceprog.c -lftdi -lusb -lm
+iceprog$(EXE): iceprog.o
+	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
