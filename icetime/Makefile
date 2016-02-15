@@ -1,6 +1,11 @@
 include ../config.mk
+ifeq ($(STATIC), 1)
+LDLIBS = -static -static-libgcc -lm -lstdc++
+CXXFLAGS = -MD -O0 -Wall -std=c++11 -I/usr/local/include -DPREFIX='"$(PREFIX)"'
+else
 LDLIBS = -lm -lstdc++
 CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include -DPREFIX='"$(PREFIX)"'
+endif
 
 all: icetime$(EXE)
 
@@ -48,4 +53,3 @@ clean:
 -include *.d
 
 .PHONY: all install uninstall clean
-
