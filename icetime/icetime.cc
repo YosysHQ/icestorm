@@ -1886,7 +1886,7 @@ int main(int argc, char **argv)
 
 	if (device_type.empty()) {
 		device_type = "lp" + config_device;
-		printf("// Warning: Missing -d paramter. Assuming '%s' device.\n", device_type.c_str());
+		printf("// Warning: Missing -d parameter. Assuming '%s' device.\n", device_type.c_str());
 	}
 
 	if (device_type == "lp1k" || device_type == "hx1k") {

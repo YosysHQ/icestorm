@@ -84,12 +84,12 @@ int main(int argc, char **argv)
 	int best_divq = 0;
 
 	if (f_pllin < 10 || f_pllin > 133) {
-		fprintf(stderr, "Error: PLL input freqency %.3f MHz is outside range 10 MHz - 133 MHz!\n", f_pllin);
+		fprintf(stderr, "Error: PLL input frequency %.3f MHz is outside range 10 MHz - 133 MHz!\n", f_pllin);
 		exit(1);
 	}
 
 	if (f_pllout < 16 || f_pllout > 275) {
-		fprintf(stderr, "Error: PLL output freqency %.3f MHz is outside range 16 MHz - 275 MHz!\n", f_pllout);
+		fprintf(stderr, "Error: PLL output frequency %.3f MHz is outside range 16 MHz - 275 MHz!\n", f_pllout);
 		exit(1);
 	}
 
