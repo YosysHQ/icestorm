@@ -1,10 +1,9 @@
 include ../config.mk
-LDLIBS = -L/usr/local/lib -lftdi -lm
+LDLIBS = -L/usr/local/lib -lm
 CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
 
-ifeq ($(MXE),1)
-LDLIBS += -lusb
-endif
+LDLIBS += $(shell for pkg in libftdi libftdi1; do $(PKG_CONFIG) --silence-errors --libs $$pkg && exit; done; echo -lftdi; )
+CFLAGS += $(shell for pkg in libftdi libftdi1; do $(PKG_CONFIG) --silence-errors --cflags $$pkg && exit; done; )
 
 all: iceprog$(EXE)
 
