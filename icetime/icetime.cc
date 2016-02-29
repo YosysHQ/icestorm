@@ -985,6 +985,8 @@ std::string make_seg_pre_io(int x, int y, int z)
 
 std::string make_lc40(int x, int y, int z)
 {
+	assert(0 < x && 0 < y && 0 <= z && z < 8);
+
 	auto cell = stringf("lc40_%d_%d_%d", x, y, z);
 
 	if (netlist_cell_types.count(cell))
@@ -1022,7 +1024,7 @@ std::string make_lc40(int x, int y, int z)
 	{
 		if (z == 0)
 		{
-			auto co_cell = make_lc40(x, y-1, 7);
+			auto co_cell = 1 < y ? make_lc40(x, y-1, 7) : std::string();
 			std::string n1, n2;
 
 			char cinit_1 = config_bits[x][y][1][49] ? '1' : '0';
@@ -1034,6 +1036,7 @@ std::string make_lc40(int x, int y, int z)
 					n1 = net_name(x_y_name_net.at(key));
 				} else {
 					n1 = tname();
+					assert(!co_cell.empty());
 					netlist_cell_ports[co_cell]["carryout"] = n1;
 					extra_wires.insert(n1);
 				}
