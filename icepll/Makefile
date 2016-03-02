@@ -2,6 +2,10 @@ include ../config.mk
 LDLIBS = -lm -lstdc++
 CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include
 
+ifeq ($(STATIC),1)
+LDFLAGS += -static
+endif
+
 all: icepll$(EXE)
 
 icepll$(EXE): icepll.o
