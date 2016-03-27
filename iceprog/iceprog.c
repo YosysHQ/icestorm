@@ -490,7 +490,7 @@ int main(int argc, char **argv)
 		// ---------------------------------------------------------
 
 		FILE *f = (strcmp(filename, "-") == 0) ? stdin :
-			fopen(filename, "r");
+			fopen(filename, "rb");
 		if (f == NULL) {
 			fprintf(stderr, "Error: Can't open '%s' for reading: %s\n", filename, strerror(errno));
 			error();
@@ -546,7 +546,7 @@ int main(int argc, char **argv)
 		if (!read_mode && !check_mode)
 		{
 			FILE *f = (strcmp(filename, "-") == 0) ? stdin :
-				fopen(filename, "r");
+				fopen(filename, "rb");
 			if (f == NULL) {
 				fprintf(stderr, "Error: Can't open '%s' for reading: %s\n", filename, strerror(errno));
 				error();
@@ -599,7 +599,7 @@ int main(int argc, char **argv)
 		if (read_mode)
 		{
 			FILE *f = (strcmp(filename, "-") == 0) ? stdout :
-				fopen(filename, "w");
+				fopen(filename, "wb");
 			if (f == NULL) {
 				fprintf(stderr, "Error: Can't open '%s' for writing: %s\n", filename, strerror(errno));
 				error();
@@ -618,7 +618,7 @@ int main(int argc, char **argv)
 		else
 		{
 			FILE *f = (strcmp(filename, "-") == 0) ? stdin :
-				fopen(filename, "r");
+				fopen(filename, "rb");
 			if (f == NULL) {
 				fprintf(stderr, "Error: Can't open '%s' for reading: %s\n", filename, strerror(errno));
 				error();
