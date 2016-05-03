@@ -769,7 +769,7 @@ struct TimingAnalysis
 		}
 	}
 
-	void report(std::string n = std::string())
+	double report(std::string n = std::string())
 	{
 		std::vector<std::string> lines;
 		std::set<std::string> visited_nets;
@@ -908,6 +908,8 @@ struct TimingAnalysis
 		fprintf(frpt, "Total number of logic levels: %d\n", logic_levels);
 		fprintf(frpt, "Total path delay: %.2f ns (%.2f MHz)\n", delay, 1000.0 / delay);
 		fprintf(frpt, "\n");
+
+		return delay;
 	}
 };
 
@@ -1805,6 +1807,9 @@ void help(const char *cmd)
 	printf("    -T <net_name>\n");
 	printf("        print a timing estimate for the specified net\n");
 	printf("\n");
+	printf("    -c <Mhz>\n");
+	printf("        check timing estimate against clock constraint\n");
+	printf("\n");
 	printf("    -v\n");
 	printf("        verbose mode (print all interconnect trees)\n");
 	printf("\n");
@@ -1815,10 +1820,11 @@ int main(int argc, char **argv)
 {
 	bool print_timing = false;
 	bool interior_timing = false;
+	double clock_constr = 0;
 	std::vector<std::string> print_timing_nets;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "p:P:g:o:r:d:mitT:v")) != -1)
+	while ((opt = getopt(argc, argv, "p:P:g:o:r:d:mitT:vc:")) != -1)
 	{
 		switch (opt)
 		{
@@ -1865,6 +1871,9 @@ int main(int argc, char **argv)
 			break;
 		case 'T':
 			print_timing_nets.push_back(optarg);
+			break;
+		case 'c':
+			clock_constr = strtod(optarg, NULL);
 			break;
 		case 'v':
 			verbose = true;
@@ -2110,6 +2119,8 @@ device_chip_mismatch:
 		fprintf(fout, "endmodule\n");
 	}
 
+	double max_path_delay = 0;
+
 	if (print_timing || !print_timing_nets.empty())
 	{
 		TimingAnalysis ta(interior_timing);
@@ -2129,15 +2140,26 @@ device_chip_mismatch:
 		fprintf(frpt, "\n");
 
 		for (auto &n : print_timing_nets)
-			ta.report(n);
+			max_path_delay = std::max(max_path_delay, ta.report(n));
 
 		if (print_timing)
-			ta.report();
+			max_path_delay = ta.report();
 	}
 	else
 	{
 		TimingAnalysis ta(interior_timing);
 		printf("// Timing estimate: %.2f ns (%.2f MHz)\n", ta.global_max_path_delay, 1000.0 / ta.global_max_path_delay);
+		max_path_delay = ta.global_max_path_delay;
+	}
+
+	if (clock_constr > 0) {
+		printf("// Checking %.2f ns (%.2f MHz) clock constraint: ", 1000.0 / clock_constr, clock_constr);
+		if (max_path_delay <= 1000.0 / clock_constr) {
+			printf("PASSED.\n");
+		} else {
+			printf("FAILED.\n");
+			return 1;
+		}
 	}
 
 	return 0;
