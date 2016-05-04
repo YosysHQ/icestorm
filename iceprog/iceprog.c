@@ -301,10 +301,17 @@ void help(const char *progname)
 	fprintf(stderr, "        connect to the specified interface on the FTDI chip\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "    -r\n");
-	fprintf(stderr, "        read entire flash (32Mb / 4MB) and write to file\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    -R\n");
 	fprintf(stderr, "        read first 256 kB from flash and write to file\n");
+	fprintf(stderr, "\n");
+	fprintf(stderr, "    -R <size_in_bytes>\n");
+	fprintf(stderr, "        read the specified number of bytes from flash\n");
+	fprintf(stderr, "        (append 'k' to the argument for size in kilobytes, or\n");
+	fprintf(stderr, "        'M' for size in megabytes)\n");
+	fprintf(stderr, "\n");
+	fprintf(stderr, "    -o <offset_in_bytes>\n");
+	fprintf(stderr, "        start address for read/write (instead of zero)\n");
+	fprintf(stderr, "        (append 'k' to the argument for size in kilobytes, or\n");
+	fprintf(stderr, "        'M' for size in megabytes)\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "    -c\n");
 	fprintf(stderr, "        do not write flash, only verify (check)\n");
@@ -324,12 +331,18 @@ void help(const char *progname)
 	fprintf(stderr, "    -v\n");
 	fprintf(stderr, "        verbose output\n");
 	fprintf(stderr, "\n");
+	fprintf(stderr, "Without -b or -n, iceprog will erase aligned chunks of 64kB in write mode.\n");
+	fprintf(stderr, "This means that some data after the written data (or even before when -o is\n");
+	fprintf(stderr, "used) may be erased as well.\n");
+	fprintf(stderr, "\n");
 	exit(1);
 }
 
 int main(int argc, char **argv)
 {
-	int max_read_size = 4 * 1024 * 1024;
+	int read_size = 256 * 1024;
+	int rw_offset = 0;
+
 	bool read_mode = false;
 	bool check_mode = false;
 	bool bulk_erase = false;
@@ -341,7 +354,8 @@ int main(int argc, char **argv)
 	enum ftdi_interface ifnum = INTERFACE_A;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "d:I:rRcbnStv")) != -1)
+	char *endptr;
+	while ((opt = getopt(argc, argv, "d:I:rR:o:cbnStv")) != -1)
 	{
 		switch (opt)
 		{
@@ -360,7 +374,14 @@ int main(int argc, char **argv)
 			break;
 		case 'R':
 			read_mode = true;
-			max_read_size = 256 * 1024;
+			read_size = strtol(optarg, &endptr, 0);
+			if (!strcmp(endptr, "k")) read_size *= 1024;
+			if (!strcmp(endptr, "M")) read_size *= 1024 * 1024;
+			break;
+		case 'o':
+			rw_offset = strtol(optarg, &endptr, 0);
+			if (!strcmp(endptr, "k")) rw_offset *= 1024;
+			if (!strcmp(endptr, "M")) rw_offset *= 1024 * 1024;
 			break;
 		case 'c':
 			check_mode = true;
@@ -391,10 +412,13 @@ int main(int argc, char **argv)
 	if (bulk_erase && dont_erase)
 		help(argv[0]);
 
-	if (optind+1 != argc && !test_mode)
-		help(argv[0]);
-
-	filename = argv[optind];
+	if (optind+1 != argc && !test_mode) {
+		if (bulk_erase && optind == argc)
+			filename = "/dev/null";
+		else
+			help(argv[0]);
+	} else
+		filename = argv[optind];
 
 	// ---------------------------------------------------------
 	// Initialize USB connection to FT2232H
@@ -569,7 +593,11 @@ int main(int argc, char **argv)
 					}
 
 					fprintf(stderr, "file size: %d\n", (int)st_buf.st_size);
-					for (int addr = 0; addr < st_buf.st_size; addr += 0x10000) {
+
+					int begin_addr = rw_offset & ~0xffff;
+					int end_addr = (rw_offset + (int)st_buf.st_size + 0xffff) & ~0xffff;
+
+					for (int addr = begin_addr; addr < end_addr; addr += 0x10000) {
 						flash_write_enable();
 						flash_64kB_sector_erase(addr);
 						flash_wait();
@@ -578,12 +606,14 @@ int main(int argc, char **argv)
 			}
 
 			fprintf(stderr, "programming..\n");
-			for (int addr = 0; true; addr += 256) {
+
+			for (int rc, addr = 0; true; addr += rc) {
 				uint8_t buffer[256];
-				int rc = fread(buffer, 1, 256, f);
+				int page_size = 256 - (rw_offset + addr) % 256;
+				rc = fread(buffer, 1, page_size, f);
 				if (rc <= 0) break;
 				flash_write_enable();
-				flash_prog(addr, buffer, rc);
+				flash_prog(rw_offset + addr, buffer, rc);
 				flash_wait();
 			}
 
@@ -606,9 +636,9 @@ int main(int argc, char **argv)
 			}
 
 			fprintf(stderr, "reading..\n");
-			for (int addr = 0; addr < max_read_size; addr += 256) {
+			for (int addr = 0; addr < read_size; addr += 256) {
 				uint8_t buffer[256];
-				flash_read(addr, buffer, 256);
+				flash_read(rw_offset + addr, buffer, 256);
 				fwrite(buffer, 256, 1, f);
 			}
 
@@ -629,7 +659,7 @@ int main(int argc, char **argv)
 				uint8_t buffer_flash[256], buffer_file[256];
 				int rc = fread(buffer_file, 1, 256, f);
 				if (rc <= 0) break;
-				flash_read(addr, buffer_flash, 256);
+				flash_read(rw_offset + addr, buffer_flash, rc);
 				if (memcmp(buffer_file, buffer_flash, rc)) {
 					fprintf(stderr, "Found difference between flash and file!\n");
 					error();
