@@ -8,6 +8,10 @@ while True:
     numrports = np.random.randint(1, 5)
     if bram_width * bram_depth * numrports < 16*4096: break
 
+bram_width = 16
+bram_depth = 256
+numrports = 1
+
 with open("demo.v", "wt") as f:
     print("module demo (", file=f)
     for i in range(numrports):

@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <assert.h>
 
 #include <map>
 #include <vector>
@@ -26,6 +27,7 @@
 #include <iostream>
 
 using std::map;
+using std::pair;
 using std::vector;
 using std::string;
 using std::ifstream;
@@ -63,22 +65,24 @@ void help(const char *cmd)
 	printf("\n");
 	printf("Usage: %s [options] from_hexfile to_hexfile \n", cmd);
 	printf("\n");
-	// printf("    -S\n");
-	// printf("        Disable SIMPLE feedback path mode\n");
-	// printf("\n");
+	printf("    -v\n");
+	printf("        verbose output\n");
+	printf("\n");
 	exit(1);
 }
 
 int main(int argc, char **argv)
 {
+	bool verbose = false;
+
 	int opt;
-	while ((opt = getopt(argc, argv, "")) != -1)
+	while ((opt = getopt(argc, argv, "v")) != -1)
 	{
 		switch (opt)
 		{
-		// case 'i':
-		// 	f_pllin = atof(optarg);
-		// 	break;
+		case 'v':
+			verbose = true;
+			break;
 		default:
 			help(argv[0]);
 		}
@@ -86,6 +90,10 @@ int main(int argc, char **argv)
 
 	if (optind+2 != argc)
 		help(argv[0]);
+
+
+	// -------------------------------------------------------
+	// Load from_hexfile and to_hexfile
 
 	const char *from_hexfile_n = argv[optind];
 	ifstream from_hexfile_f(from_hexfile_n);
@@ -125,6 +133,50 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 
+	if (from_hexfile.size() == 0 || from_hexfile.at(0).size() == 0) {
+		fprintf(stderr, "Empty from/to hexfiles!\n");
+		exit(1);
+	}
+
+	if (verbose)
+		fprintf(stderr, "Loaded pattern for %d bits wide and %d words deep memory.\n", int(from_hexfile.at(0).size()), int(from_hexfile.size()));
+
+
+	// -------------------------------------------------------
+	// Create bitslices from pattern data
+
+	map<vector<bool>, pair<vector<bool>, int>> pattern;
+
+	for (int i = 0; i < int(from_hexfile.at(0).size()); i++)
+	{
+		vector<bool> pattern_from, pattern_to;
+
+		for (int j = 0; j < int(from_hexfile.size()); j++)
+		{
+			pattern_from.push_back(from_hexfile.at(j).at(i));
+			pattern_to.push_back(to_hexfile.at(j).at(i));
+
+			if (pattern_from.size() == 256) {
+				if (pattern.count(pattern_from)) {
+					fprintf(stderr, "Conflicting from pattern for bit slice from_hexfile[%d:%d][%d]!\n", j, j-255, i);
+					exit(1);
+				}
+				pattern[pattern_from] = std::make_pair(pattern_to, 0);
+				pattern_from.clear(), pattern_to.clear();
+			}
+		}
+
+		assert(pattern_from.empty());
+		assert(pattern_to.empty());
+	}
+
+	if (verbose)
+		fprintf(stderr, "Extracted %d bit slices from from/to hexfile data.\n", int(pattern.size()));
+
+
+	// -------------------------------------------------------
+	// Read ascfile from stdin
+
 	vector<string> ascfile_lines;
 	map<string, vector<vector<bool>>> ascfile_hexdata;
 
@@ -145,7 +197,54 @@ int main(int argc, char **argv)
 		}
 	}
 
-	// FIXME: Do the actual thing
+	if (verbose)
+		fprintf(stderr, "Found %d initialized bram cells in asc file.\n", int(ascfile_hexdata.size()));
+
+
+	// -------------------------------------------------------
+	// Replace bram data
+
+	int max_replace_cnt = 0;
+
+	for (auto &bram_it : ascfile_hexdata)
+	{
+		auto &bram_data = bram_it.second;
+
+		for (int i = 0; i < 16; i++)
+		{
+			vector<bool> from_bitslice;
+
+			for (int j = 0; j < 256; j++)
+				from_bitslice.push_back(bram_data.at(j / 16).at(16 * (j % 16) + i));
+
+			auto p = pattern.find(from_bitslice);
+			if (p != pattern.end())
+			{
+				auto &to_bitslice = p->second.first;
+
+				for (int j = 0; j < 256; j++)
+					bram_data.at(j / 16).at(16 * (j % 16) + i) = to_bitslice.at(j);
+
+				max_replace_cnt = std::max(++p->second.second, max_replace_cnt);
+			}
+		}
+	}
+
+	int min_replace_cnt = max_replace_cnt;
+	for (auto &it : pattern)
+		min_replace_cnt = std::min(min_replace_cnt, it.second.second);
+
+	if (min_replace_cnt != max_replace_cnt) {
+		fprintf(stderr, "Found some bitslices up to %d times, others only %d times!\n", max_replace_cnt, min_replace_cnt);
+		exit(1);
+	}
+
+	if (verbose)
+		fprintf(stderr, "Found and replaced %d instances of the memory.\n", max_replace_cnt);
+
+
+	// -------------------------------------------------------
+	// Write ascfile to stdout
 
 	for (size_t i = 0; i < ascfile_lines.size(); i++) {
 		auto &line = ascfile_lines.at(i);
