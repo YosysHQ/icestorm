@@ -19,6 +19,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <assert.h>
+#include <stdint.h>
+#include <sys/time.h>
 
 #include <map>
 #include <vector>
@@ -32,6 +34,14 @@ using std::vector;
 using std::string;
 using std::ifstream;
 using std::getline;
+
+uint64_t x;
+uint64_t xorshift64star(void) {
+	x ^= x >> 12; // a
+	x ^= x << 25; // b
+	x ^= x >> 27; // c
+	return x * UINT64_C(2685821657736338717);
+}
 
 void parse_hexfile_line(const char *filename, int linenr, vector<vector<bool>> &hexfile, string &line)
 {
@@ -63,7 +73,17 @@ error:
 void help(const char *cmd)
 {
 	printf("\n");
-	printf("Usage: %s [options] from_hexfile to_hexfile \n", cmd);
+	printf("Usage: %s [options] <from_hexfile> <to_hexfile>\n", cmd);
+	printf("       %s [options] -g <width> <depth>\n", cmd);
+	printf("\n");
+	printf("Replace BRAM initialization data in a .asc file. This can be used\n");
+	printf("for example to replace firmware images without re-running synthesis\n");
+	printf("and place&route.\n");
+	printf("\n");
+	printf("    -g\n");
+	printf("        generate a hex file with random contents.\n");
+	printf("        use this to generate the hex file used during synthesis, then\n");
+	printf("        use the same file as <from_hexfile> later.\n");
 	printf("\n");
 	printf("    -v\n");
 	printf("        verbose output\n");
@@ -74,18 +94,68 @@ void help(const char *cmd)
 int main(int argc, char **argv)
 {
 	bool verbose = false;
+	bool generate = false;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "v")) != -1)
+	while ((opt = getopt(argc, argv, "vg")) != -1)
 	{
 		switch (opt)
 		{
 		case 'v':
 			verbose = true;
 			break;
+		case 'g':
+			generate = true;
+			break;
 		default:
 			help(argv[0]);
 		}
+	}
+
+	if (generate)
+	{
+		if (optind+2 != argc)
+			help(argv[0]);
+
+		int width = atoi(argv[optind]);
+		int depth = atoi(argv[optind+1]);
+
+		if (width <= 0 || width % 4 != 0) {
+			fprintf(stderr, "Hexfile width (%d bits) is not divisible by 4 or nonpositive!\n", width);
+			exit(1);
+		}
+
+		if (depth <= 0 || depth % 256 != 0) {
+			fprintf(stderr, "Hexfile number of words (%d) is not divisible by 256 or nonpositive!\n", depth);
+			exit(1);
+		}
+
+		x = uint64_t(getpid()) << 32;
+		x ^= uint64_t(depth) << 16;
+		x ^= uint64_t(width) << 10;
+
+		xorshift64star();
+		xorshift64star();
+		xorshift64star();
+
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+		x ^= uint64_t(tv.tv_sec) << 20;
+		x ^= uint64_t(tv.tv_usec);
+
+		xorshift64star();
+		xorshift64star();
+		xorshift64star();
+
+		for (int i = 0; i < depth; i++) {
+			for (int j = 0; j < width / 4; j++) {
+				int digit = xorshift64star() & 15;
+				std::cout << "0123456789abcdef"[digit];
+			}
+			std::cout << std::endl;
+		}
+
+		exit(1);
 	}
 
 	if (optind+2 != argc)
