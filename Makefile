@@ -7,6 +7,7 @@ all:
 	$(MAKE) -C icemulti
 	$(MAKE) -C icepll
 	$(MAKE) -C icetime
+	$(MAKE) -C icebram
 
 clean:
 	$(MAKE) -C icebox clean
@@ -15,6 +16,7 @@ clean:
 	$(MAKE) -C icemulti clean
 	$(MAKE) -C icepll clean
 	$(MAKE) -C icetime clean
+	$(MAKE) -C icebram clean
 
 install:
 	$(MAKE) -C icebox install
@@ -23,6 +25,7 @@ install:
 	$(MAKE) -C icemulti install
 	$(MAKE) -C icepll install
 	$(MAKE) -C icetime install
+	$(MAKE) -C icebram install
 
 uninstall:
 	$(MAKE) -C icebox uninstall
@@ -31,6 +34,7 @@ uninstall:
 	$(MAKE) -C icemulti uninstall
 	$(MAKE) -C icepll uninstall
 	$(MAKE) -C icetime uninstall
+	$(MAKE) -C icebram uninstall
 
 mxebin: clean
 	$(MAKE) MXE=1
