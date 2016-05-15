@@ -32,6 +32,7 @@
 #define GLOBAL_CLK_DIST_JITTER 0.1
 
 FILE *fin = nullptr, *fout = nullptr, *frpt = nullptr;
+FILE *fjson = nullptr;
 bool verbose = false;
 bool max_span_hack = false;
 
@@ -771,15 +772,19 @@ struct TimingAnalysis
 
 	double report(std::string n = std::string())
 	{
-		std::vector<std::string> lines;
+		std::vector<std::string> rpt_lines;
+		std::vector<std::string> json_lines;
 		std::set<std::string> visited_nets;
 
 		if (n.empty()) {
 			n = global_max_path_net;
-			int i = fprintf(frpt, "Report for critical path:\n");
-			while (--i) fputc('-', frpt);
-			fprintf(frpt, "\n\n");
-		} else {
+			if (frpt) {
+				int i = fprintf(frpt, "Report for critical path:\n");
+				while (--i) fputc('-', frpt);
+				fprintf(frpt, "\n\n");
+			}
+		} else
+		if (frpt) {
 			int i = fprintf(frpt, "Report for %s:\n", n.c_str());
 			while (--i) fputc('-', frpt);
 			fprintf(frpt, "\n\n");
@@ -803,9 +808,14 @@ struct TimingAnalysis
 
 		if (!std::get<1>(user).empty())
 		{
-			lines.push_back(stringf("        %s (%s) %s [setup]: %.3f ns", std::get<1>(user).c_str(),
-					netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), std::get<0>(user)));
 			delay += std::get<0>(user);
+
+			rpt_lines.push_back(stringf("%10.3f ns", delay));
+			rpt_lines.push_back(stringf("        %s (%s) %s [setup]: %.3f ns", std::get<1>(user).c_str(),
+					netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), std::get<0>(user)));
+
+			json_lines.push_back(stringf("    { cell: \"%s\", cell_type: \"%s\", cell_in_port: \"%s\", cell_out_port: \"[setup]\", delay_ns: %.3f, },",
+					std::get<1>(user).c_str(), netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), delay));
 
 			auto &inports = get_inports(netlist_cell_types.at(std::get<1>(user)));
 
@@ -834,23 +844,25 @@ struct TimingAnalysis
 
 			if (net_max_path_parent.count(n) == 0)
 			{
-				lines.push_back(stringf("%10.3f ns %s", calc_net_max_path_delay(n), n.c_str()));
+				rpt_lines.push_back(stringf("%10.3f ns %s", calc_net_max_path_delay(n), n.c_str()));
 
 				if (!net_sym.empty()) {
-					lines.back() += stringf(" (%s)", net_sym.c_str());
+					rpt_lines.back() += stringf(" (%s)", net_sym.c_str());
 					net_sym.clear();
 				}
 
 				auto &driver_cell = net_driver.at(n).first;
 				auto &driver_port = net_driver.at(n).second;
 				auto &driver_type = netlist_cell_types.at(driver_cell);
-				lines.push_back(stringf("        %s (%s) [clk] -> %s: %.3f ns", driver_cell.c_str(),
+				json_lines.push_back(stringf("    { out_net: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"[clk]\", cell_out_port: \"%s\", delay_ns: %.3f, },",
+						n.c_str(), driver_cell.c_str(), driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
+				rpt_lines.push_back(stringf("        %s (%s) [clk] -> %s: %.3f ns", driver_cell.c_str(),
 						driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
 				break;
 			}
 
 			if (visited_nets.count(n)) {
-				lines.push_back(stringf("loop-start at %s", n.c_str()));
+				rpt_lines.push_back(stringf("loop-start at %s", n.c_str()));
 				break;
 			}
 
@@ -858,16 +870,20 @@ struct TimingAnalysis
 
 			if (last_line || netlist_cell_types.at(std::get<1>(entry)) == "LogicCell40")
 			{
-				lines.push_back(stringf("%10.3f ns %s", calc_net_max_path_delay(n), n.c_str()));
+				rpt_lines.push_back(stringf("%10.3f ns %s", calc_net_max_path_delay(n), n.c_str()));
 				logic_levels++;
 
 				if (!net_sym.empty()) {
-					lines.back() += stringf(" (%s)", net_sym.c_str());
+					rpt_lines.back() += stringf(" (%s)", net_sym.c_str());
 					net_sym.clear();
 				}
 			}
 
-			lines.push_back(stringf("        %s (%s) %s -> %s: %.3f ns", std::get<1>(entry).c_str(),
+			json_lines.push_back(stringf("    { out_net: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"%s\", cell_out_port: \"%s\", delay_ns: %.3f, },",
+					n.c_str(), std::get<1>(entry).c_str(), netlist_cell_types.at(std::get<1>(entry)).c_str(),
+					std::get<2>(entry).c_str(), std::get<3>(entry).c_str(), calc_net_max_path_delay(n)));
+
+			rpt_lines.push_back(stringf("        %s (%s) %s -> %s: %.3f ns", std::get<1>(entry).c_str(),
 					netlist_cell_types.at(std::get<1>(entry)).c_str(), std::get<2>(entry).c_str(),
 					std::get<3>(entry).c_str(), std::get<4>(entry)));
 
@@ -876,38 +892,49 @@ struct TimingAnalysis
 			last_line = false;
 		}
 
-		for (int i = int(lines.size())-1; i >= 0; i--)
-			fprintf(frpt, "%s\n", lines[i].c_str());
-
-		if (!sym_list.empty() || !outsym_list.empty())
+		if (fjson)
 		{
-			fprintf(frpt, "\n");
-			fprintf(frpt, "Resolvable net names on path:\n");
-
-			std::string last_net;
-			double first_time, last_time;
-
-			for (int i = int(sym_list.size())-1; i >= 0; i--) {
-				if (last_net != sym_list[i].second) {
-					if (!last_net.empty())
-						fprintf(frpt, "%10.3f ns ..%7.3f ns %s\n", first_time, last_time, last_net.c_str());
-					first_time = sym_list[i].first;
-					last_net = sym_list[i].second;
-				}
-				last_time = sym_list[i].first;
-			}
-
-			if (!last_net.empty())
-				fprintf(frpt, "%10.3f ns ..%7.3f ns %s\n", first_time, last_time, last_net.c_str());
-
-			for (auto &it : outsym_list)
-				fprintf(frpt, "%23s -> %s\n", it.first.c_str(), it.second.c_str());
+			fprintf(fjson, "  [\n");
+			for (int i = int(json_lines.size())-1; i >= 0; i--)
+				fprintf(fjson, "%s\n", json_lines[i].c_str());
+			fprintf(fjson, "  ],\n");
 		}
 
-		fprintf(frpt, "\n");
-		fprintf(frpt, "Total number of logic levels: %d\n", logic_levels);
-		fprintf(frpt, "Total path delay: %.2f ns (%.2f MHz)\n", delay, 1000.0 / delay);
-		fprintf(frpt, "\n");
+		if (frpt)
+		{
+			for (int i = int(rpt_lines.size())-1; i >= 0; i--)
+				fprintf(frpt, "%s\n", rpt_lines[i].c_str());
+
+			if (!sym_list.empty() || !outsym_list.empty())
+			{
+				fprintf(frpt, "\n");
+				fprintf(frpt, "Resolvable net names on path:\n");
+
+				std::string last_net;
+				double first_time, last_time;
+
+				for (int i = int(sym_list.size())-1; i >= 0; i--) {
+					if (last_net != sym_list[i].second) {
+						if (!last_net.empty())
+							fprintf(frpt, "%10.3f ns ..%7.3f ns %s\n", first_time, last_time, last_net.c_str());
+						first_time = sym_list[i].first;
+						last_net = sym_list[i].second;
+					}
+					last_time = sym_list[i].first;
+				}
+
+				if (!last_net.empty())
+					fprintf(frpt, "%10.3f ns ..%7.3f ns %s\n", first_time, last_time, last_net.c_str());
+
+				for (auto &it : outsym_list)
+					fprintf(frpt, "%23s -> %s\n", it.first.c_str(), it.second.c_str());
+			}
+
+			fprintf(frpt, "\n");
+			fprintf(frpt, "Total number of logic levels: %d\n", logic_levels);
+			fprintf(frpt, "Total path delay: %.2f ns (%.2f MHz)\n", delay, 1000.0 / delay);
+			fprintf(frpt, "\n");
+		}
 
 		return delay;
 	}
@@ -1791,6 +1818,9 @@ void help(const char *cmd)
 	printf("    -r <output_file>\n");
 	printf("        write timing report to the file (instead of stdout)\n");
 	printf("\n");
+	printf("    -j <output_file>\n");
+	printf("        write timing report in json format to the file\n");
+	printf("\n");
 	printf("    -d lp1k|hx1k|lp8k|hx8k\n");
 	printf("        select the device type (default = lp variant)\n");
 	printf("\n");
@@ -1801,11 +1831,11 @@ void help(const char *cmd)
 	printf("        only consider interior timing paths (not to/from IOs)\n");
 	printf("\n");
 	printf("    -t\n");
-	printf("        print a timing estimate (based on topological timing\n");
+	printf("        print a timing report (based on topological timing\n");
 	printf("        analysis)\n");
 	printf("\n");
 	printf("    -T <net_name>\n");
-	printf("        print a timing estimate for the specified net\n");
+	printf("        print a timing report for the specified net\n");
 	printf("\n");
 	printf("    -c <Mhz>\n");
 	printf("        check timing estimate against clock constraint\n");
@@ -1824,7 +1854,7 @@ int main(int argc, char **argv)
 	std::vector<std::string> print_timing_nets;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "p:P:g:o:r:d:mitT:vc:")) != -1)
+	while ((opt = getopt(argc, argv, "p:P:g:o:r:j:d:mitT:vc:")) != -1)
 	{
 		switch (opt)
 		{
@@ -1854,6 +1884,13 @@ int main(int argc, char **argv)
 			frpt = fopen(optarg, "w");
 			if (frpt == nullptr) {
 				perror("Can't open report file");
+				exit(1);
+			}
+			break;
+		case 'j':
+			fjson = fopen(optarg, "w");
+			if (fjson == nullptr) {
+				perror("Can't open json file");
 				exit(1);
 			}
 			break;
@@ -2121,6 +2158,9 @@ device_chip_mismatch:
 
 	double max_path_delay = 0;
 
+	if (fjson)
+		fprintf(fjson, "[\n");
+
 	if (print_timing || !print_timing_nets.empty())
 	{
 		TimingAnalysis ta(interior_timing);
@@ -2149,7 +2189,7 @@ device_chip_mismatch:
 	{
 		TimingAnalysis ta(interior_timing);
 		printf("// Timing estimate: %.2f ns (%.2f MHz)\n", ta.global_max_path_delay, 1000.0 / ta.global_max_path_delay);
-		max_path_delay = ta.global_max_path_delay;
+		max_path_delay = ta.report();
 	}
 
 	if (clock_constr > 0) {
@@ -2161,6 +2201,9 @@ device_chip_mismatch:
 			return 1;
 		}
 	}
+
+	if (fjson)
+		fprintf(fjson, "]\n");
 
 	return 0;
 }
