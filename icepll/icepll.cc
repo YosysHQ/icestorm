@@ -142,6 +142,13 @@ int main(int argc, char **argv)
 	double f_pfd = f_pllin / (best_divr + 1);;
 	double f_vco = f_pfd * (best_divf + 1);
 
+	int filter_range =
+			f_pfd < 17 ? 1 :
+			f_pfd < 26 ? 2 :
+			f_pfd < 44 ? 3 :
+			f_pfd < 66 ? 4 :
+			f_pfd < 101 ? 5 : 6;
+
 	if (!simple_feedback)
 		f_vco *= exp2(best_divq);
 
@@ -167,6 +174,10 @@ int main(int argc, char **argv)
 	printf("DIVR: %2d (4'b%s)\n", best_divr, binstr(best_divr, 4));
 	printf("DIVF: %2d (7'b%s)\n", best_divf, binstr(best_divf, 7));
 	printf("DIVQ: %2d (3'b%s)\n", best_divq, binstr(best_divq, 3));
+
+	printf("\n");
+
+	printf("FILTER_RANGE: %d (3'b%s)\n", filter_range, binstr(filter_range, 3));
 
 	printf("\n");
 
