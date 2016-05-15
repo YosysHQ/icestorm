@@ -257,6 +257,12 @@ print()
 for pllid in ic.pll_list():
     pllinfo = icebox.pllinfo_db[pllid]
     print(".extra_cell %d %d PLL" % pllinfo["LOC"])
+    locked_pkgs = []
+    for entry in icebox.noplls_db:
+        if pllid in icebox.noplls_db[entry]:
+            locked_pkgs.append(entry.split("-")[1])
+    if len(locked_pkgs) > 0:
+        print("LOCKED %s" % " ".join(locked_pkgs))
     for key in sorted(pllinfo):
         if key != "LOC":
             print("%s %s" % (key, " ".join([str(k) for k in pllinfo[key]])))
