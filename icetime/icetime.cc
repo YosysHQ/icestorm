@@ -809,13 +809,7 @@ struct TimingAnalysis
 		if (!std::get<1>(user).empty())
 		{
 			delay += std::get<0>(user);
-
-			rpt_lines.push_back(stringf("%10.3f ns", delay));
-			rpt_lines.push_back(stringf("        %s (%s) %s [setup]: %.3f ns", std::get<1>(user).c_str(),
-					netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), std::get<0>(user)));
-
-			json_lines.push_back(stringf("    { cell: \"%s\", cell_type: \"%s\", cell_in_port: \"%s\", cell_out_port: \"[setup]\", delay_ns: %.3f, },",
-					std::get<1>(user).c_str(), netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), delay));
+			std::string outnet, outnethw, outnetsym;
 
 			auto &inports = get_inports(netlist_cell_types.at(std::get<1>(user)));
 
@@ -826,15 +820,27 @@ struct TimingAnalysis
 
 				int netidx;
 				char dummy_ch;
-				if (sscanf(it.second.c_str(), "net_%d%c", &netidx, &dummy_ch) == 1 && net_symbols.count(netidx))
-					outsym_list[it.first] = net_symbols[netidx];
+
+				outnetsym = outnethw = outnet = it.second;
+				if (sscanf(it.second.c_str(), "net_%d%c", &netidx, &dummy_ch) == 1 && net_symbols.count(netidx)) {
+					outnetsym = outsym_list[it.first] = net_symbols[netidx];
+					outnet += stringf(" (%s)", outnetsym.c_str());
+				}
 			}
+
+			rpt_lines.push_back(stringf("%10.3f ns %s", delay, outnet.c_str()));
+			rpt_lines.push_back(stringf("        %s (%s) %s [setup]: %.3f ns", std::get<1>(user).c_str(),
+					netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), std::get<0>(user)));
+
+			json_lines.push_back(stringf("    { net: \"%s\", hwnet: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"%s\", cell_out_port: \"[setup]\", delay_ns: %.3f, },",
+					outnetsym.c_str(), outnethw.c_str(), std::get<1>(user).c_str(), netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), delay));
 		}
 
 		while (1)
 		{
 			int netidx;
 			char dummy_ch;
+			std::string outnetsym = n;
 
 			if (sscanf(n.c_str(), "net_%d%c", &netidx, &dummy_ch) == 1 && net_symbols.count(netidx)) {
 				sym_list.push_back(std::make_pair(calc_net_max_path_delay(n), net_symbols[netidx]));
@@ -848,14 +854,15 @@ struct TimingAnalysis
 
 				if (!net_sym.empty()) {
 					rpt_lines.back() += stringf(" (%s)", net_sym.c_str());
+					outnetsym = net_sym;
 					net_sym.clear();
 				}
 
 				auto &driver_cell = net_driver.at(n).first;
 				auto &driver_port = net_driver.at(n).second;
 				auto &driver_type = netlist_cell_types.at(driver_cell);
-				json_lines.push_back(stringf("    { out_net: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"[clk]\", cell_out_port: \"%s\", delay_ns: %.3f, },",
-						n.c_str(), driver_cell.c_str(), driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
+				json_lines.push_back(stringf("    { net: \"%s\", hwnet: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"[clk]\", cell_out_port: \"%s\", delay_ns: %.3f, },",
+						outnetsym.c_str(), n.c_str(), driver_cell.c_str(), driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
 				rpt_lines.push_back(stringf("        %s (%s) [clk] -> %s: %.3f ns", driver_cell.c_str(),
 						driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
 				break;
@@ -875,12 +882,13 @@ struct TimingAnalysis
 
 				if (!net_sym.empty()) {
 					rpt_lines.back() += stringf(" (%s)", net_sym.c_str());
+					outnetsym = net_sym;
 					net_sym.clear();
 				}
 			}
 
-			json_lines.push_back(stringf("    { out_net: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"%s\", cell_out_port: \"%s\", delay_ns: %.3f, },",
-					n.c_str(), std::get<1>(entry).c_str(), netlist_cell_types.at(std::get<1>(entry)).c_str(),
+			json_lines.push_back(stringf("    { net: \"%s\", hwnet: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"%s\", cell_out_port: \"%s\", delay_ns: %.3f, },",
+					outnetsym.c_str(), n.c_str(), std::get<1>(entry).c_str(), netlist_cell_types.at(std::get<1>(entry)).c_str(),
 					std::get<2>(entry).c_str(), std::get<3>(entry).c_str(), calc_net_max_path_delay(n)));
 
 			rpt_lines.push_back(stringf("        %s (%s) %s -> %s: %.3f ns", std::get<1>(entry).c_str(),
