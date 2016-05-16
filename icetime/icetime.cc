@@ -35,6 +35,7 @@ FILE *fin = nullptr, *fout = nullptr, *frpt = nullptr;
 FILE *fjson = nullptr;
 bool verbose = false;
 bool max_span_hack = false;
+bool json_firstentry = true;
 
 std::string config_device, device_type, selected_package;
 std::vector<std::vector<std::string>> config_tile_type;
@@ -832,8 +833,8 @@ struct TimingAnalysis
 			rpt_lines.push_back(stringf("        %s (%s) %s [setup]: %.3f ns", std::get<1>(user).c_str(),
 					netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), std::get<0>(user)));
 
-			std::string netprop = outnetsym == outnethw ? "" : stringf("net: \"%s\", ", outnetsym.c_str());
-			json_lines.push_back(stringf("    { %shwnet: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"%s\", cell_out_port: \"[setup]\", delay_ns: %.3f, },",
+			std::string netprop = outnetsym == outnethw ? "" : stringf("\"net\": \"%s\", ", outnetsym.c_str());
+			json_lines.push_back(stringf("    { %s\"hwnet\": \"%s\", \"cell\": \"%s\", \"cell_type\": \"%s\", \"cell_in_port\": \"%s\", \"cell_out_port\": \"[setup]\", \"delay_ns\": %.3f },",
 					netprop.c_str(), outnethw.c_str(), std::get<1>(user).c_str(), netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), delay));
 		}
 
@@ -862,8 +863,8 @@ struct TimingAnalysis
 				auto &driver_cell = net_driver.at(n).first;
 				auto &driver_port = net_driver.at(n).second;
 				auto &driver_type = netlist_cell_types.at(driver_cell);
-				std::string netprop = outnetsym == n ? "" : stringf("net: \"%s\", ", outnetsym.c_str());
-				json_lines.push_back(stringf("    { %shwnet: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"[clk]\", cell_out_port: \"%s\", delay_ns: %.3f, },",
+				std::string netprop = outnetsym == n ? "" : stringf("\"net\": \"%s\", ", outnetsym.c_str());
+				json_lines.push_back(stringf("    { %s\"hwnet\": \"%s\", \"cell\": \"%s\", \"cell_type\": \"%s\", \"cell_in_port\": \"[clk]\", \"cell_out_port\": \"%s\", \"delay_ns\": %.3f },",
 						netprop.c_str(), n.c_str(), driver_cell.c_str(), driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
 				rpt_lines.push_back(stringf("        %s (%s) [clk] -> %s: %.3f ns", driver_cell.c_str(),
 						driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
@@ -889,8 +890,8 @@ struct TimingAnalysis
 				}
 			}
 
-			std::string netprop = outnetsym == n ? "" : stringf("net: \"%s\", ", outnetsym.c_str());
-			json_lines.push_back(stringf("    { %shwnet: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"%s\", cell_out_port: \"%s\", delay_ns: %.3f, },",
+			std::string netprop = outnetsym == n ? "" : stringf("\"net\": \"%s\", ", outnetsym.c_str());
+			json_lines.push_back(stringf("    { %s\"hwnet\": \"%s\", \"cell\": \"%s\", \"cell_type\": \"%s\", \"cell_in_port\": \"%s\", \"cell_out_port\": \"%s\", \"delay_ns\": %.3f },",
 					netprop.c_str(), n.c_str(), std::get<1>(entry).c_str(), netlist_cell_types.at(std::get<1>(entry)).c_str(),
 					std::get<2>(entry).c_str(), std::get<3>(entry).c_str(), calc_net_max_path_delay(n)));
 
@@ -905,10 +906,16 @@ struct TimingAnalysis
 
 		if (fjson)
 		{
+			if (!json_firstentry)
+				fprintf(fjson, "  ],\n");
 			fprintf(fjson, "  [\n");
-			for (int i = int(json_lines.size())-1; i >= 0; i--)
-				fprintf(fjson, "%s\n", json_lines[i].c_str());
-			fprintf(fjson, "  ],\n");
+			for (int i = int(json_lines.size())-1; i >= 0; i--) {
+				std::string line = json_lines[i];
+				if (i == 0 && line.back() == ',')
+					line.pop_back();
+				fprintf(fjson, "%s\n", line.c_str());
+			}
+			json_firstentry = false;
 		}
 
 		if (frpt)
@@ -2213,8 +2220,11 @@ device_chip_mismatch:
 		}
 	}
 
-	if (fjson)
+	if (fjson) {
+		if (!json_firstentry)
+			fprintf(fjson, "  ]\n");
 		fprintf(fjson, "]\n");
+	}
 
 	return 0;
 }
