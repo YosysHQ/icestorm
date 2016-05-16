@@ -832,8 +832,9 @@ struct TimingAnalysis
 			rpt_lines.push_back(stringf("        %s (%s) %s [setup]: %.3f ns", std::get<1>(user).c_str(),
 					netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), std::get<0>(user)));
 
-			json_lines.push_back(stringf("    { net: \"%s\", hwnet: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"%s\", cell_out_port: \"[setup]\", delay_ns: %.3f, },",
-					outnetsym.c_str(), outnethw.c_str(), std::get<1>(user).c_str(), netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), delay));
+			std::string netprop = outnetsym == outnethw ? "" : stringf("net: \"%s\", ", outnetsym.c_str());
+			json_lines.push_back(stringf("    { %shwnet: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"%s\", cell_out_port: \"[setup]\", delay_ns: %.3f, },",
+					netprop.c_str(), outnethw.c_str(), std::get<1>(user).c_str(), netlist_cell_types.at(std::get<1>(user)).c_str(), std::get<2>(user).c_str(), delay));
 		}
 
 		while (1)
@@ -861,8 +862,9 @@ struct TimingAnalysis
 				auto &driver_cell = net_driver.at(n).first;
 				auto &driver_port = net_driver.at(n).second;
 				auto &driver_type = netlist_cell_types.at(driver_cell);
-				json_lines.push_back(stringf("    { net: \"%s\", hwnet: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"[clk]\", cell_out_port: \"%s\", delay_ns: %.3f, },",
-						outnetsym.c_str(), n.c_str(), driver_cell.c_str(), driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
+				std::string netprop = outnetsym == n ? "" : stringf("net: \"%s\", ", outnetsym.c_str());
+				json_lines.push_back(stringf("    { %shwnet: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"[clk]\", cell_out_port: \"%s\", delay_ns: %.3f, },",
+						netprop.c_str(), n.c_str(), driver_cell.c_str(), driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
 				rpt_lines.push_back(stringf("        %s (%s) [clk] -> %s: %.3f ns", driver_cell.c_str(),
 						driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
 				break;
@@ -887,8 +889,9 @@ struct TimingAnalysis
 				}
 			}
 
-			json_lines.push_back(stringf("    { net: \"%s\", hwnet: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"%s\", cell_out_port: \"%s\", delay_ns: %.3f, },",
-					outnetsym.c_str(), n.c_str(), std::get<1>(entry).c_str(), netlist_cell_types.at(std::get<1>(entry)).c_str(),
+			std::string netprop = outnetsym == n ? "" : stringf("net: \"%s\", ", outnetsym.c_str());
+			json_lines.push_back(stringf("    { %shwnet: \"%s\", cell: \"%s\", cell_type: \"%s\", cell_in_port: \"%s\", cell_out_port: \"%s\", delay_ns: %.3f, },",
+					netprop.c_str(), n.c_str(), std::get<1>(entry).c_str(), netlist_cell_types.at(std::get<1>(entry)).c_str(),
 					std::get<2>(entry).c_str(), std::get<3>(entry).c_str(), calc_net_max_path_delay(n)));
 
 			rpt_lines.push_back(stringf("        %s (%s) %s -> %s: %.3f ns", std::get<1>(entry).c_str(),
