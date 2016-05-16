@@ -860,19 +860,23 @@ struct TimingAnalysis
 					net_sym.clear();
 				}
 
-				auto &driver_cell = net_driver.at(n).first;
-				auto &driver_port = net_driver.at(n).second;
-				auto &driver_type = netlist_cell_types.at(driver_cell);
-				std::string netprop = outnetsym == n ? "" : stringf("\"net\": \"%s\", ", outnetsym.c_str());
-				json_lines.push_back(stringf("    { %s\"hwnet\": \"%s\", \"cell\": \"%s\", \"cell_type\": \"%s\", \"cell_in_port\": \"[clk]\", \"cell_out_port\": \"%s\", \"delay_ns\": %.3f },",
-						netprop.c_str(), n.c_str(), driver_cell.c_str(), driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
-				rpt_lines.push_back(stringf("        %s (%s) [clk] -> %s: %.3f ns", driver_cell.c_str(),
-						driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
+				if (net_driver.count(n)) {
+					auto &driver_cell = net_driver.at(n).first;
+					auto &driver_port = net_driver.at(n).second;
+					auto &driver_type = netlist_cell_types.at(driver_cell);
+					std::string netprop = outnetsym == n ? "" : stringf("\"net\": \"%s\", ", outnetsym.c_str());
+					json_lines.push_back(stringf("    { %s\"hwnet\": \"%s\", \"cell\": \"%s\", \"cell_type\": \"%s\", \"cell_in_port\": \"[clk]\", \"cell_out_port\": \"%s\", \"delay_ns\": %.3f },",
+							netprop.c_str(), n.c_str(), driver_cell.c_str(), driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
+					rpt_lines.push_back(stringf("        %s (%s) [clk] -> %s: %.3f ns", driver_cell.c_str(),
+							driver_type.c_str(), driver_port.c_str(), calc_net_max_path_delay(n)));
+				} else {
+					rpt_lines.push_back(stringf("        no driver model at %s", n.c_str()));
+				}
 				break;
 			}
 
 			if (visited_nets.count(n)) {
-				rpt_lines.push_back(stringf("loop-start at %s", n.c_str()));
+				rpt_lines.push_back(stringf("        loop-start at %s", n.c_str()));
 				break;
 			}
 
