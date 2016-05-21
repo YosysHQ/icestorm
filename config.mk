@@ -1,4 +1,4 @@
-CXX = clang
+CXX = clang++
 CC = $(CXX)
 PKG_CONFIG = pkg-config
 DESTDIR ?=

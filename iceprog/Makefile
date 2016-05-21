@@ -1,4 +1,5 @@
 include ../config.mk
+CC = clang
 LDLIBS = -L/usr/local/lib -lm
 CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
 
@@ -31,4 +32,3 @@ clean:
 -include *.d
 
 .PHONY: all install uninstall clean
-
