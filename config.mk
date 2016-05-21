@@ -1,5 +1,5 @@
-CXX = clang
-CC = $(CXX)
+CXX ?= clang
+CC ?= $(CXX)
 PKG_CONFIG = pkg-config
 DESTDIR ?=
 PREFIX ?= /usr/local
