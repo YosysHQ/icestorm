@@ -59,7 +59,7 @@ void parse_hexfile_line(const char *filename, int linenr, vector<vector<bool>> &
 
 	hexfile.push_back(vector<bool>(digits.size() * 4));
 
-	for (int i = 0; i < digits.size() * 4; i++)
+	for (int i = 0; i < int(digits.size()) * 4; i++)
 		if ((digits.at(digits.size() - i/4 -1) & (1 << (i%4))) != 0)
 			hexfile.back().at(i) = true;
 
@@ -155,7 +155,7 @@ int main(int argc, char **argv)
 			std::cout << std::endl;
 		}
 
-		exit(1);
+		exit(0);
 	}
 
 	if (optind+2 != argc)
@@ -197,11 +197,14 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 
-	for (size_t i = 1; i < to_hexfile.size(); i++)
+	for (size_t i = 1; i < to_hexfile.size(); i++) {
+		while (to_hexfile.at(i-1).size() > to_hexfile.at(i).size())
+			to_hexfile.at(i).push_back(false);
 		if (to_hexfile.at(i-1).size() != to_hexfile.at(i).size()) {
 			fprintf(stderr, "Inconsistent word width at line %d of %s!\n", int(i+1), to_hexfile_n);
 			exit(1);
 		}
+	}
 
 	if (from_hexfile.size() == 0 || from_hexfile.at(0).size() == 0) {
 		fprintf(stderr, "Empty from/to hexfiles!\n");
