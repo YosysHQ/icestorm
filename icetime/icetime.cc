@@ -177,8 +177,11 @@ void read_pcf(const char *filename)
 
 	while (fgets(buffer, 128, f))
 	{
-		if (buffer[0] == '#')
-			continue;
+		for (int i = 0; buffer[i]; i++)
+			if (buffer[i] == '#') {
+				buffer[i] = 0;
+				break;
+			}
 
 		const char *tok = strtok(buffer, " \t\r\n");
 		if (tok == nullptr || strcmp(tok, "set_io"))
