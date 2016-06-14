@@ -779,6 +779,10 @@ struct TimingAnalysis
 
 		if (n.empty()) {
 			n = global_max_path_net;
+			if (n.empty()) {
+				fprintf(stderr, "No path found!\n");
+				exit(1);
+			}
 			if (frpt) {
 				int i = fprintf(frpt, "Report for critical path:\n");
 				while (--i) fputc('-', frpt);
