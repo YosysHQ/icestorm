@@ -41,6 +41,11 @@ if [ "$1" == "-8k" ]; then
 	shift
 fi
 
+if [ "$1" == "-ul1k" ]; then
+	ICEDEV=ul1k-cm36a
+	shift
+fi
+
 set -ex
 set -- ${1%.v}
 icecubedir="${ICECUBEDIR:-/opt/lscc/iCEcube2.2015.08}"
