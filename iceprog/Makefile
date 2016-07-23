@@ -4,11 +4,11 @@ CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
 
 ifeq ($(STATIC),1)
 LDFLAGS += -static
-LDLIBS += $(shell for pkg in libftdi libftdi1; do $(PKG_CONFIG) --silence-errors --static --libs $$pkg && exit; done; echo -lftdi; )
-CFLAGS += $(shell for pkg in libftdi libftdi1; do $(PKG_CONFIG) --silence-errors --static --cflags $$pkg && exit; done; )
+LDLIBS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --static --libs $$pkg && exit; done; echo -lftdi; )
+CFLAGS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --static --cflags $$pkg && exit; done; )
 else
-LDLIBS += $(shell for pkg in libftdi libftdi1; do $(PKG_CONFIG) --silence-errors --libs $$pkg && exit; done; echo -lftdi; )
-CFLAGS += $(shell for pkg in libftdi libftdi1; do $(PKG_CONFIG) --silence-errors --cflags $$pkg && exit; done; )
+LDLIBS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --libs $$pkg && exit; done; echo -lftdi; )
+CFLAGS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --cflags $$pkg && exit; done; )
 endif
 
 all: iceprog$(EXE)
