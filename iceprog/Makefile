@@ -2,12 +2,14 @@ include ../config.mk
 LDLIBS = -L/usr/local/lib -lm
 CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
 
-ifeq ($(STATIC),1)
+NSTATIC = $(shell pkg-config --exists libftdi1 || echo $(STATIC) )
+
+ifeq ($(NSTATIC),1)
 LDFLAGS += -static
-LDLIBS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --static --libs $$pkg && exit; done; echo -lftdi; )
-CFLAGS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --static --cflags $$pkg && exit; done; )
+LDLIBS += $(shell for pkg in libftdi; do $(PKG_CONFIG) --silence-errors --static --libs $$pkg && exit; done; )
+CFLAGS += $(shell for pkg in libftdi; do $(PKG_CONFIG) --silence-errors --static --cflags $$pkg && exit; done; )
 else
-LDLIBS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --libs $$pkg && exit; done; echo -lftdi; )
+LDLIBS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --libs $$pkg && exit; done; )
 CFLAGS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --cflags $$pkg && exit; done; )
 endif
 
@@ -31,4 +33,3 @@ clean:
 -include *.d
 
 .PHONY: all install uninstall clean
-
