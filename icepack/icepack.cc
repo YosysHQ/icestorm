@@ -16,7 +16,10 @@
 //  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 //
 
+#if !defined(_WIN32) && !defined(_GNU_SOURCE)
+// for vasprintf()
 #define _GNU_SOURCE
+#endif
 
 #include <set>
 #include <tuple>
