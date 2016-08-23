@@ -276,8 +276,24 @@ void read_chipdb()
 {
 	char buffer[1024];
 
-	if (PREFIX[0] == '~' && PREFIX[1] == '/')
-		snprintf(buffer, 1024, "%s%s/share/icebox/chipdb-%s.txt", getenv("HOME"), PREFIX+1, config_device.c_str());
+	if (PREFIX[0] == '~' && PREFIX[1] == '/') {
+		std::string homedir;
+#ifdef _WIN32
+		if (getenv("USERPROFILE") != nullptr) {
+			homedir += getenv("USERPROFILE");
+		}
+		else {
+			if (getenv("HOMEDRIVE") != nullptr &&
+			    getenv("HOMEPATH") != nullptr) {
+				homedir += getenv("HOMEDRIVE");
+				homedir += getenv("HOMEPATH");
+			}
+		}
+#else
+		homedir += getenv("HOME");
+#endif
+		snprintf(buffer, 1024, "%s%s/share/icebox/chipdb-%s.txt", homedir.c_str(), PREFIX+1, config_device.c_str());
+	}
 	else
 		snprintf(buffer, 1024, "%s/share/icebox/chipdb-%s.txt", PREFIX, config_device.c_str());
 
