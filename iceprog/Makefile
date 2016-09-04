@@ -1,6 +1,13 @@
 include ../config.mk
-LDLIBS = -L/usr/local/lib -lm
-CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
+
+UNAME := $(shell uname -s)
+ifneq ($(UNAME),Darwin)
+  LDLIBS = -L/usr/local/lib -lm
+  CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
+else
+  LDLIBS = -L/usr/local/lib -L/opt/local/lib -lftdi -lm
+  CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include -I/opt/local/include/
+endif
 
 ifeq ($(STATIC),1)
 LDFLAGS += -static
