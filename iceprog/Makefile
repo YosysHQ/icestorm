@@ -1,6 +1,13 @@
 include ../config.mk
-LDLIBS = -L/usr/local/lib -lm
-CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
+
+ifneq ($(shell uname -s),Darwin)
+  LDLIBS = -L/usr/local/lib -lm
+  CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
+else
+  LIBFTDI_NAME = $(shell $(PKG_CONFIG) --exists libftdi1 && echo ftdi1 || echo ftdi)
+  LDLIBS = -L/usr/local/lib -l${LIBFTDI_NAME} -lm
+  CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
+endif
 
 ifeq ($(STATIC),1)
 LDFLAGS += -static
