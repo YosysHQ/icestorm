@@ -1,12 +1,19 @@
 include ../config.mk
 
+LIBFTDI_VERSION = $(shell $(PKG_CONFIG) --modversion libftdi1 2>/dev/null)
+ifneq ($(LIBFTDI_VERSION),)
+  LIBFTDI_NAME = ftdi1
+else
+  LIBFTDI_NAME = ftdi
+endif
+
 UNAME := $(shell uname -s)
 ifneq ($(UNAME),Darwin)
   LDLIBS = -L/usr/local/lib -lm
   CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
 else
-  LDLIBS = -L/usr/local/lib -L/opt/local/lib -lftdi -lm
-  CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include -I/opt/local/include/
+  LDLIBS = -L/usr/local/lib -l${LIBFTDI_NAME} -lm
+  CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
 endif
 
 ifeq ($(STATIC),1)
