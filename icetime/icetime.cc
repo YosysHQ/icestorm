@@ -42,7 +42,7 @@ bool verbose = false;
 bool max_span_hack = false;
 bool json_firstentry = true;
 
-std::string config_device, device_type, selected_package;
+std::string config_device, device_type, selected_package, chipdbfile;
 std::vector<std::vector<std::string>> config_tile_type;
 std::vector<std::vector<std::vector<std::vector<bool>>>> config_bits;
 std::map<std::tuple<int, int, int>, std::string> pin_pos;
@@ -276,6 +276,9 @@ void read_chipdb()
 {
 	char buffer[1024];
 
+	if (!chipdbfile.empty()) {
+		snprintf(buffer, 1024, "%s", chipdbfile.c_str());
+	} else
 	if (PREFIX[0] == '~' && PREFIX[1] == '/') {
 		std::string homedir;
 #ifdef _WIN32
@@ -293,8 +296,7 @@ void read_chipdb()
 		homedir += getenv("HOME");
 #endif
 		snprintf(buffer, 1024, "%s%s/share/icebox/chipdb-%s.txt", homedir.c_str(), PREFIX+1, config_device.c_str());
-	}
-	else
+	} else
 		snprintf(buffer, 1024, "%s/share/icebox/chipdb-%s.txt", PREFIX, config_device.c_str());
 
 	FILE *fdb = fopen(buffer, "r");
@@ -1874,6 +1876,9 @@ void help(const char *cmd)
 	printf("    -d lp1k|hx1k|lp8k|hx8k\n");
 	printf("        select the device type (default = lp variant)\n");
 	printf("\n");
+	printf("    -C <chipdb-file>\n");
+	printf("        read chip description from the specified file\n");
+	printf("\n");
 	printf("    -m\n");
 	printf("        enable max_span_hack for conservative timing estimates\n");
 	printf("\n");
@@ -1904,7 +1909,7 @@ int main(int argc, char **argv)
 	std::vector<std::string> print_timing_nets;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "p:P:g:o:r:j:d:mitT:vc:")) != -1)
+	while ((opt = getopt(argc, argv, "p:P:g:o:r:j:d:mitT:vc:C:")) != -1)
 	{
 		switch (opt)
 		{
@@ -1961,6 +1966,9 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			clock_constr = strtod(optarg, NULL);
+			break;
+		case 'C':
+			chipdbfile = optarg;
 			break;
 		case 'v':
 			verbose = true;
