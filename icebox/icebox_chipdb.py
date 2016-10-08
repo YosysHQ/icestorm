@@ -172,7 +172,7 @@ all_group_segments = ic.group_segments(all_tiles, connect_gb=False)
 print(".device %s %d %d %d" % (ic.device, ic.max_x+1, ic.max_y+1, len(all_group_segments)))
 print()
 
-for key in list(icebox.pinloc_db.keys()):
+for key in sorted(icebox.pinloc_db.keys()):
     key_dev, key_package = key.split("-")
     if key_dev == ic.device:
         print(".pins %s" % (key_package))
@@ -262,7 +262,7 @@ for pllid in ic.pll_list():
         if pllid in icebox.noplls_db[entry]:
             locked_pkgs.append(entry.split("-")[1])
     if len(locked_pkgs) > 0:
-        print("LOCKED %s" % " ".join(locked_pkgs))
+        print("LOCKED %s" % " ".join(sorted(locked_pkgs)))
     for key in sorted(pllinfo):
         if key != "LOC":
             print("%s %s" % (key, " ".join([str(k) for k in pllinfo[key]])))
