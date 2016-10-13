@@ -3,6 +3,7 @@ CC ?= $(CXX)
 PKG_CONFIG ?= pkg-config
 DESTDIR ?=
 PREFIX ?= /usr/local
+CHIPDB_SUBDIR ?= icebox
 
 ifeq ($(MXE),1)
 EXE = .exe

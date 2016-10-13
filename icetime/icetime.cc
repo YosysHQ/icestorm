@@ -295,9 +295,9 @@ void read_chipdb()
 #else
 		homedir += getenv("HOME");
 #endif
-		snprintf(buffer, 1024, "%s%s/share/icebox/chipdb-%s.txt", homedir.c_str(), PREFIX+1, config_device.c_str());
+		snprintf(buffer, 1024, "%s%s/share/" CHIPDB_SUBDIR "/chipdb-%s.txt", homedir.c_str(), PREFIX+1, config_device.c_str());
 	} else
-		snprintf(buffer, 1024, "%s/share/icebox/chipdb-%s.txt", PREFIX, config_device.c_str());
+		snprintf(buffer, 1024, PREFIX "/share/" CHIPDB_SUBDIR "/chipdb-%s.txt", config_device.c_str());
 
 	FILE *fdb = fopen(buffer, "r");
 	if (fdb == nullptr) {
