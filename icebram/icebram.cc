@@ -43,6 +43,18 @@ uint64_t xorshift64star(void) {
 	return x * UINT64_C(2685821657736338717);
 }
 
+void push_back_bitvector(vector<vector<bool>> &hexfile, const vector<int> &digits)
+{
+	if (digits.empty())
+		return;
+
+	hexfile.push_back(vector<bool>(digits.size() * 4));
+
+	for (int i = 0; i < int(digits.size()) * 4; i++)
+		if ((digits.at(digits.size() - i/4 -1) & (1 << (i%4))) != 0)
+			hexfile.back().at(i) = true;
+}
+
 void parse_hexfile_line(const char *filename, int linenr, vector<vector<bool>> &hexfile, string &line)
 {
 	vector<int> digits;
@@ -54,14 +66,18 @@ void parse_hexfile_line(const char *filename, int linenr, vector<vector<bool>> &
 			digits.push_back(10 + c - 'a');
 		else if ('A' <= c && c <= 'F')
 			digits.push_back(10 + c - 'A');
-		else goto error;
+		else if ('x' == c || 'X' == c ||
+			 'z' == c || 'Z' == c)
+			digits.push_back(0);
+		else if ('_' == c)
+			;
+		else if (' ' == c || '\t' == c || '\r' == c) {
+			push_back_bitvector(hexfile, digits);
+			digits.clear();
+		} else goto error;
 	}
 
-	hexfile.push_back(vector<bool>(digits.size() * 4));
-
-	for (int i = 0; i < int(digits.size()) * 4; i++)
-		if ((digits.at(digits.size() - i/4 -1) & (1 << (i%4))) != 0)
-			hexfile.back().at(i) = true;
+	push_back_bitvector(hexfile, digits);
 
 	return;
 
@@ -180,6 +196,15 @@ int main(int argc, char **argv)
 
 	for (int i = 1; getline(to_hexfile_f, line); i++)
 		parse_hexfile_line(to_hexfile_n, i, to_hexfile, line);
+
+	if (to_hexfile.size() > 0 && from_hexfile.size() > to_hexfile.size()) {
+		if (verbose)
+			fprintf(stderr, "Padding to_hexfile from %d words to %d\n",
+				int(to_hexfile.size()), int(from_hexfile.size()));
+		do
+			to_hexfile.push_back(vector<bool>(to_hexfile.at(0).size()));
+		while (from_hexfile.size() > to_hexfile.size());
+	}
 
 	if (from_hexfile.size() != to_hexfile.size()) {
 		fprintf(stderr, "Hexfiles have different number of words! (%d vs. %d)\n", int(from_hexfile.size()), int(to_hexfile.size()));
