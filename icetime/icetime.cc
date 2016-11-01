@@ -2232,10 +2232,11 @@ device_chip_mismatch:
 		fprintf(frpt, "icetime topological timing analysis report\n");
 		fprintf(frpt, "==========================================\n");
 		fprintf(frpt, "\n");
-		fprintf(frpt, "Warning: This timing analysis report is an estimate!\n");
-		if (max_span_hack)
+
+		if (max_span_hack) {
 			fprintf(frpt, "Info: max_span_hack is enabled: estimate is conservative.\n");
-		fprintf(frpt, "\n");
+			fprintf(frpt, "\n");
+		}
 
 		for (auto &n : print_timing_nets)
 			max_path_delay = std::max(max_path_delay, ta.report(n));
