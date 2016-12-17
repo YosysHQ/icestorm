@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 		double f_pfd = f_pllin / (divr + 1);
 		if (f_pfd < 10 || f_pfd > 133) continue;
 
-		for (int divf = 0; divf <= 127; divf++)
+		for (int divf = 0; divf <= 63; divf++)
 		{
 			if (simple_feedback)
 			{
