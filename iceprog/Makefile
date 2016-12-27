@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-# CC = clang
-LDLIBS = -L/usr/local/lib -lftdi -lm -L/opt/local/lib
-CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include -I/opt/local/include
-MXEGCC = /usr/local/src/mxe/usr/bin/i686-pc-mingw32-gcc
-DESTDIR = /usr/local
-
-all: iceprog
-
-iceprog: iceprog.o
-
-iceprog.exe: iceprog.c
-	$(MXEGCC) -std=c99 -o iceprog.exe -Os iceprog.c -lftdi -lusb -lm
-=======
 include ../config.mk
 
 ifneq ($(shell uname -s),Darwin)
@@ -36,7 +22,6 @@ all: iceprog$(EXE)
 
 iceprog$(EXE): iceprog.o
 	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
->>>>>>> 7d8337a138fef3417b9f41cc6635c9562f4d9b4a
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
@@ -53,4 +38,3 @@ clean:
 -include *.d
 
 .PHONY: all install uninstall clean
-
