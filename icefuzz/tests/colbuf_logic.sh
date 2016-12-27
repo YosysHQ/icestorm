@@ -23,7 +23,7 @@ for y in {1..16}; do
 	echo "set_location dff $x $y 0" > ${pf}.pcf
 	echo "set_io c $gpin" >> ${pf}.pcf
 	bash ../../icecube.sh ${pf}.v > ${pf}.log 2>&1
-	../../../icebox/icebox_explain.py ${pf}.txt > ${pf}.exp
+	../../../icebox/icebox_explain.py ${pf}.asc > ${pf}.exp
 	rm -rf ${pf}.tmp
 done; done
 

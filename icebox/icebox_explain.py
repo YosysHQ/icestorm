@@ -25,7 +25,7 @@ print_all = False
 
 def usage():
     print("""
-Usage: icebox_explain [options] [bitmap.txt]
+Usage: icebox_explain [options] [bitmap.asc]
 
     -b
         print config bit names for each config statement

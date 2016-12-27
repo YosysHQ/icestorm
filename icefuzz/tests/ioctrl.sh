@@ -18,7 +18,7 @@ for pin in $pins; do
 	echo "module top (output pin); assign pin = 1; endmodule" > ${pf}.v
 	echo "set_io pin $pin" > ${pf}.pcf
 	bash ../../icecube.sh ${pf}.v > ${pf}.log 2>&1
-	../../../icebox/icebox_explain.py ${pf}.txt > ${pf}.exp
+	../../../icebox/icebox_explain.py ${pf}.asc > ${pf}.exp
 done
 
 set +x

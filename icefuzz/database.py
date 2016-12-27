@@ -53,7 +53,11 @@ def read_database(filename, tile_type):
                 if match:
                     raw_db.append((bit, ("buffer", "wire_logic_cluster/lc_%d/lout" % (int(match.group(1))-1), "input_2_%s" % match.group(1))))
                 else:
-                    raw_db.append((bit, (line[0], line[1])))
+                    match = re.match("MEMT_LC\d+_inmux\d+_bram_cbit_(\d+)", line[1])
+                    if match:
+                        raw_db.append((bit, ("RamCascade", "CBIT_%d" % int(match.group(1)))))
+                    else:
+                        raw_db.append((bit, (line[0], line[1])))
             elif line[0] == "RamConfig":
                 if line[1] == "MEMB_Power_Up_Control": line[1] = "PowerUp"
                 line[1] = re.sub(r"MEMT_bram_cbit_", "CBIT_", line[1])

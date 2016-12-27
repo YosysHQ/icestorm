@@ -7,6 +7,9 @@ import os
 os.system("rm -rf work_gbio")
 os.mkdir("work_gbio")
 
+for p in gpins:
+    if p in pins: pins.remove(p)
+
 for idx in range(num):
     with open("work_gbio/gbio_%02d.v" % idx, "w") as f:
         glbs = np.random.permutation(list(range(8)))
@@ -65,8 +68,9 @@ for idx in range(num):
         ), file=f)
     with open("work_gbio/gbio_%02d.pcf" % idx, "w") as f:
         p = np.random.permutation(pins)
+        g = np.random.permutation(gpins)
         for i in range(8):
-            print("set_io pin[%d] %s" % (i, p[i]), file=f)
+            print("set_io pin[%d] %s" % (i, g[i]), file=f)
             print("set_io din_0[%d] %s" % (i, p[8+i]), file=f)
             print("set_io din_1[%d] %s" % (i, p[2*8+i]), file=f)
             print("set_io globals[%d] %s" % (i, p[3*8+i]), file=f)

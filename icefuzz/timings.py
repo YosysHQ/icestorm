@@ -3,7 +3,7 @@
 import getopt, sys, re
 
 ignore_cells = set([
-    "ADTTRIBUF", "CascadeBuf", "DL", "GIOBUG", "LUT_MUX", "MUX4",
+    "ADTTRIBUF", "DL", "GIOBUG", "LUT_MUX", "MUX4",
     "PLL40_2_FEEDBACK_PATH_DELAY", "PLL40_2_FEEDBACK_PATH_EXTERNAL",
     "PLL40_2_FEEDBACK_PATH_PHASE_AND_DELAY", "PLL40_2_FEEDBACK_PATH_SIMPLE",
     "PLL40_2F_FEEDBACK_PATH_DELAY", "PLL40_2F_FEEDBACK_PATH_EXTERNAL",
@@ -261,7 +261,8 @@ for filename in txt_inputs:
 # Filter database
 
 for celltype in ignore_cells:
-    del database[celltype]
+    if celltype in database:
+        del database[celltype]
 
 
 ###########################################

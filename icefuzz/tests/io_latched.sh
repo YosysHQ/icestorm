@@ -23,6 +23,6 @@ for pin in $pins; do
 		echo "set_io data_out $pin_data"
 	} > ${pf}.pcf
 	bash ../../icecube.sh ${pf}.v
-	../../../icebox/icebox_vlog.py -SP ${pf}.psb ${pf}.txt > ${pf}.ve
+	../../../icebox/icebox_vlog.py -SP ${pf}.psb ${pf}.asc > ${pf}.ve
 done
 

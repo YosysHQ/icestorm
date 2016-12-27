@@ -23,7 +23,7 @@ fixup_mode = False
 
 def usage():
     print("""
-Usage: icebox_colbuf [options] [input.txt [output.txt]]
+Usage: icebox_colbuf [options] [input.asc [output.asc]]
 
     -c
         check colbuf bits

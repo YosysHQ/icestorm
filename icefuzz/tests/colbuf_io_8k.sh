@@ -44,7 +44,7 @@ for pin in $pins; do
 	echo "set_io pin $pin" > ${pf}.pcf
 	echo "set_io clk $gpin" >> ${pf}.pcf
 	ICEDEV=hx8k-ct256 bash ../../icecube.sh ${pf}.v > ${pf}.log 2>&1
-	../../../icebox/icebox_explain.py ${pf}.txt > ${pf}.exp
+	../../../icebox/icebox_explain.py ${pf}.asc > ${pf}.exp
 	rm -rf ${pf}.tmp
 done
 

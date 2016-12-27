@@ -15,6 +15,7 @@ hierarchy -generate Odrv* i:I o:O
 hierarchy -generate Sp12to4 i:I o:O
 hierarchy -generate INV i:I o:O
 hierarchy -generate gio2CtrlBuf i:I o:O
+hierarchy -generate CascadeBuf i:I o:O
 
 hierarchy -check
 tee -a tmedges.tmp edgetypes

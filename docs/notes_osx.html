@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<title>Project IceStorm &ndash; Notes for Installing on OSX</title>
+</head><body>
+<h1>Project IceStorm &ndash; Notes for Installing on OSX</h1>
+
+<p>
+The toolchain should be easy to install on OSX platforms. Below are a few troubleshooting items found on Mountain Lion (10.8.2). 
+</p>
+
+<h2>Installing FTDI Library</h2>
+
+<p>
+The libftdi package (.so lib binary and the ftdi.h header) has been renamed to libftdi0, so either do:
+</p>
+
+<ul>
+<li><p><tt>port install libftdi0</tt><br/>
+(note that ports installs the tool to /opt instead of /usr, see next note)</p></li>
+<li><p><tt>brew install libftdi0</tt></p></li>
+</ul>
+
+<h2>iceprog make error on "ftdi.h not found"</h2>
+
+<p>
+Note that Mac Ports installs to /opt instead of /usr, so change the first two lines in <tt>iceprog/Makefile</tt> to:
+</p>
+
+<pre style="padding-left: 3em">
+LDLIBS = -L/usr/local/lib -L/opt/local/lib -lftdi -lm
+CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include -I/opt/local/include/
+</pre>
+
+<p>
+Basically you are indicating where to find the lib with <tt>-L/opt/local/lib</tt> and where to find the .h with <tt>-I/opt/local/include/</tt>.
+</p>
+
+<h2>yosys make error on "&lt;tuple&gt; not found"</h2>
+
+<p>
+This is a compiler issue, i.e., you are probably running on clang and you can circumvent this error by compiling against another compiler.
+Edit the Makefile of yosys and replace the two first lines for this, i.e., comment the first line (clang) and uncomment the second (gcc):
+</p>
+
+<pre style="padding-left: 3em">
+#CONFIG := clang
+CONFIG := gcc
+</pre>
+
+<h2>error "Can't find iCE FTDI USB device (vedor_id 0x0403, device_id 0x6010)." while uploading code to FPGA (e.g., "iceprog example.bin")</h2>
+
+<p>
+You need to unload the FTDI driver. (notes below are from Mountain Lion, 10.8.2).
+First check if it is running:
+</p>
+
+<pre style="padding-left: 3em">
+kextstat | grep FTDIUSBSerialDriver
+</pre>
+
+<p>
+If you see if on the kextstat, we need to unload it:
+</p>
+
+<pre style="padding-left: 3em">
+sudo kextunload -b com.FTDI.driver.FTDIUSBSerialDriver`
+</pre>
+
+<p>
+Repeat the <tt>kextstat</tt> command and check that the driver was successfully unloaded.
+</p>
+
+<p>
+Try running <tt>iceprog example.bin</tt> again. It should be working now.
+</p>
+
+<p>
+Note: On newer OSes perhaps you need to also kextunload the <tt>com.apple.driver.AppleUSBFTDI</tt> driver.
+</p>
+

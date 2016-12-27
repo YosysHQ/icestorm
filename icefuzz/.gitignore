@@ -2,8 +2,12 @@
 *.glb
 *.psb
 *.tmp/
-*.txt
+*.asc
 *.vsb
 *.sdf
 /work_*/
 __pycache__
+bitdata_*.txt
+data_*.txt
+database_*.txt
+timings_*.html

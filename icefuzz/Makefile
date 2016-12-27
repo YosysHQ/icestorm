@@ -1,5 +1,6 @@
-
+include ../config.mk
 export LC_ALL=C
+export ICE_SBTIMER_LP=1
 
 TESTS =
 TESTS += binop
@@ -15,7 +16,9 @@ TESTS += gbio2
 TESTS += prim
 TESTS += fflogic
 TESTS += ram40
+TESTS += mem
 TESTS += pll
+TESTS += aig
 
 EIGTHK = _8k
 
@@ -38,21 +41,28 @@ endif
 
 timings:
 ifeq ($(EIGTHK),_8k)
-	cp tmedges_8k.txt tmedges.tmp
-	for f in work_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
-	sort -u tmedges.tmp > tmedges_8k.txt && rm -f tmedges.tmp
-	python3 timings.py -t timings_8k.txt work_*/*.sdf > timings_8k.new
-	mv timings_8k.new timings_8k.txt
+	cp tmedges.txt tmedges.tmp
+	set -e; for f in work_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
+	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
+	python3 timings.py -t timings_hx8k.txt work_*/*.sdf > timings_hx8k.new
+	mv timings_hx8k.new timings_hx8k.txt
+	python3 timings.py -t timings_lp8k.txt work_*/*.slp > timings_lp8k.new
+	mv timings_lp8k.new timings_lp8k.txt
 else
-	cp tmedges_1k.txt tmedges.tmp
-	for f in work_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
-	sort -u tmedges.tmp > tmedges_1k.txt && rm -f tmedges.tmp
-	python3 timings.py -t timings_1k.txt work_*/*.sdf > timings_1k.new
-	mv timings_1k.new timings_1k.txt
+	cp tmedges.txt tmedges.tmp
+	set -e; for f in work_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
+	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
+	python3 timings.py -t timings_hx1k.txt work_*/*.sdf > timings_hx1k.new
+	mv timings_hx1k.new timings_hx1k.txt
+	python3 timings.py -t timings_lp1k.txt work_*/*.slp > timings_lp1k.new
+	mv timings_lp1k.new timings_lp1k.txt
 endif
 
 timings_html:
-	python3 timings.py -h tmedges_1k.txt -t timings_1k.txt -l "HX1K with default temp/volt settings" > timings_1k.html
+	python3 timings.py -h tmedges.txt -t timings_hx1k.txt -l "HX1K with default temp/volt settings" > timings_hx1k.html
+	python3 timings.py -h tmedges.txt -t timings_hx8k.txt -l "HX8K with default temp/volt settings" > timings_hx8k.html
+	python3 timings.py -h tmedges.txt -t timings_lp1k.txt -l "LP1K with default temp/volt settings" > timings_lp1k.html
+	python3 timings.py -h tmedges.txt -t timings_lp8k.txt -l "LP8K with default temp/volt settings" > timings_lp8k.html
 
 data_cached.txt: cached_io.txt cached_logic.txt cached_ramb$(EIGTHK).txt cached_ramt$(EIGTHK).txt
 	gawk '{ print "io", $$0; }' cached_io.txt > data_cached.new
@@ -110,6 +120,7 @@ clean:
 	rm -rf data_*.txt
 	rm -rf bitdata_*.txt
 	rm -rf database_*.txt
+	rm -rf timings_*.html
 
 .PHONY: database datafiles check clean
 

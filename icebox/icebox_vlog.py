@@ -32,7 +32,7 @@ modname = "chip"
 
 def usage():
     print("""
-Usage: icebox_vlog [options] [bitmap.txt]
+Usage: icebox_vlog [options] [bitmap.asc]
 
     -s
         strip comments from output
@@ -50,7 +50,7 @@ Usage: icebox_vlog [options] [bitmap.txt]
         name for the exported module (default: "chip")
 
     -p <pcf-file>
-        use the set_io command from the specified pcf file
+        use the set_io commands from the specified pcf file
 
     -P <pcf-file>
         like -p, enable some hacks for pcf files created

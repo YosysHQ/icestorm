@@ -229,18 +229,22 @@ B14[4],B15[4],!B15[5],!B15[6],B15[7]	buffer	IO_T.logic_op_bot_6	lc_trk_g1_6
 !B14[5],!B14[6],B14[7],B14[8],B15[8]	buffer	IO_T.logic_op_bot_7	lc_trk_g1_7
 !B8[12],!B8[13],!B8[14],!B9[12],B9[15]	buffer	glb_netwk_0	wire_io_cluster/io_1/inclk
 !B14[12],!B14[13],!B14[14],!B15[12],B15[15]	buffer	glb_netwk_0	wire_io_cluster/io_1/outclk
+!B10[14],B10[15],!B11[14],!B11[15]	buffer	glb_netwk_1	wire_io_cluster/io_1/cen
 !B8[12],!B8[13],!B8[14],B9[12],B9[15]	buffer	glb_netwk_1	wire_io_cluster/io_1/inclk
 !B14[12],!B14[13],!B14[14],B15[12],B15[15]	buffer	glb_netwk_1	wire_io_cluster/io_1/outclk
 B8[12],!B8[13],!B8[14],!B9[12],B9[15]	buffer	glb_netwk_2	wire_io_cluster/io_1/inclk
 B14[12],!B14[13],!B14[14],!B15[12],B15[15]	buffer	glb_netwk_2	wire_io_cluster/io_1/outclk
+B10[14],B10[15],!B11[14],!B11[15]	buffer	glb_netwk_3	wire_io_cluster/io_1/cen
 B8[12],!B8[13],!B8[14],B9[12],B9[15]	buffer	glb_netwk_3	wire_io_cluster/io_1/inclk
 B14[12],!B14[13],!B14[14],B15[12],B15[15]	buffer	glb_netwk_3	wire_io_cluster/io_1/outclk
 !B8[12],!B8[13],B8[14],!B9[12],B9[15]	buffer	glb_netwk_4	wire_io_cluster/io_1/inclk
 !B14[12],!B14[13],B14[14],!B15[12],B15[15]	buffer	glb_netwk_4	wire_io_cluster/io_1/outclk
+!B10[14],B10[15],!B11[14],B11[15]	buffer	glb_netwk_5	wire_io_cluster/io_1/cen
 !B8[12],!B8[13],B8[14],B9[12],B9[15]	buffer	glb_netwk_5	wire_io_cluster/io_1/inclk
 !B14[12],!B14[13],B14[14],B15[12],B15[15]	buffer	glb_netwk_5	wire_io_cluster/io_1/outclk
 B8[12],!B8[13],B8[14],!B9[12],B9[15]	buffer	glb_netwk_6	wire_io_cluster/io_1/inclk
 B14[12],!B14[13],B14[14],!B15[12],B15[15]	buffer	glb_netwk_6	wire_io_cluster/io_1/outclk
+B10[14],B10[15],!B11[14],B11[15]	buffer	glb_netwk_7	wire_io_cluster/io_1/cen
 B8[12],!B8[13],B8[14],B9[12],B9[15]	buffer	glb_netwk_7	wire_io_cluster/io_1/inclk
 B14[12],!B14[13],B14[14],B15[12],B15[15]	buffer	glb_netwk_7	wire_io_cluster/io_1/outclk
 !B4[12],!B4[13],!B5[12],B5[13]	buffer	lc_trk_g0_0	wire_io_cluster/io_0/D_OUT_0
@@ -3896,6 +3900,10 @@ B8[4],B8[6],!B9[5]	routing	sp4_v_t_47	sp4_v_b_6
 """
 database_ramt_txt = """
 B0[0]	NegClk
+B5[7]	RamCascade	CBIT_4
+B4[7]	RamCascade	CBIT_5
+B7[7]	RamCascade	CBIT_6
+B6[7]	RamCascade	CBIT_7
 B1[7]	RamConfig	CBIT_0
 B0[7]	RamConfig	CBIT_1
 B3[7]	RamConfig	CBIT_2
@@ -6759,6 +6767,10 @@ B12[7]	ColBufCtrl	8k_glb_netwk_5
 B15[7]	ColBufCtrl	8k_glb_netwk_6
 B14[7]	ColBufCtrl	8k_glb_netwk_7
 B0[0]	NegClk
+B5[7]	RamCascade	CBIT_4
+B4[7]	RamCascade	CBIT_5
+B7[7]	RamCascade	CBIT_6
+B6[7]	RamCascade	CBIT_7
 B1[7]	RamConfig	CBIT_0
 B0[7]	RamConfig	CBIT_1
 B3[7]	RamConfig	CBIT_2

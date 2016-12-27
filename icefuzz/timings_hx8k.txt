@@ -1,0 +1,531 @@
+CELL CascadeBuf
+IOPATH  I  O  118.382:130.906:147.283  146.568:162.074:182.35
+
+CELL CascadeMux
+IOPATH  I  O  0:0:0  0:0:0
+
+CELL CEMux
+IOPATH  I  O  484.803:536.092:603.157  445.342:492.457:554.063
+
+CELL ClkMux
+IOPATH  I  O  248.039:274.28:308.592  186.029:205.71:231.444
+
+CELL gio2CtrlBuf
+IOPATH  I  O  0:0:0  0:0:0
+
+CELL Glb2LocalMux
+IOPATH  I  O  360.783:398.952:448.861  287.499:317.915:357.686
+
+CELL GlobalMux
+IOPATH  I  O  124.019:137.14:154.296  62.0096:68.5699:77.148
+
+CELL ICE_CARRY_IN_MUX
+IOPATH  carryinitin  carryinitout  157.843:174.542:196.377  140.931:155.841:175.336
+
+CELL ICE_GB
+IOPATH  USERSIGNALTOGLOBALBUFFER  GLOBALBUFFEROUTPUT  496.077:548.56:617.184  450.979:498.69:561.077
+
+CELL InMux
+IOPATH  I  O  208.578:230.644:259.498  174.754:193.243:217.417
+
+CELL INV
+IOPATH  I  O  0:0:0  0:0:0
+
+CELL IO_PAD
+IOPATH  DIN         PACKAGEPIN  2291.5:2291.5:2291.5  2353.2:2353.2:2353.2
+IOPATH  OE          PACKAGEPIN  1902:1902:1902        1990:1990:1990
+IOPATH  OE          PACKAGEPIN  1973:1973:1973        1942:1942:1942
+IOPATH  OE          PACKAGEPIN  2291.5:2291.5:2291.5  2353.2:2353.2:2353.2
+IOPATH  PACKAGEPIN  DOUT        590:590:590           540:540:540
+
+CELL IoInMux
+IOPATH  I  O  208.578:230.644:259.498  174.754:193.243:217.417
+
+CELL IoSpan4Mux
+IOPATH  I  O  231.127:255.579:287.552  259.313:286.747:322.619
+
+CELL LocalMux
+IOPATH  I  O  264.95:292.981:329.632  248.039:274.28:308.592
+
+CELL LogicCell40
+HOLD      negedge:ce   posedge:clk  0:0:0
+HOLD      negedge:in0  posedge:clk  0:0:0
+HOLD      negedge:in1  posedge:clk  0:0:0
+HOLD      negedge:in2  posedge:clk  0:0:0
+HOLD      negedge:in3  posedge:clk  0:0:0
+HOLD      negedge:sr   posedge:clk  -158.688:-175.477:-197.429
+HOLD      posedge:ce   posedge:clk  0:0:0
+HOLD      posedge:in0  posedge:clk  0:0:0
+HOLD      posedge:in1  posedge:clk  0:0:0
+HOLD      posedge:in2  posedge:clk  0:0:0
+HOLD      posedge:in3  posedge:clk  0:0:0
+HOLD      posedge:sr   posedge:clk  -143.975:-159.207:-179.124
+RECOVERY  negedge:sr   posedge:clk  128.36:141.94:159.696
+RECOVERY  posedge:sr   posedge:clk  0:0:0
+REMOVAL   negedge:sr   posedge:clk  0:0:0
+REMOVAL   posedge:sr   posedge:clk  0:0:0
+SETUP     negedge:ce   posedge:clk  0:0:0
+SETUP     negedge:in0  posedge:clk  321.323:355.317:399.767
+SETUP     negedge:in1  posedge:clk  304.411:336.616:378.727
+SETUP     negedge:in2  posedge:clk  259.313:286.747:322.619
+SETUP     negedge:in3  posedge:clk  174.754:193.243:217.417
+SETUP     negedge:sr   posedge:clk  112.745:124.673:140.269
+SETUP     posedge:ce   posedge:clk  0:0:0
+SETUP     posedge:in0  posedge:clk  377.695:417.653:469.902
+SETUP     posedge:in1  posedge:clk  321.323:355.317:399.767
+SETUP     posedge:in2  posedge:clk  298.774:330.382:371.713
+SETUP     posedge:in3  posedge:clk  219.852:243.112:273.525
+SETUP     posedge:sr   posedge:clk  163.48:180.775:203.39
+IOPATH    carryin      carryout     101.47:112.205:126.242      84.5586:93.5045:105.202
+IOPATH    in0          lcout        360.783:398.952:448.861     310.048:342.85:385.74
+IOPATH    in0          ltout        293.136:324.149:364.7       310.048:342.85:385.74
+IOPATH    in1          carryout     208.578:230.644:259.498     197.303:218.177:245.471
+IOPATH    in1          lcout        321.323:355.317:399.767     304.411:336.616:378.727
+IOPATH    in1          ltout        259.313:286.747:322.619     304.411:336.616:378.727
+IOPATH    in2          carryout     186.029:205.71:231.444      107.108:118.439:133.256
+IOPATH    in2          lcout        304.411:336.616:378.727     281.862:311.682:350.673
+IOPATH    in2          ltout        248.039:274.28:308.592      276.225:305.448:343.659
+IOPATH    in3          lcout        253.676:280.513:315.606     231.127:255.579:287.552
+IOPATH    in3          ltout        214.215:236.878:266.511     219.852:243.112:273.525
+IOPATH    posedge:clk  lcout        434.067:479.99:540.036      434.067:479.99:540.036
+IOPATH    sr           lcout        0:0:0                       481.612:532.564:599.188
+IOPATH    sr           lcout        481.589:532.539:599.16      0:0:0
+
+CELL Odrv4
+IOPATH  I  O  281.862:311.682:350.673  298.774:330.382:371.713
+
+CELL Odrv12
+IOPATH  I  O  394.607:436.354:490.942  434.067:479.99:540.036
+
+CELL PLL40
+IOPATH  PLLIN  PLLOUTCORE    *:*:*  *:*:*
+IOPATH  PLLIN  PLLOUTGLOBAL  *:*:*  *:*:*
+
+CELL PLL40_2
+IOPATH  PLLIN  PLLOUTCOREA    *:*:*  *:*:*
+IOPATH  PLLIN  PLLOUTCOREB    *:*:*  *:*:*
+IOPATH  PLLIN  PLLOUTGLOBALA  *:*:*  *:*:*
+IOPATH  PLLIN  PLLOUTGLOBALB  *:*:*  *:*:*
+
+CELL PLL40_2F
+IOPATH  PLLIN  PLLOUTCOREA    *:*:*  *:*:*
+IOPATH  PLLIN  PLLOUTCOREB    *:*:*  *:*:*
+IOPATH  PLLIN  PLLOUTGLOBALA  *:*:*  *:*:*
+IOPATH  PLLIN  PLLOUTGLOBALB  *:*:*  *:*:*
+
+CELL PRE_IO
+HOLD    negedge:CLOCKENABLE   posedge:INPUTCLK   0:0:0
+HOLD    negedge:CLOCKENABLE   posedge:OUTPUTCLK  0:0:0
+HOLD    negedge:DOUT0         posedge:OUTPUTCLK  0:0:0
+HOLD    negedge:DOUT1         negedge:OUTPUTCLK  0:0:0
+HOLD    negedge:OUTPUTENABLE  posedge:OUTPUTCLK  0:0:0
+HOLD    negedge:PADIN         negedge:INPUTCLK   0:0:0
+HOLD    negedge:PADIN         posedge:INPUTCLK   0:0:0
+HOLD    posedge:CLOCKENABLE   posedge:INPUTCLK   0:0:0
+HOLD    posedge:CLOCKENABLE   posedge:OUTPUTCLK  0:0:0
+HOLD    posedge:DOUT0         posedge:OUTPUTCLK  0:0:0
+HOLD    posedge:DOUT1         negedge:OUTPUTCLK  0:0:0
+HOLD    posedge:OUTPUTENABLE  posedge:OUTPUTCLK  0:0:0
+HOLD    posedge:PADIN         negedge:INPUTCLK   0:0:0
+HOLD    posedge:PADIN         posedge:INPUTCLK   0:0:0
+SETUP   negedge:CLOCKENABLE   posedge:INPUTCLK   56.3724:62.3363:70.1346
+SETUP   negedge:CLOCKENABLE   posedge:OUTPUTCLK  56.3724:62.3363:70.1346
+SETUP   negedge:DOUT0         posedge:OUTPUTCLK  56.3724:62.3363:70.1346
+SETUP   negedge:DOUT1         negedge:OUTPUTCLK  56.3724:62.3363:70.1346
+SETUP   negedge:OUTPUTENABLE  posedge:OUTPUTCLK  56.3724:62.3363:70.1346
+SETUP   negedge:PADIN         negedge:INPUTCLK   1515.4:1675.72:1885.36
+SETUP   negedge:PADIN         posedge:INPUTCLK   1515.4:1675.72:1885.36
+SETUP   posedge:CLOCKENABLE   posedge:INPUTCLK   62.0096:68.5699:77.148
+SETUP   posedge:CLOCKENABLE   posedge:OUTPUTCLK  62.0096:68.5699:77.148
+SETUP   posedge:DOUT0         posedge:OUTPUTCLK  62.0096:68.5699:77.148
+SETUP   posedge:DOUT1         negedge:OUTPUTCLK  62.0096:68.5699:77.148
+SETUP   posedge:OUTPUTENABLE  posedge:OUTPUTCLK  62.0096:68.5699:77.148
+SETUP   posedge:PADIN         negedge:INPUTCLK   1521.04:1681.96:1892.37
+SETUP   posedge:PADIN         posedge:INPUTCLK   1521.04:1681.96:1892.37
+IOPATH  DOUT0                 PADOUT             1612.25:1782.82:2005.85  1798.28:1988.53:2237.29
+IOPATH  LATCHINPUTVALUE       DIN0               276.225:305.448:343.659  298.774:330.382:371.713
+IOPATH  negedge:INPUTCLK      DIN1               112.745:124.673:140.269  112.745:124.673:140.269
+IOPATH  negedge:OUTPUTCLK     PADOUT             90.1958:99.7381:112.215  112.745:124.673:140.269
+IOPATH  OUTPUTENABLE          PADOEN             140.931:155.841:175.336  169.117:187.009:210.404
+IOPATH  PADIN                 DIN0               496.077:548.56:617.184   372.058:411.42:462.888
+IOPATH  posedge:INPUTCLK      DIN0               112.745:124.673:140.269  112.745:124.673:140.269
+IOPATH  posedge:OUTPUTCLK     PADOEN             90.1958:99.7381:112.215  112.745:124.673:140.269
+IOPATH  posedge:OUTPUTCLK     PADOUT             90.1958:99.7381:112.215  112.745:124.673:140.269
+
+CELL PRE_IO_GBUF
+IOPATH  PADSIGNALTOGLOBALBUFFER  GLOBALBUFFEROUTPUT  1496.86:1655.22:1862.28  1372.84:1518.08:1707.99
+
+CELL SB_PLL40_2F_CORE
+IOPATH  REFERENCECLK  PLLOUTCOREA    *:*:*  *:*:*
+IOPATH  REFERENCECLK  PLLOUTCOREB    *:*:*  *:*:*
+IOPATH  REFERENCECLK  PLLOUTGLOBALA  *:*:*  *:*:*
+IOPATH  REFERENCECLK  PLLOUTGLOBALB  *:*:*  *:*:*
+
+CELL SB_PLL40_CORE
+IOPATH  REFERENCECLK  PLLOUTCORE    *:*:*  *:*:*
+IOPATH  REFERENCECLK  PLLOUTGLOBAL  *:*:*  *:*:*
+
+CELL SB_RAM40_4K
+HOLD    negedge:MASK[0]    posedge:WCLK  0:0:0
+HOLD    negedge:MASK[1]    posedge:WCLK  0:0:0
+HOLD    negedge:MASK[2]    posedge:WCLK  0:0:0
+HOLD    negedge:MASK[3]    posedge:WCLK  0:0:0
+HOLD    negedge:MASK[4]    posedge:WCLK  0:0:0
+HOLD    negedge:MASK[5]    posedge:WCLK  0:0:0
+HOLD    negedge:MASK[6]    posedge:WCLK  0:0:0
+HOLD    negedge:MASK[7]    posedge:WCLK  0:0:0
+HOLD    negedge:MASK[8]    posedge:WCLK  0:0:0
+HOLD    negedge:MASK[9]    posedge:WCLK  0:0:0
+HOLD    negedge:MASK[10]   posedge:WCLK  0:0:0
+HOLD    negedge:MASK[11]   posedge:WCLK  0:0:0
+HOLD    negedge:MASK[12]   posedge:WCLK  0:0:0
+HOLD    negedge:MASK[13]   posedge:WCLK  0:0:0
+HOLD    negedge:MASK[14]   posedge:WCLK  0:0:0
+HOLD    negedge:MASK[15]   posedge:WCLK  0:0:0
+HOLD    negedge:RADDR[0]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    negedge:RADDR[1]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    negedge:RADDR[2]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    negedge:RADDR[3]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    negedge:RADDR[4]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    negedge:RADDR[5]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    negedge:RADDR[6]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    negedge:RADDR[7]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    negedge:RADDR[8]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    negedge:RADDR[9]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    negedge:RADDR[10]  posedge:RCLK  45.0979:49.869:56.1077
+HOLD    negedge:RCLKE      posedge:RCLK  42.2793:46.7522:52.6009
+HOLD    negedge:RE         posedge:RCLK  67.6469:74.8036:84.1615
+HOLD    negedge:WADDR[0]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WADDR[1]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WADDR[2]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WADDR[3]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WADDR[4]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WADDR[5]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WADDR[6]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WADDR[7]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WADDR[8]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WADDR[9]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WADDR[10]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WCLKE      posedge:WCLK  21.9852:24.3112:27.3525
+HOLD    negedge:WDATA[0]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[1]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[2]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[3]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[4]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[5]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[6]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[7]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[8]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[9]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[10]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[11]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[12]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[13]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[14]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WDATA[15]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    negedge:WE         posedge:WCLK  39.4607:43.6354:49.0942
+HOLD    posedge:MASK[0]    posedge:WCLK  0:0:0
+HOLD    posedge:MASK[1]    posedge:WCLK  0:0:0
+HOLD    posedge:MASK[2]    posedge:WCLK  0:0:0
+HOLD    posedge:MASK[3]    posedge:WCLK  0:0:0
+HOLD    posedge:MASK[4]    posedge:WCLK  0:0:0
+HOLD    posedge:MASK[5]    posedge:WCLK  0:0:0
+HOLD    posedge:MASK[6]    posedge:WCLK  0:0:0
+HOLD    posedge:MASK[7]    posedge:WCLK  0:0:0
+HOLD    posedge:MASK[8]    posedge:WCLK  0:0:0
+HOLD    posedge:MASK[9]    posedge:WCLK  0:0:0
+HOLD    posedge:MASK[10]   posedge:WCLK  0:0:0
+HOLD    posedge:MASK[11]   posedge:WCLK  0:0:0
+HOLD    posedge:MASK[12]   posedge:WCLK  0:0:0
+HOLD    posedge:MASK[13]   posedge:WCLK  0:0:0
+HOLD    posedge:MASK[14]   posedge:WCLK  0:0:0
+HOLD    posedge:MASK[15]   posedge:WCLK  0:0:0
+HOLD    posedge:RADDR[0]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    posedge:RADDR[1]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    posedge:RADDR[2]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    posedge:RADDR[3]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    posedge:RADDR[4]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    posedge:RADDR[5]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    posedge:RADDR[6]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    posedge:RADDR[7]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    posedge:RADDR[8]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    posedge:RADDR[9]   posedge:RCLK  45.0979:49.869:56.1077
+HOLD    posedge:RADDR[10]  posedge:RCLK  45.0979:49.869:56.1077
+HOLD    posedge:RCLKE      posedge:RCLK  42.2793:46.7522:52.6009
+HOLD    posedge:RE         posedge:RCLK  67.6469:74.8036:84.1615
+HOLD    posedge:WADDR[0]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WADDR[1]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WADDR[2]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WADDR[3]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WADDR[4]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WADDR[5]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WADDR[6]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WADDR[7]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WADDR[8]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WADDR[9]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WADDR[10]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WCLKE      posedge:WCLK  21.9852:24.3112:27.3525
+HOLD    posedge:WDATA[0]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[1]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[2]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[3]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[4]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[5]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[6]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[7]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[8]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[9]   posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[10]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[11]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[12]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[13]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[14]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WDATA[15]  posedge:WCLK  28.1862:31.1682:35.0673
+HOLD    posedge:WE         posedge:WCLK  39.4607:43.6354:49.0942
+SETUP   negedge:MASK[0]    posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[1]    posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[2]    posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[3]    posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[4]    posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[5]    posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[6]    posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[7]    posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[8]    posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[9]    posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[10]   posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[11]   posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[12]   posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[13]   posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[14]   posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:MASK[15]   posedge:WCLK  219.852:243.112:273.525
+SETUP   negedge:RADDR[0]   posedge:RCLK  163.48:180.775:203.39
+SETUP   negedge:RADDR[1]   posedge:RCLK  163.48:180.775:203.39
+SETUP   negedge:RADDR[2]   posedge:RCLK  163.48:180.775:203.39
+SETUP   negedge:RADDR[3]   posedge:RCLK  163.48:180.775:203.39
+SETUP   negedge:RADDR[4]   posedge:RCLK  163.48:180.775:203.39
+SETUP   negedge:RADDR[5]   posedge:RCLK  163.48:180.775:203.39
+SETUP   negedge:RADDR[6]   posedge:RCLK  163.48:180.775:203.39
+SETUP   negedge:RADDR[7]   posedge:RCLK  163.48:180.775:203.39
+SETUP   negedge:RADDR[8]   posedge:RCLK  163.48:180.775:203.39
+SETUP   negedge:RADDR[9]   posedge:RCLK  163.48:180.775:203.39
+SETUP   negedge:RADDR[10]  posedge:RCLK  163.48:180.775:203.39
+SETUP   negedge:RCLKE      posedge:RCLK  214.215:236.878:266.511
+SETUP   negedge:RE         posedge:RCLK  78.9214:87.2708:98.1884
+SETUP   negedge:WADDR[0]   posedge:WCLK  180.392:199.476:224.431
+SETUP   negedge:WADDR[1]   posedge:WCLK  180.392:199.476:224.431
+SETUP   negedge:WADDR[2]   posedge:WCLK  180.392:199.476:224.431
+SETUP   negedge:WADDR[3]   posedge:WCLK  180.392:199.476:224.431
+SETUP   negedge:WADDR[4]   posedge:WCLK  180.392:199.476:224.431
+SETUP   negedge:WADDR[5]   posedge:WCLK  180.392:199.476:224.431
+SETUP   negedge:WADDR[6]   posedge:WCLK  180.392:199.476:224.431
+SETUP   negedge:WADDR[7]   posedge:WCLK  180.392:199.476:224.431
+SETUP   negedge:WADDR[8]   posedge:WCLK  180.392:199.476:224.431
+SETUP   negedge:WADDR[9]   posedge:WCLK  180.392:199.476:224.431
+SETUP   negedge:WADDR[10]  posedge:WCLK  180.392:199.476:224.431
+SETUP   negedge:WCLKE      posedge:WCLK  214.215:236.878:266.511
+SETUP   negedge:WDATA[0]   posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[1]   posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[2]   posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[3]   posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[4]   posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[5]   posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[6]   posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[7]   posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[8]   posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[9]   posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[10]  posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[11]  posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[12]  posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[13]  posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[14]  posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WDATA[15]  posedge:WCLK  129.657:143.374:161.31
+SETUP   negedge:WE         posedge:WCLK  107.108:118.439:133.256
+SETUP   posedge:MASK[0]    posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[1]    posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[2]    posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[3]    posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[4]    posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[5]    posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[6]    posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[7]    posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[8]    posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[9]    posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[10]   posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[11]   posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[12]   posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[13]   posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[14]   posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:MASK[15]   posedge:WCLK  219.852:243.112:273.525
+SETUP   posedge:RADDR[0]   posedge:RCLK  163.48:180.775:203.39
+SETUP   posedge:RADDR[1]   posedge:RCLK  163.48:180.775:203.39
+SETUP   posedge:RADDR[2]   posedge:RCLK  163.48:180.775:203.39
+SETUP   posedge:RADDR[3]   posedge:RCLK  163.48:180.775:203.39
+SETUP   posedge:RADDR[4]   posedge:RCLK  163.48:180.775:203.39
+SETUP   posedge:RADDR[5]   posedge:RCLK  163.48:180.775:203.39
+SETUP   posedge:RADDR[6]   posedge:RCLK  163.48:180.775:203.39
+SETUP   posedge:RADDR[7]   posedge:RCLK  163.48:180.775:203.39
+SETUP   posedge:RADDR[8]   posedge:RCLK  163.48:180.775:203.39
+SETUP   posedge:RADDR[9]   posedge:RCLK  163.48:180.775:203.39
+SETUP   posedge:RADDR[10]  posedge:RCLK  163.48:180.775:203.39
+SETUP   posedge:RCLKE      posedge:RCLK  214.215:236.878:266.511
+SETUP   posedge:RE         posedge:RCLK  78.9214:87.2708:98.1884
+SETUP   posedge:WADDR[0]   posedge:WCLK  180.392:199.476:224.431
+SETUP   posedge:WADDR[1]   posedge:WCLK  180.392:199.476:224.431
+SETUP   posedge:WADDR[2]   posedge:WCLK  180.392:199.476:224.431
+SETUP   posedge:WADDR[3]   posedge:WCLK  180.392:199.476:224.431
+SETUP   posedge:WADDR[4]   posedge:WCLK  180.392:199.476:224.431
+SETUP   posedge:WADDR[5]   posedge:WCLK  180.392:199.476:224.431
+SETUP   posedge:WADDR[6]   posedge:WCLK  180.392:199.476:224.431
+SETUP   posedge:WADDR[7]   posedge:WCLK  180.392:199.476:224.431
+SETUP   posedge:WADDR[8]   posedge:WCLK  180.392:199.476:224.431
+SETUP   posedge:WADDR[9]   posedge:WCLK  180.392:199.476:224.431
+SETUP   posedge:WADDR[10]  posedge:WCLK  180.392:199.476:224.431
+SETUP   posedge:WCLKE      posedge:WCLK  214.215:236.878:266.511
+SETUP   posedge:WDATA[0]   posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[1]   posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[2]   posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[3]   posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[4]   posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[5]   posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[6]   posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[7]   posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[8]   posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[9]   posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[10]  posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[11]  posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[12]  posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[13]  posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[14]  posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WDATA[15]  posedge:WCLK  129.657:143.374:161.31
+SETUP   posedge:WE         posedge:WCLK  107.108:118.439:133.256
+IOPATH  posedge:RCLK       RDATA[0]      1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[1]      1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[2]      1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[3]      1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[4]      1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[5]      1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[6]      1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[7]      1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[8]      1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[9]      1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[10]     1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[11]     1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[12]     1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[13]     1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[14]     1725:1907.49:2146.12     1725:1907.49:2146.12
+IOPATH  posedge:RCLK       RDATA[15]     1725:1907.49:2146.12     1725:1907.49:2146.12
+
+CELL Sp12to4
+IOPATH  I  O  343.872:380.251:427.821  360.783:398.952:448.861
+
+CELL Span4Mux_h0
+IOPATH  I  O  118.382:130.906:147.283  112.745:124.673:140.269
+
+CELL Span4Mux_h1
+IOPATH  I  O  140.931:155.841:175.336  135.294:149.607:168.323
+
+CELL Span4Mux_h2
+IOPATH  I  O  163.48:180.775:203.39  163.48:180.775:203.39
+
+CELL Span4Mux_h3
+IOPATH  I  O  186.029:205.71:231.444  186.029:205.71:231.444
+
+CELL Span4Mux_h4
+IOPATH  I  O  242.401:268.046:301.579  253.676:280.513:315.606
+
+CELL Span4Mux_v0
+IOPATH  I  O  163.48:180.775:203.39  152.205:168.308:189.363
+
+CELL Span4Mux_v1
+IOPATH  I  O  163.48:180.775:203.39  157.843:174.542:196.377
+
+CELL Span4Mux_v2
+IOPATH  I  O  202.941:224.411:252.484  202.941:224.411:252.484
+
+CELL Span4Mux_v3
+IOPATH  I  O  253.676:280.513:315.606  270.588:299.214:336.646
+
+CELL Span4Mux_v4
+IOPATH  I  O  281.862:311.682:350.673  298.774:330.382:371.713
+
+CELL Span12Mux_h0
+IOPATH  I  O  112.745:124.673:140.269  118.382:130.906:147.283
+
+CELL Span12Mux_h1
+IOPATH  I  O  107.108:118.439:133.256  107.108:118.439:133.256
+
+CELL Span12Mux_h2
+IOPATH  I  O  129.657:143.374:161.31  135.294:149.607:168.323
+
+CELL Span12Mux_h3
+IOPATH  I  O  135.294:149.607:168.323  146.568:162.074:182.35
+
+CELL Span12Mux_h4
+IOPATH  I  O  157.843:174.542:196.377  174.754:193.243:217.417
+
+CELL Span12Mux_h5
+IOPATH  I  O  186.029:205.71:231.444  208.578:230.644:259.498
+
+CELL Span12Mux_h6
+IOPATH  I  O  202.941:224.411:252.484  225.49:249.345:280.538
+
+CELL Span12Mux_h7
+IOPATH  I  O  231.127:255.579:287.552  259.313:286.747:322.619
+
+CELL Span12Mux_h8
+IOPATH  I  O  276.225:305.448:343.659  310.048:342.85:385.74
+
+CELL Span12Mux_h9
+IOPATH  I  O  315.685:349.083:392.754  349.509:386.485:434.834
+
+CELL Span12Mux_h10
+IOPATH  I  O  343.872:380.251:427.821  377.695:417.653:469.902
+
+CELL Span12Mux_h11
+IOPATH  I  O  377.695:417.653:469.902  422.793:467.522:526.009
+
+CELL Span12Mux_h12
+IOPATH  I  O  394.607:436.354:490.942  434.067:479.99:540.036
+
+CELL Span12Mux_v0
+IOPATH  I  O  78.9214:87.2708:98.1884  84.5586:93.5045:105.202
+
+CELL Span12Mux_v1
+IOPATH  I  O  84.5586:93.5045:105.202  84.5586:93.5045:105.202
+
+CELL Span12Mux_v2
+IOPATH  I  O  112.745:124.673:140.269  124.019:137.14:154.296
+
+CELL Span12Mux_v3
+IOPATH  I  O  118.382:130.906:147.283  135.294:149.607:168.323
+
+CELL Span12Mux_v4
+IOPATH  I  O  146.568:162.074:182.35  169.117:187.009:210.404
+
+CELL Span12Mux_v5
+IOPATH  I  O  191.666:211.943:238.458  214.215:236.878:266.511
+
+CELL Span12Mux_v6
+IOPATH  I  O  208.578:230.644:259.498  231.127:255.579:287.552
+
+CELL Span12Mux_v7
+IOPATH  I  O  225.49:249.345:280.538  253.676:280.513:315.606
+
+CELL Span12Mux_v8
+IOPATH  I  O  287.499:317.915:357.686  315.685:349.083:392.754
+
+CELL Span12Mux_v9
+IOPATH  I  O  304.411:336.616:378.727  338.234:374.018:420.807
+
+CELL Span12Mux_v10
+IOPATH  I  O  315.685:349.083:392.754  349.509:386.485:434.834
+
+CELL Span12Mux_v11
+IOPATH  I  O  332.597:367.784:413.794  366.421:405.186:455.875
+
+CELL Span12Mux_v12
+IOPATH  I  O  394.607:436.354:490.942  434.067:479.99:540.036
+
+CELL SRMux
+IOPATH  I  O  372.058:411.42:462.888  287.499:317.915:357.686
+
