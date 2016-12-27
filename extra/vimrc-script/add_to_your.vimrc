@@ -10,8 +10,10 @@ function! FPGACompileAndUpload(upload)
     if expand('%:e') == "v"
         write "saves the current file
         let file = expand('%:r') "grabs filename without extension (not needed for now)
-        "echo 'Cleaning ' . system("rm -f " . file . ".blif " . file . "*.txt " . file . "*.bin")
-        echo "Synthesizing " system("yosys -q -p 'synth_ice40 -top top -blif " . file .".blif' " . file . ".v")
+        echo 'Cleaning ' . system("rm -f " . file . ".blif " . file . "*.txt " . file . "*.bin")
+        echo "Synthesizing " . system("yosys -q -p 'synth_ice40 -top top -blif " . file .".blif' " . file . ".v")
+        echo "Mapping to hardware " . system("arachne-pnr -q -d 1k -o " . file . ".txt -p icestick.pcf " . file . ".blif")
+        echo "Packing binary " . system("icepack ". file . ".txt " . file . ".bin")
         if a:upload == 1
             echo 'Uploading ' . system("iceprog " . file . ".bin")
         endif
