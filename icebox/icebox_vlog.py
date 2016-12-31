@@ -91,6 +91,8 @@ for o, a in opts:
                 if o == "-P" and not re.search(" # ICE_(GB_)?IO", line):
                     continue
                 line = re.sub(r"#.*", "", line.strip()).split()
+                if "--warn-no-port" in line:
+                    line.remove("--warn-no-port")
                 if len(line) and line[0] == "set_io":
                     p = line[1]
                     if o == "-P":
