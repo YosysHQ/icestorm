@@ -28,6 +28,7 @@ install: all
 	cp icebox_html.py    $(DESTDIR)$(PREFIX)/bin/icebox_html
 	cp icebox_maps.py    $(DESTDIR)$(PREFIX)/bin/icebox_maps
 	cp icebox_vlog.py    $(DESTDIR)$(PREFIX)/bin/icebox_vlog
+	cp icebox_stat.py    $(DESTDIR)$(PREFIX)/bin/icebox_stat
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox.py
@@ -39,6 +40,7 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_html
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_maps
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_vlog
+	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_stat
 	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-1k.txt
 	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-8k.txt
 	-rmdir $(DESTDIR)$(PREFIX)/share/icebox
