@@ -12,46 +12,44 @@ module top (
 	parameter integer CLOCK_FREQ_HZ = 12000000;
 	localparam integer HALF_PERIOD = CLOCK_FREQ_HZ / (2 * BAUD_RATE);
 
-	reg [9:0] buffer;
+	reg [7:0] buffer;
 	reg buffer_valid;
 
 	reg [$clog2(3*HALF_PERIOD):0] cycle_cnt;
 	reg [3:0] bit_cnt = 0;
-	reg [0:0] state = 0;
+	reg recv = 0;
 
 	always @(posedge clk) begin
 		buffer_valid <= 0;
-		case (state)
-			0: begin
-				if (!RX) begin
-					cycle_cnt <= HALF_PERIOD;
-					bit_cnt <= 0;
-					state <= 1;
-				end
+		if (!recv) begin
+			if (!RX) begin
+				cycle_cnt <= HALF_PERIOD;
+				bit_cnt <= 0;
+				recv <= 1;
 			end
-			1: begin
-				if (cycle_cnt == 2*HALF_PERIOD) begin
-					cycle_cnt <= 0;
-					buffer[bit_cnt] <= RX;
-					bit_cnt <= bit_cnt + 1;
-					if (bit_cnt == 9) begin
-						buffer_valid <= 1;
-						state <= 0;
-					end
+		end else begin
+			if (cycle_cnt == 2*HALF_PERIOD) begin
+				cycle_cnt <= 0;
+				bit_cnt <= bit_cnt + 1;
+				if (bit_cnt == 9) begin
+					buffer_valid <= 1;
+					recv <= 0;
 				end else begin
-					cycle_cnt <= cycle_cnt + 1;
+					buffer <= {RX, buffer[7:1]};
 				end
+			end else begin
+				cycle_cnt <= cycle_cnt + 1;
 			end
-		endcase
+		end
 	end
 
 	always @(posedge clk) begin
 		if (buffer_valid) begin
-			if (buffer[8:1] == "1") LED1 <= !LED1;
-			if (buffer[8:1] == "2") LED2 <= !LED2;
-			if (buffer[8:1] == "3") LED3 <= !LED3;
-			if (buffer[8:1] == "4") LED4 <= !LED4;
-			if (buffer[8:1] == "5") LED5 <= !LED5;
+			if (buffer == "1") LED1 <= !LED1;
+			if (buffer == "2") LED2 <= !LED2;
+			if (buffer == "3") LED3 <= !LED3;
+			if (buffer == "4") LED4 <= !LED4;
+			if (buffer == "5") LED5 <= !LED5;
 		end
 	end
 

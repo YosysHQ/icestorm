@@ -1,4 +1,6 @@
 PROJ = example
+# PROJ = rs232demo
+
 PIN_DEF = icestick.pcf
 DEVICE = hx1k
 
