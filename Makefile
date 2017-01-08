@@ -8,6 +8,7 @@ all:
 	$(MAKE) -C icepll
 	$(MAKE) -C icetime
 	$(MAKE) -C icebram
+	$(MAKE) -C icecompr
 
 clean:
 	$(MAKE) -C icebox clean
@@ -17,6 +18,7 @@ clean:
 	$(MAKE) -C icepll clean
 	$(MAKE) -C icetime clean
 	$(MAKE) -C icebram clean
+	$(MAKE) -C icecompr clean
 
 install:
 	$(MAKE) -C icebox install
@@ -26,6 +28,7 @@ install:
 	$(MAKE) -C icepll install
 	$(MAKE) -C icetime install
 	$(MAKE) -C icebram install
+	$(MAKE) -C icecompr install
 
 uninstall:
 	$(MAKE) -C icebox uninstall
@@ -35,12 +38,14 @@ uninstall:
 	$(MAKE) -C icepll uninstall
 	$(MAKE) -C icetime uninstall
 	$(MAKE) -C icebram uninstall
+	$(MAKE) -C icecompr uninstall
 
 mxebin: clean
 	$(MAKE) MXE=1
 	rm -rf icestorm-win32 && mkdir icestorm-win32
 	cp icebox/chipdb-*.txt icepack/*.exe iceprog/*.exe icestorm-win32/
 	cp icemulti/*.exe icepll/*.exe icetime/*.exe icestorm-win32/
+	cp icecompr/*.exe icestorm-win32
 	zip -r icestorm-win32.zip icestorm-win32/
 
 .PHONY: all clean install uninstall
