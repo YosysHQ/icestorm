@@ -11,8 +11,8 @@ all: icecompr$(EXE) iceuncompr$(EXE)
 icecompr$(EXE): icecompr.cc
 	$(CXX) $(CXXFLAGS) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
-iceuncompr$(EXE): iceuncompr.c
-	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
+iceuncompr$(EXE): iceuncompr.c libiceuncompr.c
+	$(CC) -o $@ $(LDFLAGS) $< $(LDLIBS)
 
 test: example_1k.ok example_8k.ok
 
@@ -27,9 +27,10 @@ test: example_1k.ok example_8k.ok
 	touch $@
 
 install: all
-	mkdir -p $(DESTDIR)$(PREFIX)/bin
+	mkdir -p $(DESTDIR)$(PREFIX)/bin $(DESTDIR)$(PREFIX)/share/icecompr
 	cp icecompr$(EXE) $(DESTDIR)$(PREFIX)/bin/icecompr$(EXE)
 	cp iceuncompr$(EXE) $(DESTDIR)$(PREFIX)/bin/iceuncompr$(EXE)
+	cp libiceuncompr.c $(DESTDIR)$(PREFIX)/share/icecompr/libiceuncompr.c
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/icecompr$(EXE)
