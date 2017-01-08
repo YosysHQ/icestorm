@@ -1,0 +1,52 @@
+
+A simple compression algorithm for iCE40 bit-streams
+====================================================
+
+This directory contains tools for compressing and uncompressing
+iCE40 bit-streams. The motivation is to reduce the bandwidth
+requirements for bit-stream upload.
+
+Note that iCE40 FPGAs can not uncompress this compressed bit-streams!
+Uncompression must be performed by e.g. a uC on the FPGA board.
+
+This compression algorithm uses the fact that most bits in an iCE40
+bit-stream are cleared.
+
+The bit-stream is encoded as the distances between set bits (i.e.
+the length of runs of ZERO bits between two ONE bits). This sequence
+of integers is stored using a simple prefix code to spend fewer bits
+on smaller (more frequent) numbers.
+
+The algorithm includes an escape-mechanism to mix uncompressed binary
+data with compressed bit-streams. This is useful when the bit-stream
+contains sections that do not compress well with this algorithm, for
+example in BRAM initialization data.
+
+The compressed bitstream starts with the ASCII string "ICECOMPR", i.e.
+the hex values 0x49434543 and 0x4f4d5052 (stored as big-endian numbers).
+
+After the 8 bytes magic the compressed bitstream is a stream of the
+following opcodes that must be interpreted by the decompressor. The
+notation ZERO and ONE is used for zero and one bits. The notation foo[N]
+is used for an N bit value "foo", transmitted MSB first.
+
+	ONE count[2]
+	ZERO ONE count[5]
+	ZERO ZERO ONE count[8]
+	ZERO ZERO ZERO ZERO ONE count[23]
+	  output count ZERO bits followed by a single ONE bit
+
+	ZERO ZERO ZERO ONE count[6] data[count]
+	  output the count data bits followed by a single ONE bit
+
+	ZERO ZERO ZERO ZERO ZERO count[23]
+	  output count ZERO bits and stop decompressing. (end of file)
+
+The program "icecompr" (C++11, ISC license) contains an implementation of a
+compressor and a decompressor. The decompressor in this program however is
+only used for integrity checking the compressed bit-stream.
+
+The program "iceuncompr" (plain C, public domain) contains an implementation
+of a stand-alone decompressor. Simply copy&paste this implementation into
+your uC firmware.
+
