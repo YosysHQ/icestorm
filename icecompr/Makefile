@@ -21,7 +21,7 @@ iceuncompr: iceuncompr.c
 	touch $@
 
 clean:
-	rm -f icecompr iceuncompr
+	rm -f icecompr iceuncompr *.d
 	rm -f example_1k.compr example_8k.compr
 	rm -f example_1k.uncompr example_8k.uncompr
 	rm -f example_1k.ok example_8k.ok
