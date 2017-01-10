@@ -11,71 +11,74 @@
 #include <string.h>
 #include <errno.h>
 
-FILE *input_file;
-FILE *output_file;
+FILE *ice40_compr_input_file;
+FILE *ice40_uncompr_output_file;
 
-int write_bitcounter;
-int write_buffer;
+static int ice40_read_bitcounter;
+static int ice40_read_buffer;
 
-int read_bitcounter;
-int read_buffer;
+static int ice40_write_bitcounter;
+static int ice40_write_buffer;
 
-int write_bitcounter;
-int write_buffer;
-
-static int read_bit()
+static int ice40_compr_read_bit()
 {
-	if (read_bitcounter == 0) {
-		read_bitcounter = 8;
-		read_buffer = fgetc(input_file);
+	if (ice40_read_bitcounter == 0) {
+		ice40_read_bitcounter = 8;
+		ice40_read_buffer = fgetc(ice40_compr_input_file);
 	}
 
-	read_bitcounter--;
-	return (read_buffer >> read_bitcounter) & 1;
+	ice40_read_bitcounter--;
+	return (ice40_read_buffer >> ice40_read_bitcounter) & 1;
 }
 
-static void write_bit(int value)
+static void ice40_uncompr_write_bit(int value)
 {
-	write_bitcounter--;
+	ice40_write_bitcounter--;
 
 	if (value)
-		write_buffer |= 1 << write_bitcounter;
+		ice40_write_buffer |= 1 << ice40_write_bitcounter;
 
-	if (write_bitcounter == 0) {
-		fputc(write_buffer, output_file);
-		write_bitcounter = 8;
-		write_buffer = 0;
+	if (ice40_write_bitcounter == 0) {
+		fputc(ice40_write_buffer, ice40_uncompr_output_file);
+		ice40_write_bitcounter = 8;
+		ice40_write_buffer = 0;
 	}
 }
 
-static int read_int(int bits)
+static int ice40_compr_read_int(int bits)
 {
 	int ret = 0;
 	while (bits-- > 0)
-		if (read_bit())
+		if (ice40_compr_read_bit())
 			ret |= 1 << bits;
 	return ret;
 }
 
-static void write_zeros(int bits)
+static void ice40_uncompr_write_zeros(int bits)
 {
 	while (bits-- > 0)
-		write_bit(0);
+		ice40_uncompr_write_bit(0);
 }
 
-int ice_uncompress()
+int ice40_uncompress()
 {
-	read_bitcounter = 0;
-	read_buffer = 0;
+	ice40_read_bitcounter = 0;
+	ice40_read_buffer = 0;
 
-	write_bitcounter = 8;
-	write_buffer = 0;
+	ice40_write_bitcounter = 8;
+	ice40_write_buffer = 0;
+
+#define read_bit()     ice40_compr_read_bit()
+#define read_int(x)    ice40_compr_read_int(x)
+#define write_bit(x)   ice40_uncompr_write_bit(x)
+#define write_zeros(x) ice40_uncompr_write_zeros(x)
 
 	int magic1_ok = read_int(32) == 0x49434543;
 	int magic2_ok = read_int(32) == 0x4f4d5052;
 
 	if (!magic1_ok || !magic2_ok) {
-		fprintf(stderr, "Missing ICECOMPR magic. Abort!\n");
+		fprintf(stderr, "%s: Missing ICECOMPR magic. Abort!\n",
+            __FUNCTION__);
 		return 1;
 	}
 
@@ -107,6 +110,11 @@ int ice_uncompress()
 			break;
 		}
 	}
+
+#undef write_zeros
+#undef write_bit
+#undef read_int
+#undef read_bit
 
 	return 0;
 }

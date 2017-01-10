@@ -17,8 +17,8 @@ void help()
 
 int main(int argc, char **argv)
 {
-	input_file = stdin;
-	output_file = stdout;
+	ice40_compr_input_file = stdin;
+	ice40_uncompr_output_file = stdout;
 
 	int opt;
 	while ((opt = getopt(argc, argv, "v")) != -1)
@@ -33,8 +33,8 @@ int main(int argc, char **argv)
 	}
 
 	if (optind < argc) {
-		input_file = fopen(argv[optind], "rb");
-		if (input_file == NULL) {
+		ice40_compr_input_file = fopen(argv[optind], "rb");
+		if (ice40_compr_input_file == NULL) {
 			fprintf(stderr, "Failed to open input file `%s': %s\n", argv[optind], strerror(errno));
 			return 1;
 		}
@@ -42,8 +42,8 @@ int main(int argc, char **argv)
 	}
 
 	if (optind < argc) {
-		output_file = fopen(argv[optind], "wb");
-		if (output_file == NULL) {
+		ice40_uncompr_output_file = fopen(argv[optind], "wb");
+		if (ice40_uncompr_output_file == NULL) {
 			fprintf(stderr, "Failed to open output file `%s': %s\n", argv[optind], strerror(errno));
 			return 1;
 		}
@@ -56,6 +56,6 @@ int main(int argc, char **argv)
 	if (optind != argc)
 		help();
 
-	return ice_uncompress();
+	return ice40_uncompress();
 }
 
