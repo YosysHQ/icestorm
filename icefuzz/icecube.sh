@@ -16,9 +16,9 @@
 #
 # Additional notes for installing iCEcube2 on 64 Bit Ubuntu:
 #
-# sudo apt-get install ibc6-i386 zlib1g:i386 libxext6:i386 libpng12-0:i386 libsm6:i386
+# sudo apt-get install libc6-i386 zlib1g:i386 libxext6:i386 libpng12-0:i386 libsm6:i386
 # sudo apt-get install libxi6:i386 libxrender1:i386 libxrandr2:i386 libxfixes3:i386
-# sudo apt-get install libxcursor1:i386 libXinerama.so.1:i386 libXinerama1:i386 libfreetype6:i386
+# sudo apt-get install libxcursor1:i386 libxinerama1:i386 libfreetype6:i386
 # sudo apt-get install libfontconfig1:i386 libglib2.0-0:i386 libstdc++6:i386 libelf1:i386
 #
 # icecubedir="/opt/lscc/iCEcube2.2015.08"
