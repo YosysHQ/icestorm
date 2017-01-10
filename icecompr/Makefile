@@ -37,7 +37,7 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/iceuncompr$(EXE)
 
 clean:
-	rm -f icecompr$(EXE) iceuncompr$(EXE)
+	rm -f icecompr$(EXE) iceuncompr$(EXE) *.d
 	rm -f example_1k.compr example_8k.compr
 	rm -f example_1k.uncompr example_8k.uncompr
 	rm -f example_1k.ok example_8k.ok
