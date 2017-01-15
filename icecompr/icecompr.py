@@ -7,14 +7,13 @@
 # binary, for any purpose, commercial or non-commercial, and by any
 # means.
 
-
 def make_int_bits(value, nbits):
     bits = list()
     for i in range(nbits-1, -1, -1):
         bits.append((value & (1 << i)) != 0)
     return bits
 
-def ice_compress(inbits):
+def ice_compress_bits(inbits):
     outbits = list()
     outbits += make_int_bits(0x49434543, 32)
     outbits += make_int_bits(0x4f4d5052, 32)
@@ -107,23 +106,30 @@ def ice_compress(inbits):
 
     return outbits
 
+def ice_compress_bytes(inbytes):
+    inbits = list()
+    for byte in inbytes:
+        for i in range(7, -1, -1):
+            inbits.append((byte & (1 << i)) != 0)
+
+    outbits = ice_compress_bits(inbits)
+
+    outbytes = list()
+    for i in range(0, len(outbits), 8):
+        byte = 0
+        for k in range(i, min(i+8, len(outbits))):
+            if outbits[k]: byte |= 1 << (7-(k-i))
+        outbytes.append(byte)
+
+    return bytes(outbytes)
 
 # ------------------------------------------------------
 # Usage example:
 # python3 icecompr.py < example_8k.bin > example_8k.compr
 
-import sys
-
-inbits = list()
-for byte in sys.stdin.buffer.read():
-    for i in range(7, -1, -1):
-        inbits.append((byte & (1 << i)) != 0)
-
-outbits = ice_compress(inbits)
-
-for i in range(0, len(outbits), 8):
-    byte = 0
-    for k in range(i, min(i+8, len(outbits))):
-        if outbits[k]: byte |= 1 << (7-(k-i))
-    sys.stdout.buffer.write(bytes([byte]))
+if __name__ == '__main__':
+    import sys
+    inbytes = sys.stdin.buffer.read()
+    outbytes = ice_compress_bytes(inbytes)
+    sys.stdout.buffer.write(outbytes)
 
