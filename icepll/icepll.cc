@@ -46,6 +46,9 @@ void help(const char *cmd)
 	printf("    -S\n");
 	printf("        Disable SIMPLE feedback path mode\n");
 	printf("\n");
+	printf("    -q\n");
+	printf("        Do not print PLL settings to stdout\n");
+	printf("\n");
 	exit(1);
 }
 
@@ -54,9 +57,10 @@ int main(int argc, char **argv)
 	double f_pllin = 12;
 	double f_pllout = 60;
 	bool simple_feedback = true;
+	bool quiet = false;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "i:o:S")) != -1)
+	while ((opt = getopt(argc, argv, "i:o:S:q")) != -1)
 	{
 		switch (opt)
 		{
@@ -68,6 +72,9 @@ int main(int argc, char **argv)
 			break;
 		case 'S':
 			simple_feedback = false;
+			break;
+		case 'q':
+			quiet = true;
 			break;
 		default:
 			help(argv[0]);
@@ -157,29 +164,32 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	printf("\n");
+	if (!quiet)
+	{
+		printf("\n");
 
-	printf("F_PLLIN:  %8.3f MHz (given)\n", f_pllin);
-	printf("F_PLLOUT: %8.3f MHz (requested)\n", f_pllout);
-	printf("F_PLLOUT: %8.3f MHz (achieved)\n", best_fout);
+		printf("F_PLLIN:  %8.3f MHz (given)\n", f_pllin);
+		printf("F_PLLOUT: %8.3f MHz (requested)\n", f_pllout);
+		printf("F_PLLOUT: %8.3f MHz (achieved)\n", best_fout);
 
-	printf("\n");
+		printf("\n");
 
-	printf("FEEDBACK: %s\n", simple_feedback ? "SIMPLE" : "NON_SIMPLE");
-	printf("F_PFD: %8.3f MHz\n", f_pfd);
-	printf("F_VCO: %8.3f MHz\n", f_vco);
+		printf("FEEDBACK: %s\n", simple_feedback ? "SIMPLE" : "NON_SIMPLE");
+		printf("F_PFD: %8.3f MHz\n", f_pfd);
+		printf("F_VCO: %8.3f MHz\n", f_vco);
 
-	printf("\n");
+		printf("\n");
 
-	printf("DIVR: %2d (4'b%s)\n", best_divr, binstr(best_divr, 4));
-	printf("DIVF: %2d (7'b%s)\n", best_divf, binstr(best_divf, 7));
-	printf("DIVQ: %2d (3'b%s)\n", best_divq, binstr(best_divq, 3));
+		printf("DIVR: %2d (4'b%s)\n", best_divr, binstr(best_divr, 4));
+		printf("DIVF: %2d (7'b%s)\n", best_divf, binstr(best_divf, 7));
+		printf("DIVQ: %2d (3'b%s)\n", best_divq, binstr(best_divq, 3));
 
-	printf("\n");
+		printf("\n");
 
-	printf("FILTER_RANGE: %d (3'b%s)\n", filter_range, binstr(filter_range, 3));
+		printf("FILTER_RANGE: %d (3'b%s)\n", filter_range, binstr(filter_range, 3));
 
-	printf("\n");
+		printf("\n");
+	}
 
 	return 0;
 }
