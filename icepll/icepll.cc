@@ -46,8 +46,11 @@ void help(const char *cmd)
 	printf("    -S\n");
 	printf("        Disable SIMPLE feedback path mode\n");
 	printf("\n");
-	printf("    -f <filename.v>\n");
-	printf("        Save PLL configuration as Verilog module\n");
+	printf("    -f <filename>\n");
+	printf("        Save PLL configuration as Verilog to file\n");
+	printf("\n");
+	printf("    -m\n");
+	printf("        Save PLL configuration as Verilog module (use with -f)\n");
 	printf("\n");
 	printf("    -q\n");
 	printf("        Do not print PLL configuration to stdout\n");
@@ -60,11 +63,12 @@ int main(int argc, char **argv)
 	double f_pllin = 12;
 	double f_pllout = 60;
 	bool simple_feedback = true;
-	char* verilog_filename = NULL;
+	char* filename = NULL;
+	bool save_as_module = false;
 	bool quiet = false;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "i:o:S:f:q")) != -1)
+	while ((opt = getopt(argc, argv, "i:o:S:mf:q")) != -1)
 	{
 		switch (opt)
 		{
@@ -77,8 +81,11 @@ int main(int argc, char **argv)
 		case 'S':
 			simple_feedback = false;
 			break;
+		case 'm':
+			save_as_module = true;
+			break;
 		case 'f':
-			verilog_filename = optarg;
+			filename = optarg;
 			break;
 		case 'q':
 			quiet = true;
@@ -89,6 +96,10 @@ int main(int argc, char **argv)
 	}
 
 	if (optind != argc)
+		help(argv[0]);
+
+	// error: shall save as module, but no filename was given
+	if (save_as_module && filename == NULL)
 		help(argv[0]);
 
 	bool found_something = false;
@@ -198,53 +209,86 @@ int main(int argc, char **argv)
 		printf("\n");
 	}
 
-	if (verilog_filename != NULL)
+	// save PLL configuration as file
+	if (filename != NULL)
 	{
 		// open file for writing
 		FILE *f;
-		f = fopen(verilog_filename, "w");
+		f = fopen(filename, "w");
 
-		// header
-		fprintf(f, "/**\n * PLL configuration\n *\n"
-					" * This Verilog source file was generated automatically\n"
-					" * using the icepll tool from the IceStorm project.\n"
-					" * Use at your own risk.\n"
-					" *\n"
-					" * Given input frequency:      %8.3f MHz\n"
-					" * Requested output frequency: %8.3f MHz\n"
-					" * Achieved output frequency:  %8.3f MHz\n"
-					" */\n\n",
-					f_pllin, f_pllout, best_fout);
+		if (save_as_module)
+		{
+			// save PLL configuration as Verilog module
 
-		// generate Verilog module
-		fprintf(f,  "module pll(\n"
-					"\tinput  clock_in,\n"
-					"\toutput clock_out,\n"
-					"\toutput locked\n"
-					"\t)\n\n"
-				);
+			// header
+			fprintf(f, "/**\n * PLL configuration\n *\n"
+						" * This Verilog module was generated automatically\n"
+						" * using the icepll tool from the IceStorm project.\n"
+						" * Use at your own risk.\n"
+						" *\n"
+						" * Given input frequency:      %8.3f MHz\n"
+						" * Requested output frequency: %8.3f MHz\n"
+						" * Achieved output frequency:  %8.3f MHz\n"
+						" */\n\n",
+						f_pllin, f_pllout, best_fout);
 
-		// save iCE40 PLL tile configuration
-		fprintf(f, "SB_PLL40_CORE #(\n");
-		fprintf(f, "\t\t.FEEDBACK_PATH(\"%s\"),\n", (simple_feedback ? "SIMPLE" : "NON_SIMPLE"));
-		fprintf(f, "\t\t.PLLOUT_SELECT(\"GENCLK\"),\n");
-		fprintf(f, "\t\t.DIVR(4'b%s),\n", binstr(best_divr, 4));
-		fprintf(f, "\t\t.DIVF(7'b%s),\n", binstr(best_divf, 7));
-		fprintf(f, "\t\t.DIVQ(3'b%s),\n", binstr(best_divq, 3));
-		fprintf(f, "\t\t.FILTER_RANGE(3'b%s),\n", binstr(filter_range, 3));
-		fprintf(f, "\t) uut (\n"
-					"\t\t.LOCK(locked),\n"
-					"\t\t.RESETB(1'b1),\n"
-					"\t\t.BYPASS(1'b0),\n"
-					"\t\t.REFERENCECLK(clock_in),\n"
-					"\t\t.PLLOUTCORE(clock_out),\n"
-					"\t\t);\n\n"
-				);
+			// generate Verilog module
+			fprintf(f,  "module pll(\n"
+						"\tinput  clock_in,\n"
+						"\toutput clock_out,\n"
+						"\toutput locked\n"
+						"\t);\n\n"
+					);
 
-		fprintf(f, "endmodule\n");
+			// save iCE40 PLL tile configuration
+			fprintf(f, "SB_PLL40_CORE #(\n");
+			fprintf(f, "\t\t.FEEDBACK_PATH(\"%s\"),\n", (simple_feedback ? "SIMPLE" : "NON_SIMPLE"));
+			fprintf(f, "\t\t.PLLOUT_SELECT(\"GENCLK\"),\n");
+			fprintf(f, "\t\t.DIVR(4'b%s),\t\t"      "// DIVR = %2d\n", binstr(best_divr, 4), best_divr);
+			fprintf(f, "\t\t.DIVF(7'b%s),\t"        "// DIVF = %2d\n", binstr(best_divf, 7), best_divf);
+			fprintf(f, "\t\t.DIVQ(3'b%s),\t\t"      "// DIVQ = %2d\n", binstr(best_divq, 3), best_divq);
+			fprintf(f, "\t\t.FILTER_RANGE(3'b%s)\t" "// FILTER_RANGE = %d\n", binstr(filter_range, 3), filter_range);
+			fprintf(f, "\t) uut (\n"
+						"\t\t.LOCK(locked),\n"
+						"\t\t.RESETB(1'b1),\n"
+						"\t\t.BYPASS(1'b0),\n"
+						"\t\t.REFERENCECLK(clock_in),\n"
+						"\t\t.PLLOUTCORE(clock_out),\n"
+						"\t\t);\n\n"
+					);
+
+			fprintf(f, "endmodule\n");
+		}
+		else
+		{
+			// only save PLL configuration values
+
+			// header
+			fprintf(f, "/**\n * PLL configuration\n *\n"
+						" * This Verilog header file was generated automatically\n"
+						" * using the icepll tool from the IceStorm project.\n"
+						" * It is intended for use with FPGA primitives SB_PLL40_CORE,\n"
+						" * SB_PLL40_PAD, SB_PLL40_2_PAD, SB_PLL40_2F_CORE or SB_PLL40_2F_PAD.\n"
+						" * Use at your own risk.\n"
+						" *\n"
+						" * Given input frequency:      %8.3f MHz\n"
+						" * Requested output frequency: %8.3f MHz\n"
+						" * Achieved output frequency:  %8.3f MHz\n"
+						" */\n\n",
+						f_pllin, f_pllout, best_fout);
+
+			// PLL configuration
+			fprintf(f, ".FEEDBACK_PATH(\"%s\"),\n", (simple_feedback ? "SIMPLE" : "NON_SIMPLE"));
+			fprintf(f, ".PLLOUT_SELECT(\"GENCLK\"),\n");
+			fprintf(f, ".DIVR(4'b%s),\t\t"      "// DIVR = %2d\n", binstr(best_divr, 4), best_divr);
+			fprintf(f, ".DIVF(7'b%s),\t"        "// DIVF = %2d\n", binstr(best_divf, 7), best_divf);
+			fprintf(f, ".DIVQ(3'b%s),\t\t"      "// DIVQ = %2d\n", binstr(best_divq, 3), best_divq);
+			fprintf(f, ".FILTER_RANGE(3'b%s)\t" "// FILTER_RANGE = %d\n", binstr(filter_range, 3), filter_range);
+		}
+
 		fclose(f);
 
-		printf("PLL configuration written to: %s\n", verilog_filename);
+		printf("PLL configuration written to: %s\n", filename);
 	}
 
 	return 0;
