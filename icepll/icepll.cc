@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 	bool quiet = false;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "i:o:S:mf:q")) != -1)
+	while ((opt = getopt(argc, argv, "i:o:Smf:q")) != -1)
 	{
 		switch (opt)
 		{
@@ -243,7 +243,6 @@ int main(int argc, char **argv)
 			// save iCE40 PLL tile configuration
 			fprintf(f, "SB_PLL40_CORE #(\n");
 			fprintf(f, "\t\t.FEEDBACK_PATH(\"%s\"),\n", (simple_feedback ? "SIMPLE" : "NON_SIMPLE"));
-			fprintf(f, "\t\t.PLLOUT_SELECT(\"GENCLK\"),\n");
 			fprintf(f, "\t\t.DIVR(4'b%s),\t\t"      "// DIVR = %2d\n", binstr(best_divr, 4), best_divr);
 			fprintf(f, "\t\t.DIVF(7'b%s),\t"        "// DIVF = %2d\n", binstr(best_divf, 7), best_divf);
 			fprintf(f, "\t\t.DIVQ(3'b%s),\t\t"      "// DIVQ = %2d\n", binstr(best_divq, 3), best_divq);
@@ -279,7 +278,6 @@ int main(int argc, char **argv)
 
 			// PLL configuration
 			fprintf(f, ".FEEDBACK_PATH(\"%s\"),\n", (simple_feedback ? "SIMPLE" : "NON_SIMPLE"));
-			fprintf(f, ".PLLOUT_SELECT(\"GENCLK\"),\n");
 			fprintf(f, ".DIVR(4'b%s),\t\t"      "// DIVR = %2d\n", binstr(best_divr, 4), best_divr);
 			fprintf(f, ".DIVF(7'b%s),\t"        "// DIVF = %2d\n", binstr(best_divf, 7), best_divf);
 			fprintf(f, ".DIVQ(3'b%s),\t\t"      "// DIVQ = %2d\n", binstr(best_divq, 3), best_divq);
