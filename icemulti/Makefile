@@ -1,6 +1,4 @@
 include ../config.mk
-LDLIBS = -lm -lstdc++
-CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11
 
 ifeq ($(STATIC),1)
 LDFLAGS += -static
@@ -9,7 +7,7 @@ endif
 all: icemulti$(EXE)
 
 icemulti$(EXE): icemulti.o
-	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
+	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin

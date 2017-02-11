@@ -1,5 +1,8 @@
-CXX ?= clang
-CC ?= $(CXX)
+CXX ?= clang++
+CC ?= clang
+LDLIBS = -lm -lstdc++
+CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include
+CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include
 PKG_CONFIG ?= pkg-config
 DESTDIR ?=
 PREFIX ?= /usr/local

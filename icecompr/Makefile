@@ -1,13 +1,14 @@
+include ../config.mk
 
 all: icecompr iceuncompr
 
 test: example_1k.ok example_8k.ok
 
-icecompr: icecompr.cc
-	clang++ -o icecompr -Wall -Wextra -std=c++11 icecompr.cc
+icecompr: icecompr.o
+	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
-iceuncompr: iceuncompr.c
-	clang -o iceuncompr -Wall -Wextra iceuncompr.c
+iceuncompr: iceuncompr.o
+	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 %.compr: %.bin icecompr
 	./icecompr -v $< $@

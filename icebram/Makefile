@@ -1,6 +1,4 @@
 include ../config.mk
-LDLIBS = -lm -lstdc++
-CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include
 
 ifeq ($(STATIC),1)
 LDFLAGS += -static
@@ -9,7 +7,7 @@ endif
 all: icebram$(EXE)
 
 icebram$(EXE): icebram.o
-	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
+	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 test: icebram
 	bash rundemo.sh
