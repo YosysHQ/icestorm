@@ -1,5 +1,8 @@
 icecompr
 iceuncompr
+icecompr.d
+icecompr.o
+iceuncompr.o
 example_?k.compr
 example_?k.compr_py
 example_?k.ok
