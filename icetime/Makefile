@@ -1,6 +1,6 @@
 include ../config.mk
 LDLIBS = -lm -lstdc++
-CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include -DPREFIX='"$(PREFIX)"' -DCHIPDB_SUBDIR='"$(CHIPDB_SUBDIR)"'
+override CXXFLAGS += -DPREFIX='"$(PREFIX)"' -DCHIPDB_SUBDIR='"$(CHIPDB_SUBDIR)"'
 
 ifeq ($(STATIC),1)
 LDFLAGS += -static
@@ -9,7 +9,7 @@ endif
 all: icetime$(EXE)
 
 icetime$(EXE): icetime.o
-	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
+	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 icetime.o: icetime.cc timings.inc
 

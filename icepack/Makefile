@@ -1,6 +1,4 @@
 include ../config.mk
-LDLIBS = -lm -lstdc++
-CXXFLAGS = -MD -O0 -ggdb -Wall -std=c++11 -I/usr/local/include
 MXEGCC = /usr/local/src/mxe/usr/bin/i686-pc-mingw32-gcc
 
 ifeq ($(STATIC),1)
@@ -10,7 +8,7 @@ endif
 all: icepack$(EXE) iceunpack$(EXE)
 
 icepack$(EXE): icepack.o
-	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
+	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 iceunpack: icepack
 	ln -sf icepack iceunpack
