@@ -32,6 +32,13 @@ static const int NUM_IMAGES = 4;
 static const int NUM_HEADERS = NUM_IMAGES + 1;
 static const int HEADER_SIZE = 32;
 
+static void align_offset(uint32_t &offset, int bits)
+{
+    uint32_t mask = (1 << bits) - 1;
+    if (offset & mask)
+        offset = (offset | mask) + 1;
+}
+
 static void write_byte(std::ostream &ofs, uint32_t &file_offset, uint8_t byte)
 {
     ofs << byte;
@@ -157,6 +164,9 @@ void usage()
     log(" -p0, -p1, -p2, -p3\n");
     log(" select power on reset image when not using coldboot mode\n");
     log("\n");
+    log(" -a<n>, -A<n>\n");
+    log(" align images at 2^<n> bytes. -A also aligns image 0.\n");
+    log("\n");
     log(" -o filename\n");
     log(" write output image to file instead of stdout\n");
     log("\n");
@@ -171,6 +181,8 @@ int main(int argc, char **argv)
     bool coldboot = false;
     int por_image = 0;
     int image_count = 0;
+    int align_bits = 0;
+    bool align_first = false;
     Header headers[NUM_HEADERS];
     std::unique_ptr<Image> images[NUM_IMAGES];
     const char *outfile_name = NULL;
@@ -183,6 +195,15 @@ int main(int argc, char **argv)
                     coldboot = true;
                 } else if (argv[i][j] == 'p' && argv[i][j+1]) {
                     por_image = argv[i][++j] - '0';
+                } else if (argv[i][j] == 'a' || argv[i][j] == 'A') {
+                    align_first = argv[i][j] == 'A';
+                    if (argv[i][j+1])
+                        align_bits = atoi(&argv[i][j+1]);
+                    else if(i+1 < argc)
+                        align_bits = atoi(argv[++i]);
+                    else
+                        usage();
+                    break;
                 } else if (argv[i][j] == 'o') {
                     if (argv[i][j+1])
                         outfile_name = &argv[i][j+1];
@@ -213,16 +234,14 @@ int main(int argc, char **argv)
         error("Specified non-existing image for power on reset\n");
 
     // Place images
-    uint32_t offs = 0x100;
+    uint32_t offs = NUM_HEADERS * HEADER_SIZE;
+    if (align_first)
+        align_offset(offs, align_bits);
     for (int i=0; i<image_count; i++) {
         images[i]->place(offs);
         offs += images[i]->size();
-
-        // Align to 4K
-        if (offs & 0xfff) {
-            offs |= 0xfff;
-            offs++;
-        }
+        align_offset(offs, align_bits);
+        info("Place image %d at %06x .. %06x.\n", i, int(images[i]->offset()), int(offs));
     }
 
     // Populate headers
