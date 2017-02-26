@@ -1892,6 +1892,9 @@ void help(const char *cmd)
 	printf("    -T <net_name>\n");
 	printf("        print a timing report for the specified net\n");
 	printf("\n");
+	printf("    -N\n");
+	printf("        list valid net names for -T <net_name>\n");
+	printf("\n");
 	printf("    -c <Mhz>\n");
 	printf("        check timing estimate against clock constraint\n");
 	printf("\n");
@@ -1903,13 +1906,14 @@ void help(const char *cmd)
 
 int main(int argc, char **argv)
 {
+	bool listnets = false;
 	bool print_timing = false;
 	bool interior_timing = false;
 	double clock_constr = 0;
 	std::vector<std::string> print_timing_nets;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "p:P:g:o:r:j:d:mitT:vc:C:")) != -1)
+	while ((opt = getopt(argc, argv, "p:P:g:o:r:j:d:mitT:Nvc:C:")) != -1)
 	{
 		switch (opt)
 		{
@@ -1963,6 +1967,9 @@ int main(int argc, char **argv)
 			break;
 		case 'T':
 			print_timing_nets.push_back(optarg);
+			break;
+		case 'N':
+			listnets = true;
 			break;
 		case 'c':
 			clock_constr = strtod(optarg, NULL);
@@ -2219,7 +2226,7 @@ device_chip_mismatch:
 	if (fjson)
 		fprintf(fjson, "[\n");
 
-	if (print_timing || !print_timing_nets.empty())
+	if (print_timing || listnets || !print_timing_nets.empty())
 	{
 		TimingAnalysis ta(interior_timing);
 
@@ -2243,6 +2250,10 @@ device_chip_mismatch:
 
 		if (print_timing)
 			max_path_delay = ta.report();
+
+		if (listnets)
+			for (auto &it : ta.net_max_path_delay)
+				fprintf(frpt, "%s\n", it.first.c_str());
 	}
 	else
 	{
