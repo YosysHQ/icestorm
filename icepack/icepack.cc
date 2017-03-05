@@ -42,7 +42,7 @@
 using std::vector;
 using std::string;
 
-int log_level = 0;
+int log_level = 1; // 0;
 #define log(...) fprintf(stderr, __VA_ARGS__);
 #define info(...) do { if (log_level > 0) fprintf(stderr, __VA_ARGS__); } while (0)
 #define debug(...) do { if (log_level > 1) fprintf(stderr, __VA_ARGS__); } while (0)
@@ -390,7 +390,9 @@ void FpgaConfig::read_bits(std::istream &ifs)
 		}
 	}
 
-	if (this->cram_width == 332 && this->cram_height == 144)
+	if (this->cram_width == 182 && this->cram_height == 80)
+		this->device = "384";
+	else if (this->cram_width == 332 && this->cram_height == 144)
 		this->device = "1k";
 	else if (this->cram_width == 872 && this->cram_height == 272)
 		this->device = "8k";
@@ -598,6 +600,12 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 
 			is >> this->device;
 
+			if (this->device == "384") {
+				this->cram_width = 182;
+				this->cram_height = 80;
+				this->bram_width = 0;
+				this->bram_height = 0;
+			} else
 			if (this->device == "1k") {
 				this->cram_width = 332;
 				this->cram_height = 144;
@@ -857,6 +865,7 @@ void FpgaConfig::write_bram_pbm(std::ostream &ofs, int bank_num) const
 
 int FpgaConfig::chip_width() const
 {
+	if (this->device == "384") return 6;
 	if (this->device == "1k") return 12;
 	if (this->device == "8k") return 32;
 	panic("Unknown chip type '%s'.\n", this->device.c_str());
@@ -864,6 +873,7 @@ int FpgaConfig::chip_width() const
 
 int FpgaConfig::chip_height() const
 {
+	if (this->device == "384") return 8;
 	if (this->device == "1k") return 16;
 	if (this->device == "8k") return 32;
 	panic("Unknown chip type '%s'.\n", this->device.c_str());
@@ -871,6 +881,7 @@ int FpgaConfig::chip_height() const
 
 vector<int> FpgaConfig::chip_cols() const
 {
+	if (this->device == "384") return vector<int>({18, 54, 54, 54, 54});
 	if (this->device == "1k") return vector<int>({18, 54, 54, 42, 54, 54, 54});
 	if (this->device == "8k") return vector<int>({18, 54, 54, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54, 54, 54});
 	panic("Unknown chip type '%s'.\n", this->device.c_str());
@@ -880,6 +891,8 @@ string FpgaConfig::tile_type(int x, int y) const
 {
 	if ((x == 0 || x == this->chip_width()+1) && (y == 0 || y == this->chip_height()+1)) return "corner";
 	if ((x == 0 || x == this->chip_width()+1) || (y == 0 || y == this->chip_height()+1)) return "io";
+
+	if (this->device == "384") return "logic";
 
 	if (this->device == "1k") {
 		if (x == 3 || x == 10) return y % 2 == 1 ? "ramb" : "ramt";
