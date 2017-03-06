@@ -487,46 +487,49 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 
 	int bram_chunk_size = 128;
 
-	debug("BRAM: Setting bank width to %d.\n", this->bram_width);
-	write_byte(ofs, crc_value, file_offset, 0x62);
-	write_byte(ofs, crc_value, file_offset, (this->bram_width-1) >> 8);
-	write_byte(ofs, crc_value, file_offset, (this->bram_width-1));
-
-	debug("BRAM: Setting bank height to %d.\n", this->bram_height);
-	write_byte(ofs, crc_value, file_offset, 0x72);
-	write_byte(ofs, crc_value, file_offset, bram_chunk_size >> 8);
-	write_byte(ofs, crc_value, file_offset, bram_chunk_size);
-
-	for (int bram_bank = 0; bram_bank < 4; bram_bank++)
+	if (this->bram_width && this->bram_height) 
 	{
-		debug("BRAM: Setting bank %d.\n", bram_bank);
-		write_byte(ofs, crc_value, file_offset, 0x11);
-		write_byte(ofs, crc_value, file_offset, bram_bank);
+		debug("BRAM: Setting bank width to %d.\n", this->bram_width);
+		write_byte(ofs, crc_value, file_offset, 0x62);
+		write_byte(ofs, crc_value, file_offset, (this->bram_width-1) >> 8);
+		write_byte(ofs, crc_value, file_offset, (this->bram_width-1));
 
-		for (int offset = 0; offset < this->bram_height; offset += bram_chunk_size)
+		debug("BRAM: Setting bank height to %d.\n", this->bram_height);
+		write_byte(ofs, crc_value, file_offset, 0x72);
+		write_byte(ofs, crc_value, file_offset, bram_chunk_size >> 8);
+		write_byte(ofs, crc_value, file_offset, bram_chunk_size);
+
+		for (int bram_bank = 0; bram_bank < 4; bram_bank++)
 		{
-			vector<bool> bram_bits;
-			for (int bram_y = 0; bram_y < bram_chunk_size; bram_y++)
-			for (int bram_x = 0; bram_x < this->bram_width; bram_x++)
-				bram_bits.push_back(this->bram[bram_bank][bram_x][bram_y+offset]);
+			debug("BRAM: Setting bank %d.\n", bram_bank);
+			write_byte(ofs, crc_value, file_offset, 0x11);
+			write_byte(ofs, crc_value, file_offset, bram_bank);
 
-			debug("BRAM: Setting bank offset to %d.\n", offset);
-			write_byte(ofs, crc_value, file_offset, 0x82);
-			write_byte(ofs, crc_value, file_offset, offset >> 8);
-			write_byte(ofs, crc_value, file_offset, offset);
+			for (int offset = 0; offset < this->bram_height; offset += bram_chunk_size)
+			{
+				vector<bool> bram_bits;
+				for (int bram_y = 0; bram_y < bram_chunk_size; bram_y++)
+				for (int bram_x = 0; bram_x < this->bram_width; bram_x++)
+					bram_bits.push_back(this->bram[bram_bank][bram_x][bram_y+offset]);
 
-			debug("BRAM: Writing bank %d data.\n", bram_bank);
-			write_byte(ofs, crc_value, file_offset, 0x01);
-			write_byte(ofs, crc_value, file_offset, 0x03);
-			for (int i = 0; i < int(bram_bits.size()); i += 8) {
-				uint8_t byte = 0;
-				for (int j = 0; j < 8; j++)
-					byte = (byte << 1) | (bram_bits[i+j] ? 1 : 0);
-				write_byte(ofs, crc_value, file_offset, byte);
+				debug("BRAM: Setting bank offset to %d.\n", offset);
+				write_byte(ofs, crc_value, file_offset, 0x82);
+				write_byte(ofs, crc_value, file_offset, offset >> 8);
+				write_byte(ofs, crc_value, file_offset, offset);
+
+				debug("BRAM: Writing bank %d data.\n", bram_bank);
+				write_byte(ofs, crc_value, file_offset, 0x01);
+				write_byte(ofs, crc_value, file_offset, 0x03);
+				for (int i = 0; i < int(bram_bits.size()); i += 8) {
+					uint8_t byte = 0;
+					for (int j = 0; j < 8; j++)
+						byte = (byte << 1) | (bram_bits[i+j] ? 1 : 0);
+					write_byte(ofs, crc_value, file_offset, byte);
+				}
+
+				write_byte(ofs, crc_value, file_offset, 0x00);
+				write_byte(ofs, crc_value, file_offset, 0x00);
 			}
-
-			write_byte(ofs, crc_value, file_offset, 0x00);
-			write_byte(ofs, crc_value, file_offset, 0x00);
 		}
 	}
 
