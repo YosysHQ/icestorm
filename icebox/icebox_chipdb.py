@@ -18,11 +18,15 @@
 import icebox
 import getopt, sys, re
 
+mode_384 = False
 mode_8k = False
 
 def usage():
     print("""
 Usage: icebox_chipdb [options] [bitmap.asc]
+
+    -3
+        create chipdb for 384 device
 
     -8
         create chipdb for 8k device
@@ -30,19 +34,23 @@ Usage: icebox_chipdb [options] [bitmap.asc]
     sys.exit(0)
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "8")
+    opts, args = getopt.getopt(sys.argv[1:], "38")
 except:
     usage()
 
 for o, a in opts:
     if o == "-8":
         mode_8k = True
+    elif o == "-3":
+        mode_384 = True
     else:
         usage()
 
 ic = icebox.iceconfig()
 if mode_8k:
     ic.setup_empty_8k()
+elif mode_384:
+    ic.setup_empty_384()
 else:
     ic.setup_empty_1k()
 
