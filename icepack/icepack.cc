@@ -42,7 +42,7 @@
 using std::vector;
 using std::string;
 
-int log_level = 1; // 0;
+int log_level = 0;
 #define log(...) fprintf(stderr, __VA_ARGS__);
 #define info(...) do { if (log_level > 0) fprintf(stderr, __VA_ARGS__); } while (0)
 #define debug(...) do { if (log_level > 1) fprintf(stderr, __VA_ARGS__); } while (0)
