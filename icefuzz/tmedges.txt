@@ -688,6 +688,7 @@ Span4Mux_s2_h.O Span4Mux_h.I
 Span4Mux_s2_h.O Span4Mux_s0_v.I
 Span4Mux_s2_h.O Span4Mux_s1_v.I
 Span4Mux_s2_h.O Span4Mux_s2_v.I
+Span4Mux_s2_h.O Span4Mux_s3_h.I
 Span4Mux_s2_h.O Span4Mux_s3_v.I
 Span4Mux_s2_h.O Span4Mux_v.I
 Span4Mux_s2_v.O IoSpan4Mux.I
@@ -703,6 +704,7 @@ Span4Mux_s3_h.O LocalMux.I
 Span4Mux_s3_h.O Span4Mux_h.I
 Span4Mux_s3_h.O Span4Mux_s0_v.I
 Span4Mux_s3_h.O Span4Mux_s1_v.I
+Span4Mux_s3_h.O Span4Mux_s2_h.I
 Span4Mux_s3_h.O Span4Mux_s2_v.I
 Span4Mux_s3_h.O Span4Mux_s3_v.I
 Span4Mux_s3_h.O Span4Mux_v.I
