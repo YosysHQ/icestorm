@@ -20,7 +20,8 @@ TESTS += mem
 TESTS += pll
 TESTS += aig
 
-EIGTHK = _8k
+#EIGTHK = _8k
+THREEH = _384
 
 database: bitdata_io.txt bitdata_logic.txt bitdata_ramb$(EIGTHK).txt bitdata_ramt$(EIGTHK).txt
 ifeq ($(EIGTHK),_8k)
@@ -95,6 +96,11 @@ ifeq ($(EIGTHK),_8k)
 	+ICEDEV=hx8k-ct256 $(MAKE) -C work_$(1)
 	python3 extract.py -8 work_$(1)/*.glb > $$@
 else
+ ifeq ($(THREEH),_384)
+	ICE384PINS=1 python3 make_$(1).py
+	+ICEDEV=lp384-qn32 $(MAKE) -C work_$(1)
+	python3 extract.py -3 work_$(1)/*.glb > $$@
+ endif
 	python3 make_$(1).py
 	+$(MAKE) -C work_$(1)
 	python3 extract.py work_$(1)/*.glb > $$@

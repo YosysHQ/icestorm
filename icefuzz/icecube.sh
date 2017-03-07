@@ -10,7 +10,7 @@
 #  - <project_name>.pcf  ## physical constraint file
 #
 # Running iCEcube2:
-#  - bash icecube.sh [-1k|-8k] <project_name>  ## creates <project_name>.bin
+#  - bash icecube.sh [-1k|-8k|-384] <project_name>  ## creates <project_name>.bin
 #
 #
 #
@@ -38,6 +38,11 @@ fi
 
 if [ "$1" == "-8k" ]; then
 	ICEDEV=hx8k-ct256
+	shift
+fi
+
+if [ "$1" == "-384" ]; then
+	ICEDEV=384-qn32
 	shift
 fi
 
@@ -91,6 +96,10 @@ case "${ICEDEV:-hx1k-tq144}" in
 	hx8k-cb132)
 		iCEPACKAGE="CB132"
 		iCE40DEV="iCE40HX8K"
+		;;
+	lp384-qn32)
+		iCEPACKAGE="QN32"
+		iCE40DEV="iCE40LP384"
 		;;
         lp1k-swg16tr)
                 iCEPACKAGE="SWG16TR"
@@ -176,6 +185,11 @@ case "$iCE40DEV" in
 		icetech="SBTiCE40"
 		libfile="ice40HX8K.lib"
 		devfile="ICE40P08.dev"
+		;;
+	iCE40LP384)
+		icetech="SBTiCE40"
+		libfile="ice40LP384.lib"
+		devfile="ICE40P03.dev"
 		;;
 	iCE40LP1K)
 		icetech="SBTiCE40"

@@ -26,6 +26,18 @@ if os.getenv('ICE8KPINS'):
 
     gpins = "C8 F7 G1 H11 H16 I3 K9 R9".split()
 
+elif os.getenv('ICE384PINS'):
+    num_ramb40 = 0
+
+    pins = """
+	1 2 5 6 7 8
+	12 13 14 15
+	18 19 20 22 23
+	26 27 29 30 31 32
+    """.split()
+
+    gpins = "6 8 19 20 29 30".split()
+
 else:
     num_ramb40 = 16
 
