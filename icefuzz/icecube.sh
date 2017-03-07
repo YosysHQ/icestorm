@@ -394,5 +394,6 @@ if [ -n "$ICE_SBTIMER_LP" ]; then
 	cp "$1.tmp"/outputs/netlist/top_timing_lp.rpt "$1.rlp"
 fi
 
+export LD_LIBRARY_PATH=""
 $scriptdir/../icepack/iceunpack "$1.bin" "$1.asc"
 

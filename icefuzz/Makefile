@@ -100,10 +100,11 @@ else
 	ICE384PINS=1 python3 make_$(1).py
 	+ICEDEV=lp384-qn32 $(MAKE) -C work_$(1)
 	python3 extract.py -3 work_$(1)/*.glb > $$@
- endif
+ else
 	python3 make_$(1).py
 	+$(MAKE) -C work_$(1)
 	python3 extract.py work_$(1)/*.glb > $$@
+ endif
 endif
 endef
 
