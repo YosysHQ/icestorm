@@ -2,6 +2,9 @@ include ../config.mk
 export LC_ALL=C
 export ICE_SBTIMER_LP=1
 
+#EIGTHK = _8k
+THREEH = _384
+
 TESTS =
 TESTS += binop
 TESTS += pin2pin
@@ -15,13 +18,12 @@ TESTS += gbio
 TESTS += gbio2
 TESTS += prim
 TESTS += fflogic
-TESTS += ram40
-TESTS += mem
-TESTS += pll
-TESTS += aig
-
-#EIGTHK = _8k
-THREEH = _384
+ifneq ($(THREEH),_384)
+ TESTS += ram40
+ TESTS += mem
+ TESTS += pll
+ TESTS += aig
+endif
 
 database: bitdata_io.txt bitdata_logic.txt bitdata_ramb$(EIGTHK).txt bitdata_ramt$(EIGTHK).txt
 ifeq ($(EIGTHK),_8k)

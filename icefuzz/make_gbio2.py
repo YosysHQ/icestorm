@@ -7,6 +7,8 @@ import os
 os.system("rm -rf work_gbio2")
 os.mkdir("work_gbio2")
 
+w = 2 if os.getenv('ICE384PINS') else 8
+
 for p in gpins:
     if p in pins: pins.remove(p)
 
@@ -15,7 +17,7 @@ for idx in range(num):
         glbs = np.random.permutation(list(range(8)))
         print("""
             module top (
-                inout [7:0] pin,
+                inout [%s:0] pin,
                 input latch_in,
                 input clk_en,
                 input clk_in,
@@ -23,13 +25,15 @@ for idx in range(num):
                 input oen,
                 input dout_0,
                 input dout_1,
-                output [7:0] din_0,
-                output [7:0] din_1,
-                output [7:0] globals,
+                output [%s:0] din_0,
+                output [%s:0] din_1,
+                output [%s:0] globals,
                 output reg q
             );
-        """, file=f);
-        for k in range(8):
+        """ % (
+            w-1, w-1, w-1, w-1
+        ), file=f);
+        for k in range(w):
             print("""
                 SB_GB_IO #(
                     .PIN_TYPE(6'b %s),
@@ -68,13 +72,13 @@ for idx in range(num):
     with open("work_gbio2/gbio2_%02d.pcf" % idx, "w") as f:
         p = np.random.permutation(pins)
         g = np.random.permutation(gpins)
-        for i in range(8):
+        for i in range(w):
             print("set_io pin[%d] %s" % (i, g[i]), file=f)
-            print("set_io din_0[%d] %s" % (i, p[8+i]), file=f)
-            print("set_io din_1[%d] %s" % (i, p[2*8+i]), file=f)
-            print("set_io globals[%d] %s" % (i, p[3*8+i]), file=f)
+            print("set_io din_0[%d] %s" % (i, p[w+i]), file=f)
+            print("set_io din_1[%d] %s" % (i, p[2*w+i]), file=f)
+            print("set_io globals[%d] %s" % (i, p[3*w+i]), file=f)
         for i, n in enumerate("latch_in clk_en clk_in clk_out oen dout_0 dout_1".split()):
-            print("set_io %s %s" % (n, p[4*8+i]), file=f)
+            print("set_io %s %s" % (n, p[4*w+i]), file=f)
         print("set_io q %s" % (p[-1]), file=f)
 
 with open("work_gbio2/Makefile", "w") as f:

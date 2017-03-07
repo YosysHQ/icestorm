@@ -37,8 +37,13 @@ def print_seq_op(dst, src1, src2, op, f):
 
 for idx in range(num):
     with open("work_fflogic/fflogic_%02d.v" % idx, "w") as f:
-        print("module top(input clk, rst, en, input [15:0] a, b, c, d, output [15:0] y, output z);", file=f)
-        print("  reg [15:0] p, q;", file=f)
+        if os.getenv('ICE384PINS'): 
+            print("module top(input clk, rst, en, input [1:0] a, b, c, d, output [1:0] y, output z);", file=f)
+            print("  reg [1:0] p, q;", file=f)
+        else:
+            print("module top(input clk, rst, en, input [15:0] a, b, c, d, output [15:0] y, output z);", file=f)
+            print("  reg [15:0] p, q;", file=f)
+
         print_seq_op("p", "a", "b", random_op(), f)
         print_seq_op("q", "c", "d", random_op(), f)
         print("  assign y = p %s q, z = clk ^ rst ^ en;" % random_op(), file=f)
