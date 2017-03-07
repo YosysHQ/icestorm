@@ -487,7 +487,7 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 
 	int bram_chunk_size = 128;
 
-	if (this->bram_width && this->bram_height) 
+	if (this->bram_width && this->bram_height)
 	{
 		debug("BRAM: Setting bank width to %d.\n", this->bram_width);
 		write_byte(ofs, crc_value, file_offset, 0x62);
