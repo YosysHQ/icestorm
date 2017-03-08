@@ -42,7 +42,7 @@ if [ "$1" == "-8k" ]; then
 fi
 
 if [ "$1" == "-384" ]; then
-	ICEDEV=384-qn32
+	ICEDEV=lp384-qn32
 	shift
 fi
 
