@@ -5,12 +5,17 @@ import sys, re
 db = set()
 text_db = dict()
 mode_8k = False
+mode_384 = False
 cur_text_db = None
 max_x, max_y = 0, 0
 
 if sys.argv[1] == '-8':
     sys.argv = sys.argv[1:]
     mode_8k = True
+
+if sys.argv[1] == '-3':
+    sys.argv = sys.argv[1:]
+    mode_384 = True
 
 for filename in sys.argv[1:]:
     with open(filename, "r") as f:

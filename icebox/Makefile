@@ -1,6 +1,10 @@
 include ../config.mk
 
-all: chipdb-1k.txt chipdb-8k.txt
+all: chipdb-1k.txt chipdb-8k.txt # chipdb-384.txt
+
+chipdb-384.txt: icebox.py iceboxdb.py icebox_chipdb.py
+	python3 icebox_chipdb.py -3 > chipdb-384.new
+	mv chipdb-384.new chipdb-384.txt
 
 chipdb-1k.txt: icebox.py iceboxdb.py icebox_chipdb.py
 	python3 icebox_chipdb.py > chipdb-1k.new
@@ -11,12 +15,13 @@ chipdb-8k.txt: icebox.py iceboxdb.py icebox_chipdb.py
 	mv chipdb-8k.new chipdb-8k.txt
 
 clean:
-	rm -f chipdb-1k.txt chipdb-8k.txt
+	rm -f chipdb-1k.txt chipdb-8k.txt chipdb-384.txt
 	rm -f icebox.pyc iceboxdb.pyc
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icebox
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
+	cp chipdb-384.txt    $(DESTDIR)$(PREFIX)/share/icebox/
 	cp chipdb-1k.txt     $(DESTDIR)$(PREFIX)/share/icebox/
 	cp chipdb-8k.txt     $(DESTDIR)$(PREFIX)/share/icebox/
 	cp icebox.py         $(DESTDIR)$(PREFIX)/bin/icebox.py
@@ -41,6 +46,7 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_maps
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_vlog
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_stat
+	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-384.txt
 	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-1k.txt
 	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-8k.txt
 	-rmdir $(DESTDIR)$(PREFIX)/share/icebox

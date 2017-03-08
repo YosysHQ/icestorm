@@ -7,6 +7,8 @@ import os
 os.system("rm -rf work_gbio")
 os.mkdir("work_gbio")
 
+w = 2 if os.getenv('ICE384PINS') else 8
+
 for p in gpins:
     if p in pins: pins.remove(p)
 
@@ -15,7 +17,7 @@ for idx in range(num):
         glbs = np.random.permutation(list(range(8)))
         print("""
             module top (
-                inout [7:0] pin,
+                inout [%s:0] pin,
                 input latch_in,
                 input clk_en,
                 input clk_in,
@@ -23,9 +25,9 @@ for idx in range(num):
                 input oen,
                 input dout_0,
                 input dout_1,
-                output [7:0] din_0,
-                output [7:0] din_1,
-                output [7:0] globals,
+                output [%s:0] din_0,
+                output [%s:0] din_1,
+                output [%s:0] globals,
                 output reg q
             );
                 SB_GB_IO #(
@@ -33,7 +35,7 @@ for idx in range(num):
                     .PULLUP(1'b0),
                     .NEG_TRIGGER(1'b0),
                     .IO_STANDARD("SB_LVCMOS")
-                ) PINS [7:0] (
+                ) PINS [%s:0] (
                     .PACKAGE_PIN(pin),
                     .LATCH_INPUT_VALUE(%s),
                     .CLOCK_ENABLE(%s),
@@ -54,6 +56,7 @@ for idx in range(num):
                         q <= globals[%d];
             endmodule
         """ % (
+            w-1, w-1, w-1, w-1, w-1,
             np.random.choice(["latch_in", "globals", "din_0+din_1", "din_0^din_1"]),
             np.random.choice(["clk_en",   "globals", "din_0+din_1", "din_0^din_1"]),
             np.random.choice(["clk_in",   "globals", "din_0+din_1", "din_0^din_1"]),
@@ -61,21 +64,24 @@ for idx in range(num):
             np.random.choice(["oen",      "globals", "din_0+din_1", "din_0^din_1"]),
             np.random.choice(["dout_1",   "globals", "globals^dout_0", "din_0+din_1", "~din_0"]),
             np.random.choice(["dout_0",   "globals", "globals^dout_1", "din_0+din_1", "~din_1"]),
-            np.random.choice(["din_0",    "{din_0[3:0], din_0[7:4]}"]),
-            np.random.choice(["din_1",    "{din_1[1:0], din_1[7:2]}"]),
-            np.random.choice(["globals",  "{globals[0], globals[7:1]}"]),
+            np.random.choice(["din_0",    "{din_0[0], din_0[1]}"]) if os.getenv('ICE384PINS')
+             else np.random.choice(["din_0",    "{din_0[3:0], din_0[7:4]}"]) ,
+            np.random.choice(["din_1",    "{din_1[0], din_1[1]}"]) if os.getenv('ICE384PINS')
+             else np.random.choice(["din_1",    "{din_1[1:0], din_1[7:2]}"]),
+            np.random.choice(["globals",  "{globals[0], globals[1]}"]) if os.getenv('ICE384PINS')
+             else np.random.choice(["globals",  "{globals[0], globals[7:1]}"]),
             glbs[0], glbs[1], glbs[1], glbs[2], glbs[3]
         ), file=f)
     with open("work_gbio/gbio_%02d.pcf" % idx, "w") as f:
         p = np.random.permutation(pins)
         g = np.random.permutation(gpins)
-        for i in range(8):
+        for i in range(w):
             print("set_io pin[%d] %s" % (i, g[i]), file=f)
-            print("set_io din_0[%d] %s" % (i, p[8+i]), file=f)
-            print("set_io din_1[%d] %s" % (i, p[2*8+i]), file=f)
-            print("set_io globals[%d] %s" % (i, p[3*8+i]), file=f)
+            print("set_io din_0[%d] %s" % (i, p[w+i]), file=f)
+            print("set_io din_1[%d] %s" % (i, p[2*w+i]), file=f)
+            print("set_io globals[%d] %s" % (i, p[3*w+i]), file=f)
         for i, n in enumerate("latch_in clk_en clk_in clk_out oen dout_0 dout_1".split()):
-            print("set_io %s %s" % (n, p[4*8+i]), file=f)
+            print("set_io %s %s" % (n, p[4*w+i]), file=f)
         print("set_io q %s" % (p[-1]), file=f)
 
 with open("work_gbio/Makefile", "w") as f:

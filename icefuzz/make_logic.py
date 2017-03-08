@@ -12,17 +12,21 @@ def random_op():
 
 for idx in range(num):
     with open("work_logic/logic_%02d.v" % idx, "w") as f:
-        print("module top(input [15:0] a, b, c, d, output [15:0] y);", file=f)
+        if os.getenv('ICE384PINS'):
+            print("module top(input [3:0] a, b, c, d, output [3:0] y);", file=f)
+        else:
+            print("module top(input [15:0] a, b, c, d, output [15:0] y);", file=f)
         print("  assign y = (a %s b) %s (c %s d);" % (random_op(), random_op(), random_op()), file=f)
         print("endmodule", file=f)
     with open("work_logic/logic_%02d.pcf" % idx, "w") as f:
         p = np.random.permutation(pins)
-        for i in range(16):
+        r = 4 if os.getenv('ICE384PINS') else 16
+        for i in range(r):
             print("set_io a[%d] %s" % (i, p[i]), file=f)
-            print("set_io b[%d] %s" % (i, p[i+16]), file=f)
-            print("set_io c[%d] %s" % (i, p[i+32]), file=f)
-            print("set_io d[%d] %s" % (i, p[i+48]), file=f)
-            print("set_io y[%d] %s" % (i, p[i+64]), file=f)
+            print("set_io b[%d] %s" % (i, p[i+r]), file=f)
+            print("set_io c[%d] %s" % (i, p[i+r*2]), file=f)
+            print("set_io d[%d] %s" % (i, p[i+r*3]), file=f)
+            print("set_io y[%d] %s" % (i, p[i+r*4]), file=f)
 
 with open("work_logic/Makefile", "w") as f:
     print("all: %s" % " ".join(["logic_%02d.bin" % i for i in range(num)]), file=f)

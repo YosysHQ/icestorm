@@ -7,28 +7,31 @@ import os
 os.system("rm -rf work_io")
 os.mkdir("work_io")
 
+if os.getenv('ICE384PINS'): w = 2
+else: w = 4
+
 for idx in range(num):
     with open("work_io/io_%02d.v" % idx, "w") as f:
         glbs = np.random.permutation(list(range(8)))
         print("""
             module top (
-                inout [3:0] pin,
-                input [3:0] latch_in,
-                input [3:0] clk_en,
-                input [3:0] clk_in,
-                input [3:0] clk_out,
-                input [3:0] oen,
-                input [3:0] dout_0,
-                input [3:0] dout_1,
-                output [3:0] din_0,
-                output [3:0] din_1
+                inout [%s:0] pin,
+                input [%s:0] latch_in,
+                input [%s:0] clk_en,
+                input [%s:0] clk_in,
+                input [%s:0] clk_out,
+                input [%s:0] oen,
+                input [%s:0] dout_0,
+                input [%s:0] dout_1,
+                output [%s:0] din_0,
+                output [%s:0] din_1
             );
                 SB_IO #(
                     .PIN_TYPE(6'b %s_%s),
                     .PULLUP(1'b %s),
                     .NEG_TRIGGER(1'b %s),
                     .IO_STANDARD("SB_LVCMOS")
-                ) PINS [3:0] (
+                ) PINS [%s:0] (
                     .PACKAGE_PIN(pin),
                     .LATCH_INPUT_VALUE(latch_in),
                     .CLOCK_ENABLE(clk_en),
@@ -42,13 +45,14 @@ for idx in range(num):
                 );
             endmodule
         """ % (
+            w-1, w-1, w-1, w-1, w-1, w-1, w-1, w-1, w-1, w-1,
             np.random.choice(["0000", "0110", "1010", "1110", "0101", "1001", "1101", "0100", "1000", "1100", "0111", "1111"]),
-            np.random.choice(["00", "01", "10", "11"]), np.random.choice(["0", "1"]), np.random.choice(["0", "1"])
+            np.random.choice(["00", "01", "10", "11"]), np.random.choice(["0", "1"]), np.random.choice(["0", "1"]), w-1
         ), file=f)
     with open("work_io/io_%02d.pcf" % idx, "w") as f:
         p = list(np.random.permutation(pins))
         for k in ["pin", "latch_in", "clk_en", "clk_in", "clk_out", "oen", "dout_0", "dout_1", "din_0", "din_1"]:
-            for i in range(4):
+            for i in range(w):
                 print("set_io %s[%d] %s" % (k, i, p.pop()), file=f)
 
 with open("work_io/Makefile", "w") as f:

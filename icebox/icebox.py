@@ -34,6 +34,24 @@ class iceconfig:
         self.extra_bits = set()
         self.symbols = dict()
 
+    def setup_empty_384(self):
+        self.clear()
+        self.device = "384"
+        self.max_x = 7
+        self.max_y = 9
+
+        for x in range(1, self.max_x):
+            for y in range(1, self.max_y):
+                self.logic_tiles[(x, y)] = ["0" * 54 for i in range(16)]
+
+        for x in range(1, self.max_x):
+            self.io_tiles[(x, 0)] = ["0" * 18 for i in range(16)]
+            self.io_tiles[(x, self.max_y)] = ["0" * 18 for i in range(16)]
+
+        for y in range(1, self.max_y):
+            self.io_tiles[(0, y)] = ["0" * 18 for i in range(16)]
+            self.io_tiles[(self.max_x, y)] = ["0" * 18 for i in range(16)]
+
     def setup_empty_1k(self):
         self.clear()
         self.device = "1k"
@@ -96,6 +114,7 @@ class iceconfig:
         return None
 
     def pinloc_db(self):
+        if self.device == "384": return pinloc_db["384-qn32"]
         if self.device == "1k": return pinloc_db["1k-tq144"]
         if self.device == "8k": return pinloc_db["8k-ct256"]
         assert False
@@ -120,6 +139,8 @@ class iceconfig:
             return ["1k"]
         if self.device == "8k":
             return ["8k_0", "8k_1"]
+        if self.device == "384":
+            return [ ]
         assert False
 
     def colbuf_db(self):
@@ -148,7 +169,7 @@ class iceconfig:
                     if 25 <= y <= 33: src_y = 25
                     entries.append((x, src_y, x, y))
             return entries
-
+#384?
         assert False
 
     def tile_db(self, x, y):
@@ -164,6 +185,8 @@ class iceconfig:
             if (x, y) in self.logic_tiles: return logictile_8k_db
             if (x, y) in self.ramb_tiles: return rambtile_8k_db
             if (x, y) in self.ramt_tiles: return ramttile_8k_db
+        if self.device == "384":
+            if (x, y) in self.logic_tiles: return logictile_384_db
         assert False
 
     def tile_type(self, x, y):
@@ -441,6 +464,8 @@ class iceconfig:
                 add_seed_segments(idx, tile, logictile_db)
             elif self.device == "8k":
                 add_seed_segments(idx, tile, logictile_8k_db)
+            elif self.device == "384":
+                add_seed_segments(idx, tile, logictile_384_db)
             else:
                 assert False
 
@@ -574,7 +599,7 @@ class iceconfig:
                     self.extra_bits.add((int(line[1]), int(line[2]), int(line[3])))
                     continue
                 if line[0] == ".device":
-                    assert line[1] in ["1k", "8k"]
+                    assert line[1] in ["1k", "8k", "384"]
                     self.device = line[1]
                     continue
                 if line[0] == ".sym":
@@ -948,6 +973,7 @@ def run_checks_neigh():
     ic = iceconfig()
     ic.setup_empty_1k()
     # ic.setup_empty_8k()
+    # ic.setup_empty_384()
 
     all_segments = set()
 
@@ -983,19 +1009,26 @@ def run_checks_neigh():
 def run_checks():
     run_checks_neigh()
 
-def parse_db(text, grep_8k=False):
+def parse_db(text, grep_8k=False, grep_384=False):
     db = list()
     for line in text.split("\n"):
+        line_384 = line.replace("384_glb_netwk_", "glb_netwk_")
         line_1k = line.replace("1k_glb_netwk_", "glb_netwk_")
         line_8k = line.replace("8k_glb_netwk_", "glb_netwk_")
         if line_1k != line:
             if grep_8k:
+                continue
+            if grep_384:
                 continue
             line = line_1k
         elif line_8k != line:
             if not grep_8k:
                 continue
             line = line_8k
+        elif line_384 != line:
+            if not grep_384:
+                continue
+            line = line_384
         line = line.split("\t")
         if len(line) == 0 or line[0] == "":
             continue
@@ -1024,6 +1057,7 @@ extra_bits_db = {
         (0, 870, 271): ("padin_glb_netwk", "6"),
         (0, 871, 271): ("padin_glb_netwk", "7"),
     }
+#384?
 }
 
 gbufin_db = {
@@ -1047,6 +1081,7 @@ gbufin_db = {
         (16,  0,  5),
         (16, 33,  4),
     ]
+#384?
 }
 
 iolatch_db = {
@@ -1062,6 +1097,7 @@ iolatch_db = {
         (18,  0),
         (15, 33),
     ],
+#384?
 }
 
 warmbootinfo_db = {
@@ -1075,6 +1111,7 @@ warmbootinfo_db = {
         "S0":   ( 33, 1, "fabout" ),
         "S1":   ( 33, 2, "fabout" ),
     }
+#384?
 }
 
 noplls_db = {
@@ -1087,6 +1124,7 @@ noplls_db = {
     "1k-cb81": [ "1k" ],
     "1k-cb121": [ "1k" ],
     "1k-vq100": [ "1k" ],
+    "384-qn32": [ "384" ],
 }
 
 pllinfo_db = {
@@ -1369,6 +1407,7 @@ pllinfo_db = {
         "SDI":                  ( 22, 33, "fabout"),
         "SCLK":                 ( 21, 33, "fabout"),
     },
+#384?
 }
 
 padin_pio_db = {
@@ -1392,6 +1431,7 @@ padin_pio_db = {
         (16,  0, 1),
         (16, 33, 1),
     ]
+#384?
 }
 
 ieren_db = {
@@ -1719,6 +1759,7 @@ ieren_db = {
         (33, 30, 1, 33, 30, 1),
         (33, 31, 0, 33, 31, 0),
     ]
+#384?
 }
 
 pinloc_db = {
@@ -3636,11 +3677,13 @@ pinloc_db = {
         ("T15", 22,  0, 1),
         ("T16", 27,  0, 0),
     ]
+#384?
 }
 
 iotile_full_db = parse_db(iceboxdb.database_io_txt)
 logictile_db = parse_db(iceboxdb.database_logic_txt)
 logictile_8k_db = parse_db(iceboxdb.database_logic_txt, True)
+logictile_384_db = parse_db(iceboxdb.database_logic_txt, False, True)
 rambtile_db = parse_db(iceboxdb.database_ramb_txt)
 ramttile_db = parse_db(iceboxdb.database_ramt_txt)
 rambtile_8k_db = parse_db(iceboxdb.database_ramb_8k_txt, True)
@@ -3679,6 +3722,8 @@ logictile_db.append([["B1[50]"], "CarryInSet"])
 
 logictile_8k_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
 logictile_8k_db.append([["B1[50]"], "CarryInSet"])
+
+#384?
 
 for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, logictile_db, logictile_8k_db, rambtile_db, ramttile_db, rambtile_8k_db, ramttile_8k_db]:
     for entry in db:
