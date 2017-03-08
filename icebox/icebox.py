@@ -139,7 +139,8 @@ class iceconfig:
             return ["1k"]
         if self.device == "8k":
             return ["8k_0", "8k_1"]
-#384?
+        if self.device == "384":
+            return [ ]
         assert False
 
     def colbuf_db(self):
@@ -281,7 +282,6 @@ class iceconfig:
                         return (nx, ny, "ram/RDATA_%d" % func)
                     elif self.device == "8k":
                         return (nx, ny, "ram/RDATA_%d" % (15-func))
-#384?
                     else:
                         assert False
                 if (nx, ny) in self.ramt_tiles:
@@ -289,7 +289,6 @@ class iceconfig:
                         return (nx, ny, "ram/RDATA_%d" % (8+func))
                     elif self.device == "8k":
                         return (nx, ny, "ram/RDATA_%d" % (7-func))
-#384?
                     else:
                         assert False
 
@@ -330,7 +329,6 @@ class iceconfig:
                 funcnets |= self.follow_funcnet(x, y, int(match.group(1)) % 8)
             elif self.device == "8k":
                 funcnets |= self.follow_funcnet(x, y, 7 - int(match.group(1)) % 8)
-#384?
             else:
                 assert False
 
@@ -476,7 +474,6 @@ class iceconfig:
                 add_seed_segments(idx, tile, rambtile_db)
             elif self.device == "8k":
                 add_seed_segments(idx, tile, rambtile_8k_db)
-#384?
             else:
                 assert False
 
@@ -485,7 +482,6 @@ class iceconfig:
                 add_seed_segments(idx, tile, ramttile_db)
             elif self.device == "8k":
                 add_seed_segments(idx, tile, ramttile_8k_db)
-#384?
             else:
                 assert False
 
@@ -763,7 +759,6 @@ def sp12v_normalize(netname, edge=""):
     return netname
 
 def netname_normalize(netname, edge="", ramb=False, ramt=False, ramb_8k=False, ramt_8k=False):
-#384?
     if netname.startswith("sp4_v_"): return sp4v_normalize(netname, edge)
     if netname.startswith("sp4_h_"): return sp4h_normalize(netname, edge)
     if netname.startswith("sp12_v_"): return sp12v_normalize(netname, edge)
@@ -978,7 +973,7 @@ def run_checks_neigh():
     ic = iceconfig()
     ic.setup_empty_1k()
     # ic.setup_empty_8k()
-#384?
+    # ic.setup_empty_384()
 
     all_segments = set()
 
