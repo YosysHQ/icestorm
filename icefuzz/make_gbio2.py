@@ -7,7 +7,7 @@ import os
 os.system("rm -rf work_gbio2")
 os.mkdir("work_gbio2")
 
-w = 2 if os.getenv('ICE384PINS') else 8
+w = 4 if os.getenv('ICE384PINS') else 8
 
 for p in gpins:
     if p in pins: pins.remove(p)

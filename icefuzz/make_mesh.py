@@ -10,14 +10,14 @@ os.mkdir("work_mesh")
 for idx in range(num):
     with open("work_mesh/mesh_%02d.v" % idx, "w") as f:
         if os.getenv('ICE384PINS'):
-            print("module top(input [9:0] a, output [9:0] y);", file=f)
+            print("module top(input [9:0] a, output [17:0] y);", file=f)
         else:
             print("module top(input [39:0] a, output [39:0] y);", file=f)
         print("  assign y = a;", file=f)
         print("endmodule", file=f)
     with open("work_mesh/mesh_%02d.pcf" % idx, "w") as f:
         p = np.random.permutation(pins)
-        if os.getenv('ICE384PINS'): r = 10
+        if os.getenv('ICE384PINS'): r = 18
         else: r = 40
         for i in range(r):
             print("set_io a[%d] %s" % (i, p[i]), file=f)

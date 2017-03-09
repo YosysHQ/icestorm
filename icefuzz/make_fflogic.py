@@ -38,8 +38,8 @@ def print_seq_op(dst, src1, src2, op, f):
 for idx in range(num):
     with open("work_fflogic/fflogic_%02d.v" % idx, "w") as f:
         if os.getenv('ICE384PINS'):
-            print("module top(input clk, rst, en, input [1:0] a, b, c, d, output [1:0] y, output z);", file=f)
-            print("  reg [1:0] p, q;", file=f)
+            print("module top(input clk, rst, en, input [4:0] a, b, c, d, output [4:0] y, output z);", file=f)
+            print("  reg [4:0] p, q;", file=f)
         else:
             print("module top(input clk, rst, en, input [15:0] a, b, c, d, output [15:0] y, output z);", file=f)
             print("  reg [15:0] p, q;", file=f)

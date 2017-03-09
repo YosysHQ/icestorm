@@ -13,14 +13,14 @@ def random_op():
 for idx in range(num):
     with open("work_logic/logic_%02d.v" % idx, "w") as f:
         if os.getenv('ICE384PINS'):
-            print("module top(input [3:0] a, b, c, d, output [3:0] y);", file=f)
+            print("module top(input [5:0] a, b, c, d, output [5:0] y);", file=f)
         else:
             print("module top(input [15:0] a, b, c, d, output [15:0] y);", file=f)
         print("  assign y = (a %s b) %s (c %s d);" % (random_op(), random_op(), random_op()), file=f)
         print("endmodule", file=f)
     with open("work_logic/logic_%02d.pcf" % idx, "w") as f:
         p = np.random.permutation(pins)
-        r = 4 if os.getenv('ICE384PINS') else 16
+        r = 6 if os.getenv('ICE384PINS') else 16
         for i in range(r):
             print("set_io a[%d] %s" % (i, p[i]), file=f)
             print("set_io b[%d] %s" % (i, p[i+r]), file=f)

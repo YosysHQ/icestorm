@@ -7,7 +7,7 @@ import os
 os.system("rm -rf work_io")
 os.mkdir("work_io")
 
-if os.getenv('ICE384PINS'): w = 2
+if os.getenv('ICE384PINS'): w = 3
 else: w = 4
 
 for idx in range(num):

@@ -10,7 +10,7 @@ os.mkdir("work_fanout")
 for idx in range(num):
     with open("work_fanout/fanout_%02d.v" % idx, "w") as f:
         if os.getenv('ICE384PINS'):
-            print("module top(input [1:0] a, output [15:0] y);", file=f)
+            print("module top(input [1:0] a, output [33:0] y);", file=f)
             print("  assign y = {8{a}};", file=f)
         else:
             print("module top(input [1:0] a, output [63:0] y);", file=f)
@@ -18,7 +18,7 @@ for idx in range(num):
         print("endmodule", file=f)
     with open("work_fanout/fanout_%02d.pcf" % idx, "w") as f:
         p = np.random.permutation(pins)
-        r = 16 if os.getenv('ICE384PINS') else 64
+        r = 34 if os.getenv('ICE384PINS') else 64
         for i in range(r):
             print("set_io y[%d] %s" % (i, p[i]), file=f)
         print("set_io a[0] %s" % p[r], file=f)
