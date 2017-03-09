@@ -1,6 +1,6 @@
 include ../config.mk
 
-all: chipdb-1k.txt chipdb-8k.txt # chipdb-384.txt
+all: chipdb-384.txt chipdb-1k.txt chipdb-8k.txt
 
 chipdb-384.txt: icebox.py iceboxdb.py icebox_chipdb.py
 	python3 icebox_chipdb.py -3 > chipdb-384.new

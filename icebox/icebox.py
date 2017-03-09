@@ -169,7 +169,19 @@ class iceconfig:
                     if 25 <= y <= 33: src_y = 25
                     entries.append((x, src_y, x, y))
             return entries
-#384?
+
+        if self.device == "384":
+            entries = list()
+            for x in range(self.max_x+1):
+                for y in range(self.max_y+1):
+                    src_y = None
+                    if  0 <= y <=  2: src_y =  2 #384?
+                    if  3 <= y <=  4: src_y =  3 #384?
+                    if  5 <= y <=  6: src_y =  6 #384?
+                    if  7 <= y <=  9: src_y =  7 #384?
+                    entries.append((x, src_y, x, y))
+            return entries
+
         assert False
 
     def tile_db(self, x, y):
@@ -1056,8 +1068,17 @@ extra_bits_db = {
         (1, 871, 270): ("padin_glb_netwk", "5"),
         (0, 870, 271): ("padin_glb_netwk", "6"),
         (0, 871, 271): ("padin_glb_netwk", "7"),
+    },
+    "384": {
+        (0, 180, 78): ("padin_glb_netwk", "0"),
+        (0, 181, 78): ("padin_glb_netwk", "1"),
+        (1, 180, 79): ("padin_glb_netwk", "2"),
+        (1, 181, 79): ("padin_glb_netwk", "3"),
+        (1, 180, 78): ("padin_glb_netwk", "4"),
+        (1, 181, 78): ("padin_glb_netwk", "5"),
+        (0, 180, 79): ("padin_glb_netwk", "6"),
+        (0, 181, 79): ("padin_glb_netwk", "7"),
     }
-#384?
 }
 
 gbufin_db = {
@@ -1080,8 +1101,17 @@ gbufin_db = {
         (33, 17,  2),
         (16,  0,  5),
         (16, 33,  4),
+    ],
+    "384": [
+        ( 7,  4,  7),
+        ( 0,  4,  6),
+        ( 4,  9,  1),
+        ( 4,  0,  0),
+        ( 0,  5,  3),
+        ( 7,  5,  2),
+        ( 3,  0,  5),
+        ( 3,  9,  4),
     ]
-#384?
 }
 
 iolatch_db = {
@@ -1097,7 +1127,12 @@ iolatch_db = {
         (18,  0),
         (15, 33),
     ],
-#384?
+    "384": [
+        ( 0,  3), #384?
+        ( 7,  5), #384?
+        ( 2,  0), #384?
+        ( 5,  9), #384?
+    ],
 }
 
 warmbootinfo_db = {
@@ -1110,8 +1145,12 @@ warmbootinfo_db = {
         "BOOT": ( 31, 0, "fabout" ),
         "S0":   ( 33, 1, "fabout" ),
         "S1":   ( 33, 2, "fabout" ),
+    },
+    "384": {
+        "BOOT": ( 6, 0, "fabout" ), #384?
+        "S0":   ( 7, 1, "fabout" ),
+        "S1":   ( 7, 2, "fabout" ),
     }
-#384?
 }
 
 noplls_db = {
@@ -1407,7 +1446,6 @@ pllinfo_db = {
         "SDI":                  ( 22, 33, "fabout"),
         "SCLK":                 ( 21, 33, "fabout"),
     },
-#384?
 }
 
 padin_pio_db = {
@@ -1430,8 +1468,17 @@ padin_pio_db = {
         (33, 17, 0),
         (16,  0, 1),
         (16, 33, 1),
+    ],
+    "384": [
+        ( 7,  4, 1),
+        ( 0,  4, 1),
+        ( 4,  9, 0),
+        ( 4,  0, 0), #QFN32: no pin?!
+        ( 0,  5, 0),
+        ( 7,  5, 0),
+        ( 3,  0, 1), #QFN32: no pin?!
+        ( 3,  9, 1),
     ]
-#384?
 }
 
 ieren_db = {
@@ -1758,8 +1805,47 @@ ieren_db = {
         (33, 30, 0, 33, 30, 0),
         (33, 30, 1, 33, 30, 1),
         (33, 31, 0, 33, 31, 0),
-    ]
-#384?
+    ],
+    "384": [
+        # IO-block (X, Y, Z) <-> IeRen-block (X, Y, Z)
+        ( 0, 1, 0, 0, 0, 0), #384?
+        ( 0, 1, 1, 0, 1, 0), #384?
+        ( 0, 2, 0, 0, 2, 0), #384?
+        ( 0, 2, 1, 0, 2, 0), #384?
+        ( 0, 4, 0, 0, 4, 0), #384?
+        ( 0, 4, 1, 0, 4, 0), #384?
+        ( 0, 5, 0, 0, 5, 0), #384?
+        ( 0, 5, 1, 0, 5, 0), #384?
+        ( 0, 6, 0, 0, 6, 0), #384?
+        ( 0, 6, 1, 0, 6, 0), #384?
+        ( 0, 7, 0, 0, 7, 0), #384?
+        ( 0, 7, 1, 0, 7, 0), #384?
+        ( 2, 9, 0, 2, 9, 0), #384?
+        ( 2, 9, 1, 2, 9, 0), #384?
+        ( 3, 0, 0, 3, 0, 0), #384?
+        ( 3, 0, 1, 3, 0, 0), #384?
+        ( 3, 9, 0, 3, 9, 0), #384?
+        ( 3, 9, 1, 3, 9, 0), #384?
+        ( 4, 0, 0, 4, 0, 0), #384?
+        ( 4, 0, 1, 4, 0, 0), #384?
+        ( 4, 9, 0, 4, 9, 0), #384?
+        ( 4, 9, 1, 4, 9, 0), #384?
+        ( 5, 0, 0, 5, 0, 0), #384?
+        ( 5, 0, 1, 5, 0, 0), #384?
+        ( 5, 9, 0, 5, 9, 0), #384?
+        ( 5, 9, 1, 5, 9, 0), #384?
+        ( 6, 0, 0, 6, 0, 0), #384?
+        ( 6, 0, 1, 6, 0, 0), #384?
+        ( 6, 9, 0, 6, 9, 0), #384?
+        ( 6, 9, 1, 6, 9, 0), #384?
+        ( 7, 3, 1, 7, 3, 0), #384?
+        ( 7, 4, 0, 7, 4, 0), #384?
+        ( 7, 4, 1, 7, 4, 0), #384?
+        ( 7, 5, 0, 7, 5, 0), #384?
+        ( 7, 5, 1, 7, 5, 0), #384?
+        ( 7, 6, 0, 7, 6, 0), #384?
+        ( 7, 6, 1, 7, 6, 0), #384?
+    ],
 }
 
 pinloc_db = {
@@ -3676,8 +3762,30 @@ pinloc_db = {
         ("T14", 23,  0, 0),
         ("T15", 22,  0, 1),
         ("T16", 27,  0, 0),
+    ],
+    "384-qn32": [
+        (  "1",  0,  7, 0),
+        (  "2",  0,  7, 1),
+        (  "5",  0,  5, 1),
+        (  "6",  0,  5, 0),
+        (  "7",  0,  4, 0),
+        (  "8",  0,  4, 1),
+        ( "12",  5,  0, 0),
+        ( "13",  5,  0, 1),
+        ( "14",  6,  0, 1),
+        ( "15",  6,  0, 0),
+        ( "18",  7,  4, 0),
+        ( "19",  7,  4, 1),
+        ( "20",  7,  5, 0),
+        ( "22",  7,  6, 0),
+        ( "23",  7,  6, 1),
+        ( "26",  6,  9, 0),
+        ( "27",  5,  9, 0),
+        ( "29",  4,  9, 0),
+        ( "30",  3,  9, 1),
+        ( "31",  2,  9, 0),
+        ( "32",  2,  9, 1),
     ]
-#384?
 }
 
 iotile_full_db = parse_db(iceboxdb.database_io_txt)
@@ -3723,9 +3831,10 @@ logictile_db.append([["B1[50]"], "CarryInSet"])
 logictile_8k_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
 logictile_8k_db.append([["B1[50]"], "CarryInSet"])
 
-#384?
+logictile_384_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"]) #384?
+logictile_384_db.append([["B1[50]"], "CarryInSet"])
 
-for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, logictile_db, logictile_8k_db, rambtile_db, ramttile_db, rambtile_8k_db, ramttile_8k_db]:
+for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, logictile_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_8k_db, ramttile_8k_db]:
     for entry in db:
         if entry[1] in ("buffer", "routing"):
             entry[2] = netname_normalize(entry[2], ramb=(db == rambtile_db), ramt=(db == ramttile_db), ramb_8k=(db == rambtile_8k_db), ramt_8k=(db == ramttile_8k_db))

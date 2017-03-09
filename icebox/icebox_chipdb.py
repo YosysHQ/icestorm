@@ -254,8 +254,9 @@ def print_tile_nonrouting_bits(tile_type, idx):
 
 print_tile_nonrouting_bits("logic", list(ic.logic_tiles.keys())[0])
 print_tile_nonrouting_bits("io", list(ic.io_tiles.keys())[0])
-print_tile_nonrouting_bits("ramb", list(ic.ramb_tiles.keys())[0])
-print_tile_nonrouting_bits("ramt", list(ic.ramt_tiles.keys())[0])
+if not mode_384:
+    print_tile_nonrouting_bits("ramb", list(ic.ramb_tiles.keys())[0])
+    print_tile_nonrouting_bits("ramt", list(ic.ramt_tiles.keys())[0])
 
 print(".extra_cell 0 0 WARMBOOT")
 for key in sorted(icebox.warmbootinfo_db[ic.device]):
