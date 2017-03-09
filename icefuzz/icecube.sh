@@ -42,7 +42,7 @@ if [ "$1" == "-8k" ]; then
 fi
 
 if [ "$1" == "-384" ]; then
-	ICEDEV=lp384-qn32
+	ICEDEV=lp384-cm49
 	shift
 fi
 
@@ -99,6 +99,14 @@ case "${ICEDEV:-hx1k-tq144}" in
 		;;
 	lp384-qn32)
 		iCEPACKAGE="QN32"
+		iCE40DEV="iCE40LP384"
+		;;
+	lp384-cm36)
+		iCEPACKAGE="CM36"
+		iCE40DEV="iCE40LP384"
+		;;
+	lp384-cm49)
+		iCEPACKAGE="CM49"
 		iCE40DEV="iCE40LP384"
 		;;
         lp1k-swg16tr)
