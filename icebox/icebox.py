@@ -174,7 +174,7 @@ class iceconfig:
             entries = list()
             for x in range(self.max_x+1):
                 for y in range(self.max_y+1):
-                    src_y = None
+                    src_y = None                 #Is ColBufCtrl relevant?
                     if  0 <= y <=  2: src_y =  2 #384?
                     if  3 <= y <=  4: src_y =  3 #384?
                     if  5 <= y <=  6: src_y =  6 #384?
