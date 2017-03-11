@@ -529,16 +529,21 @@
 (2 6) IO control bit: BIORIGHT_REN_0
 (2 6) IO control bit: BIORIGHT_REN_1
 (2 6) IO control bit: BIOUP_REN_0
+(2 6) IO control bit: BIOUP_REN_1
 (2 6) IO control bit: GIODOWN0_REN_0
+(2 6) IO control bit: GIODOWN0_REN_1
 (2 6) IO control bit: GIODOWN1_REN_0
+(2 6) IO control bit: GIODOWN1_REN_1
 (2 6) IO control bit: GIOLEFT0_REN_0
 (2 6) IO control bit: GIOLEFT0_REN_1
 (2 6) IO control bit: GIOLEFT1_REN_0
 (2 6) IO control bit: GIOLEFT1_REN_1
 (2 6) IO control bit: GIORIGHT0_REN_0
+(2 6) IO control bit: GIORIGHT0_REN_1
 (2 6) IO control bit: GIORIGHT1_REN_0
 (2 6) IO control bit: GIORIGHT1_REN_1
 (2 6) IO control bit: GIOUP0_REN_0
+(2 6) IO control bit: GIOUP0_REN_1
 (2 6) IO control bit: GIOUP1_REN_0
 (2 6) IO control bit: GIOUP1_REN_1
 (2 6) IO control bit: IODOWN_REN_0
@@ -546,6 +551,7 @@
 (2 6) IO control bit: IOLEFT_REN_0
 (2 6) IO control bit: IOLEFT_REN_1
 (2 6) IO control bit: IORIGHT_REN_0
+(2 6) IO control bit: IORIGHT_REN_1
 (2 6) IO control bit: IOUP_REN_0
 (2 6) IO control bit: IOUP_REN_1
 (2 7) Enable bit of Mux _out_links/OutMux9_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_r_13
@@ -569,7 +575,9 @@
 (3 1) IO control bit: BIORIGHT_REN_1
 (3 1) IO control bit: BIOUP_REN_0
 (3 1) IO control bit: BIOUP_REN_1
+(3 1) IO control bit: GIODOWN0_REN_0
 (3 1) IO control bit: GIODOWN0_REN_1
+(3 1) IO control bit: GIODOWN1_REN_0
 (3 1) IO control bit: GIODOWN1_REN_1
 (3 1) IO control bit: GIOLEFT0_REN_0
 (3 1) IO control bit: GIOLEFT0_REN_1
@@ -581,6 +589,7 @@
 (3 1) IO control bit: GIORIGHT1_REN_1
 (3 1) IO control bit: GIOUP0_REN_0
 (3 1) IO control bit: GIOUP0_REN_1
+(3 1) IO control bit: GIOUP1_REN_0
 (3 1) IO control bit: GIOUP1_REN_1
 (3 1) IO control bit: IODOWN_REN_0
 (3 1) IO control bit: IODOWN_REN_1
@@ -638,7 +647,9 @@
 (3 6) IO control bit: BIORIGHT_IE_1
 (3 6) IO control bit: BIOUP_IE_0
 (3 6) IO control bit: BIOUP_IE_1
+(3 6) IO control bit: GIODOWN0_IE_0
 (3 6) IO control bit: GIODOWN0_IE_1
+(3 6) IO control bit: GIODOWN1_IE_0
 (3 6) IO control bit: GIODOWN1_IE_1
 (3 6) IO control bit: GIOLEFT0_IE_0
 (3 6) IO control bit: GIOLEFT0_IE_1
@@ -650,6 +661,7 @@
 (3 6) IO control bit: GIORIGHT1_IE_1
 (3 6) IO control bit: GIOUP0_IE_0
 (3 6) IO control bit: GIOUP0_IE_1
+(3 6) IO control bit: GIOUP1_IE_0
 (3 6) IO control bit: GIOUP1_IE_1
 (3 6) IO control bit: IODOWN_IE_0
 (3 6) IO control bit: IODOWN_IE_1
@@ -671,16 +683,21 @@
 (3 9) IO control bit: BIORIGHT_IE_0
 (3 9) IO control bit: BIORIGHT_IE_1
 (3 9) IO control bit: BIOUP_IE_0
+(3 9) IO control bit: BIOUP_IE_1
 (3 9) IO control bit: GIODOWN0_IE_0
+(3 9) IO control bit: GIODOWN0_IE_1
 (3 9) IO control bit: GIODOWN1_IE_0
+(3 9) IO control bit: GIODOWN1_IE_1
 (3 9) IO control bit: GIOLEFT0_IE_0
 (3 9) IO control bit: GIOLEFT0_IE_1
 (3 9) IO control bit: GIOLEFT1_IE_0
 (3 9) IO control bit: GIOLEFT1_IE_1
 (3 9) IO control bit: GIORIGHT0_IE_0
+(3 9) IO control bit: GIORIGHT0_IE_1
 (3 9) IO control bit: GIORIGHT1_IE_0
 (3 9) IO control bit: GIORIGHT1_IE_1
 (3 9) IO control bit: GIOUP0_IE_0
+(3 9) IO control bit: GIOUP0_IE_1
 (3 9) IO control bit: GIOUP1_IE_0
 (3 9) IO control bit: GIOUP1_IE_1
 (3 9) IO control bit: IODOWN_IE_0
@@ -688,6 +705,7 @@
 (3 9) IO control bit: IOLEFT_IE_0
 (3 9) IO control bit: IOLEFT_IE_1
 (3 9) IO control bit: IORIGHT_IE_0
+(3 9) IO control bit: IORIGHT_IE_1
 (3 9) IO control bit: IOUP_IE_0
 (3 9) IO control bit: IOUP_IE_1
 (4 0) routing IO_B.logic_op_tnl_0 <X> lc_trk_g0_0

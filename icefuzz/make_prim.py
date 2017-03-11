@@ -7,7 +7,7 @@ import os
 os.system("rm -rf work_prim")
 os.mkdir("work_prim")
 
-w = 5 if os.getenv('ICE384PINS') else 24
+w = 10 if os.getenv('ICE384PINS') else 24
 
 for idx in range(num):
     with open("work_prim/prim_%02d.v" % idx, "w") as f:

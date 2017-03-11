@@ -7,7 +7,7 @@ import os
 os.system("rm -rf work_gbio")
 os.mkdir("work_gbio")
 
-w = 2 if os.getenv('ICE384PINS') else 8
+w = 4 if os.getenv('ICE384PINS') else 8
 
 for p in gpins:
     if p in pins: pins.remove(p)
@@ -64,11 +64,11 @@ for idx in range(num):
             np.random.choice(["oen",      "globals", "din_0+din_1", "din_0^din_1"]),
             np.random.choice(["dout_1",   "globals", "globals^dout_0", "din_0+din_1", "~din_0"]),
             np.random.choice(["dout_0",   "globals", "globals^dout_1", "din_0+din_1", "~din_1"]),
-            np.random.choice(["din_0",    "{din_0[0], din_0[1]}"]) if os.getenv('ICE384PINS')
+            np.random.choice(["din_0",    "{din_0[2:0], din_0[3]}"]) if os.getenv('ICE384PINS')
              else np.random.choice(["din_0",    "{din_0[3:0], din_0[7:4]}"]) ,
-            np.random.choice(["din_1",    "{din_1[0], din_1[1]}"]) if os.getenv('ICE384PINS')
+            np.random.choice(["din_1",    "{din_1[1:0], din_1[3:2]}"]) if os.getenv('ICE384PINS')
              else np.random.choice(["din_1",    "{din_1[1:0], din_1[7:2]}"]),
-            np.random.choice(["globals",  "{globals[0], globals[1]}"]) if os.getenv('ICE384PINS')
+            np.random.choice(["globals",  "{globals[0], globals[3:1]}"]) if os.getenv('ICE384PINS')
              else np.random.choice(["globals",  "{globals[0], globals[7:1]}"]),
             glbs[0], glbs[1], glbs[1], glbs[2], glbs[3]
         ), file=f)
