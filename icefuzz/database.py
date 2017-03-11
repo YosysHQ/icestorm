@@ -31,7 +31,14 @@ def read_database(filename, tile_type):
                 if line[3] == "wire_gbuf/in": line[3] = "fabout"
                 raw_db.append((bit, (line[0], line[1], line[3])))
             elif line[0] == "IoCtrl":
-                raw_db.append((bit, (line[0], re.sub(r"^.*?_", "", line[1]).replace("_en", ""))))
+                line[1] = re.sub(r"^.*?_", "", line[1]).replace("_en", "")
+                # LP384 chips have reversed IE_0/IE_1 and REN_0/REN_1 bit assignments
+                # we simply use the assignments for 1k/8k for all chips and fix it in ieren_db
+                if bit == "B6[3]" and line == ['IoCtrl', 'IE_0']: continue
+                if bit == "B9[3]" and line == ['IoCtrl', 'IE_1']: continue
+                if bit == "B1[3]" and line == ['IoCtrl', 'REN_0']: continue
+                if bit == "B6[2]" and line == ['IoCtrl', 'REN_1']: continue
+                raw_db.append((bit, (line[0], line[1])))
             elif line[0] in ("IOB_0", "IOB_1"):
                 if line[1] != "IO":
                     raw_db.append((bit, (line[0], line[1])))
