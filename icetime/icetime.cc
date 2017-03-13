@@ -644,6 +644,9 @@ double get_delay(std::string cell_type, std::string in_port, std::string out_por
 	if (cell_type == "INTERCONN")
 		return 0;
 
+	if (device_type == "lp384")
+		return get_delay_lp384(cell_type, in_port, out_port);
+
 	if (device_type == "lp1k")
 		return get_delay_lp1k(cell_type, in_port, out_port);
 
@@ -1873,7 +1876,7 @@ void help(const char *cmd)
 	printf("    -j <output_file>\n");
 	printf("        write timing report in json format to the file\n");
 	printf("\n");
-	printf("    -d lp1k|hx1k|lp8k|hx8k\n");
+	printf("    -d lp384|lp1k|hx1k|lp8k|hx8k\n");
 	printf("        select the device type (default = lp variant)\n");
 	printf("\n");
 	printf("    -C <chipdb-file>\n");
@@ -2003,6 +2006,10 @@ int main(int argc, char **argv)
 		printf("// Warning: Missing -d parameter. Assuming '%s' device.\n", device_type.c_str());
 	}
 
+	if (device_type == "lp384") {
+		if (config_device != "384")
+			goto device_chip_mismatch;
+	} else
 	if (device_type == "lp1k" || device_type == "hx1k") {
 		if (config_device != "1k")
 			goto device_chip_mismatch;
