@@ -252,7 +252,7 @@ int main(int argc, char **argv)
 						"\t\t.RESETB(1'b1),\n"
 						"\t\t.BYPASS(1'b0),\n"
 						"\t\t.REFERENCECLK(clock_in),\n"
-						"\t\t.PLLOUTCORE(clock_out),\n"
+						"\t\t.PLLOUTCORE(clock_out)\n"
 						"\t\t);\n\n"
 					);
 
