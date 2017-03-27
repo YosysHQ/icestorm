@@ -126,7 +126,15 @@ A simple timing analysis report can be generated using the <tt>icetime</tt> util
 <h2 id="install">Where are the Tools? How to install?</h2>
 
 <p>
-Installing prerequisites (this command is for Ubuntu 14.04):
+<b>Notes for <a href="https://www.archlinux.org/">Archlinux</a>:</b> just install <a href="https://aur.archlinux.org/packages/icestorm-git/">icestorm-git</a>, <a href="https://aur.archlinux.org/packages/arachne-pnr-git/">arachne-pnr-git</a> and <a href="https://aur.archlinux.org/packages/yosys-git/">yosys-git</a> from the Arch User Repository &#8212;AUR&#8212;. No need to follow the install instructions below.
+</p>
+
+<h3>Installing prerequisites for GNU/Linux</h3>
+
+The following commands install all the prerequisites. Note that the version between brackets is given as a reference, i.e., it is the lastest version for which the name of the packages have been checked.
+
+<p>
+On <a href="https://www.ubuntu.com/">Ubuntu</a> [14.04]:
 </p>
 
 <pre style="padding-left: 3em">
@@ -136,7 +144,7 @@ sudo apt-get install build-essential clang bison flex libreadline-dev \
 </pre>
 
 <p>
-On Fedora 24 the following command installs all prerequisites:
+On <a href="https://getfedora.org">Fedora</a> [24]:
 </p>
 
 <pre style="padding-left: 3em">
@@ -146,7 +154,18 @@ sudo dnf install make automake gcc gcc-c++ kernel-devel clang bison \
 </pre>
 
 <p>
-Installing the <a href="https://github.com/cliffordwolf/icestorm">IceStorm Tools</a> (icepack, icebox, iceprog, icetime, chip databases):
+On <a href="https://alpinelinux.org">Alpine Linux</a> [3.5]:
+</p>
+
+<pre style="padding-left: 3em">
+sudo apk add --no-cache -U bash git build-base coreutils tcl-dev clang gawk readline-dev python3 \
+                           bison flex libffi-dev mercurial graphviz pkgconfig libftdi1-dev
+</pre>
+
+<h3>Installing the tools</h3>
+
+<p>
+<a href="https://github.com/cliffordwolf/icestorm">IceStorm Tools</a> (icepack, icebox, iceprog, icetime, chip databases):
 </p>
 
 <pre style="padding-left: 3em">git clone https://github.com/cliffordwolf/icestorm.git icestorm
@@ -155,7 +174,7 @@ make -j$(nproc)
 sudo make install</pre>
 
 <p>
-Installing <a href="https://github.com/cseed/arachne-pnr">Arachne-PNR</a> (the place&amp;route tool):
+<a href="https://github.com/cseed/arachne-pnr">Arachne-PNR</a> (the place&amp;route (PR) tool):
 </p>
 
 <pre style="padding-left: 3em">git clone https://github.com/cseed/arachne-pnr.git arachne-pnr
@@ -164,7 +183,12 @@ make -j$(nproc)
 sudo make install</pre>
 
 <p>
-Installing <a href="http://www.clifford.at/yosys/">Yosys</a> (Verilog synthesis):
+<b>Note</b>: the Arachne-PNR build converts the IceStorm text chip databases into the arachne-pnr binary chip databases. Always rebuild Arachne-PNR
+after updating your IceStorm installation.
+</p>
+
+<p>
+<a href="http://www.clifford.at/yosys/">Yosys</a> (Verilog synthesis):
 </p>
 
 <pre style="padding-left: 3em">git clone https://github.com/cliffordwolf/yosys.git yosys
@@ -172,25 +196,20 @@ cd yosys
 make -j$(nproc)
 sudo make install</pre>
 
-<p>
-The Arachne-PNR build converts the IceStorm text chip databases into the arachne-pnr binary chip databases. Always rebuild Arachne-PNR
-after updating your IceStorm installation.
-</p>
+<h3>Additional instructions</h3>
 
 <p>
-<b>Notes for Linux:</b> Create a file <tt>/etc/udev/rules.d/53-lattice-ftdi.rules</tt> with the following line in it to allow uploading
+<b>GNU/Linux:</b> Create a file <tt>/etc/udev/rules.d/53-lattice-ftdi.rules</tt> with the following line in it to allow uploading
 bit-streams to a Lattice iCEstick and/or a Lattice iCE40-HX8K Breakout Board as unprivileged user:
 </p>
 
 <pre style="padding-left: 3em">ACTION=="add", ATTR{idVendor}=="0403", ATTR{idProduct}=="6010", MODE:="666"</pre>
 
 <p>
-<b>Notes for Archlinux:</b> just install <a href="https://aur.archlinux.org/packages/icestorm-git/">icestorm-git</a>, <a href="https://aur.archlinux.org/packages/arachne-pnr-git/">arachne-pnr-git</a> and <a href="https://aur.archlinux.org/packages/yosys-git/">yosys-git</a> from the Arch User Repository (no need to follow the install instructions above).
+<b>OSX/macOS:</b> Please follow the <a href="notes_osx.html">additional instructions for OSX</a> to install on OSX.
 </p>
 
-<p>
-<b>Notes for OSX:</b> Please follow the <a href="notes_osx.html">additional instructions for OSX</a> to install on OSX.
-</p>
+<h3>Installation issues and further platform support</h3>
 
 <p>
 Please <a href="https://github.com/cliffordwolf/icestorm/issues/new">file an issue on github</a> if you have additional notes to
