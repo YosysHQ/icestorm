@@ -24,6 +24,6 @@ sudo-prog: $(PROJ).bin
 	iCEburn.py  -e -v -w  $<
 
 clean:
-	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).bin
+	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).rpt $(PROJ).bin
 
 .PHONY: all prog clean
