@@ -464,8 +464,8 @@ int main(int argc, char **argv)
 		error();
 	}
 
-	/* 2 is the ideal value, it means 500 Hz polling */
-	if (ftdi_set_latency_timer(&ftdic, 2) < 0) {
+	/* 1 is the fastest polling, it means 1 kHz polling */
+	if (ftdi_set_latency_timer(&ftdic, 1) < 0) {
 		fprintf(stderr, "Failed to set latency timer (%s).\n", ftdi_get_error_string(&ftdic));
 		error();
 	}
