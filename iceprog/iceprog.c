@@ -454,6 +454,11 @@ int main(int argc, char **argv)
 		error();
 	}
 
+	if (ftdi_set_latency_timer(&ftdic, 2) < 0) {
+		fprintf(stderr, "Failed to set latency timer (%s).\n", ftdi_get_error_string(&ftdic));
+		error();
+	}
+
 	if (ftdi_set_bitmode(&ftdic, 0xff, BITMODE_MPSSE) < 0) {
 		fprintf(stderr, "Failed set BITMODE_MPSSE on iCE FTDI USB device.\n");
 		error();
