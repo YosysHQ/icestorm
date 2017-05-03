@@ -38,6 +38,8 @@
 struct ftdi_context ftdic;
 bool ftdic_open = false;
 bool verbose = false;
+bool ftdic_latency_set = false;
+unsigned char ftdi_latency;
 
 void check_rx()
 {
@@ -53,8 +55,11 @@ void error()
 {
 	check_rx();
 	fprintf(stderr, "ABORT.\n");
-	if (ftdic_open)
+	if (ftdic_open) {
+		if (ftdic_latency_set)
+			ftdi_set_latency_timer(&ftdic, ftdi_latency);
 		ftdi_usb_close(&ftdic);
+	}
 	ftdi_deinit(&ftdic);
 	exit(1);
 }
@@ -454,10 +459,18 @@ int main(int argc, char **argv)
 		error();
 	}
 
+	if (ftdi_get_latency_timer(&ftdic, &ftdi_latency) < 0) {
+		fprintf(stderr, "Failed to get latency timer (%s).\n", ftdi_get_error_string(&ftdic));
+		error();
+	}
+
+	/* 2 is the ideal value, it means 500 Hz polling */
 	if (ftdi_set_latency_timer(&ftdic, 2) < 0) {
 		fprintf(stderr, "Failed to set latency timer (%s).\n", ftdi_get_error_string(&ftdic));
 		error();
 	}
+
+	ftdic_latency_set = true;
 
 	if (ftdi_set_bitmode(&ftdic, 0xff, BITMODE_MPSSE) < 0) {
 		fprintf(stderr, "Failed set BITMODE_MPSSE on iCE FTDI USB device.\n");
@@ -697,6 +710,7 @@ int main(int argc, char **argv)
 	// ---------------------------------------------------------
 
 	fprintf(stderr, "Bye.\n");
+	ftdi_set_latency_timer(&ftdic, ftdi_latency);
 	ftdi_disable_bitbang(&ftdic);
 	ftdi_usb_close(&ftdic);
 	ftdi_deinit(&ftdic);
