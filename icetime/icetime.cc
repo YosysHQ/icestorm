@@ -208,11 +208,19 @@ void read_pcf(const char *filename)
 
 void read_config()
 {
-	char buffer[128];
+	constexpr size_t line_buf_size = 65536;
+	char buffer[line_buf_size];
 	int tile_x, tile_y, line_nr = -1;
 
-	while (fgets(buffer, 128, fin))
+	while (fgets(buffer, line_buf_size, fin))
 	{
+		if (buffer[strlen(buffer) - 1] != '\n')
+		{
+			fprintf(stderr, "Input file contains very long lines.\n");
+			fprintf(stderr, "icetime cannot process it.\n");
+			exit(1);
+		}
+
 		if (buffer[0] == '.')
 		{
 			line_nr = -1;
