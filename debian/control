@@ -1,0 +1,13 @@
+Source: icestorm
+Maintainer: Sebastian Kuzminsky <seb@highlab.com>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.6
+Build-Depends: debhelper (>= 9), python3, clang, libftdi-dev
+
+Package: icestorm
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Project IceStorm - Lattice iCE40 FPGA tools
+ Tools for working with bitstream files for Lattice iCE40 FPGAs.
+ See http://www.clifford.at/icestorm/ for more information.
