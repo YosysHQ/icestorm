@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <getopt.h>
 #include <errno.h>
 #include <err.h>
 #include <sys/types.h>
@@ -342,7 +343,6 @@ void help(const char *progname)
 	fprintf(stderr, "This means that some data after the written data (or even before when -o is\n");
 	fprintf(stderr, "used) may be erased as well.\n");
 	fprintf(stderr, "\n");
-	exit(1);
 }
 
 int main(int argc, char **argv)
@@ -360,9 +360,15 @@ int main(int argc, char **argv)
 	const char *devstr = NULL;
 	enum ftdi_interface ifnum = INTERFACE_A;
 
+	static struct option long_options[] = {
+		{"help", no_argument, NULL, -2},
+		{NULL, 0, NULL, 0}
+	};
+
 	int opt;
 	char *endptr;
-	while ((opt = getopt(argc, argv, "d:I:rR:o:cbnStv")) != -1)
+	while ((opt = getopt_long(argc, argv, "d:I:rR:o:cbnStv",
+				  long_options, NULL)) != -1)
 	{
 		switch (opt)
 		{
@@ -419,8 +425,14 @@ int main(int argc, char **argv)
 		case 'v':
 			verbose = true;
 			break;
-		default:
+		case -2:
 			help(argv[0]);
+			return EXIT_SUCCESS;
+		default:
+			/* error message has already been printed */
+			fprintf(stderr, "Try `%s --help' "
+					"for more information.\n", argv[0]);
+			return EXIT_FAILURE;
 		}
 	}
 
