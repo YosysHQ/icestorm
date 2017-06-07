@@ -385,13 +385,21 @@ int main(int argc, char **argv)
 		case 'R':
 			read_mode = true;
 			read_size = strtol(optarg, &endptr, 0);
-			if (!strcmp(endptr, "k")) read_size *= 1024;
-			if (!strcmp(endptr, "M")) read_size *= 1024 * 1024;
+			if (*endptr == '\0') /* ok */;
+			else if (!strcmp(endptr, "k")) read_size *= 1024;
+			else if (!strcmp(endptr, "M")) read_size *= 1024 * 1024;
+			else
+				errx(EXIT_FAILURE,
+				     "`%s' is not a valid size", optarg);
 			break;
 		case 'o':
 			rw_offset = strtol(optarg, &endptr, 0);
-			if (!strcmp(endptr, "k")) rw_offset *= 1024;
-			if (!strcmp(endptr, "M")) rw_offset *= 1024 * 1024;
+			if (*endptr == '\0') /* ok */;
+			else if (!strcmp(endptr, "k")) rw_offset *= 1024;
+			else if (!strcmp(endptr, "M")) rw_offset *= 1024 * 1024;
+			else
+				errx(EXIT_FAILURE,
+				     "`%s' is not a valid offset", optarg);
 			break;
 		case 'c':
 			check_mode = true;
