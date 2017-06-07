@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <err.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -373,7 +374,10 @@ int main(int argc, char **argv)
 			else if (!strcmp(optarg, "B")) ifnum = INTERFACE_B;
 			else if (!strcmp(optarg, "C")) ifnum = INTERFACE_C;
 			else if (!strcmp(optarg, "D")) ifnum = INTERFACE_D;
-			else help(argv[0]);
+			else
+				errx(EXIT_FAILURE,
+				     "`%s' is not a valid interface (must be "
+				     "`A', `B', `C', or `D')", optarg);
 			break;
 		case 'r':
 			read_mode = true;
@@ -413,18 +417,29 @@ int main(int argc, char **argv)
 	}
 
 	if (read_mode + check_mode + prog_sram + test_mode > 1)
-		help(argv[0]);
+		errx(EXIT_FAILURE,
+		     "options `-r'/`-R', `-c', `-S', and `-t' are mutually "
+		     "exclusive");
 
 	if (bulk_erase && dont_erase)
-		help(argv[0]);
+		errx(EXIT_FAILURE,
+		     "options `-b' and `-n' are mutually exclusive");
 
-	if (optind+1 != argc && !test_mode) {
-		if (bulk_erase && optind == argc)
-			filename = "/dev/null";
-		else
-			help(argv[0]);
-	} else
+	if (optind + 1 == argc) {
 		filename = argv[optind];
+	} else if (optind != argc) {
+		warnx("too many arguments");
+		fprintf(stderr, "Try `%s --help' "
+				"for more information.\n", argv[0]);
+		return EXIT_FAILURE;
+	} else if (bulk_erase) {
+		filename = "/dev/null";
+	} else if (!test_mode) {
+		warnx("missing argument");
+		fprintf(stderr, "Try `%s --help' "
+				"for more information.\n", argv[0]);
+		return EXIT_FAILURE;
+	}
 
 	// ---------------------------------------------------------
 	// Initialize USB connection to FT2232H
