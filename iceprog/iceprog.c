@@ -433,7 +433,25 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE,
 		     "options `-b' and `-n' are mutually exclusive");
 
+	if (bulk_erase && (read_mode || check_mode || prog_sram || test_mode))
+		errx(EXIT_FAILURE,
+		     "option `-b' only valid in programming mode");
+	if (dont_erase && (read_mode || check_mode || prog_sram || test_mode))
+		errx(EXIT_FAILURE,
+		     "option `-n' only valid in programming mode");
+
+	if (rw_offset != 0 && prog_sram)
+		errx(EXIT_FAILURE, "option `-o' not supported in SRAM mode");
+	if (rw_offset != 0 && test_mode)
+		errx(EXIT_FAILURE, "option `-o' not supported in test mode");
+
 	if (optind + 1 == argc) {
+		if (test_mode) {
+			warnx("test mode doesn't take a file name");
+			fprintf(stderr, "Try `%s --help' "
+					"for more information.\n", argv[0]);
+			return EXIT_FAILURE;
+		}
 		filename = argv[optind];
 	} else if (optind != argc) {
 		warnx("too many arguments");
