@@ -489,14 +489,54 @@ int main(int argc, char **argv)
 			err(EXIT_FAILURE,
 			    "can't open '%s' for reading", filename);
 
-		if (!prog_sram && !check_mode && !dont_erase && !bulk_erase) {
-			if (fseek(f, 0L, SEEK_END) == -1)
-				err(EXIT_FAILURE, "%s: fseek", filename);
-			file_size = ftell(f);
-			if (file_size == -1)
-				err(EXIT_FAILURE, "%s: ftell", filename);
-			if (fseek(f, 0L, SEEK_SET) == -1)
-				err(EXIT_FAILURE, "%s: fseek", filename);
+		/* For regular programming, we need to read the file
+		   twice--once for programming and once for verifying--and
+		   need to know the file size in advance in order to erase
+		   the correct amount of memory.
+
+		   See if we can seek on the input file.  Checking for "-"
+		   as an argument isn't enough as we might be reading from a
+		   named pipe, or contrarily, the standard input may be an
+		   ordinary file. */
+
+		if (!prog_sram && !check_mode) {
+			if (fseek(f, 0L, SEEK_END) != -1) {
+				file_size = ftell(f);
+				if (file_size == -1)
+					err(EXIT_FAILURE,
+					    "%s: ftell", filename);
+				if (fseek(f, 0L, SEEK_SET) == -1)
+					err(EXIT_FAILURE,
+					    "%s: fseek", filename);
+			} else {
+				FILE *pipe = f;
+
+				f = tmpfile();
+				if (f == NULL)
+					errx(EXIT_FAILURE,
+					     "can't open temporary file");
+				file_size = 0;
+
+				while (true) {
+					static unsigned char buffer[4096];
+					size_t rc =
+						fread(buffer, 1, 4096, pipe);
+					if (rc <= 0)
+						break;
+					size_t wc =
+						fwrite(buffer, 1, rc, f);
+					if (wc != rc)
+						errx(EXIT_FAILURE,
+						     "can't write to "
+						     "temporary file");
+					file_size += rc;
+				}
+				fclose(pipe);
+
+				/* now seek to the beginning so we can
+				   start reading again */
+				fseek(f, 0, SEEK_SET);
+			}
 		}
 	}
 
