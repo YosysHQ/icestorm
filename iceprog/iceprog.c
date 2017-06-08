@@ -742,7 +742,8 @@ int main(int argc, char **argv)
 			for (int addr = 0; addr < read_size; addr += 256) {
 				uint8_t buffer[256];
 				flash_read(rw_offset + addr, buffer, 256);
-				fwrite(buffer, 256, 1, f);
+				fwrite(buffer, read_size - addr > 256 ? 256 :
+					       read_size - addr, 1, f);
 			}
 		}
 		else
