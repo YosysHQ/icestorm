@@ -468,6 +468,35 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
+	/* open input/output file in advance
+	   so we can fail before initializing the hardware */
+
+	FILE *f = NULL;
+	int file_size = -1;
+
+	if (test_mode)
+		/* nop */;
+	else if (read_mode) {
+		f = (strcmp(filename, "-") == 0) ? stdout
+						 : fopen(filename, "wb");
+		if (f == NULL)
+			err(EXIT_FAILURE,
+			    "can't open '%s' for writing", filename);
+	} else {
+		f = (strcmp(filename, "-") == 0) ? stdin
+						 : fopen(filename, "rb");
+		if (f == NULL)
+			err(EXIT_FAILURE,
+			    "can't open '%s' for reading", filename);
+
+		if (!prog_sram && !check_mode && !dont_erase && !bulk_erase) {
+			struct stat st_buf;
+			if (stat(filename, &st_buf) == -1)
+				err(EXIT_FAILURE, "can't stat '%s'", filename);
+			file_size = (int)st_buf.st_size;
+		}
+	}
+
 	// ---------------------------------------------------------
 	// Initialize USB connection to FT2232H
 	// ---------------------------------------------------------
@@ -574,13 +603,6 @@ int main(int argc, char **argv)
 		// Program
 		// ---------------------------------------------------------
 
-		FILE *f = (strcmp(filename, "-") == 0) ? stdin :
-			fopen(filename, "rb");
-		if (f == NULL) {
-			fprintf(stderr, "Error: Can't open '%s' for reading: %s\n", filename, strerror(errno));
-			error();
-		}
-
 		fprintf(stderr, "programming..\n");
 		while (1)
 		{
@@ -591,9 +613,6 @@ int main(int argc, char **argv)
 				fprintf(stderr, "sending %d bytes.\n", rc);
 			send_spi(buffer, rc);
 		}
-
-		if (f != stdin)
-			fclose(f);
 
 		// add 48 dummy bits
 		send_byte(0x8f);
@@ -630,13 +649,6 @@ int main(int argc, char **argv)
 
 		if (!read_mode && !check_mode)
 		{
-			FILE *f = (strcmp(filename, "-") == 0) ? stdin :
-				fopen(filename, "rb");
-			if (f == NULL) {
-				fprintf(stderr, "Error: Can't open '%s' for reading: %s\n", filename, strerror(errno));
-				error();
-			}
-
 			if (!dont_erase)
 			{
 				if (bulk_erase)
@@ -647,16 +659,10 @@ int main(int argc, char **argv)
 				}
 				else
 				{
-					struct stat st_buf;
-					if (stat(filename, &st_buf)) {
-						fprintf(stderr, "Error: Can't stat '%s': %s\n", filename, strerror(errno));
-						error();
-					}
-
-					fprintf(stderr, "file size: %d\n", (int)st_buf.st_size);
+					fprintf(stderr, "file size: %d\n", file_size);
 
 					int begin_addr = rw_offset & ~0xffff;
-					int end_addr = (rw_offset + (int)st_buf.st_size + 0xffff) & ~0xffff;
+					int end_addr = (rw_offset + file_size + 0xffff) & ~0xffff;
 
 					for (int addr = begin_addr; addr < end_addr; addr += 0x10000) {
 						flash_write_enable();
@@ -678,8 +684,8 @@ int main(int argc, char **argv)
 				flash_wait();
 			}
 
-			if (f != stdin)
-				fclose(f);
+			/* seek to the beginning for second pass */
+			fseek(f, 0, SEEK_SET);
 		}
 
 
@@ -689,32 +695,15 @@ int main(int argc, char **argv)
 
 		if (read_mode)
 		{
-			FILE *f = (strcmp(filename, "-") == 0) ? stdout :
-				fopen(filename, "wb");
-			if (f == NULL) {
-				fprintf(stderr, "Error: Can't open '%s' for writing: %s\n", filename, strerror(errno));
-				error();
-			}
-
 			fprintf(stderr, "reading..\n");
 			for (int addr = 0; addr < read_size; addr += 256) {
 				uint8_t buffer[256];
 				flash_read(rw_offset + addr, buffer, 256);
 				fwrite(buffer, 256, 1, f);
 			}
-
-			if (f != stdout)
-				fclose(f);
 		}
 		else
 		{
-			FILE *f = (strcmp(filename, "-") == 0) ? stdin :
-				fopen(filename, "rb");
-			if (f == NULL) {
-				fprintf(stderr, "Error: Can't open '%s' for reading: %s\n", filename, strerror(errno));
-				error();
-			}
-
 			fprintf(stderr, "reading..\n");
 			for (int addr = 0; true; addr += 256) {
 				uint8_t buffer_flash[256], buffer_file[256];
@@ -728,9 +717,6 @@ int main(int argc, char **argv)
 			}
 
 			fprintf(stderr, "VERIFY OK\n");
-
-			if (f != stdin)
-				fclose(f);
 		}
 
 
@@ -746,6 +732,8 @@ int main(int argc, char **argv)
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 	}
 
+	if (f != NULL && f != stdin && f != stdout)
+		fclose(f);
 
 	// ---------------------------------------------------------
 	// Exit
