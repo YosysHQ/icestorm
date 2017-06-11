@@ -53,7 +53,7 @@ void check_rx()
 	}
 }
 
-void error()
+void error(int status)
 {
 	check_rx();
 	fprintf(stderr, "ABORT.\n");
@@ -63,7 +63,7 @@ void error()
 		ftdi_usb_close(&ftdic);
 	}
 	ftdi_deinit(&ftdic);
-	exit(1);
+	exit(status);
 }
 
 uint8_t recv_byte()
@@ -73,7 +73,7 @@ uint8_t recv_byte()
 		int rc = ftdi_read_data(&ftdic, &data, 1);
 		if (rc < 0) {
 			fprintf(stderr, "Read error.\n");
-			error();
+			error(2);
 		}
 		if (rc == 1)
 			break;
@@ -87,7 +87,7 @@ void send_byte(uint8_t data)
 	int rc = ftdi_write_data(&ftdic, &data, 1);
 	if (rc != 1) {
 		fprintf(stderr, "Write error (single byte, rc=%d, expected %d).\n", rc, 1);
-		error();
+		error(2);
 	}
 }
 
@@ -103,7 +103,7 @@ void send_spi(uint8_t *data, int n)
 	int rc = ftdi_write_data(&ftdic, data, n);
 	if (rc != n) {
 		fprintf(stderr, "Write error (chunk, rc=%d, expected %d).\n", rc, n);
-		error();
+		error(2);
 	}
 }
 
@@ -119,7 +119,7 @@ void xfer_spi(uint8_t *data, int n)
 	int rc = ftdi_write_data(&ftdic, data, n);
 	if (rc != n) {
 		fprintf(stderr, "Write error (chunk, rc=%d, expected %d).\n", rc, n);
-		error();
+		error(2);
 	}
 
 	for (int i = 0; i < n; i++)
@@ -317,6 +317,14 @@ void help(const char *progname)
 	fprintf(stderr, "Miscellaneous options:\n");
 	fprintf(stderr, "      --help            display this help and exit\n");
 	fprintf(stderr, "  --                    treat all remaining arguments as filenames\n");
+	fprintf(stderr, "\n");
+	fprintf(stderr, "Exit status:\n");
+	fprintf(stderr, "  0 on success,\n");
+	fprintf(stderr, "  1 if a non-hardware error occurred (e.g., failure to read from or\n");
+	fprintf(stderr, "    write to a file, or invoked with invalid options),\n");
+	fprintf(stderr, "  2 if communication with the hardware failed (e.g., cannot find the\n");
+	fprintf(stderr, "    iCE FTDI USB device),\n");
+	fprintf(stderr, "  3 if verification of the data failed.\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "Notes for iCEstick (iCE40HX-1k devel board):\n");
 	fprintf(stderr, "  An unmodified iCEstick can only be programmed via the serial flash.\n");
@@ -552,12 +560,12 @@ int main(int argc, char **argv)
 	if (devstr != NULL) {
 		if (ftdi_usb_open_string(&ftdic, devstr)) {
 			fprintf(stderr, "Can't find iCE FTDI USB device (device string %s).\n", devstr);
-			error();
+			error(2);
 		}
 	} else {
 		if (ftdi_usb_open(&ftdic, 0x0403, 0x6010)) {
 			fprintf(stderr, "Can't find iCE FTDI USB device (vedor_id 0x0403, device_id 0x6010).\n");
-			error();
+			error(2);
 		}
 	}
 
@@ -565,30 +573,30 @@ int main(int argc, char **argv)
 
 	if (ftdi_usb_reset(&ftdic)) {
 		fprintf(stderr, "Failed to reset iCE FTDI USB device.\n");
-		error();
+		error(2);
 	}
 
 	if (ftdi_usb_purge_buffers(&ftdic)) {
 		fprintf(stderr, "Failed to purge buffers on iCE FTDI USB device.\n");
-		error();
+		error(2);
 	}
 
 	if (ftdi_get_latency_timer(&ftdic, &ftdi_latency) < 0) {
 		fprintf(stderr, "Failed to get latency timer (%s).\n", ftdi_get_error_string(&ftdic));
-		error();
+		error(2);
 	}
 
 	/* 1 is the fastest polling, it means 1 kHz polling */
 	if (ftdi_set_latency_timer(&ftdic, 1) < 0) {
 		fprintf(stderr, "Failed to set latency timer (%s).\n", ftdi_get_error_string(&ftdic));
-		error();
+		error(2);
 	}
 
 	ftdic_latency_set = true;
 
 	if (ftdi_set_bitmode(&ftdic, 0xff, BITMODE_MPSSE) < 0) {
 		fprintf(stderr, "Failed set BITMODE_MPSSE on iCE FTDI USB device.\n");
-		error();
+		error(2);
 	}
 
 	// enable clock divide by 5
@@ -756,7 +764,7 @@ int main(int argc, char **argv)
 				flash_read(rw_offset + addr, buffer_flash, rc);
 				if (memcmp(buffer_file, buffer_flash, rc)) {
 					fprintf(stderr, "Found difference between flash and file!\n");
-					error();
+					error(3);
 				}
 			}
 
