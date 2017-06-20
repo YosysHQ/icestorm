@@ -170,7 +170,7 @@ struct BramIndexConverter
 	int bank_off;
 
 	BramIndexConverter(const FpgaConfig *fpga, int tile_x, int tile_y);
-	void get_bram_index(int bit_x, int bit_y, int &bram_bank, int &bram_x, int &bram_y) const;
+	void get_bram_index(uint bit_x, uint bit_y, uint &bram_bank, uint &bram_x, uint &bram_y) const;
 };
 
 static void update_crc16(uint16_t &crc, uint8_t byte)
@@ -249,7 +249,7 @@ void FpgaConfig::read_bits(std::istream &ifs)
 	{
 		// one command byte. the lower 4 bits of the command byte specify
 		// the length of the command payload.
-		
+
 		uint8_t command = read_byte(ifs, crc_value, file_offset);
 		uint32_t payload = 0;
 
@@ -396,9 +396,11 @@ void FpgaConfig::read_bits(std::istream &ifs)
 		this->device = "1k";
 	else if (this->cram_width == 872 && this->cram_height == 272)
 		this->device = "8k";
+	else if (this->cram_width == 692 && this->cram_height == 336)
+		this->device = "5k";
 	else
 		error("Failed to detect chip type.\n");
-	
+
 	info("Chip type is '%s'.\n", this->device.c_str());
 }
 
@@ -621,6 +623,12 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 				this->bram_width = 128;
 				this->bram_height = 2 * 128;
 			} else
+			if (this->device == "5k") {
+				this->cram_width = 692;
+				this->cram_height = 336;
+				this->bram_width = 160;
+				this->bram_height = 2 * 128;
+			} else
 				error("Unsupported chip type '%s'.\n", this->device.c_str());
 
 			this->cram.resize(4);
@@ -704,7 +712,7 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 
 					for (int i = 0; i < 4; i++)
 						if ((value & (1 << i)) != 0) {
-							int bram_bank, bram_x, bram_y;
+							uint bram_bank, bram_x, bram_y;
 							bic.get_bram_index(bit_x+i, bit_y, bram_bank, bram_x, bram_y);
 							this->bram[bram_bank][bram_x][bram_y] = true;
 						}
@@ -725,10 +733,10 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 
 			continue;
 		}
-		
+
 		if (command == ".sym")
 		  continue;
-		
+
 		if (command.substr(0, 1) == ".")
 			error("Unknown statement: %s\n", command.c_str());
 		error("Unexpected data line: %s\n", line.c_str());
@@ -785,12 +793,20 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 			BramIndexConverter bic(this, x, y);
 			ofs << stringf(".ram_data %d %d\n", x, y);
 
-			for (int bit_y = 0; bit_y < 16; bit_y++) {
-				for (int bit_x = 256-4; bit_x >= 0; bit_x -= 4) {
+			for (uint bit_y = 0; bit_y < 16; bit_y++) {
+				for (uint bit_x = 256-4; bit_x > 0; bit_x -= 4) {
 					int value = 0;
 					for (int i = 0; i < 4; i++) {
-						int bram_bank, bram_x, bram_y;
+						uint bram_bank, bram_x, bram_y;
 						bic.get_bram_index(bit_x+i, bit_y, bram_bank, bram_x, bram_y);
+						if (bram_x >= this->bram[bram_bank].size()) {
+							error("bram_x %u higher than loaded bram size %lu\n", bram_x,  this->bram[bram_bank].size());
+							break;
+						}
+						if (bram_y >= this->bram[bram_bank][bram_x].size()) {
+							error("bram_y %u higher than loaded bram size %lu\n", bram_y,  this->bram[bram_bank][bram_x].size());
+							break;
+						}
 						if (this->bram[bram_bank][bram_x][bram_y])
 							value += 1 << i;
 					}
@@ -870,6 +886,7 @@ int FpgaConfig::chip_width() const
 {
 	if (this->device == "384") return 6;
 	if (this->device == "1k") return 12;
+	if (this->device == "5k") return 24;
 	if (this->device == "8k") return 32;
 	panic("Unknown chip type '%s'.\n", this->device.c_str());
 }
@@ -878,6 +895,7 @@ int FpgaConfig::chip_height() const
 {
 	if (this->device == "384") return 8;
 	if (this->device == "1k") return 16;
+	if (this->device == "5k") return 30;
 	if (this->device == "8k") return 32;
 	panic("Unknown chip type '%s'.\n", this->device.c_str());
 }
@@ -886,6 +904,8 @@ vector<int> FpgaConfig::chip_cols() const
 {
 	if (this->device == "384") return vector<int>({18, 54, 54, 54, 54});
 	if (this->device == "1k") return vector<int>({18, 54, 54, 42, 54, 54, 54});
+	// Its IPConnect or Mutiplier block, five logic, ram, six logic.
+	if (this->device == "5k") return vector<int>({18, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54});
 	if (this->device == "8k") return vector<int>({18, 54, 54, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54, 54, 54});
 	panic("Unknown chip type '%s'.\n", this->device.c_str());
 }
@@ -899,6 +919,11 @@ string FpgaConfig::tile_type(int x, int y) const
 
 	if (this->device == "1k") {
 		if (x == 3 || x == 10) return y % 2 == 1 ? "ramb" : "ramt";
+		return "logic";
+	}
+
+	if (this->device == "5k") {
+		if (x == 6 || x == 18) return y % 2 == 1 ? "ramb" : "ramt";
 		return "logic";
 	}
 
@@ -951,7 +976,7 @@ void FpgaConfig::cram_checkerboard(int m)
 	{
 		if ((x+y) % 2 == m)
 			continue;
-			
+
 		CramIndexConverter cic(this, x, y);
 
 		for (int bit_y = 0; bit_y < 16; bit_y++)
@@ -1031,7 +1056,7 @@ void CramIndexConverter::get_cram_index(int bit_x, int bit_y, int &cram_bank, in
 			cram_x = bank_xoff + column_width - 1 - bit_x;
 		else
 			cram_x = bank_xoff + bit_x;
-		
+
 		if (top_half)
 			cram_y = bank_yoff + (15 - bit_y);
 		else
@@ -1050,15 +1075,26 @@ BramIndexConverter::BramIndexConverter(const FpgaConfig *fpga, int tile_x, int t
 
 	bool right_half = this->tile_x > chip_width / 2;
 	bool top_half = this->tile_y > chip_height / 2;
+	// The UltraPlus 5k line is special because the bottom quarter of the chip is
+	// used for SRAM instead of logic. Therefore the bitstream for the bottom two
+	// quadrants are half the height of the top.
+	if (this->fpga->device == "5k") {
+		top_half = this->tile_y > chip_height / 3;
+	}
 
 	this->bank_num = 0;
-	if (top_half) this->bank_num |= 1;
+	int y_offset = this->tile_y - 1;
+	if (!top_half) {
+		this->bank_num |= 1;
+	} else {
+		y_offset = this->tile_y - chip_height / 3;
+	}
 	if (right_half) this->bank_num |= 2;
 
-	this->bank_off = 16 * ((top_half ? this->tile_y - chip_height / 2 : this->tile_y - 1) / 2);
+	this->bank_off = 16 * (y_offset / 2);
 }
 
-void BramIndexConverter::get_bram_index(int bit_x, int bit_y, int &bram_bank, int &bram_x, int &bram_y) const
+void BramIndexConverter::get_bram_index(uint bit_x, uint bit_y, uint &bram_bank, uint &bram_x, uint &bram_y) const
 {
 	int index = 256 * bit_y + (16*(bit_x/16) + 15 - bit_x%16);
 	bram_bank = bank_num;
@@ -1205,4 +1241,3 @@ int main(int argc, char **argv)
 	info("Done.\n");
 	return 0;
 }
-
