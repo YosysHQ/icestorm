@@ -1,6 +1,6 @@
 include ../config.mk
 
-all: chipdb-384.txt chipdb-1k.txt chipdb-8k.txt
+all: chipdb-384.txt chipdb-1k.txt chipdb-5k.txt chipdb-8k.txt
 
 chipdb-384.txt: icebox.py iceboxdb.py icebox_chipdb.py
 	python3 icebox_chipdb.py -3 > chipdb-384.new
@@ -10,12 +10,16 @@ chipdb-1k.txt: icebox.py iceboxdb.py icebox_chipdb.py
 	python3 icebox_chipdb.py > chipdb-1k.new
 	mv chipdb-1k.new chipdb-1k.txt
 
+chipdb-5k.txt: icebox.py iceboxdb.py icebox_chipdb.py
+	python3 icebox_chipdb.py -5 > chipdb-5k.new
+	mv chipdb-5k.new chipdb-5k.txt
+
 chipdb-8k.txt: icebox.py iceboxdb.py icebox_chipdb.py
 	python3 icebox_chipdb.py -8 > chipdb-8k.new
 	mv chipdb-8k.new chipdb-8k.txt
 
 clean:
-	rm -f chipdb-1k.txt chipdb-8k.txt chipdb-384.txt
+	rm -f chipdb-1k.txt chipdb-8k.txt chipdb-384.txt chipdb-5k.txt
 	rm -f icebox.pyc iceboxdb.pyc
 
 install: all
@@ -52,4 +56,3 @@ uninstall:
 	-rmdir $(DESTDIR)$(PREFIX)/share/icebox
 
 .PHONY: all clean install uninstall
-

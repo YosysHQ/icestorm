@@ -19,6 +19,7 @@ import icebox
 import getopt, sys, re
 
 mode_384 = False
+mode_5k = False
 mode_8k = False
 
 def usage():
@@ -28,19 +29,24 @@ Usage: icebox_chipdb [options] [bitmap.asc]
     -3
         create chipdb for 384 device
 
+    -5
+        create chipdb for 5k device
+
     -8
         create chipdb for 8k device
 """)
     sys.exit(0)
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "38")
+    opts, args = getopt.getopt(sys.argv[1:], "358")
 except:
     usage()
 
 for o, a in opts:
     if o == "-8":
         mode_8k = True
+    elif o == "-5":
+        mode_5k = True
     elif o == "-3":
         mode_384 = True
     else:
@@ -49,6 +55,8 @@ for o, a in opts:
 ic = icebox.iceconfig()
 if mode_8k:
     ic.setup_empty_8k()
+elif mode_5k:
+    ic.setup_empty_5k()
 elif mode_384:
     ic.setup_empty_384()
 else:
@@ -142,7 +150,7 @@ print("""#
 #
 #    declares a special-purpose cell that is not part of the FPGA fabric
 #
-# 
+#
 # .extra_bits
 # FUNCTION BANK_NUM ADDR_X ADDR_Y
 # ...
@@ -233,21 +241,21 @@ print()
 def print_tile_nonrouting_bits(tile_type, idx):
     tx = idx[0]
     ty = idx[1]
-    
+
     tile = ic.tile(tx, ty)
-    
+
     print(".%s_tile_bits %d %d" % (tile_type, len(tile[0]), len(tile)))
-    
+
     function_bits = dict()
     for entry in ic.tile_db(tx, ty):
         if not ic.tile_has_entry(tx, ty, entry):
             continue
         if entry[1] in ("routing", "buffer"):
             continue
-        
+
         func = ".".join(entry[1:])
         function_bits[func] = entry[0]
-    
+
     for x in sorted(function_bits):
         print(" ".join([x] + function_bits[x]))
     print()
@@ -318,4 +326,3 @@ for idx in sorted(all_tiles):
             assert (idx[0], idx[1], entry[2]) in seg_to_net
             print("%s %d" % (pattern, seg_to_net[(idx[0], idx[1], entry[2])]))
         print()
-
