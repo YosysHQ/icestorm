@@ -472,7 +472,7 @@ int main(int argc, char **argv)
 	   so we can fail before initializing the hardware */
 
 	FILE *f = NULL;
-	int file_size = -1;
+	long file_size = -1;
 
 	if (test_mode)
 		/* nop */;
@@ -490,10 +490,13 @@ int main(int argc, char **argv)
 			    "can't open '%s' for reading", filename);
 
 		if (!prog_sram && !check_mode && !dont_erase && !bulk_erase) {
-			struct stat st_buf;
-			if (stat(filename, &st_buf) == -1)
-				err(EXIT_FAILURE, "can't stat '%s'", filename);
-			file_size = (int)st_buf.st_size;
+			if (fseek(f, 0L, SEEK_END) == -1)
+				err(EXIT_FAILURE, "%s: fseek", filename);
+			file_size = ftell(f);
+			if (file_size == -1)
+				err(EXIT_FAILURE, "%s: ftell", filename);
+			if (fseek(f, 0L, SEEK_SET) == -1)
+				err(EXIT_FAILURE, "%s: fseek", filename);
 		}
 	}
 
@@ -659,7 +662,7 @@ int main(int argc, char **argv)
 				}
 				else
 				{
-					fprintf(stderr, "file size: %d\n", file_size);
+					fprintf(stderr, "file size: %ld\n", file_size);
 
 					int begin_addr = rw_offset & ~0xffff;
 					int end_addr = (rw_offset + file_size + 0xffff) & ~0xffff;
