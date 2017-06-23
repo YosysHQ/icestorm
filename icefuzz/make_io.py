@@ -7,8 +7,7 @@ import os
 os.system("rm -rf work_io")
 os.mkdir("work_io")
 
-if os.getenv('ICE384PINS'): w = 3
-else: w = 4
+w = num_iobanks
 
 for idx in range(num):
     with open("work_io/io_%02d.v" % idx, "w") as f:
@@ -60,4 +59,3 @@ with open("work_io/Makefile", "w") as f:
     for i in range(num):
         print("io_%02d.bin:" % i, file=f)
         print("\t-bash ../icecube.sh io_%02d > io_%02d.log 2>&1 && rm -rf io_%02d.tmp || tail io_%02d.log" % (i, i, i, i), file=f)
-

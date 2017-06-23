@@ -170,7 +170,7 @@ struct BramIndexConverter
 	int bank_off;
 
 	BramIndexConverter(const FpgaConfig *fpga, int tile_x, int tile_y);
-	void get_bram_index(uint bit_x, uint bit_y, uint &bram_bank, uint &bram_x, uint &bram_y) const;
+	void get_bram_index(int bit_x, int bit_y, int &bram_bank, int &bram_x, int &bram_y) const;
 };
 
 static void update_crc16(uint16_t &crc, uint8_t byte)
@@ -712,7 +712,7 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 
 					for (int i = 0; i < 4; i++)
 						if ((value & (1 << i)) != 0) {
-							uint bram_bank, bram_x, bram_y;
+							int bram_bank, bram_x, bram_y;
 							bic.get_bram_index(bit_x+i, bit_y, bram_bank, bram_x, bram_y);
 							this->bram[bram_bank][bram_x][bram_y] = true;
 						}
@@ -793,17 +793,17 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 			BramIndexConverter bic(this, x, y);
 			ofs << stringf(".ram_data %d %d\n", x, y);
 
-			for (uint bit_y = 0; bit_y < 16; bit_y++) {
-				for (uint bit_x = 256-4; bit_x > 0; bit_x -= 4) {
+			for (int bit_y = 0; bit_y < 16; bit_y++) {
+				for (int bit_x = 256-4; bit_x >= 0; bit_x -= 4) {
 					int value = 0;
 					for (int i = 0; i < 4; i++) {
-						uint bram_bank, bram_x, bram_y;
+						int bram_bank, bram_x, bram_y;
 						bic.get_bram_index(bit_x+i, bit_y, bram_bank, bram_x, bram_y);
-						if (bram_x >= this->bram[bram_bank].size()) {
+						if (bram_x >= int(this->bram[bram_bank].size())) {
 							error("bram_x %u higher than loaded bram size %lu\n", bram_x,  this->bram[bram_bank].size());
 							break;
 						}
-						if (bram_y >= this->bram[bram_bank][bram_x].size()) {
+						if (bram_y >= int(this->bram[bram_bank][bram_x].size())) {
 							error("bram_y %u higher than loaded bram size %lu\n", bram_y,  this->bram[bram_bank][bram_x].size());
 							break;
 						}
@@ -1094,7 +1094,7 @@ BramIndexConverter::BramIndexConverter(const FpgaConfig *fpga, int tile_x, int t
 	this->bank_off = 16 * (y_offset / 2);
 }
 
-void BramIndexConverter::get_bram_index(uint bit_x, uint bit_y, uint &bram_bank, uint &bram_x, uint &bram_y) const
+void BramIndexConverter::get_bram_index(int bit_x, int bit_y, int &bram_bank, int &bram_x, int &bram_y) const
 {
 	int index = 256 * bit_y + (16*(bit_x/16) + 15 - bit_x%16);
 	bram_bank = bank_num;

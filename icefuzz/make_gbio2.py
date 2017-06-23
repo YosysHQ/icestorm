@@ -7,10 +7,12 @@ import os
 os.system("rm -rf work_gbio2")
 os.mkdir("work_gbio2")
 
-w = 4 if os.getenv('ICE384PINS') else 8
-
 for p in gpins:
     if p in pins: pins.remove(p)
+
+# We can either tickle every global buffer or we don't have enough pins to do
+# the full logic for each one.
+w = min(min((len(pins) - 8) // 4, len(gpins)), 8)
 
 for idx in range(num):
     with open("work_gbio2/gbio2_%02d.v" % idx, "w") as f:
@@ -86,4 +88,3 @@ with open("work_gbio2/Makefile", "w") as f:
     for i in range(num):
         print("gbio2_%02d.bin:" % i, file=f)
         print("\t-bash ../icecube.sh gbio2_%02d > gbio2_%02d.log 2>&1 && rm -rf gbio2_%02d.tmp || tail gbio2_%02d.log" % (i, i, i, i), file=f)
-

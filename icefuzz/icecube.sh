@@ -56,6 +56,8 @@ if [ "$1" == "-up5k" ]; then
 	shift
 fi
 
+ICECUBEDIR=~/lscc/iCEcube2.2017.01
+
 set -ex
 set -- ${1%.v}
 icecubedir="${ICECUBEDIR:-/opt/lscc/iCEcube2.2015.08}"
@@ -417,4 +419,4 @@ if [ -n "$ICE_SBTIMER_LP" ]; then
 fi
 
 export LD_LIBRARY_PATH=""
-$scriptdir/../icepack/iceunpack "$1.bin" "$1.asc"
+$scriptdir/../icepack/iceunpack -vv "$1.bin" "$1.asc"

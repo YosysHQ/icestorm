@@ -7,7 +7,7 @@ import os
 os.system("rm -rf work_prim")
 os.mkdir("work_prim")
 
-w = 10 if os.getenv('ICE384PINS') else 24
+w = len(pins) // 4
 
 for idx in range(num):
     with open("work_prim/prim_%02d.v" % idx, "w") as f:
@@ -48,4 +48,3 @@ with open("work_prim/Makefile", "w") as f:
     for i in range(num):
         print("prim_%02d.bin:" % i, file=f)
         print("\t-bash ../icecube.sh prim_%02d > prim_%02d.log 2>&1 && rm -rf prim_%02d.tmp || tail prim_%02d.log" % (i, i, i, i), file=f)
-

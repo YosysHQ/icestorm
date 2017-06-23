@@ -340,6 +340,19 @@
 (14 14) routing glb_netwk_5 <X> wire_io_cluster/io_1/outclk
 (14 14) routing glb_netwk_6 <X> wire_io_cluster/io_1/outclk
 (14 14) routing glb_netwk_7 <X> wire_io_cluster/io_1/outclk
+(14 15) IO control bit: BIODOWN_extra_padeb_test_0
+(14 15) IO control bit: BIOUP_extra_padeb_test_0
+(14 15) IO control bit: GIODOWN0_extra_padeb_test_0
+(14 15) IO control bit: GIODOWN1_extra_padeb_test_0
+(14 15) IO control bit: GIOLEFT0_extra_padeb_test_0
+(14 15) IO control bit: GIOLEFT1_extra_padeb_test_0
+(14 15) IO control bit: GIORIGHT0_extra_padeb_test_0
+(14 15) IO control bit: GIORIGHT1_extra_padeb_test_0
+(14 15) IO control bit: GIOUP0_extra_padeb_test_0
+(14 15) IO control bit: GIOUP1_extra_padeb_test_0
+(14 15) IO control bit: HIPBIOUP_extra_padeb_test_0
+(14 15) IO control bit: IODOWN_extra_padeb_test_0
+(14 15) IO control bit: IOUP_extra_padeb_test_0
 (14 2) routing span4_horz_l_13 <X> span4_vert_7
 (14 2) routing span4_horz_r_1 <X> span4_vert_7
 (14 2) routing span4_vert_b_1 <X> span4_horz_7
@@ -388,6 +401,28 @@
 (15 11) routing glb_netwk_7 <X> wire_io_cluster/io_1/cen
 (15 11) routing lc_trk_g1_2 <X> wire_io_cluster/io_1/cen
 (15 11) routing lc_trk_g1_5 <X> wire_io_cluster/io_1/cen
+(15 12) IO control bit: BIODOWN_cf_bit_39
+(15 12) IO control bit: BIOUP_cf_bit_39
+(15 12) IO control bit: GIODOWN0_cf_bit_39
+(15 12) IO control bit: GIOLEFT1_cf_bit_39
+(15 12) IO control bit: GIORIGHT0_cf_bit_39
+(15 12) IO control bit: GIORIGHT1_cf_bit_39
+(15 12) IO control bit: GIOUP0_cf_bit_39
+(15 12) IO control bit: GIOUP1_cf_bit_39
+(15 12) IO control bit: IODOWN_cf_bit_39
+(15 14) IO control bit: BIODOWN_extra_padeb_test_1
+(15 14) IO control bit: BIOUP_extra_padeb_test_1
+(15 14) IO control bit: GIODOWN0_extra_padeb_test_1
+(15 14) IO control bit: GIODOWN1_extra_padeb_test_1
+(15 14) IO control bit: GIOLEFT0_extra_padeb_test_1
+(15 14) IO control bit: GIOLEFT1_extra_padeb_test_1
+(15 14) IO control bit: GIORIGHT0_extra_padeb_test_1
+(15 14) IO control bit: GIORIGHT1_extra_padeb_test_1
+(15 14) IO control bit: GIOUP0_extra_padeb_test_1
+(15 14) IO control bit: GIOUP1_extra_padeb_test_1
+(15 14) IO control bit: HIPBIOUP_extra_padeb_test_1
+(15 14) IO control bit: IODOWN_extra_padeb_test_1
+(15 14) IO control bit: IOUP_extra_padeb_test_1
 (15 15) Enable bit of Mux _clock_links/clk_mux => glb_netwk_0 wire_io_cluster/io_1/outclk
 (15 15) Enable bit of Mux _clock_links/clk_mux => glb_netwk_1 wire_io_cluster/io_1/outclk
 (15 15) Enable bit of Mux _clock_links/clk_mux => glb_netwk_2 wire_io_cluster/io_1/outclk
@@ -424,6 +459,13 @@
 (15 5) routing lc_trk_g1_4 <X> wire_gbuf/in
 (15 5) routing lc_trk_g1_6 <X> fabout
 (15 5) routing lc_trk_g1_6 <X> wire_gbuf/in
+(15 6) IO control bit: BIODOWN_cf_bit_35
+(15 6) IO control bit: BIOUP_cf_bit_35
+(15 6) IO control bit: GIOLEFT1_cf_bit_35
+(15 6) IO control bit: GIORIGHT0_cf_bit_35
+(15 6) IO control bit: GIORIGHT1_cf_bit_35
+(15 6) IO control bit: GIOUP0_cf_bit_35
+(15 6) IO control bit: IODOWN_cf_bit_35
 (15 9) Enable bit of Mux _clock_links/inclk_mux => glb_netwk_0 wire_io_cluster/io_1/inclk
 (15 9) Enable bit of Mux _clock_links/inclk_mux => glb_netwk_1 wire_io_cluster/io_1/inclk
 (15 9) Enable bit of Mux _clock_links/inclk_mux => glb_netwk_2 wire_io_cluster/io_1/inclk
@@ -489,7 +531,12 @@
 (2 0) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_1
 (2 0) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_1
 (2 0) PLL config bit: CLOCK_T_0_5_IOLEFT_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_10_31_IOUP_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_11_31_IOUP_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_12_31_IOUP_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_13_31_IOUP_cf_bit_1
 (2 0) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_1
+(2 0) PLL config bit: CLOCK_T_14_31_IOUP_cf_bit_1
 (2 0) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_1
 (2 0) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_1
 (2 0) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_1
@@ -506,6 +553,8 @@
 (2 2) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_4
 (2 2) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_4
 (2 2) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_4
+(2 2) PLL config bit: CLOCK_T_12_31_IOUP_cf_bit_4
+(2 2) PLL config bit: CLOCK_T_13_31_IOUP_cf_bit_4
 (2 2) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_4
 (2 2) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_4
 (2 2) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_4
@@ -518,6 +567,10 @@
 (2 4) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_7
 (2 4) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_7
 (2 4) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_7
+(2 4) PLL config bit: CLOCK_T_10_31_IOUP_cf_bit_7
+(2 4) PLL config bit: CLOCK_T_11_31_IOUP_cf_bit_7
+(2 4) PLL config bit: CLOCK_T_12_31_IOUP_cf_bit_7
+(2 4) PLL config bit: CLOCK_T_13_31_IOUP_cf_bit_7
 (2 4) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_7
 (2 4) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_7
 (2 4) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_7
@@ -525,6 +578,7 @@
 (2 5) Enable bit of Mux _out_links/OutMux4_1 => wire_io_cluster/io_0/D_IN_1 span4_horz_34
 (2 5) Enable bit of Mux _out_links/OutMux4_1 => wire_io_cluster/io_0/D_IN_1 span4_vert_34
 (2 6) IO control bit: BIODOWN_REN_0
+(2 6) IO control bit: BIODOWN_REN_1
 (2 6) IO control bit: BIOLEFT_REN_0
 (2 6) IO control bit: BIORIGHT_REN_0
 (2 6) IO control bit: BIORIGHT_REN_1
@@ -563,12 +617,18 @@
 (3 0) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_2
 (3 0) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_2
 (3 0) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_10_31_IOUP_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_11_31_IOUP_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_12_31_IOUP_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_13_31_IOUP_cf_bit_2
 (3 0) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_2
+(3 0) PLL config bit: CLOCK_T_14_31_IOUP_cf_bit_2
 (3 0) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_2
 (3 0) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_2
 (3 0) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_2
 (3 0) PLL config bit: CLOCK_T_18_0_IODOWN_cf_bit_2
 (3 0) PLL config bit: CLOCK_T_18_33_IOUP_cf_bit_2
+(3 1) IO control bit: BIODOWN_REN_0
 (3 1) IO control bit: BIODOWN_REN_1
 (3 1) IO control bit: BIOLEFT_REN_1
 (3 1) IO control bit: BIORIGHT_REN_0
@@ -611,6 +671,7 @@
 (3 2) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_5
 (3 2) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_5
 (3 2) PLL config bit: CLOCK_T_0_5_IOLEFT_cf_bit_5
+(3 2) PLL config bit: CLOCK_T_13_31_IOUP_cf_bit_5
 (3 2) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_5
 (3 2) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_5
 (3 2) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_5
@@ -621,7 +682,10 @@
 (3 3) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_3
 (3 3) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_3
 (3 3) PLL config bit: CLOCK_T_0_5_IOLEFT_cf_bit_3
+(3 3) PLL config bit: CLOCK_T_11_31_IOUP_cf_bit_3
+(3 3) PLL config bit: CLOCK_T_13_31_IOUP_cf_bit_3
 (3 3) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_3
+(3 3) PLL config bit: CLOCK_T_14_31_IOUP_cf_bit_3
 (3 3) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_3
 (3 3) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_3
 (3 3) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_3
@@ -630,6 +694,9 @@
 (3 4) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_8
 (3 4) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_8
 (3 4) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_8
+(3 4) PLL config bit: CLOCK_T_10_31_IOUP_cf_bit_8
+(3 4) PLL config bit: CLOCK_T_11_31_IOUP_cf_bit_8
+(3 4) PLL config bit: CLOCK_T_13_31_IOUP_cf_bit_8
 (3 4) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_8
 (3 4) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_8
 (3 4) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_8
@@ -637,10 +704,13 @@
 (3 5) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_6
 (3 5) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_6
 (3 5) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_6
+(3 5) PLL config bit: CLOCK_T_11_31_IOUP_cf_bit_6
+(3 5) PLL config bit: CLOCK_T_13_31_IOUP_cf_bit_6
 (3 5) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_6
 (3 5) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_6
 (3 5) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_6
 (3 5) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_6
+(3 6) IO control bit: BIODOWN_IE_0
 (3 6) IO control bit: BIODOWN_IE_1
 (3 6) IO control bit: BIOLEFT_IE_1
 (3 6) IO control bit: BIORIGHT_IE_0
@@ -674,11 +744,16 @@
 (3 7) PLL config bit: CLOCK_T_0_2_IOLEFT_cf_bit_9
 (3 7) PLL config bit: CLOCK_T_0_3_IOLEFT_cf_bit_9
 (3 7) PLL config bit: CLOCK_T_0_4_IOLEFT_cf_bit_9
+(3 7) PLL config bit: CLOCK_T_10_31_IOUP_cf_bit_9
+(3 7) PLL config bit: CLOCK_T_11_31_IOUP_cf_bit_9
+(3 7) PLL config bit: CLOCK_T_12_31_IOUP_cf_bit_9
+(3 7) PLL config bit: CLOCK_T_13_31_IOUP_cf_bit_9
 (3 7) PLL config bit: CLOCK_T_14_0_IODOWN_cf_bit_9
 (3 7) PLL config bit: CLOCK_T_15_0_IODOWN_cf_bit_9
 (3 7) PLL config bit: CLOCK_T_16_0_IODOWN_cf_bit_9
 (3 7) PLL config bit: CLOCK_T_17_0_IODOWN_cf_bit_9
 (3 9) IO control bit: BIODOWN_IE_0
+(3 9) IO control bit: BIODOWN_IE_1
 (3 9) IO control bit: BIOLEFT_IE_0
 (3 9) IO control bit: BIORIGHT_IE_0
 (3 9) IO control bit: BIORIGHT_IE_1
