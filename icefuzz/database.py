@@ -138,11 +138,11 @@ with open("database_ramt.txt", "w") as f:
     for entry in read_database("bitdata_ramt.txt", "ramt"):
         print("\t".join(entry), file=f)
 
-if device_class in ["5k", "8k"]:
+for device_class in ["5k", "8k"]:
   with open("database_ramb_%s.txt" % (device_class, ), "w") as f:
       for entry in read_database("bitdata_ramb_%s.txt" % (device_class, ), "ramb_" + device_class):
           print("\t".join(entry), file=f)
 
-  with open("database_ramt_8k.txt", "w") as f:
+  with open("database_ramt_%s.txt" % (device_class, ), "w") as f:
       for entry in read_database("bitdata_ramt_%s.txt" % (device_class, ), "ramt_" + device_class):
           print("\t".join(entry), file=f)

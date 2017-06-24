@@ -47,9 +47,14 @@ database: bitdata_io.txt bitdata_logic.txt bitdata_ramb$(RAM_SUFFIX).txt bitdata
 ifneq ($(RAM_SUFFIX),)
 	cp cached_ramb.txt bitdata_ramb.txt
 	cp cached_ramt.txt bitdata_ramt.txt
-else
-	cp cached_ramb$(RAM_SUFFIX).txt bitdata_ramb$(RAM_SUFFIX).txt
-	cp cached_ramt$(RAM_SUFFIX).txt bitdata_ramt$(RAM_SUFFIX).txt
+endif
+ifneq ($(RAM_SUFFIX),_8k)
+	cp cached_ramb_8k.txt bitdata_ramb_8k.txt
+	cp cached_ramt_8k.txt bitdata_ramt_8k.txt
+endif
+ifneq ($(RAM_SUFFIX),_5k)
+	cp cached_ramb_5k.txt bitdata_ramb_5k.txt
+	cp cached_ramt_5k.txt bitdata_ramt_5k.txt
 endif
 	ICEDEVICE=$(DEVICECLASS) python3 database.py
 	python3 export.py

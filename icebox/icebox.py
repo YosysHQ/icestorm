@@ -208,20 +208,28 @@ class iceconfig:
         assert False
 
     def tile_db(self, x, y):
-        if x == 0: return iotile_l_db
+        # Only these devices have IO on the left and right sides.
+        if self.device in ["384", "1k", "8k"]:
+          if x == 0: return iotile_l_db
+          if x == self.max_x: return iotile_r_db
         if y == 0: return iotile_b_db
-        if x == self.max_x: return iotile_r_db
         if y == self.max_y: return iotile_t_db
         if self.device == "1k":
             if (x, y) in self.logic_tiles: return logictile_db
             if (x, y) in self.ramb_tiles: return rambtile_db
             if (x, y) in self.ramt_tiles: return ramttile_db
-        if self.device == "8k":
+        elif self.device == "5k":
+            if (x, y) in self.logic_tiles: return logictile_5k_db
+            if (x, y) in self.ramb_tiles: return rambtile_5k_db
+            if (x, y) in self.ramt_tiles: return ramttile_5k_db
+        elif self.device == "8k":
             if (x, y) in self.logic_tiles: return logictile_8k_db
             if (x, y) in self.ramb_tiles: return rambtile_8k_db
             if (x, y) in self.ramt_tiles: return ramttile_8k_db
-        if self.device == "384":
+        elif self.device == "384":
             if (x, y) in self.logic_tiles: return logictile_384_db
+
+        print("Tile type unknown at (%d, %d)" % (x, y))
         assert False
 
     def tile_type(self, x, y):
@@ -568,7 +576,9 @@ class iceconfig:
                 for s in self.expand_net(queue.pop()):
                     if s not in segments:
                         segments.add(s)
-                        assert s not in seen_segments
+                        if s in seen_segments:
+                          print("//", s, "has already been seen. Check your bitmapping.")
+                          assert False
                         seen_segments.add(s)
                         seed_segments.discard(s)
                         if s in connected_segments:
@@ -1012,7 +1022,8 @@ def key_netname(netname):
 def run_checks_neigh():
     print("Running consistency checks on neighbour finder..")
     ic = iceconfig()
-    ic.setup_empty_1k()
+    # ic.setup_empty_1k()
+    ic.setup_empty_5k()
     # ic.setup_empty_8k()
     # ic.setup_empty_384()
 
@@ -1028,7 +1039,11 @@ def run_checks_neigh():
 
     for x in range(ic.max_x+1):
         for y in range(ic.max_x+1):
+            # Skip the corners.
             if x in (0, ic.max_x) and y in (0, ic.max_y):
+                continue
+            # Skip the sides of a 5k device.
+            if ic.device == "5k" and x in (0, ic.max_x):
                 continue
             add_segments((x, y), ic.tile_db(x, y))
             if (x, y) in ic.logic_tiles:
@@ -1091,6 +1106,16 @@ extra_bits_db = {
         (0, 330, 143): ("padin_glb_netwk", "6"),
         (0, 331, 143): ("padin_glb_netwk", "7"),
     },
+    "5k": {
+        (0, 870, 270): ("padin_glb_netwk", "0"),
+        (0, 871, 270): ("padin_glb_netwk", "1"),
+        (1, 870, 271): ("padin_glb_netwk", "2"),
+        (1, 871, 271): ("padin_glb_netwk", "3"),
+        (1, 870, 270): ("padin_glb_netwk", "4"),
+        (1, 871, 270): ("padin_glb_netwk", "5"),
+        (0, 870, 271): ("padin_glb_netwk", "6"),
+        (0, 871, 271): ("padin_glb_netwk", "7"),
+    },
     "8k": {
         (0, 870, 270): ("padin_glb_netwk", "0"),
         (0, 871, 270): ("padin_glb_netwk", "1"),
@@ -1124,6 +1149,8 @@ gbufin_db = {
         ( 6,  0,  5),
         ( 6, 17,  4),
     ],
+    "5k": [
+    ],
     "8k": [
         (33, 16,  7),
         ( 0, 16,  6),
@@ -1146,12 +1173,24 @@ gbufin_db = {
     ]
 }
 
+# To figure these out:
+#   1. Copy io_latched.sh and convert it for your pinout (like io_latched_5k.sh).
+#   2. Run it. It will create an io_latched_<device>.work directory with a bunch of files.
+#   3. Grep the *.ve files in that directory for "'fabout')". The coordinates
+#      before it are where the io latches are.
+#
+# Note: This may not work if your icepack configuration of cell sizes is incorrect because
+# icebox_vlog.py won't correctly interpret the meaning of particular bits.
 iolatch_db = {
     "1k": [
         ( 0,  7),
         (13, 10),
         ( 5,  0),
         ( 8, 17),
+    ],
+    "5k": [
+        (14, 0),
+        (14, 31),
     ],
     "8k": [
         ( 0, 15),
@@ -1167,11 +1206,19 @@ iolatch_db = {
     ],
 }
 
+# The x, y cell locations of the WARMBOOT controls. Run tests/sb_warmboot.v
+# through icecube.sh to determine these values.
 warmbootinfo_db = {
     "1k": {
         "BOOT": ( 12, 0, "fabout" ),
         "S0":   ( 13, 1, "fabout" ),
         "S1":   ( 13, 2, "fabout" ),
+    },
+    "5k": {
+        # These are the right locations but may be the wrong order.
+        "BOOT": ( 22, 0, "fabout" ),
+        "S0":   ( 23, 0, "fabout" ),
+        "S1":   ( 24, 0, "fabout" ),
     },
     "8k": {
         "BOOT": ( 31, 0, "fabout" ),
@@ -1292,6 +1339,99 @@ pllinfo_db = {
         "SDO":                  (12,  1, "neigh_op_bnr_3"),
         "SDI":                  ( 4,  0, "fabout"),
         "SCLK":                 ( 3,  0, "fabout"),
+    },
+    "5k": {
+        "LOC" : (16, 0),
+
+        # 3'b000 = "DISABLED"
+        # 3'b010 = "SB_PLL40_PAD"
+        # 3'b100 = "SB_PLL40_2_PAD"
+        # 3'b110 = "SB_PLL40_2F_PAD"
+        # 3'b011 = "SB_PLL40_CORE"
+        # 3'b111 = "SB_PLL40_2F_CORE"
+        "PLLTYPE_0":            ( 16, 0, "PLLCONFIG_5"),
+        "PLLTYPE_1":            ( 18, 0, "PLLCONFIG_1"),
+        "PLLTYPE_2":            ( 18, 0, "PLLCONFIG_3"),
+
+        # 3'b000 = "DELAY"
+        # 3'b001 = "SIMPLE"
+        # 3'b010 = "PHASE_AND_DELAY"
+        # 3'b110 = "EXTERNAL"
+        "FEEDBACK_PATH_0":      ( 18, 0, "PLLCONFIG_5"),
+        "FEEDBACK_PATH_1":      ( 15, 0, "PLLCONFIG_9"),
+        "FEEDBACK_PATH_2":      ( 16, 0, "PLLCONFIG_1"),
+
+        # 1'b0 = "FIXED"
+        # 1'b1 = "DYNAMIC" (also set FDA_FEEDBACK=4'b1111)
+        "DELAY_ADJMODE_FB":     ( 17, 0, "PLLCONFIG_4"),
+
+        # 1'b0 = "FIXED"
+        # 1'b1 = "DYNAMIC" (also set FDA_RELATIVE=4'b1111)
+        "DELAY_ADJMODE_REL":    ( 17, 0, "PLLCONFIG_9"),
+
+        # 2'b00 = "GENCLK"
+        # 2'b01 = "GENCLK_HALF"
+        # 2'b10 = "SHIFTREG_90deg"
+        # 2'b11 = "SHIFTREG_0deg"
+        "PLLOUT_SELECT_A_0":    ( 16, 0, "PLLCONFIG_6"),
+        "PLLOUT_SELECT_A_1":    ( 16, 0, "PLLCONFIG_7"),
+
+        # 2'b00 = "GENCLK"
+        # 2'b01 = "GENCLK_HALF"
+        # 2'b10 = "SHIFTREG_90deg"
+        # 2'b11 = "SHIFTREG_0deg"
+        "PLLOUT_SELECT_B_0":    ( 16, 0, "PLLCONFIG_2"),
+        "PLLOUT_SELECT_B_1":    ( 16, 0, "PLLCONFIG_3"),
+
+        # Numeric Parameters
+        "SHIFTREG_DIV_MODE":    ( 16, 0, "PLLCONFIG_4"),
+        "FDA_FEEDBACK_0":       ( 16, 0, "PLLCONFIG_9"),
+        "FDA_FEEDBACK_1":       ( 17, 0, "PLLCONFIG_1"),
+        "FDA_FEEDBACK_2":       ( 17, 0, "PLLCONFIG_2"),
+        "FDA_FEEDBACK_3":       ( 17, 0, "PLLCONFIG_3"),
+        "FDA_RELATIVE_0":       ( 17, 0, "PLLCONFIG_5"),
+        "FDA_RELATIVE_1":       ( 17, 0, "PLLCONFIG_6"),
+        "FDA_RELATIVE_2":       ( 17, 0, "PLLCONFIG_7"),
+        "FDA_RELATIVE_3":       ( 17, 0, "PLLCONFIG_8"),
+        "DIVR_0":               ( 14, 0, "PLLCONFIG_1"),
+        "DIVR_1":               ( 14, 0, "PLLCONFIG_2"),
+        "DIVR_2":               ( 14, 0, "PLLCONFIG_3"),
+        "DIVR_3":               ( 14, 0, "PLLCONFIG_4"),
+        "DIVF_0":               ( 14, 0, "PLLCONFIG_5"),
+        "DIVF_1":               ( 14, 0, "PLLCONFIG_6"),
+        "DIVF_2":               ( 14, 0, "PLLCONFIG_7"),
+        "DIVF_3":               ( 14, 0, "PLLCONFIG_8"),
+        "DIVF_4":               ( 14, 0, "PLLCONFIG_9"),
+        "DIVF_5":               ( 15, 0, "PLLCONFIG_1"),
+        "DIVF_6":               ( 15, 0, "PLLCONFIG_2"),
+        "DIVQ_0":               ( 15, 0, "PLLCONFIG_3"),
+        "DIVQ_1":               ( 15, 0, "PLLCONFIG_4"),
+        "DIVQ_2":               ( 15, 0, "PLLCONFIG_5"),
+        "FILTER_RANGE_0":       ( 15, 0, "PLLCONFIG_6"),
+        "FILTER_RANGE_1":       ( 15, 0, "PLLCONFIG_7"),
+        "FILTER_RANGE_2":       ( 15, 0, "PLLCONFIG_8"),
+        "TEST_MODE":            ( 16, 0, "PLLCONFIG_8"),
+
+        # PLL Ports
+        "PLLOUT_A":             ( 16, 0, 1),
+        "PLLOUT_B":             ( 17, 0, 0),
+        "REFERENCECLK":         ( 13, 0, "fabout"),
+        "EXTFEEDBACK":          ( 14, 0, "fabout"),
+        "DYNAMICDELAY_0":       (  5, 0, "fabout"),
+        "DYNAMICDELAY_1":       (  6, 0, "fabout"),
+        "DYNAMICDELAY_2":       (  7, 0, "fabout"),
+        "DYNAMICDELAY_3":       (  8, 0, "fabout"),
+        "DYNAMICDELAY_4":       (  9, 0, "fabout"),
+        "DYNAMICDELAY_5":       ( 10, 0, "fabout"),
+        "DYNAMICDELAY_6":       ( 11, 0, "fabout"),
+        "DYNAMICDELAY_7":       ( 12, 0, "fabout"),
+        "LOCK":                 (  1, 1, "neigh_op_bnl_1"),
+        "BYPASS":               ( 19, 0, "fabout"),
+        "RESETB":               ( 20, 0, "fabout"),
+        "LATCHINPUTVALUE":      ( 15, 0, "fabout"),
+        "SDO":                  ( 32, 1, "neigh_op_bnr_3"),
+        "SDI":                  ( 22, 0, "fabout"),
+        "SCLK":                 ( 21, 0, "fabout"),
     },
     "8k_0": {
         "LOC" : (16, 0),
@@ -1481,8 +1621,6 @@ pllinfo_db = {
     },
 }
 
-# TODO(tannewt): Correct these values for 5k once we figure out how to get the
-# info.
 padin_pio_db = {
     "1k": [
         (13,  8, 1),  # glb_netwk_0
@@ -1495,14 +1633,11 @@ padin_pio_db = {
         ( 6, 17, 1),  # glb_netwk_7
     ],
     "5k": [
-        (33, 16, 1),
-        ( 0, 16, 1),
-        (17, 33, 0),
-        (17,  0, 0),
-        ( 0, 17, 0),
-        (33, 17, 0),
-        (16,  0, 1),
-        (16, 33, 1),
+        ( 6,  0, 1),
+        (19,  0, 1),
+        ( 6, 31, 0),
+        (12, 31, 1),
+        (13, 31, 0),
     ],
     "8k": [
         (33, 16, 1),

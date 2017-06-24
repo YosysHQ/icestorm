@@ -415,10 +415,11 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 	for (auto byte : this->initblop)
 		ofs << byte;
 
-	debug("Writing preamble.\n");
+	info("Writing preamble.\n");
 	write_byte(ofs, crc_value, file_offset, 0x7E);
 	write_byte(ofs, crc_value, file_offset, 0xAA);
 	write_byte(ofs, crc_value, file_offset, 0x99);
+	info("blah");
 	write_byte(ofs, crc_value, file_offset, 0x7E);
 
 	debug("Setting freqrange to '%s'.\n", this->freqrange.c_str());
@@ -773,7 +774,7 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 	{
 		CramIndexConverter cic(this, x, y);
 
-		if (cic.tile_type == "corner")
+		if (cic.tile_type == "corner" || cic.tile_type == "unsupported")
 			continue;
 
 		ofs << stringf(".%s_tile %d %d\n", cic.tile_type.c_str(), x, y);
@@ -783,6 +784,12 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 				int cram_bank, cram_x, cram_y;
 				cic.get_cram_index(bit_x, bit_y, cram_bank, cram_x, cram_y);
 				tile_bits.insert(tile_bit_t(cram_bank, cram_x, cram_y));
+				if (cram_x > int(this->cram[cram_bank].size())) {
+					error("cram_x %d (bit %d, %d) larger than bank size %lu\n", cram_x, bit_x, bit_y, this->cram[cram_bank].size());
+				}
+				if (cram_y > int(this->cram[cram_bank][cram_x].size())) {
+						error("cram_y %d larger than bank size %lu\n", cram_y, this->cram[cram_bank][cram_x].size());
+				}
 				ofs << (this->cram[cram_bank][cram_x][cram_y] ? '1' : '0');
 			}
 			ofs << '\n';
@@ -800,11 +807,11 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 						int bram_bank, bram_x, bram_y;
 						bic.get_bram_index(bit_x+i, bit_y, bram_bank, bram_x, bram_y);
 						if (bram_x >= int(this->bram[bram_bank].size())) {
-							error("bram_x %u higher than loaded bram size %lu\n", bram_x,  this->bram[bram_bank].size());
+							error("%d %d bram_x %d higher than loaded bram size %lu\n",bit_x+i, bit_y, bram_x,  this->bram[bram_bank].size());
 							break;
 						}
 						if (bram_y >= int(this->bram[bram_bank][bram_x].size())) {
-							error("bram_y %u higher than loaded bram size %lu\n", bram_y,  this->bram[bram_bank][bram_x].size());
+							error("bram_y %d higher than loaded bram size %lu\n", bram_y,  this->bram[bram_bank][bram_x].size());
 							break;
 						}
 						if (this->bram[bram_bank][bram_x][bram_y])
@@ -905,7 +912,7 @@ vector<int> FpgaConfig::chip_cols() const
 	if (this->device == "384") return vector<int>({18, 54, 54, 54, 54});
 	if (this->device == "1k") return vector<int>({18, 54, 54, 42, 54, 54, 54});
 	// Its IPConnect or Mutiplier block, five logic, ram, six logic.
-	if (this->device == "5k") return vector<int>({18, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54});
+	if (this->device == "5k") return vector<int>({54, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54});
 	if (this->device == "8k") return vector<int>({18, 54, 54, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54, 54, 54});
 	panic("Unknown chip type '%s'.\n", this->device.c_str());
 }
@@ -913,6 +920,8 @@ vector<int> FpgaConfig::chip_cols() const
 string FpgaConfig::tile_type(int x, int y) const
 {
 	if ((x == 0 || x == this->chip_width()+1) && (y == 0 || y == this->chip_height()+1)) return "corner";
+	// The sides on the 5k devices are unsupported tile types.
+	if (this->device == "5k" && (x == 0 || x == this->chip_width()+1)) return "unsupported";
 	if ((x == 0 || x == this->chip_width()+1) || (y == 0 || y == this->chip_height()+1)) return "io";
 
 	if (this->device == "384") return "logic";
@@ -942,6 +951,7 @@ int FpgaConfig::tile_width(const string &type) const
 	if (type == "ramb")   return 42;
 	if (type == "ramt")   return 42;
 	if (type == "io")     return 18;
+	if (type == "unsupported")     return 76;
 	panic("Unknown tile type '%s'.\n", type.c_str());
 }
 
@@ -1004,7 +1014,11 @@ CramIndexConverter::CramIndexConverter(const FpgaConfig *fpga, int tile_x, int t
 
 	this->left_right_io = this->tile_x == 0 || this->tile_x == chip_width+1;
 	this->right_half = this->tile_x > chip_width / 2;
-	this->top_half = this->tile_y > chip_height / 2;
+	if (this->fpga->device == "5k") {
+		this->top_half = this->tile_y > chip_height / 3;
+	} else {
+		this->top_half = this->tile_y > chip_height / 2;
+	}
 
 	this->bank_num = 0;
 	if (this->top_half) this->bank_num |= 1;
@@ -1086,8 +1100,10 @@ BramIndexConverter::BramIndexConverter(const FpgaConfig *fpga, int tile_x, int t
 	int y_offset = this->tile_y - 1;
 	if (!top_half) {
 		this->bank_num |= 1;
-	} else {
+	} else if (this->fpga->device == "5k") {
 		y_offset = this->tile_y - chip_height / 3;
+	} else {
+		y_offset = this->tile_y - chip_height / 2;
 	}
 	if (right_half) this->bank_num |= 2;
 
