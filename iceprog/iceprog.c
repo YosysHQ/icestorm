@@ -48,7 +48,8 @@ void check_rx()
 	while (1) {
 		uint8_t data;
 		int rc = ftdi_read_data(&ftdic, &data, 1);
-		if (rc <= 0) break;
+		if (rc <= 0)
+			break;
 		fprintf(stderr, "unexpected rx byte: %02X\n", data);
 	}
 }
@@ -97,8 +98,8 @@ void send_spi(uint8_t *data, int n)
 		return;
 
 	send_byte(0x11);
-	send_byte(n-1);
-	send_byte((n-1) >> 8);
+	send_byte(n - 1);
+	send_byte((n - 1) >> 8);
 
 	int rc = ftdi_write_data(&ftdic, data, n);
 	if (rc != n) {
@@ -113,8 +114,8 @@ void xfer_spi(uint8_t *data, int n)
 		return;
 
 	send_byte(0x31);
-	send_byte(n-1);
-	send_byte((n-1) >> 8);
+	send_byte(n - 1);
+	send_byte((n - 1) >> 8);
 
 	int rc = ftdi_write_data(&ftdic, data, n);
 	if (rc != n) {
@@ -229,7 +230,7 @@ void flash_prog(int addr, uint8_t *data, int n)
 
 	if (verbose)
 		for (int i = 0; i < n; i++)
-			fprintf(stderr, "%02x%c", data[i], i == n-1 || i % 32 == 31 ? '\n' : ' ');
+			fprintf(stderr, "%02x%c", data[i], i == n - 1 || i % 32 == 31 ? '\n' : ' ');
 }
 
 void flash_read(int addr, uint8_t *data, int n)
@@ -246,7 +247,7 @@ void flash_read(int addr, uint8_t *data, int n)
 
 	if (verbose)
 		for (int i = 0; i < n; i++)
-			fprintf(stderr, "%02x%c", data[i], i == n-1 || i % 32 == 31 ? '\n' : ' ');
+			fprintf(stderr, "%02x%c", data[i], i == n - 1 || i % 32 == 31 ? '\n' : ' ');
 }
 
 void flash_wait()
@@ -254,8 +255,7 @@ void flash_wait()
 	if (verbose)
 		fprintf(stderr, "waiting..");
 
-	while (1)
-	{
+	while (1) {
 		uint8_t data[2] = { 0x05 };
 
 		set_gpio(0, 0);
@@ -365,18 +365,20 @@ int main(int argc, char **argv)
 	int opt;
 	char *endptr;
 	while ((opt = getopt_long(argc, argv, "d:I:rR:o:cbnStv",
-				  long_options, NULL)) != -1)
-	{
-		switch (opt)
-		{
+				  long_options, NULL)) != -1) {
+		switch (opt) {
 		case 'd':
 			devstr = optarg;
 			break;
 		case 'I':
-			if (!strcmp(optarg, "A")) ifnum = INTERFACE_A;
-			else if (!strcmp(optarg, "B")) ifnum = INTERFACE_B;
-			else if (!strcmp(optarg, "C")) ifnum = INTERFACE_C;
-			else if (!strcmp(optarg, "D")) ifnum = INTERFACE_D;
+			if (!strcmp(optarg, "A"))
+				ifnum = INTERFACE_A;
+			else if (!strcmp(optarg, "B"))
+				ifnum = INTERFACE_B;
+			else if (!strcmp(optarg, "C"))
+				ifnum = INTERFACE_C;
+			else if (!strcmp(optarg, "D"))
+				ifnum = INTERFACE_D;
 			else
 				errx(EXIT_FAILURE,
 				     "`%s' is not a valid interface (must be "
@@ -388,18 +390,24 @@ int main(int argc, char **argv)
 		case 'R':
 			read_mode = true;
 			read_size = strtol(optarg, &endptr, 0);
-			if (*endptr == '\0') /* ok */;
-			else if (!strcmp(endptr, "k")) read_size *= 1024;
-			else if (!strcmp(endptr, "M")) read_size *= 1024 * 1024;
+			if (*endptr == '\0')
+				/* ok */;
+			else if (!strcmp(endptr, "k"))
+				read_size *= 1024;
+			else if (!strcmp(endptr, "M"))
+				read_size *= 1024 * 1024;
 			else
 				errx(EXIT_FAILURE,
 				     "`%s' is not a valid size", optarg);
 			break;
 		case 'o':
 			rw_offset = strtol(optarg, &endptr, 0);
-			if (*endptr == '\0') /* ok */;
-			else if (!strcmp(endptr, "k")) rw_offset *= 1024;
-			else if (!strcmp(endptr, "M")) rw_offset *= 1024 * 1024;
+			if (*endptr == '\0')
+				/* ok */;
+			else if (!strcmp(endptr, "k"))
+				rw_offset *= 1024;
+			else if (!strcmp(endptr, "M"))
+				rw_offset *= 1024 * 1024;
 			else
 				errx(EXIT_FAILURE,
 				     "`%s' is not a valid offset", optarg);
@@ -613,8 +621,7 @@ int main(int argc, char **argv)
 	usleep(100000);
 
 
-	if (test_mode)
-	{
+	if (test_mode) {
 		fprintf(stderr, "reset..\n");
 
 		set_gpio(1, 0);
@@ -632,9 +639,7 @@ int main(int argc, char **argv)
 		usleep(250000);
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
-	}
-	else if (prog_sram)
-	{
+	} else if (prog_sram) {
 		// ---------------------------------------------------------
 		// Reset
 		// ---------------------------------------------------------
@@ -655,11 +660,11 @@ int main(int argc, char **argv)
 		// ---------------------------------------------------------
 
 		fprintf(stderr, "programming..\n");
-		while (1)
-		{
+		while (1) {
 			static unsigned char buffer[4096];
 			int rc = fread(buffer, 1, 4096, f);
-			if (rc <= 0) break;
+			if (rc <= 0)
+				break;
 			if (verbose)
 				fprintf(stderr, "sending %d bytes.\n", rc);
 			send_spi(buffer, rc);
@@ -675,9 +680,7 @@ int main(int argc, char **argv)
 		send_byte(0x00);
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
-	}
-	else
-	{
+	} else {
 		// ---------------------------------------------------------
 		// Reset
 		// ---------------------------------------------------------
@@ -698,18 +701,13 @@ int main(int argc, char **argv)
 		// Program
 		// ---------------------------------------------------------
 
-		if (!read_mode && !check_mode)
-		{
-			if (!dont_erase)
-			{
-				if (bulk_erase)
-				{
+		if (!read_mode && !check_mode) {
+			if (!dont_erase) {
+				if (bulk_erase) {
 					flash_write_enable();
 					flash_bulk_erase();
 					flash_wait();
-				}
-				else
-				{
+				} else {
 					fprintf(stderr, "file size: %ld\n", file_size);
 
 					int begin_addr = rw_offset & ~0xffff;
@@ -729,7 +727,8 @@ int main(int argc, char **argv)
 				uint8_t buffer[256];
 				int page_size = 256 - (rw_offset + addr) % 256;
 				rc = fread(buffer, 1, page_size, f);
-				if (rc <= 0) break;
+				if (rc <= 0)
+					break;
 				flash_write_enable();
 				flash_prog(rw_offset + addr, buffer, rc);
 				flash_wait();
@@ -739,13 +738,11 @@ int main(int argc, char **argv)
 			fseek(f, 0, SEEK_SET);
 		}
 
-
 		// ---------------------------------------------------------
 		// Read/Verify
 		// ---------------------------------------------------------
 
-		if (read_mode)
-		{
+		if (read_mode) {
 			fprintf(stderr, "reading..\n");
 			for (int addr = 0; addr < read_size; addr += 256) {
 				uint8_t buffer[256];
@@ -753,14 +750,13 @@ int main(int argc, char **argv)
 				fwrite(buffer, read_size - addr > 256 ? 256 :
 					       read_size - addr, 1, f);
 			}
-		}
-		else
-		{
+		} else {
 			fprintf(stderr, "reading..\n");
 			for (int addr = 0; true; addr += 256) {
 				uint8_t buffer_flash[256], buffer_file[256];
 				int rc = fread(buffer_file, 1, 256, f);
-				if (rc <= 0) break;
+				if (rc <= 0)
+					break;
 				flash_read(rw_offset + addr, buffer_flash, rc);
 				if (memcmp(buffer_file, buffer_flash, rc)) {
 					fprintf(stderr, "Found difference between flash and file!\n");
