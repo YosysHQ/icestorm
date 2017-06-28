@@ -816,4 +816,3 @@ int main(int argc, char **argv)
 	ftdi_deinit(&ftdic);
 	return 0;
 }
-
