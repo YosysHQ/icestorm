@@ -564,7 +564,7 @@ int main(int argc, char **argv)
 		}
 	} else {
 		if (ftdi_usb_open(&ftdic, 0x0403, 0x6010)) {
-			fprintf(stderr, "Can't find iCE FTDI USB device (vedor_id 0x0403, device_id 0x6010).\n");
+			fprintf(stderr, "Can't find iCE FTDI USB device (vendor_id 0x0403, device_id 0x6010).\n");
 			error(2);
 		}
 	}
@@ -595,7 +595,7 @@ int main(int argc, char **argv)
 	ftdic_latency_set = true;
 
 	if (ftdi_set_bitmode(&ftdic, 0xff, BITMODE_MPSSE) < 0) {
-		fprintf(stderr, "Failed set BITMODE_MPSSE on iCE FTDI USB device.\n");
+		fprintf(stderr, "Failed to set BITMODE_MPSSE on iCE FTDI USB device.\n");
 		error(2);
 	}
 
