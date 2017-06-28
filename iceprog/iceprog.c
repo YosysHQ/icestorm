@@ -37,13 +37,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-struct ftdi_context ftdic;
-bool ftdic_open = false;
-bool verbose = false;
-bool ftdic_latency_set = false;
-unsigned char ftdi_latency;
+static struct ftdi_context ftdic;
+static bool ftdic_open = false;
+static bool verbose = false;
+static bool ftdic_latency_set = false;
+static unsigned char ftdi_latency;
 
-void check_rx()
+static void check_rx()
 {
 	while (1) {
 		uint8_t data;
@@ -54,7 +54,7 @@ void check_rx()
 	}
 }
 
-void error(int status)
+static void error(int status)
 {
 	check_rx();
 	fprintf(stderr, "ABORT.\n");
@@ -67,7 +67,7 @@ void error(int status)
 	exit(status);
 }
 
-uint8_t recv_byte()
+static uint8_t recv_byte()
 {
 	uint8_t data;
 	while (1) {
@@ -83,7 +83,7 @@ uint8_t recv_byte()
 	return data;
 }
 
-void send_byte(uint8_t data)
+static void send_byte(uint8_t data)
 {
 	int rc = ftdi_write_data(&ftdic, &data, 1);
 	if (rc != 1) {
@@ -93,7 +93,7 @@ void send_byte(uint8_t data)
 	}
 }
 
-void send_spi(uint8_t *data, int n)
+static void send_spi(uint8_t *data, int n)
 {
 	if (n < 1)
 		return;
@@ -110,7 +110,7 @@ void send_spi(uint8_t *data, int n)
 	}
 }
 
-void xfer_spi(uint8_t *data, int n)
+static void xfer_spi(uint8_t *data, int n)
 {
 	if (n < 1)
 		return;
@@ -130,7 +130,7 @@ void xfer_spi(uint8_t *data, int n)
 		data[i] = recv_byte();
 }
 
-void set_gpio(int slavesel_b, int creset_b)
+static void set_gpio(int slavesel_b, int creset_b)
 {
 	uint8_t gpio = 1;
 
@@ -149,7 +149,7 @@ void set_gpio(int slavesel_b, int creset_b)
 	send_byte(0x93);
 }
 
-int get_cdone()
+static int get_cdone()
 {
 	uint8_t data;
 	send_byte(0x81);
@@ -158,7 +158,7 @@ int get_cdone()
 	return (data & 0x40) != 0;
 }
 
-void flash_read_id()
+static void flash_read_id()
 {
 	// fprintf(stderr, "read flash ID..\n");
 
@@ -173,7 +173,7 @@ void flash_read_id()
 	fprintf(stderr, "\n");
 }
 
-void flash_power_up()
+static void flash_power_up()
 {
 	uint8_t data[1] = { 0xAB };
 	set_gpio(0, 0);
@@ -181,7 +181,7 @@ void flash_power_up()
 	set_gpio(1, 0);
 }
 
-void flash_power_down()
+static void flash_power_down()
 {
 	uint8_t data[1] = { 0xB9 };
 	set_gpio(0, 0);
@@ -189,7 +189,7 @@ void flash_power_down()
 	set_gpio(1, 0);
 }
 
-void flash_write_enable()
+static void flash_write_enable()
 {
 	if (verbose)
 		fprintf(stderr, "write enable..\n");
@@ -200,7 +200,7 @@ void flash_write_enable()
 	set_gpio(1, 0);
 }
 
-void flash_bulk_erase()
+static void flash_bulk_erase()
 {
 	fprintf(stderr, "bulk erase..\n");
 
@@ -210,7 +210,7 @@ void flash_bulk_erase()
 	set_gpio(1, 0);
 }
 
-void flash_64kB_sector_erase(int addr)
+static void flash_64kB_sector_erase(int addr)
 {
 	fprintf(stderr, "erase 64kB sector at 0x%06X..\n", addr);
 
@@ -222,7 +222,7 @@ void flash_64kB_sector_erase(int addr)
 	set_gpio(1, 0);
 }
 
-void flash_prog(int addr, uint8_t *data, int n)
+static void flash_prog(int addr, uint8_t *data, int n)
 {
 	if (verbose)
 		fprintf(stderr, "prog 0x%06X +0x%03X..\n", addr, n);
@@ -241,7 +241,7 @@ void flash_prog(int addr, uint8_t *data, int n)
 				i == n - 1 || i % 32 == 31 ? '\n' : ' ');
 }
 
-void flash_read(int addr, uint8_t *data, int n)
+static void flash_read(int addr, uint8_t *data, int n)
 {
 	if (verbose)
 		fprintf(stderr, "read 0x%06X +0x%03X..\n", addr, n);
@@ -261,7 +261,7 @@ void flash_read(int addr, uint8_t *data, int n)
 				i == n - 1 || i % 32 == 31 ? '\n' : ' ');
 }
 
-void flash_wait()
+static void flash_wait()
 {
 	if (verbose)
 		fprintf(stderr, "waiting..");
@@ -287,7 +287,7 @@ void flash_wait()
 		fprintf(stderr, "\n");
 }
 
-void help(const char *progname)
+static void help(const char *progname)
 {
 	fprintf(stderr, "Simple programming tool for FTDI-based Lattice iCE programmers.\n");
 	fprintf(stderr, "Usage: %s [-b|-n|-c] <input file>\n", progname);
