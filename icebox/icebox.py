@@ -84,7 +84,7 @@ class iceconfig:
 
         for x in range(1, self.max_x):
             for y in range(1, self.max_y):
-                if x in (6, 18):
+                if x in (7, 20):
                     if y % 2 == 1:
                         self.ramb_tiles[(x, y)] = ["0" * 42 for i in range(16)]
                     else:
@@ -323,6 +323,8 @@ class iceconfig:
                 if (nx, ny) in self.ramb_tiles:
                     if self.device == "1k":
                         return (nx, ny, "ram/RDATA_%d" % func)
+                    elif self.device == "5k":
+                        return (nx, ny, "ram/RDATA_%d" % (15-func))
                     elif self.device == "8k":
                         return (nx, ny, "ram/RDATA_%d" % (15-func))
                     else:
@@ -330,6 +332,8 @@ class iceconfig:
                 if (nx, ny) in self.ramt_tiles:
                     if self.device == "1k":
                         return (nx, ny, "ram/RDATA_%d" % (8+func))
+                    elif self.device == "5k":
+                        return (nx, ny, "ram/RDATA_%d" % (7-func))
                     elif self.device == "8k":
                         return (nx, ny, "ram/RDATA_%d" % (7-func))
                     else:
@@ -370,6 +374,8 @@ class iceconfig:
         if match:
             if self.device == "1k":
                 funcnets |= self.follow_funcnet(x, y, int(match.group(1)) % 8)
+            elif self.device == "5k":
+                funcnets |= self.follow_funcnet(x, y, 7 - int(match.group(1)) % 8)
             elif self.device == "8k":
                 funcnets |= self.follow_funcnet(x, y, 7 - int(match.group(1)) % 8)
             else:
@@ -380,6 +386,9 @@ class iceconfig:
     def follow_net(self, netspec):
         x, y, netname = netspec
         neighbours = self.rlookup_funcnet(x, y, netname)
+        
+        #print(netspec)
+        #print('\t', neighbours)
 
         if netname == "carry_in" and y > 1:
             neighbours.add((x, y-1, "lutff_7/cout"))
@@ -396,6 +405,7 @@ class iceconfig:
         match = re.match(r"sp4_r_v_b_(\d+)", netname)
         if match and 0 < x < self.max_x-1:
             neighbours.add((x+1, y, sp4v_normalize("sp4_v_b_" + match.group(1))))
+        #print('\tafter r_v_b', neighbours)
 
         match = re.match(r"sp4_v_[bt]_(\d+)", netname)
         if match and 1 < x < self.max_x:
@@ -403,6 +413,7 @@ class iceconfig:
             if n is not None:
                 n = n.replace("sp4_", "sp4_r_")
                 neighbours.add((x-1, y, n))
+        #print('\tafter v_[bt]', neighbours)
 
         match = re.match(r"(logic|neigh)_op_(...)_(\d+)", netname)
         if match:
@@ -452,16 +463,20 @@ class iceconfig:
 
                 if self.tile_has_net(s[0], s[1], s[2]):
                     neighbours.add((s[0], s[1], s[2]))
+        
+        #print('\tafter directions', neighbours)
         return neighbours
 
     def group_segments(self, all_from_tiles=set(), extra_connections=list(), extra_segments=list(), connect_gb=True):
         seed_segments = set()
-        seen_segments = set()
+        seen_segments = dict()
         connected_segments = dict()
         grouped_segments = set()
 
         for seg in extra_segments:
             seed_segments.add(seg)
+            
+        print("extra seg", extra_segments)
 
         for conn in extra_connections:
             s1, s2 = conn
@@ -469,6 +484,8 @@ class iceconfig:
             connected_segments.setdefault(s2, set()).add(s1)
             seed_segments.add(s1)
             seed_segments.add(s2)
+            
+        print("extra connections", extra_connections)
 
         for idx, tile in self.io_tiles.items():
             tc = tileconfig(tile)
@@ -482,10 +499,16 @@ class iceconfig:
                 seed_segments.add((idx[0], idx[1], "io_1/D_OUT_0"))
 
         def add_seed_segments(idx, tile, db):
+            if idx == (19, 16):
+              print("found tile", idx, tile)
             tc = tileconfig(tile)
             for entry in db:
+                if idx == (19, 16):
+                  print(entry)
                 if entry[1] in ("routing", "buffer"):
                     config_match = tc.match(entry[0])
+                    if idx == (19, 16):
+                        print(config_match)
                     if idx in all_from_tiles or config_match:
                         if not self.tile_has_net(idx[0], idx[1], entry[2]): continue
                         if not self.tile_has_net(idx[0], idx[1], entry[3]): continue
@@ -573,13 +596,17 @@ class iceconfig:
             segments = set()
             queue.add(seed_segments.pop())
             while queue:
-                for s in self.expand_net(queue.pop()):
+                next_segment = queue.pop()
+                expanded = self.expand_net(next_segment)
+                for s in expanded:
                     if s not in segments:
                         segments.add(s)
                         if s in seen_segments:
+                          print(next_segment, expanded)
+                          print(seen_segments[s])
                           print("//", s, "has already been seen. Check your bitmapping.")
                           assert False
-                        seen_segments.add(s)
+                        seen_segments[s] = (next_segment, expanded)
                         seed_segments.discard(s)
                         if s in connected_segments:
                             for cs in connected_segments[s]:
@@ -1100,21 +1127,21 @@ extra_bits_db = {
         (0, 330, 142): ("padin_glb_netwk", "0"),
         (0, 331, 142): ("padin_glb_netwk", "1"),
         (1, 330, 143): ("padin_glb_netwk", "2"),
-        (1, 331, 143): ("padin_glb_netwk", "3"),
+        (1, 331, 143): ("padin_glb_netwk", "3"), # (1 3)  (331 144)  (331 144)  routing T_0_0.padin_3 <X> T_0_0.glb_netwk_3
         (1, 330, 142): ("padin_glb_netwk", "4"),
         (1, 331, 142): ("padin_glb_netwk", "5"),
-        (0, 330, 143): ("padin_glb_netwk", "6"),
+        (0, 330, 143): ("padin_glb_netwk", "6"), # (0 0)  (330 143)  (330 143)  routing T_0_0.padin_6 <X> T_0_0.glb_netwk_6
         (0, 331, 143): ("padin_glb_netwk", "7"),
     },
     "5k": {
-        (0, 870, 270): ("padin_glb_netwk", "0"),
-        (0, 871, 270): ("padin_glb_netwk", "1"),
-        (1, 870, 271): ("padin_glb_netwk", "2"),
+        (0, 690, 334): ("padin_glb_netwk", "0"), # (0 1)  (690 334)  (690 334)  routing T_0_0.padin_0 <X> T_0_0.glb_netwk_0
+        (1, 691, 334): ("padin_glb_netwk", "1"), # (1 1)  (691 334)  (691 334)  routing T_0_0.padin_1 <X> T_0_0.glb_netwk_1
+        (0, 690, 336): ("padin_glb_netwk", "2"), # (0 3)  (690 336)  (690 336)  routing T_0_0.padin_2 <X> T_0_0.glb_netwk_2
         (1, 871, 271): ("padin_glb_netwk", "3"),
         (1, 870, 270): ("padin_glb_netwk", "4"),
         (1, 871, 270): ("padin_glb_netwk", "5"),
         (0, 870, 271): ("padin_glb_netwk", "6"),
-        (0, 871, 271): ("padin_glb_netwk", "7"),
+        (1, 691, 335): ("padin_glb_netwk", "7"), # (1 0)  (691 335)  (691 335)  routing T_0_0.padin_7 <X> T_0_0.glb_netwk_7
     },
     "8k": {
         (0, 870, 270): ("padin_glb_netwk", "0"),
@@ -1149,7 +1176,15 @@ gbufin_db = {
         ( 6,  0,  5),
         ( 6, 17,  4),
     ],
-    "5k": [
+    "5k": [ # not sure how to get the third column, currently based on diagram in pdf.
+        ( 6,  0,  0),
+        (12,  0,  1),
+        (13,  0,  3),
+        (19,  0,  6),
+        ( 6, 31,  5),
+        (12, 31,  2),
+        (13, 31,  7),
+        (19, 31,  4),
     ],
     "8k": [
         (33, 16,  7),
@@ -1341,7 +1376,7 @@ pllinfo_db = {
         "SCLK":                 ( 3,  0, "fabout"),
     },
     "5k": {
-        "LOC" : (16, 0),
+        "LOC" : (12, 31),
 
         # 3'b000 = "DISABLED"
         # 3'b010 = "SB_PLL40_PAD"
@@ -4084,8 +4119,8 @@ logictile_8k_db = parse_db(iceboxdb.database_logic_txt, "8k")
 logictile_384_db = parse_db(iceboxdb.database_logic_txt, "384")
 rambtile_db = parse_db(iceboxdb.database_ramb_txt, "1k")
 ramttile_db = parse_db(iceboxdb.database_ramt_txt, "1k")
-rambtile_5k_db = parse_db(iceboxdb.database_ramb_8k_txt, "5k")
-ramttile_5k_db = parse_db(iceboxdb.database_ramt_8k_txt, "5k")
+rambtile_5k_db = parse_db(iceboxdb.database_ramb_5k_txt, "5k")
+ramttile_5k_db = parse_db(iceboxdb.database_ramt_5k_txt, "5k")
 rambtile_8k_db = parse_db(iceboxdb.database_ramb_8k_txt, "8k")
 ramttile_8k_db = parse_db(iceboxdb.database_ramt_8k_txt, "8k")
 

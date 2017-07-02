@@ -396,6 +396,7 @@ if lookup_symbols:
                     current_net = -1
     text_func.append("")
 
+#print(nets)
 wb_boot = seg_to_net(icebox.warmbootinfo_db[ic.device]["BOOT"], "")
 wb_s0 = seg_to_net(icebox.warmbootinfo_db[ic.device]["S0"], "")
 wb_s1 = seg_to_net(icebox.warmbootinfo_db[ic.device]["S1"], "")
