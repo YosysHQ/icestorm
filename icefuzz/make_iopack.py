@@ -10,8 +10,12 @@ num_xor = 8
 num_luts = 8
 num_outputs_range = (5, 20)
 
-os.system("rm -rf work_iopack")
-os.mkdir("work_iopack")
+device_class = os.getenv("ICEDEVICE")
+
+working_dir = "work_%s_iopack" % (device_class, )
+
+os.system("rm -rf " + working_dir)
+os.mkdir(working_dir)
 
 def get_pin_directions():
     pindirs = ["i" for i in range(len(pins))]
@@ -32,7 +36,7 @@ def get_nearby_inputs(p, n, r):
     return [choice(ipins) for i in range(n)]
 
 for idx in range(num):
-    with open("work_iopack/iopack_%02d.v" % idx, "w") as f:
+    with open(working_dir + "/iopack_%02d.v" % idx, "w") as f:
         pindirs = get_pin_directions()
         print("module top(%s);" % ", ".join(["%sput p%d" % ("in" if pindirs[i] == "i" else "out", i) for i in range(len(pins))]), file=f)
         for outp in range(len(pins)):
@@ -45,13 +49,9 @@ for idx in range(num):
                     xor_nets.add("%sp%d_in%d" % (choice(["~", ""]), outp, i))
                 print("  assign p%d = ^{%s};" % (outp, ", ".join(sorted(xor_nets))), file=f)
         print("endmodule", file=f)
-    with open("work_iopack/iopack_%02d.pcf" % idx, "w") as f:
+    with open(working_dir + "/iopack_%02d.pcf" % idx, "w") as f:
         for i in range(len(pins)):
             print("set_io p%d %s" % (i, pins[i]), file=f)
 
-with open("work_iopack/Makefile", "w") as f:
-    print("all: %s" % " ".join(["iopack_%02d.bin" % i for i in range(num)]), file=f)
-    for i in range(num):
-        print("iopack_%02d.bin:" % i, file=f)
-        print("\t-bash ../icecube.sh iopack_%02d > iopack_%02d.log 2>&1 && rm -rf iopack_%02d.tmp || tail iopack_%02d.log" % (i, i, i, i), file=f)
+output_makefile(working_dir, "iopack")
 

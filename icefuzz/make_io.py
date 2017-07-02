@@ -4,13 +4,17 @@ from fuzzconfig import *
 import numpy as np
 import os
 
-os.system("rm -rf work_io")
-os.mkdir("work_io")
+device_class = os.getenv("ICEDEVICE")
+
+working_dir = "work_%s_io" % (device_class, )
+
+os.system("rm -rf " + working_dir)
+os.mkdir(working_dir)
 
 w = num_iobanks
 
 for idx in range(num):
-    with open("work_io/io_%02d.v" % idx, "w") as f:
+    with open(working_dir + "/io_%02d.v" % idx, "w") as f:
         glbs = np.random.permutation(list(range(8)))
         print("""
             module top (
@@ -48,14 +52,11 @@ for idx in range(num):
             np.random.choice(["0000", "0110", "1010", "1110", "0101", "1001", "1101", "0100", "1000", "1100", "0111", "1111"]),
             np.random.choice(["00", "01", "10", "11"]), np.random.choice(["0", "1"]), np.random.choice(["0", "1"]), w-1
         ), file=f)
-    with open("work_io/io_%02d.pcf" % idx, "w") as f:
+    with open(working_dir + "/io_%02d.pcf" % idx, "w") as f:
         p = list(np.random.permutation(pins))
         for k in ["pin", "latch_in", "clk_en", "clk_in", "clk_out", "oen", "dout_0", "dout_1", "din_0", "din_1"]:
             for i in range(w):
                 print("set_io %s[%d] %s" % (k, i, p.pop()), file=f)
 
-with open("work_io/Makefile", "w") as f:
-    print("all: %s" % " ".join(["io_%02d.bin" % i for i in range(num)]), file=f)
-    for i in range(num):
-        print("io_%02d.bin:" % i, file=f)
-        print("\t-bash ../icecube.sh io_%02d > io_%02d.log 2>&1 && rm -rf io_%02d.tmp || tail io_%02d.log" % (i, i, i, i), file=f)
+
+output_makefile(working_dir, "io")

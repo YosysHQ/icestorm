@@ -4,11 +4,15 @@ from fuzzconfig import *
 import numpy as np
 import os
 
-os.system("rm -rf work_ram40")
-os.mkdir("work_ram40")
+device_class = os.getenv("ICEDEVICE")
+
+working_dir = "work_%s_ram40" % (device_class, )
+
+os.system("rm -rf " + working_dir)
+os.mkdir(working_dir)
 
 for idx in range(num):
-    with open("work_ram40/ram40_%02d.v" % idx, "w") as f:
+    with open(working_dir + "/ram40_%02d.v" % idx, "w") as f:
         glbs = ["glb[%d]" % i for i in range(np.random.randint(8)+1)]
         glbs_choice = ["wa", "ra", "msk", "wd", "we", "wce", "wc", "re", "rce", "rc"]
         print("""
@@ -96,15 +100,12 @@ for idx in range(num):
                 bits[k] = "rdata_%d[%d] ^ %s" % (i, k, bits[k])
         print("assign out_pins = rdata_%d;" % i, file=f)
         print("endmodule", file=f)
-    with open("work_ram40/ram40_%02d.pcf" % idx, "w") as f:
+    with open(working_dir + "/ram40_%02d.pcf" % idx, "w") as f:
         p = list(np.random.permutation(pins))
         for i in range(len(pins) - 16):
             print("set_io in_pins[%d] %s" % (i, p.pop()), file=f)
         for i in range(16):
             print("set_io out_pins[%d] %s" % (i, p.pop()), file=f)
 
-with open("work_ram40/Makefile", "w") as f:
-    print("all: %s" % " ".join(["ram40_%02d.bin" % i for i in range(num)]), file=f)
-    for i in range(num):
-        print("ram40_%02d.bin:" % i, file=f)
-        print("\t-bash ../icecube.sh ram40_%02d > ram40_%02d.log 2>&1 && rm -rf ram40_%02d.tmp || tail ram40_%02d.log" % (i, i, i, i), file=f)
+
+output_makefile(working_dir, "ram40")
