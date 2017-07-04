@@ -419,7 +419,6 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 	write_byte(ofs, crc_value, file_offset, 0x7E);
 	write_byte(ofs, crc_value, file_offset, 0xAA);
 	write_byte(ofs, crc_value, file_offset, 0x99);
-	info("blah");
 	write_byte(ofs, crc_value, file_offset, 0x7E);
 
 	debug("Setting freqrange to '%s'.\n", this->freqrange.c_str());
@@ -851,42 +850,41 @@ void FpgaConfig::write_cram_pbm(std::ostream &ofs, int bank_num) const
 	ofs << "P3\n";
 	ofs << stringf("%d %d\n", 2*this->cram_width, 2*this->cram_height);
 	ofs << "255\n";
-        uint32_t tile_type[4][this->cram_width][this->cram_height];
+	uint32_t tile_type[4][this->cram_width][this->cram_height];
 	for (int y = 0; y <= this->chip_height()+1; y++)
 	for (int x = 0; x <= this->chip_width()+1; x++)
 	{
 		CramIndexConverter cic(this, x, y);
-                
-                uint32_t color = 0x000000;
-                if (cic.tile_type == "io") {
-                  color = 0x00aa00;
-                } else if (cic.tile_type == "logic") {
-                  if ((x + y) %2 == 0) {
-                    color = 0x0000ff;
-                  } else {
-                    color = 0x0000aa;
-                  }
-                  if (x == 12 && y == 25) {
-                    color = 0xaa00aa;
-                  }
-                  if (x == 12 && y == 24) {
-                    color = 0x888888;
-                  }
-                } else if (cic.tile_type == "ramt") {
-                  color = 0xff0000;
-                } else if (cic.tile_type == "ramb") {
-                  color = 0xaa0000;
-                } else if (cic.tile_type == "unsupported") {
-                  color = 0x333333;
-                } else {
-                info("%s\n", cic.tile_type.c_str());
-                }
+
+		uint32_t color = 0x000000;
+		if (cic.tile_type == "io") {
+			color = 0x00aa00;
+		} else if (cic.tile_type == "logic") {
+			if ((x + y) % 2 == 0) {
+				color = 0x0000ff;
+			} else {
+				color = 0x0000aa;
+			}
+			if (x == 12 && y == 25) {
+				color = 0xaa00aa;
+			}
+			if (x == 12 && y == 24) {
+				color = 0x888888;
+			}
+		} else if (cic.tile_type == "ramt") {
+			color = 0xff0000;
+		} else if (cic.tile_type == "ramb") {
+			color = 0xaa0000;
+		} else if (cic.tile_type == "unsupported") {
+			color = 0x333333;
+		} else {
+			info("%s\n", cic.tile_type.c_str());
+		}
 
 		for (int bit_y = 0; bit_y < 16; bit_y++)
 		for (int bit_x = 0; bit_x < cic.tile_width; bit_x++) {
 			int cram_bank, cram_x, cram_y;
 			cic.get_cram_index(bit_x, bit_y, cram_bank, cram_x, cram_y);
-                        
 			tile_type[cram_bank][cram_x][cram_y] = color;
 		}
 	}
@@ -900,14 +898,14 @@ void FpgaConfig::write_cram_pbm(std::ostream &ofs, int bank_num) const
 			if (bank_num >= 0 && bank != bank_num)
 				ofs << "   255 255 255";
 			else if (this->cram[bank][bank_x][bank_y]) {
-                          ofs << "   255 255 255";
-                        } else {
-                          uint32_t color = tile_type[bank][bank_x][bank_y];
-                          uint8_t r = color >> 16;
-                          uint8_t g = color >> 8;
-                          uint8_t b = color & 0xff;
+				ofs << "   255 255 255";
+			} else {
+				uint32_t color = tile_type[bank][bank_x][bank_y];
+				uint8_t r = color >> 16;
+				uint8_t g = color >> 8;
+				uint8_t b = color & 0xff;
 				ofs << stringf(" %d %d %d", r, g, b);
-                        }
+			}
 		}
 		ofs << '\n';
 	}
@@ -927,7 +925,7 @@ void FpgaConfig::write_bram_pbm(std::ostream &ofs, int bank_num) const
 				bank |= 1, bank_x = 2*this->bram_width - bank_x - 1;
 			if (bank_y >= this->bram_height)
 				bank |= 2, bank_y = 2*this->bram_height - bank_y - 1;
-                        info("%d %d %d\n", bank, bank_x, bank_y);
+			info("%d %d %d\n", bank, bank_x, bank_y);
 			if (bank_num >= 0 && bank != bank_num)
 				ofs << " 0";
 			else
@@ -994,12 +992,12 @@ string FpgaConfig::tile_type(int x, int y) const
 
 int FpgaConfig::tile_width(const string &type) const
 {
-	if (type == "corner") return 0;
-	if (type == "logic")  return 54;
-	if (type == "ramb")   return 42;
-	if (type == "ramt")   return 42;
-	if (type == "io")     return 18;
-	if (type == "unsupported")     return 76;
+	if (type == "corner")        return 0;
+	if (type == "logic")         return 54;
+	if (type == "ramb")          return 42;
+	if (type == "ramt")          return 42;
+	if (type == "io")            return 18;
+	if (type == "unsupported")   return 76;
 	panic("Unknown tile type '%s'.\n", type.c_str());
 }
 
@@ -1291,13 +1289,13 @@ int main(int argc, char **argv)
 		fpga_config.cram_clear();
 		fpga_config.cram_checkerboard(checkerboard_m);
 	}
-	
+
 	info("netpbm\n");
 
 	if (netpbm_fill_tiles)
 		fpga_config.cram_fill_tiles();
-        
-        info("fill done\n");
+
+	info("fill done\n");
 
 	if (netpbm_mode) {
 		if (netpbm_bram)
