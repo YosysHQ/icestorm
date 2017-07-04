@@ -51,6 +51,13 @@ if [ "$1" == "-ul1k" ]; then
 	shift
 fi
 
+if [ "$1" == "-up5k" ]; then
+	ICEDEV=up5k-sg48
+	shift
+fi
+
+ICECUBEDIR=~/lscc/iCEcube2.2017.01
+
 set -ex
 set -- ${1%.v}
 icecubedir="${ICECUBEDIR:-/opt/lscc/iCEcube2.2015.08}"
@@ -62,7 +69,7 @@ export TCL_LIBRARY="$icecubedir/sbt_backend/bin/linux/lib/tcl8.4"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH${LD_LIBRARY_PATH:+:}$icecubedir/sbt_backend/bin/linux/opt"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH${LD_LIBRARY_PATH:+:}$icecubedir/sbt_backend/bin/linux/opt/synpwrap"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH${LD_LIBRARY_PATH:+:}$icecubedir/sbt_backend/lib/linux/opt"
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH${LD_LIBRARY_PATH:+:}$icecubedir/LSE/bin/lin"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH${LD_LIBRARY_PATH:+:}$icecubedir/LSE/bin/lin64"
 
 case "${ICEDEV:-hx1k-tq144}" in
 	hx1k-cb132)
@@ -173,6 +180,10 @@ case "${ICEDEV:-hx1k-tq144}" in
                 iCEPACKAGE="CM36A"
                 iCE40DEV="iCE40UL1K"
 		;;
+	up5k-sg48)
+		iCEPACKAGE="SG48"
+		iCE40DEV="iCE40UP5K"
+		;;
 	*)
 		echo "ERROR: Invalid \$ICEDEV device config '$ICEDEV'."
 		exit 1
@@ -218,6 +229,11 @@ case "$iCE40DEV" in
 		icetech="SBTiCE40UL"
 		libfile="ice40BT1K.lib"
 		devfile="ICE40T01.dev"
+		;;
+	iCE40UP5K)
+		icetech="SBTiCE40UP"
+		libfile="ice40UP5K.lib"
+		devfile="ICE40T05.dev"
 		;;
 esac
 
@@ -334,7 +350,7 @@ fi
 
 # synthesis (Lattice LSE)
 if true; then
-	"$icecubedir"/LSE/bin/lin/synthesis -f "impl_lse.prj"
+	"$icecubedir"/LSE/bin/lin64/synthesis -f "impl_lse.prj"
 fi
 
 # convert netlist
@@ -403,5 +419,4 @@ if [ -n "$ICE_SBTIMER_LP" ]; then
 fi
 
 export LD_LIBRARY_PATH=""
-$scriptdir/../icepack/iceunpack "$1.bin" "$1.asc"
-
+$scriptdir/../icepack/iceunpack -vv "$1.bin" "$1.asc"

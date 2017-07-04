@@ -2,6 +2,8 @@
 
 import re, sys, os
 
+device_class = os.getenv("ICEDEVICE")
+
 def sort_bits_key(a):
     if a[0] == "!": a = a[1:]
     return re.sub(r"\d+", lambda m: "%02d" % int(m.group(0)), a)
@@ -136,11 +138,11 @@ with open("database_ramt.txt", "w") as f:
     for entry in read_database("bitdata_ramt.txt", "ramt"):
         print("\t".join(entry), file=f)
 
-with open("database_ramb_8k.txt", "w") as f:
-    for entry in read_database("bitdata_ramb_8k.txt", "ramb_8k"):
-        print("\t".join(entry), file=f)
+for device_class in ["5k", "8k"]:
+  with open("database_ramb_%s.txt" % (device_class, ), "w") as f:
+      for entry in read_database("bitdata_ramb_%s.txt" % (device_class, ), "ramb_" + device_class):
+          print("\t".join(entry), file=f)
 
-with open("database_ramt_8k.txt", "w") as f:
-    for entry in read_database("bitdata_ramt_8k.txt", "ramt_8k"):
-        print("\t".join(entry), file=f)
-
+  with open("database_ramt_%s.txt" % (device_class, ), "w") as f:
+      for entry in read_database("bitdata_ramt_%s.txt" % (device_class, ), "ramt_" + device_class):
+          print("\t".join(entry), file=f)

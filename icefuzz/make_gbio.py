@@ -4,17 +4,31 @@ from fuzzconfig import *
 import numpy as np
 import os
 
-os.system("rm -rf work_gbio")
-os.mkdir("work_gbio")
+device_class = os.getenv("ICEDEVICE")
 
-w = 4 if os.getenv('ICE384PINS') else 8
+working_dir = "work_%s_gbio" % (device_class, )
+
+os.system("rm -rf " + working_dir)
+os.mkdir(working_dir)
 
 for p in gpins:
     if p in pins: pins.remove(p)
 
+# We can either tickle every global buffer or we don't have enough pins to do
+# the full logic for each one.
+w = min(min((len(pins) - 8) // 4, len(gpins)), 8)
+
 for idx in range(num):
-    with open("work_gbio/gbio_%02d.v" % idx, "w") as f:
+    with open(working_dir + "/gbio_%02d.v" % idx, "w") as f:
         glbs = np.random.permutation(list(range(8)))
+
+        if w <= 4:
+          din_0 = (w - 2, w)
+        else:
+          din_0 = (4, "%d:4" % (w - 1,))
+        din_0 = np.random.choice(["din_0",    "{din_0[%d:0], din_0[%s]}" % din_0])
+        din_1 = np.random.choice(["din_1",    "{din_1[1:0], din_1[%d:2]}" % (w - 1,)])
+        globals_0 = np.random.choice(["globals",  "{globals[0], globals[%d:1]}" % (w - 1, )])
         print("""
             module top (
                 inout [%s:0] pin,
@@ -64,15 +78,12 @@ for idx in range(num):
             np.random.choice(["oen",      "globals", "din_0+din_1", "din_0^din_1"]),
             np.random.choice(["dout_1",   "globals", "globals^dout_0", "din_0+din_1", "~din_0"]),
             np.random.choice(["dout_0",   "globals", "globals^dout_1", "din_0+din_1", "~din_1"]),
-            np.random.choice(["din_0",    "{din_0[2:0], din_0[3]}"]) if os.getenv('ICE384PINS')
-             else np.random.choice(["din_0",    "{din_0[3:0], din_0[7:4]}"]) ,
-            np.random.choice(["din_1",    "{din_1[1:0], din_1[3:2]}"]) if os.getenv('ICE384PINS')
-             else np.random.choice(["din_1",    "{din_1[1:0], din_1[7:2]}"]),
-            np.random.choice(["globals",  "{globals[0], globals[3:1]}"]) if os.getenv('ICE384PINS')
-             else np.random.choice(["globals",  "{globals[0], globals[7:1]}"]),
+            din_0,
+            din_1,
+            globals_0,
             glbs[0], glbs[1], glbs[1], glbs[2], glbs[3]
         ), file=f)
-    with open("work_gbio/gbio_%02d.pcf" % idx, "w") as f:
+    with open(working_dir + "/gbio_%02d.pcf" % idx, "w") as f:
         p = np.random.permutation(pins)
         g = np.random.permutation(gpins)
         for i in range(w):
@@ -84,9 +95,5 @@ for idx in range(num):
             print("set_io %s %s" % (n, p[4*w+i]), file=f)
         print("set_io q %s" % (p[-1]), file=f)
 
-with open("work_gbio/Makefile", "w") as f:
-    print("all: %s" % " ".join(["gbio_%02d.bin" % i for i in range(num)]), file=f)
-    for i in range(num):
-        print("gbio_%02d.bin:" % i, file=f)
-        print("\t-bash ../icecube.sh gbio_%02d > gbio_%02d.log 2>&1 && rm -rf gbio_%02d.tmp || tail gbio_%02d.log" % (i, i, i, i), file=f)
 
+output_makefile(working_dir, "gbio")
