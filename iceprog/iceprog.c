@@ -87,8 +87,7 @@ static void send_byte(uint8_t data)
 {
 	int rc = ftdi_write_data(&ftdic, &data, 1);
 	if (rc != 1) {
-		fprintf(stderr, "Write error (single byte, "
-				"rc=%d, expected %d).\n", rc, 1);
+		fprintf(stderr, "Write error (single byte, rc=%d, expected %d).\n", rc, 1);
 		error(2);
 	}
 }
@@ -104,8 +103,7 @@ static void send_spi(uint8_t *data, int n)
 
 	int rc = ftdi_write_data(&ftdic, data, n);
 	if (rc != n) {
-		fprintf(stderr, "Write error (chunk, "
-				"rc=%d, expected %d).\n", rc, n);
+		fprintf(stderr, "Write error (chunk, rc=%d, expected %d).\n", rc, n);
 		error(2);
 	}
 }
@@ -121,8 +119,7 @@ static void xfer_spi(uint8_t *data, int n)
 
 	int rc = ftdi_write_data(&ftdic, data, n);
 	if (rc != n) {
-		fprintf(stderr, "Write error (chunk, "
-				"rc=%d, expected %d).\n", rc, n);
+		fprintf(stderr, "Write error (chunk, rc=%d, expected %d).\n", rc, n);
 		error(2);
 	}
 
@@ -214,9 +211,8 @@ static void flash_64kB_sector_erase(int addr)
 {
 	fprintf(stderr, "erase 64kB sector at 0x%06X..\n", addr);
 
-	uint8_t command[4] = { 0xd8, (uint8_t)(addr >> 16),
-				     (uint8_t)(addr >> 8),
-				     (uint8_t)addr };
+	uint8_t command[4] = { 0xd8, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
+
 	set_gpio(0, 0);
 	send_spi(command, 4);
 	set_gpio(1, 0);
@@ -227,9 +223,8 @@ static void flash_prog(int addr, uint8_t *data, int n)
 	if (verbose)
 		fprintf(stderr, "prog 0x%06X +0x%03X..\n", addr, n);
 
-	uint8_t command[4] = { 0x02, (uint8_t)(addr >> 16),
-				     (uint8_t)(addr >> 8),
-				     (uint8_t)addr };
+	uint8_t command[4] = { 0x02, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
+
 	set_gpio(0, 0);
 	send_spi(command, 4);
 	send_spi(data, n);
@@ -237,8 +232,7 @@ static void flash_prog(int addr, uint8_t *data, int n)
 
 	if (verbose)
 		for (int i = 0; i < n; i++)
-			fprintf(stderr, "%02x%c", data[i],
-				i == n - 1 || i % 32 == 31 ? '\n' : ' ');
+			fprintf(stderr, "%02x%c", data[i], i == n - 1 || i % 32 == 31 ? '\n' : ' ');
 }
 
 static void flash_read(int addr, uint8_t *data, int n)
@@ -246,9 +240,8 @@ static void flash_read(int addr, uint8_t *data, int n)
 	if (verbose)
 		fprintf(stderr, "read 0x%06X +0x%03X..\n", addr, n);
 
-	uint8_t command[4] = { 0x03, (uint8_t)(addr >> 16),
-				     (uint8_t)(addr >> 8),
-				     (uint8_t)addr };
+	uint8_t command[4] = { 0x03, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
+
 	set_gpio(0, 0);
 	send_spi(command, 4);
 	memset(data, 0, n);
@@ -257,8 +250,7 @@ static void flash_read(int addr, uint8_t *data, int n)
 
 	if (verbose)
 		for (int i = 0; i < n; i++)
-			fprintf(stderr, "%02x%c", data[i],
-				i == n - 1 || i % 32 == 31 ? '\n' : ' ');
+			fprintf(stderr, "%02x%c", data[i], i == n - 1 || i % 32 == 31 ? '\n' : ' ');
 }
 
 static void flash_wait()
@@ -266,7 +258,8 @@ static void flash_wait()
 	if (verbose)
 		fprintf(stderr, "waiting..");
 
-	while (1) {
+	while (1)
+	{
 		uint8_t data[2] = { 0x05 };
 
 		set_gpio(0, 0);
@@ -375,8 +368,7 @@ int main(int argc, char **argv)
 
 	int opt;
 	char *endptr;
-	while ((opt = getopt_long(argc, argv, "d:I:rR:o:cbnStv",
-				  long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "d:I:rR:o:cbnStv", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'd':
 			devstr = optarg;
@@ -391,9 +383,7 @@ int main(int argc, char **argv)
 			else if (!strcmp(optarg, "D"))
 				ifnum = INTERFACE_D;
 			else
-				errx(EXIT_FAILURE,
-				     "`%s' is not a valid interface (must be "
-				     "`A', `B', `C', or `D')", optarg);
+				errx(EXIT_FAILURE, "`%s' is not a valid interface (must be `A', `B', `C', or `D')", optarg);
 			break;
 		case 'r':
 			read_mode = true;
@@ -408,8 +398,7 @@ int main(int argc, char **argv)
 			else if (!strcmp(endptr, "M"))
 				read_size *= 1024 * 1024;
 			else
-				errx(EXIT_FAILURE,
-				     "`%s' is not a valid size", optarg);
+				errx(EXIT_FAILURE, "`%s' is not a valid size", optarg);
 			break;
 		case 'o':
 			rw_offset = strtol(optarg, &endptr, 0);
@@ -420,8 +409,7 @@ int main(int argc, char **argv)
 			else if (!strcmp(endptr, "M"))
 				rw_offset *= 1024 * 1024;
 			else
-				errx(EXIT_FAILURE,
-				     "`%s' is not a valid offset", optarg);
+				errx(EXIT_FAILURE, "`%s' is not a valid offset", optarg);
 			break;
 		case 'c':
 			check_mode = true;
@@ -446,52 +434,45 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		default:
 			/* error message has already been printed */
-			fprintf(stderr, "Try `%s --help' "
-					"for more information.\n", argv[0]);
+			fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
 			return EXIT_FAILURE;
 		}
 	}
 
 	if (read_mode + check_mode + prog_sram + test_mode > 1)
-		errx(EXIT_FAILURE,
-		     "options `-r'/`-R', `-c', `-S', and `-t' are mutually "
-		     "exclusive");
+		errx(EXIT_FAILURE, "options `-r'/`-R', `-c', `-S', and `-t' are mutually exclusive");
 
 	if (bulk_erase && dont_erase)
-		errx(EXIT_FAILURE,
-		     "options `-b' and `-n' are mutually exclusive");
+		errx(EXIT_FAILURE, "options `-b' and `-n' are mutually exclusive");
 
 	if (bulk_erase && (read_mode || check_mode || prog_sram || test_mode))
-		errx(EXIT_FAILURE,
-		     "option `-b' only valid in programming mode");
+		errx(EXIT_FAILURE, "option `-b' only valid in programming mode");
+
 	if (dont_erase && (read_mode || check_mode || prog_sram || test_mode))
-		errx(EXIT_FAILURE,
-		     "option `-n' only valid in programming mode");
+		errx(EXIT_FAILURE, "option `-n' only valid in programming mode");
 
 	if (rw_offset != 0 && prog_sram)
 		errx(EXIT_FAILURE, "option `-o' not supported in SRAM mode");
+
 	if (rw_offset != 0 && test_mode)
 		errx(EXIT_FAILURE, "option `-o' not supported in test mode");
 
 	if (optind + 1 == argc) {
 		if (test_mode) {
 			warnx("test mode doesn't take a file name");
-			fprintf(stderr, "Try `%s --help' "
-					"for more information.\n", argv[0]);
+			fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
 			return EXIT_FAILURE;
 		}
 		filename = argv[optind];
 	} else if (optind != argc) {
 		warnx("too many arguments");
-		fprintf(stderr, "Try `%s --help' "
-				"for more information.\n", argv[0]);
+		fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
 		return EXIT_FAILURE;
 	} else if (bulk_erase) {
 		filename = "/dev/null";
 	} else if (!test_mode) {
 		warnx("missing argument");
-		fprintf(stderr, "Try `%s --help' "
-				"for more information.\n", argv[0]);
+		fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
@@ -504,17 +485,13 @@ int main(int argc, char **argv)
 	if (test_mode)
 		/* nop */;
 	else if (read_mode) {
-		f = (strcmp(filename, "-") == 0) ? stdout
-						 : fopen(filename, "wb");
+		f = (strcmp(filename, "-") == 0) ? stdout : fopen(filename, "wb");
 		if (f == NULL)
-			err(EXIT_FAILURE,
-			    "can't open '%s' for writing", filename);
+			err(EXIT_FAILURE, "can't open '%s' for writing", filename);
 	} else {
-		f = (strcmp(filename, "-") == 0) ? stdin
-						 : fopen(filename, "rb");
+		f = (strcmp(filename, "-") == 0) ? stdin : fopen(filename, "rb");
 		if (f == NULL)
-			err(EXIT_FAILURE,
-			    "can't open '%s' for reading", filename);
+			err(EXIT_FAILURE, "can't open '%s' for reading", filename);
 
 		/* For regular programming, we need to read the file
 		   twice--once for programming and once for verifying--and
@@ -530,32 +507,25 @@ int main(int argc, char **argv)
 			if (fseek(f, 0L, SEEK_END) != -1) {
 				file_size = ftell(f);
 				if (file_size == -1)
-					err(EXIT_FAILURE,
-					    "%s: ftell", filename);
+					err(EXIT_FAILURE, "%s: ftell", filename);
 				if (fseek(f, 0L, SEEK_SET) == -1)
-					err(EXIT_FAILURE,
-					    "%s: fseek", filename);
+					err(EXIT_FAILURE, "%s: fseek", filename);
 			} else {
 				FILE *pipe = f;
 
 				f = tmpfile();
 				if (f == NULL)
-					errx(EXIT_FAILURE,
-					     "can't open temporary file");
+					errx(EXIT_FAILURE, "can't open temporary file");
 				file_size = 0;
 
 				while (true) {
 					static unsigned char buffer[4096];
-					size_t rc =
-						fread(buffer, 1, 4096, pipe);
+					size_t rc = fread(buffer, 1, 4096, pipe);
 					if (rc <= 0)
 						break;
-					size_t wc =
-						fwrite(buffer, 1, rc, f);
+					size_t wc = fwrite(buffer, 1, rc, f);
 					if (wc != rc)
-						errx(EXIT_FAILURE,
-						     "can't write to "
-						     "temporary file");
+						errx(EXIT_FAILURE, "can't write to temporary file");
 					file_size += rc;
 				}
 				fclose(pipe);
@@ -578,15 +548,12 @@ int main(int argc, char **argv)
 
 	if (devstr != NULL) {
 		if (ftdi_usb_open_string(&ftdic, devstr)) {
-			fprintf(stderr, "Can't find iCE FTDI USB device "
-					"(device string %s).\n", devstr);
+			fprintf(stderr, "Can't find iCE FTDI USB device (device string %s).\n", devstr);
 			error(2);
 		}
 	} else {
 		if (ftdi_usb_open(&ftdic, 0x0403, 0x6010)) {
-			fprintf(stderr, "Can't find iCE FTDI USB device "
-					"(vendor_id 0x0403, "
-					"device_id 0x6010).\n");
+			fprintf(stderr, "Can't find iCE FTDI USB device (vendor_id 0x0403, device_id 0x6010).\n");
 			error(2);
 		}
 	}
@@ -599,29 +566,25 @@ int main(int argc, char **argv)
 	}
 
 	if (ftdi_usb_purge_buffers(&ftdic)) {
-		fprintf(stderr, "Failed to purge buffers "
-				"on iCE FTDI USB device.\n");
+		fprintf(stderr, "Failed to purge buffers on iCE FTDI USB device.\n");
 		error(2);
 	}
 
 	if (ftdi_get_latency_timer(&ftdic, &ftdi_latency) < 0) {
-		fprintf(stderr, "Failed to get latency timer (%s).\n",
-				ftdi_get_error_string(&ftdic));
+		fprintf(stderr, "Failed to get latency timer (%s).\n", ftdi_get_error_string(&ftdic));
 		error(2);
 	}
 
 	/* 1 is the fastest polling, it means 1 kHz polling */
 	if (ftdi_set_latency_timer(&ftdic, 1) < 0) {
-		fprintf(stderr, "Failed to set latency timer (%s).\n",
-				ftdi_get_error_string(&ftdic));
+		fprintf(stderr, "Failed to set latency timer (%s).\n", ftdi_get_error_string(&ftdic));
 		error(2);
 	}
 
 	ftdic_latency_set = true;
 
 	if (ftdi_set_bitmode(&ftdic, 0xff, BITMODE_MPSSE) < 0) {
-		fprintf(stderr, "Failed to set BITMODE_MPSSE "
-				"on iCE FTDI USB device.\n");
+		fprintf(stderr, "Failed to set BITMODE_MPSSE on iCE FTDI USB device.\n");
 		error(2);
 	}
 
@@ -639,7 +602,8 @@ int main(int argc, char **argv)
 	usleep(100000);
 
 
-	if (test_mode) {
+	if (test_mode)
+	{
 		fprintf(stderr, "reset..\n");
 
 		set_gpio(1, 0);
@@ -657,7 +621,9 @@ int main(int argc, char **argv)
 		usleep(250000);
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
-	} else if (prog_sram) {
+	}
+	else if (prog_sram)
+	{
 		// ---------------------------------------------------------
 		// Reset
 		// ---------------------------------------------------------
@@ -698,7 +664,9 @@ int main(int argc, char **argv)
 		send_byte(0x00);
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
-	} else {
+	}
+	else
+	{
 		// ---------------------------------------------------------
 		// Reset
 		// ---------------------------------------------------------
@@ -719,22 +687,24 @@ int main(int argc, char **argv)
 		// Program
 		// ---------------------------------------------------------
 
-		if (!read_mode && !check_mode) {
-			if (!dont_erase) {
-				if (bulk_erase) {
+		if (!read_mode && !check_mode)
+		{
+			if (!dont_erase)
+			{
+				if (bulk_erase)
+				{
 					flash_write_enable();
 					flash_bulk_erase();
 					flash_wait();
-				} else {
-					fprintf(stderr, "file size: %ld\n",
-							file_size);
+				}
+				else
+				{
+					fprintf(stderr, "file size: %ld\n", file_size);
 
 					int begin_addr = rw_offset & ~0xffff;
-					int end_addr = (rw_offset + file_size
-							  + 0xffff) & ~0xffff;
+					int end_addr = (rw_offset + file_size + 0xffff) & ~0xffff;
 
-					for (int addr = begin_addr;
-					     addr < end_addr; addr += 0x10000) {
+					for (int addr = begin_addr; addr < end_addr; addr += 0x10000) {
 						flash_write_enable();
 						flash_64kB_sector_erase(addr);
 						flash_wait();
@@ -768,8 +738,7 @@ int main(int argc, char **argv)
 			for (int addr = 0; addr < read_size; addr += 256) {
 				uint8_t buffer[256];
 				flash_read(rw_offset + addr, buffer, 256);
-				fwrite(buffer, read_size - addr > 256 ? 256 :
-					       read_size - addr, 1, f);
+				fwrite(buffer, read_size - addr > 256 ? 256 : read_size - addr, 1, f);
 			}
 		} else {
 			fprintf(stderr, "reading..\n");
@@ -780,8 +749,7 @@ int main(int argc, char **argv)
 					break;
 				flash_read(rw_offset + addr, buffer_flash, rc);
 				if (memcmp(buffer_file, buffer_flash, rc)) {
-					fprintf(stderr, "Found difference "
-						"between flash and file!\n");
+					fprintf(stderr, "Found difference between flash and file!\n");
 					error(3);
 				}
 			}
