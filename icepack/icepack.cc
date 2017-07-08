@@ -1144,11 +1144,14 @@ BramIndexConverter::BramIndexConverter(const FpgaConfig *fpga, int tile_x, int t
 
 	this->bank_num = 0;
 	int y_offset = this->tile_y - 1;
-	if (!top_half) {
+	if (this->fpga->device == "5k") {
+		if (!top_half) {
+			this->bank_num |= 1;
+		} else {
+			y_offset = this->tile_y - (chip_height / 3);
+		}
+	} else if (top_half) {
 		this->bank_num |= 1;
-	} else if (this->fpga->device == "5k") {
-		y_offset = this->tile_y - (chip_height / 3);
-	} else {
 		y_offset = this->tile_y - chip_height / 2;
 	}
 	if (right_half) this->bank_num |= 2;
