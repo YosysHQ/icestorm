@@ -469,7 +469,7 @@ class iceconfig:
 
     def group_segments(self, all_from_tiles=set(), extra_connections=list(), extra_segments=list(), connect_gb=True):
         seed_segments = set()
-        seen_segments = dict()
+        seen_segments = set()
         connected_segments = dict()
         grouped_segments = set()
 
@@ -499,16 +499,10 @@ class iceconfig:
                 seed_segments.add((idx[0], idx[1], "io_1/D_OUT_0"))
 
         def add_seed_segments(idx, tile, db):
-            if idx == (19, 16):
-              print("found tile", idx, tile)
             tc = tileconfig(tile)
             for entry in db:
-                if idx == (19, 16):
-                  print(entry)
                 if entry[1] in ("routing", "buffer"):
                     config_match = tc.match(entry[0])
-                    if idx == (19, 16):
-                        print(config_match)
                     if idx in all_from_tiles or config_match:
                         if not self.tile_has_net(idx[0], idx[1], entry[2]): continue
                         if not self.tile_has_net(idx[0], idx[1], entry[3]): continue
@@ -602,11 +596,9 @@ class iceconfig:
                     if s not in segments:
                         segments.add(s)
                         if s in seen_segments:
-                          print(next_segment, expanded)
-                          print(seen_segments[s])
                           print("//", s, "has already been seen. Check your bitmapping.")
                           assert False
-                        seen_segments[s] = (next_segment, expanded)
+                        seen_segments.insert(s)
                         seed_segments.discard(s)
                         if s in connected_segments:
                             for cs in connected_segments[s]:
@@ -1077,8 +1069,8 @@ def run_checks_neigh():
                 all_segments.add((x, y, "lutff_7/cout"))
 
     for s1 in all_segments:
-        # if s1[1] > 4: continue
         for s2 in ic.follow_net(s1):
+            # if s1[1] > 4: continue
             if s1 not in ic.follow_net(s2):
                 print("ERROR: %s -> %s, but not vice versa!" % (s1, s2))
                 print("Neighbours of %s:" % (s1,))
@@ -4161,11 +4153,19 @@ logictile_8k_db.append([["B1[50]"], "CarryInSet"])
 logictile_384_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
 logictile_384_db.append([["B1[50]"], "CarryInSet"])
 
-for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, logictile_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_8k_db, ramttile_8k_db]:
+for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, logictile_db, logictile_5k_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_5k_db, ramttile_5k_db, rambtile_8k_db, ramttile_8k_db]:
     for entry in db:
         if entry[1] in ("buffer", "routing"):
-            entry[2] = netname_normalize(entry[2], ramb=(db == rambtile_db), ramt=(db == ramttile_db), ramb_8k=(db == rambtile_8k_db), ramt_8k=(db == ramttile_8k_db))
-            entry[3] = netname_normalize(entry[3], ramb=(db == rambtile_db), ramt=(db == ramttile_db), ramb_8k=(db == rambtile_8k_db), ramt_8k=(db == ramttile_8k_db))
+            entry[2] = netname_normalize(entry[2],
+                                         ramb=(db == rambtile_db),
+                                         ramt=(db == ramttile_db),
+                                         ramb_8k=(db in (rambtile_8k_db, rambtile_5k_db)),
+                                         ramt_8k=(db in (ramttile_8k_db, ramttile_5k_db)))
+            entry[3] = netname_normalize(entry[3],
+                                         ramb=(db == rambtile_db),
+                                         ramt=(db == ramttile_db),
+                                         ramb_8k=(db in (rambtile_8k_db, rambtile_5k_db)),
+                                         ramt_8k=(db in (ramttile_8k_db, ramttile_5k_db)))
     unique_entries = dict()
     while db:
         entry = db.pop()
