@@ -19,12 +19,12 @@
 #include <cstdint>
 #include <memory>
 
+#include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #define log(...) fprintf(stderr, __VA_ARGS__);
 #define info(...) do { if (log_level > 0) fprintf(stderr, __VA_ARGS__); } while (0)
-#define error(...) do { fprintf(stderr, "Error: " __VA_ARGS__); exit(EXIT_FAILURE); } while (0)
 
 int log_level = 0;
 
@@ -63,7 +63,7 @@ static void write_file(std::ostream &ofs, uint32_t &file_offset,
     while(!ifs.eof()) {
         ifs.read(reinterpret_cast<char *>(buffer), bufsize);
         if (ifs.bad())
-            error("Read error on input image");
+            errx(EXIT_FAILURE, "read error on input image");
         write_bytes(ofs, file_offset, buffer, ifs.gcount());
     }
 
@@ -73,7 +73,7 @@ static void write_file(std::ostream &ofs, uint32_t &file_offset,
 static void pad_to(std::ostream &ofs, uint32_t &file_offset, uint32_t target)
 {
     if (target < file_offset)
-        error("Trying to pad backwards!\n");
+        errx(EXIT_FAILURE, "trying to pad backwards");
     while(file_offset < target)
         write_byte(ofs, file_offset, 0xff);
 }
@@ -220,7 +220,7 @@ int main(int argc, char **argv)
         }
 
         if (image_count >= NUM_IMAGES)
-            error("Too many images supplied\n");
+            errx(EXIT_FAILURE, "too many images supplied (maximum is 4)");
         images[image_count++].reset(new Image(argv[i]));
     }
 
@@ -228,10 +228,10 @@ int main(int argc, char **argv)
         usage();
 
     if (coldboot && por_image != 0)
-        error("Can't select power on reset boot image in cold boot mode\n");
+        errx(EXIT_FAILURE, "can't select power-on/reset boot image in cold boot mode");
 
     if (por_image >= image_count)
-        error("Specified non-existing image for power on reset\n");
+        errx(EXIT_FAILURE, "specified non-existing image for power-on/reset");
 
     // Place images
     uint32_t offs = NUM_HEADERS * HEADER_SIZE;
@@ -259,7 +259,7 @@ int main(int argc, char **argv)
     if (outfile_name != NULL) {
         ofs.open(outfile_name, std::ofstream::binary);
         if (!ofs.is_open())
-            error("Failed to open output file.\n");
+            errx(EXIT_FAILURE, "failed to open output file");
         osp = &ofs;
     } else {
         osp = &std::cout;
