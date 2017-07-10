@@ -58,7 +58,7 @@ static void write_bytes(std::ostream &ofs, uint32_t &file_offset,
 }
 
 static void write_file(std::ostream &ofs, uint32_t &file_offset,
-                       std::istream &ifs)
+                       std::istream &ifs, const char *filename)
 {
     const size_t bufsize = 8192;
     uint8_t *buffer = new uint8_t[bufsize];
@@ -66,7 +66,7 @@ static void write_file(std::ostream &ofs, uint32_t &file_offset,
     while(!ifs.eof()) {
         ifs.read(reinterpret_cast<char *>(buffer), bufsize);
         if (ifs.bad())
-            error("Read error on input image");
+            error("can't read input image `%s': %s\n", filename, strerror(errno));
         write_bytes(ofs, file_offset, buffer, ifs.gcount());
     }
 
@@ -82,11 +82,12 @@ static void pad_to(std::ostream &ofs, uint32_t &file_offset, uint32_t target)
 }
 
 class Image {
+    const char *filename;
     std::ifstream ifs;
     uint32_t offs;
 
 public:
-    Image(const char *filename) : ifs(filename, std::ifstream::binary) {}
+    Image(const char *filename) : filename(filename), ifs(filename, std::ifstream::binary) {}
 
     size_t size();
     void write(std::ostream &ofs, uint32_t &file_offset);
@@ -104,7 +105,7 @@ size_t Image::size()
 
 void Image::write(std::ostream &ofs, uint32_t &file_offset)
 {
-    write_file(ofs, file_offset, ifs);
+    write_file(ofs, file_offset, ifs, filename);
 }
 
 class Header {
@@ -268,7 +269,7 @@ int main(int argc, char **argv)
     if (outfile_name != NULL) {
         ofs.open(outfile_name, std::ofstream::binary);
         if (!ofs.is_open())
-            error("Failed to open output file.\n");
+            error("can't open output file `%s': %s\n", outfile_name, strerror(errno));
         osp = &ofs;
     } else {
         osp = &std::cout;
