@@ -84,19 +84,28 @@ class Image {
     uint32_t offs;
 
 public:
-    Image(const char *filename) : filename(filename), ifs(filename, std::ifstream::binary) {}
-
+    Image(const char *filename);
     size_t size();
     void write(std::ostream &ofs, uint32_t &file_offset);
     void place(uint32_t o) { offs = o; }
     uint32_t offset() const { return offs; }
 };
 
+Image::Image(const char *filename) : filename(filename), ifs(filename, std::ifstream::binary)
+{
+    if (ifs.fail())
+        err(EXIT_FAILURE, "can't open input image `%s'", filename);
+}
+
 size_t Image::size()
 {
     ifs.seekg (0, ifs.end);
+    if (ifs.fail())
+        err(EXIT_FAILURE, "can't seek on input image `%s'", filename);
     size_t length = ifs.tellg();
     ifs.seekg (0, ifs.beg);
+    if (ifs.fail())
+        err(EXIT_FAILURE, "can't seek on input image `%s'", filename);
     return length;
 }
 

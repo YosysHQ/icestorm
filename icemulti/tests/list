@@ -160,3 +160,6 @@ ERR		../icemulti -p2 image0 image1
 ERR		../icemulti -p3 image0
 ERR		../icemulti -p3 image0 image1
 ERR		../icemulti -p3 image0 image1 image2
+
+ERR		../icemulti doesnt-exist
+ERR		: | ../icemulti /dev/fd/0
