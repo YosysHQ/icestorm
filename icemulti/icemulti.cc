@@ -20,6 +20,7 @@
 #include <memory>
 
 #include <err.h>
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -191,6 +192,8 @@ void usage()
 
 int main(int argc, char **argv)
 {
+    int c;
+    char *endptr = NULL;
     bool coldboot = false;
     int por_image = 0;
     int image_count = 0;
@@ -200,45 +203,56 @@ int main(int argc, char **argv)
     std::unique_ptr<Image> images[NUM_IMAGES];
     const char *outfile_name = NULL;
 
-    for (int i = 1; i < argc; i++)
-    {
-	if (argv[i][0] == '-' && argv[i][1]) {
-            for (int j = 1; argv[i][j]; j++)
-                if (argv[i][j] == 'c') {
-                    coldboot = true;
-                } else if (argv[i][j] == 'p' && argv[i][j+1]) {
-                    por_image = argv[i][++j] - '0';
-                } else if (argv[i][j] == 'a' || argv[i][j] == 'A') {
-                    align_first = argv[i][j] == 'A';
-                    if (argv[i][j+1])
-                        align_bits = atoi(&argv[i][j+1]);
-                    else if(i+1 < argc)
-                        align_bits = atoi(argv[++i]);
-                    else
-                        usage();
-                    break;
-                } else if (argv[i][j] == 'o') {
-                    if (argv[i][j+1])
-                        outfile_name = &argv[i][j+1];
-                    else if(i+1 < argc)
-                        outfile_name = argv[++i];
-                    else
-                        usage();
-                    break;
-                } else if (argv[i][j] == 'v') {
-                    log_level++;
-                } else
-                    usage();
-            continue;
+    static struct option long_options[] = {
+        {NULL, 0, NULL, 0}
+    };
+
+    while ((c = getopt_long(argc, argv, "cp:a:A:o:v",
+                long_options, NULL)) != -1)
+        switch (c) {
+            case 'c':
+                coldboot = true;
+                break;
+            case 'p':
+                if (optarg[0] == '0' && optarg[1] == '\0')
+                    por_image = 0;
+                else if (optarg[0] == '1' && optarg[1] == '\0')
+                    por_image = 1;
+                else if (optarg[0] == '2' && optarg[1] == '\0')
+                    por_image = 2;
+                else if (optarg[0] == '3' && optarg[1] == '\0')
+                    por_image = 3;
+                else
+                    errx(EXIT_FAILURE, "`%s' is not a valid power-on/reset image (must be 0, 1, 2, or 3)", optarg);
+                break;
+            case 'A':
+                align_first = true;
+                /* fallthrough */
+            case 'a':
+                align_bits = strtol(optarg, &endptr, 0);
+                if (*endptr != '\0')
+                    errx(EXIT_FAILURE, "`%s' is not a valid number", optarg);
+                break;
+            case 'o':
+                outfile_name = optarg;
+                break;
+            case 'v':
+                log_level++;
+                break;
+            default:
+                usage();
         }
 
-        if (image_count >= NUM_IMAGES)
-            errx(EXIT_FAILURE, "too many images supplied (maximum is 4)");
-        images[image_count++].reset(new Image(argv[i]));
+    if (optind == argc) {
+        warnx("missing argument");
+        usage();
     }
 
-    if (!image_count)
-        usage();
+    while (optind != argc) {
+        if (image_count >= NUM_IMAGES)
+            errx(EXIT_FAILURE, "too many images supplied (maximum is 4)");
+        images[image_count++].reset(new Image(argv[optind++]));
+    }
 
     if (coldboot && por_image != 0)
         errx(EXIT_FAILURE, "can't select power-on/reset boot image in cold boot mode");
