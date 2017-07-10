@@ -24,7 +24,7 @@
 
 #define log(...) fprintf(stderr, __VA_ARGS__);
 #define info(...) do { if (log_level > 0) fprintf(stderr, __VA_ARGS__); } while (0)
-#define error(...) do { fprintf(stderr, "Error: " __VA_ARGS__); exit(1); } while (0)
+#define error(...) do { fprintf(stderr, "Error: " __VA_ARGS__); exit(EXIT_FAILURE); } while (0)
 
 int log_level = 0;
 
@@ -173,7 +173,7 @@ void usage()
     log(" -v\n");
     log(" verbose (repeat to increase verbosity)\n");
     log("\n");
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 int main(int argc, char **argv)
@@ -278,5 +278,5 @@ int main(int argc, char **argv)
     }
 
     info("Done.\n");
-    return 0;
+    return EXIT_SUCCESS;
 }
