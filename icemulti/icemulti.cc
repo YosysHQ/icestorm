@@ -24,7 +24,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define log(...) fprintf(stderr, __VA_ARGS__);
 #define info(...) do { if (log_level > 0) fprintf(stderr, __VA_ARGS__); } while (0)
 
 int log_level = 0;
@@ -167,26 +166,24 @@ void Header::write(std::ostream &ofs, uint32_t &file_offset)
         write_byte(ofs, file_offset, 0x00);
 }
 
-void usage()
+void usage(const char *program_name)
 {
-    log("\n");
-    log("Usage: icemulti [options] input-files\n");
-    log("\n");
-    log(" -c\n");
-    log(" coldboot mode, power on reset image is selected by CBSEL0/CBSEL1\n");
-    log("\n");
-    log(" -p0, -p1, -p2, -p3\n");
-    log(" select power on reset image when not using coldboot mode\n");
-    log("\n");
-    log(" -a<n>, -A<n>\n");
-    log(" align images at 2^<n> bytes. -A also aligns image 0.\n");
-    log("\n");
-    log(" -o filename\n");
-    log(" write output image to file instead of stdout\n");
-    log("\n");
-    log(" -v\n");
-    log(" verbose (repeat to increase verbosity)\n");
-    log("\n");
+    fprintf(stderr, "Create a multi-configuration image from up to four configuration images.\n");
+    fprintf(stderr, "Usage: %s [OPTION]... INPUT-FILE...\n", program_name);
+    fprintf(stderr, "\n");
+    fprintf(stderr, "  -c                    coldboot mode: image loaded on power-on or after a low\n");
+    fprintf(stderr, "                          pulse on CRESET_B is determined by the value of the\n");
+    fprintf(stderr, "                          pins CBSEL0 and CBSEL1\n");
+    fprintf(stderr, "  -p0, -p1, -p2, -p3    specifies image to be loaded on power-on or after a low\n");
+    fprintf(stderr, "                          pulse on CRESET_B (not applicable in coldboot mode)\n");
+    fprintf(stderr, "  -a N                  align images at 2^N bytes\n");
+    fprintf(stderr, "  -A N                  like `-a N', but align the first image, too\n");
+    fprintf(stderr, "  -o OUTPUT-FILE        write output to OUTPUT-FILE instead of stdout\n");
+    fprintf(stderr, "  -v                    print image offsets to stderr\n");
+    fprintf(stderr, "      --help            display this help and exit\n");
+    fprintf(stderr, "\n");
+    fprintf(stderr, "If you have a bug report, please file an issue on github:\n");
+    fprintf(stderr, "  https://github.com/cliffordwolf/icestorm/issues\n");
 }
 
 int main(int argc, char **argv)
@@ -242,7 +239,7 @@ int main(int argc, char **argv)
                 log_level++;
                 break;
             case -2:
-                usage();
+                usage(argv[0]);
                 exit(EXIT_SUCCESS);
             default:
                 fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
