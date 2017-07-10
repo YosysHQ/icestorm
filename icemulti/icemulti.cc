@@ -187,7 +187,6 @@ void usage()
     log(" -v\n");
     log(" verbose (repeat to increase verbosity)\n");
     log("\n");
-    exit(EXIT_FAILURE);
 }
 
 int main(int argc, char **argv)
@@ -204,6 +203,7 @@ int main(int argc, char **argv)
     const char *outfile_name = NULL;
 
     static struct option long_options[] = {
+        {"help", no_argument, NULL, -2},
         {NULL, 0, NULL, 0}
     };
 
@@ -241,13 +241,18 @@ int main(int argc, char **argv)
             case 'v':
                 log_level++;
                 break;
-            default:
+            case -2:
                 usage();
+                exit(EXIT_SUCCESS);
+            default:
+                fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
+                return EXIT_FAILURE;
         }
 
     if (optind == argc) {
         warnx("missing argument");
-        usage();
+        fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
+        return EXIT_FAILURE;
     }
 
     while (optind != argc) {

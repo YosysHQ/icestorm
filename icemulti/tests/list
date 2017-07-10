@@ -182,3 +182,5 @@ ERR		../icemulti -Ax image0
 
 ERR		../icemulti doesnt-exist
 ERR		: | ../icemulti /dev/fd/0
+
+tc-empty.hex	../icemulti --help
