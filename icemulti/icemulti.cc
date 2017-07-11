@@ -121,11 +121,6 @@ void Image::write(std::ostream &ofs, uint32_t &file_offset)
     write_file(ofs, file_offset, ifs, filename);
 }
 
-class Header {
-public:
-    Image const *image;
-};
-
 static void write_header(std::ostream &ofs, uint32_t &file_offset,
                          Image const *image, bool coldboot)
 {
@@ -193,7 +188,7 @@ int main(int argc, char **argv)
     int image_count = 0;
     int align_bits = 0;
     bool align_first = false;
-    Header headers[NUM_HEADERS];
+    Image *header_images[NUM_HEADERS];
     std::unique_ptr<Image> images[NUM_IMAGES];
     const char *outfile_name = NULL;
 
@@ -275,10 +270,10 @@ int main(int argc, char **argv)
 
     // Populate headers
     for (int i=0; i<image_count; i++)
-        headers[i + 1].image = &*images[i];
-    headers[0].image = headers[por_image + 1].image;
+        header_images[i + 1] = &*images[i];
+    header_images[0] = header_images[por_image + 1];
     for (int i=image_count; i < NUM_IMAGES; i++)
-        headers[i + 1].image = headers[0].image;
+        header_images[i + 1] = header_images[0];
 
     std::ofstream ofs;
     std::ostream *osp;
@@ -296,7 +291,7 @@ int main(int argc, char **argv)
     for (int i=0; i<NUM_HEADERS; i++)
     {
         pad_to(*osp, file_offset, i * HEADER_SIZE);
-        write_header(*osp, file_offset, headers[i].image, i == 0 && coldboot);
+        write_header(*osp, file_offset, header_images[i], i == 0 && coldboot);
     }
     for (int i=0; i<image_count; i++)
     {
