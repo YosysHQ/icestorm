@@ -248,7 +248,9 @@ int main(int argc, char **argv)
     while (optind != argc) {
         if (image_count >= NUM_IMAGES)
             error("Too many images supplied\n");
-        images[image_count++].reset(new Image(argv[optind++]));
+        images[image_count].reset(new Image(argv[optind++]));
+        header_images[image_count + 1] = &*images[image_count];
+        image_count++;
     }
 
     if (coldboot && por_image != 0)
@@ -269,8 +271,6 @@ int main(int argc, char **argv)
     }
 
     // Populate headers
-    for (int i=0; i<image_count; i++)
-        header_images[i + 1] = &*images[i];
     header_images[0] = header_images[por_image + 1];
     for (int i=image_count; i < NUM_IMAGES; i++)
         header_images[i + 1] = header_images[0];
