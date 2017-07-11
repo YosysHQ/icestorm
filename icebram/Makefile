@@ -10,7 +10,15 @@ icebram$(EXE): icebram.o
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 check test: all
-	bash rundemo.sh
+	@if type yosys; then \
+	  if type arachne-pnr; then \
+	    if type iverilog; then \
+	      if type vvp; then \
+	        bash rundemo.sh; \
+	      else echo "... skipping icebram test ..."; fi; \
+	    else echo "... skipping icebram test ..."; fi; \
+	  else echo "... skipping icebram test ..."; fi; \
+	else echo "... skipping icebram test ..."; fi
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
