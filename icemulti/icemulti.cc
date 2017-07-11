@@ -23,6 +23,7 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 static const int NUM_IMAGES = 4;
 static const int HEADER_SIZE = 32;
@@ -239,10 +240,18 @@ int main(int argc, char **argv)
     while (optind != argc) {
         if (header_count >= NUM_IMAGES)
             errx(EXIT_FAILURE, "too many images supplied (maximum is 4)");
-        images[image_count].reset(new Image(argv[optind++]));
+        for (int i = 0; i < image_count; i++)
+            if (strcmp(argv[optind], images[i]->filename) == 0) {
+                header_images[header_count] = &*images[i];
+                goto image_found;
+            }
+        images[image_count].reset(new Image(argv[optind]));
         header_images[header_count] = &*images[image_count];
-        header_count++;
         image_count++;
+
+    image_found:
+        header_count++;
+        optind++;
     }
 
     if (coldboot && por_image != 0)
