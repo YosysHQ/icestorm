@@ -185,6 +185,7 @@ int main(int argc, char **argv)
     char *endptr = NULL;
     bool coldboot = false;
     int por_image = 0;
+    int header_count = 0;
     int image_count = 0;
     int align_bits = 0;
     bool align_first = false;
@@ -246,17 +247,18 @@ int main(int argc, char **argv)
     }
 
     while (optind != argc) {
-        if (image_count >= NUM_IMAGES)
+        if (header_count >= NUM_IMAGES)
             error("Too many images supplied\n");
         images[image_count].reset(new Image(argv[optind++]));
-        header_images[image_count + 1] = &*images[image_count];
+        header_images[header_count + 1] = &*images[image_count];
+        header_count++;
         image_count++;
     }
 
     if (coldboot && por_image != 0)
         error("Can't select power on reset boot image in cold boot mode\n");
 
-    if (por_image >= image_count)
+    if (por_image >= header_count)
         error("Specified non-existing image for power on reset\n");
 
     // Place images
@@ -272,7 +274,7 @@ int main(int argc, char **argv)
 
     // Populate headers
     header_images[0] = header_images[por_image + 1];
-    for (int i=image_count; i < NUM_IMAGES; i++)
+    for (int i=header_count; i < NUM_IMAGES; i++)
         header_images[i + 1] = header_images[0];
 
     std::ofstream ofs;
