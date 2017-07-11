@@ -241,6 +241,8 @@ int main(int argc, char **argv)
                 align_bits = strtol(optarg, &endptr, 0);
                 if (*endptr != '\0')
                     error("`%s' is not a valid number\n", optarg);
+                if (align_bits < 0)
+                    error("argument to `-%c' must be non-negative\n", c);
                 break;
             case 'o':
                 outfile_name = optarg;
