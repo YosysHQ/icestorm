@@ -124,10 +124,10 @@ void Image::write(std::ostream &ofs, uint32_t &file_offset)
 class Header {
 public:
     Image const *image;
-    void write(std::ostream &ofs, uint32_t &file_offset, bool coldboot);
 };
 
-void Header::write(std::ostream &ofs, uint32_t &file_offset, bool coldboot)
+static void write_header(std::ostream &ofs, uint32_t &file_offset,
+                         Image const *image, bool coldboot)
 {
     // Preamble
     write_byte(ofs, file_offset, 0x7e);
@@ -296,7 +296,7 @@ int main(int argc, char **argv)
     for (int i=0; i<NUM_HEADERS; i++)
     {
         pad_to(*osp, file_offset, i * HEADER_SIZE);
-        headers[i].write(*osp, file_offset, i == 0 && coldboot);
+        write_header(*osp, file_offset, headers[i].image, i == 0 && coldboot);
     }
     for (int i=0; i<image_count; i++)
     {
