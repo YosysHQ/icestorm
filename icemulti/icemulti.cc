@@ -189,7 +189,7 @@ int main(int argc, char **argv)
     int image_count = 0;
     int align_bits = 0;
     bool align_first = false;
-    Image *header_images[NUM_HEADERS];
+    Image *header_images[NUM_IMAGES];
     std::unique_ptr<Image> images[NUM_IMAGES];
     const char *outfile_name = NULL;
 
@@ -250,7 +250,7 @@ int main(int argc, char **argv)
         if (header_count >= NUM_IMAGES)
             error("Too many images supplied\n");
         images[image_count].reset(new Image(argv[optind++]));
-        header_images[header_count + 1] = &*images[image_count];
+        header_images[header_count] = &*images[image_count];
         header_count++;
         image_count++;
     }
@@ -273,9 +273,8 @@ int main(int argc, char **argv)
     }
 
     // Populate headers
-    header_images[0] = header_images[por_image + 1];
     for (int i=header_count; i < NUM_IMAGES; i++)
-        header_images[i + 1] = header_images[0];
+        header_images[i] = header_images[por_image];
 
     std::ofstream ofs;
     std::ostream *osp;
@@ -293,7 +292,10 @@ int main(int argc, char **argv)
     for (int i=0; i<NUM_HEADERS; i++)
     {
         pad_to(*osp, file_offset, i * HEADER_SIZE);
-        write_header(*osp, file_offset, header_images[i], i == 0 && coldboot);
+        if (i == 0)
+            write_header(*osp, file_offset, header_images[por_image], coldboot);
+        else
+            write_header(*osp, file_offset, header_images[i - 1], false);
     }
     for (int i=0; i<image_count; i++)
     {
