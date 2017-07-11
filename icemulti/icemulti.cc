@@ -118,11 +118,8 @@ void Image::write(std::ostream &ofs, uint32_t &file_offset)
 }
 
 class Header {
-    uint32_t image_offs;
 public:
-    Header() {}
-    Header(const Image &i) :
-        image_offs(i.offset()) {}
+    Image const *image;
     void write(std::ostream &ofs, uint32_t &file_offset, bool coldboot);
 };
 
@@ -142,9 +139,9 @@ void Header::write(std::ostream &ofs, uint32_t &file_offset, bool coldboot)
     // Boot address
     write_byte(ofs, file_offset, 0x44);
     write_byte(ofs, file_offset, 0x03);
-    write_byte(ofs, file_offset, (image_offs >> 16) & 0xff);
-    write_byte(ofs, file_offset, (image_offs >> 8) & 0xff);
-    write_byte(ofs, file_offset, image_offs & 0xff);
+    write_byte(ofs, file_offset, (image->offset() >> 16) & 0xff);
+    write_byte(ofs, file_offset, (image->offset() >> 8) & 0xff);
+    write_byte(ofs, file_offset, image->offset() & 0xff);
 
     // Bank offset
     write_byte(ofs, file_offset, 0x82);
@@ -271,10 +268,10 @@ int main(int argc, char **argv)
 
     // Populate headers
     for (int i=0; i<image_count; i++)
-        headers[i + 1] = Header(*images[i]);
-    headers[0] = headers[por_image + 1];
+        headers[i + 1].image = &*images[i];
+    headers[0].image = headers[por_image + 1].image;
     for (int i=image_count; i < NUM_IMAGES; i++)
-        headers[i + 1] = headers[0];
+        headers[i + 1].image = headers[0].image;
 
     std::ofstream ofs;
     std::ostream *osp;
