@@ -119,19 +119,15 @@ void Image::write(std::ostream &ofs, uint32_t &file_offset)
 
 class Header {
     uint32_t image_offs;
-    bool empty;
 public:
-    Header() : empty(true) {}
+    Header() {}
     Header(const Image &i) :
-        image_offs(i.offset()), empty(false) {}
+        image_offs(i.offset()) {}
     void write(std::ostream &ofs, uint32_t &file_offset, bool coldboot);
 };
 
 void Header::write(std::ostream &ofs, uint32_t &file_offset, bool coldboot)
 {
-    if (empty)
-        return;
-
     // Preamble
     write_byte(ofs, file_offset, 0x7e);
     write_byte(ofs, file_offset, 0xaa);
