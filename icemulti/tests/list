@@ -175,7 +175,9 @@ ERR		../icemulti -p3 image0
 ERR		../icemulti -p3 image0 image1
 ERR		../icemulti -p3 image0 image1 image2
 
+ERR		../icemulti -a-1 image0
 ERR		../icemulti -ax image0
+ERR		../icemulti -A-1 image0
 ERR		../icemulti -Ax image0
 
 ERR		../icemulti doesnt-exist
