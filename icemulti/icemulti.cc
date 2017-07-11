@@ -123,17 +123,15 @@ void Image::write(std::ostream &ofs, uint32_t &file_offset)
 
 class Header {
     uint32_t image_offs;
-    bool coldboot_flag;
     bool empty;
 public:
     Header() : empty(true) {}
     Header(const Image &i) :
-        image_offs(i.offset()), coldboot_flag(false), empty(false) {}
-    void set_coldboot_flag() { coldboot_flag = true; }
-    void write(std::ostream &ofs, uint32_t &file_offset);
+        image_offs(i.offset()), empty(false) {}
+    void write(std::ostream &ofs, uint32_t &file_offset, bool coldboot);
 };
 
-void Header::write(std::ostream &ofs, uint32_t &file_offset)
+void Header::write(std::ostream &ofs, uint32_t &file_offset, bool coldboot)
 {
     if (empty)
         return;
@@ -147,7 +145,7 @@ void Header::write(std::ostream &ofs, uint32_t &file_offset)
     // Boot mode
     write_byte(ofs, file_offset, 0x92);
     write_byte(ofs, file_offset, 0x00);
-    write_byte(ofs, file_offset, (coldboot_flag? 0x10: 0x00));
+    write_byte(ofs, file_offset, coldboot ? 0x10 : 0x00);
 
     // Boot address
     write_byte(ofs, file_offset, 0x44);
@@ -288,8 +286,6 @@ int main(int argc, char **argv)
     headers[0] = headers[por_image + 1];
     for (int i=image_count; i < NUM_IMAGES; i++)
         headers[i + 1] = headers[0];
-    if (coldboot)
-        headers[0].set_coldboot_flag();
 
     std::ofstream ofs;
     std::ostream *osp;
@@ -307,7 +303,7 @@ int main(int argc, char **argv)
     for (int i=0; i<NUM_HEADERS; i++)
     {
         pad_to(*osp, file_offset, i * HEADER_SIZE);
-        headers[i].write(*osp, file_offset);
+        headers[i].write(*osp, file_offset, i == 0 && coldboot);
     }
     for (int i=0; i<image_count; i++)
     {
