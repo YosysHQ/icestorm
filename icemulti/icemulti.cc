@@ -29,7 +29,6 @@
 int log_level = 0;
 
 static const int NUM_IMAGES = 4;
-static const int NUM_HEADERS = NUM_IMAGES + 1;
 static const int HEADER_SIZE = 32;
 
 static void align_offset(uint32_t &offset, int bits)
@@ -255,7 +254,7 @@ int main(int argc, char **argv)
         errx(EXIT_FAILURE, "specified non-existing image for power-on/reset");
 
     // Place images
-    uint32_t offs = NUM_HEADERS * HEADER_SIZE;
+    uint32_t offs = (NUM_IMAGES + 1) * HEADER_SIZE;
     if (align_first)
         align_offset(offs, align_bits);
     for (int i=0; i<image_count; i++) {
@@ -282,7 +281,7 @@ int main(int argc, char **argv)
     }
 
     uint32_t file_offset = 0;
-    for (int i=0; i<NUM_HEADERS; i++)
+    for (int i=0; i<NUM_IMAGES + 1; i++)
     {
         pad_to(*osp, file_offset, i * HEADER_SIZE);
         if (i == 0)
