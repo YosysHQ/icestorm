@@ -247,10 +247,18 @@ int main(int argc, char **argv)
     while (optind != argc) {
         if (header_count >= NUM_IMAGES)
             error("Too many images supplied\n");
-        images[image_count].reset(new Image(argv[optind++]));
+        for (int i = 0; i < image_count; i++)
+            if (strcmp(argv[optind], images[i]->filename) == 0) {
+                header_images[header_count] = &*images[i];
+                goto image_found;
+            }
+        images[image_count].reset(new Image(argv[optind]));
         header_images[header_count] = &*images[image_count];
-        header_count++;
         image_count++;
+
+    image_found:
+        header_count++;
+        optind++;
     }
 
     if (coldboot && por_image != 0)
