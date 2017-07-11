@@ -16,6 +16,8 @@ iceunpack: icepack
 iceunpack.exe:
 	# no iceunpack.exe, use icepack -u
 
+check: all
+
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp icepack$(EXE) $(DESTDIR)$(PREFIX)/bin/icepack$(EXE)
@@ -33,5 +35,5 @@ clean:
 
 -include *.d
 
-.PHONY: all install uninstall clean
+.PHONY: all check install uninstall clean
 

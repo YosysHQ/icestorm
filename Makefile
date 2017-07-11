@@ -2,7 +2,7 @@ include config.mk
 
 SUBDIRS = icebox icepack iceprog icemulti icepll icetime icebram
 
-all clean install uninstall:
+all check clean install uninstall:
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir $@ || exit; \
 	done
@@ -14,5 +14,5 @@ mxebin: clean
 	cp icemulti/*.exe icepll/*.exe icetime/*.exe icestorm-win32/
 	zip -r icestorm-win32.zip icestorm-win32/
 
-.PHONY: all clean install uninstall
+.PHONY: all check clean install uninstall
 
