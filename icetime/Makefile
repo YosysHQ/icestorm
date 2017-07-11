@@ -17,6 +17,8 @@ timings.inc: timings.py ../icefuzz/timings_*.txt
 	python3 timings.py > timings.inc.new
 	mv timings.inc.new timings.inc
 
+check: all
+
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp icetime$(EXE) $(DESTDIR)$(PREFIX)/bin/icetime$(EXE)
@@ -51,5 +53,5 @@ clean:
 
 -include *.d
 
-.PHONY: all install uninstall clean
+.PHONY: all check install uninstall clean
 
