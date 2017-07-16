@@ -149,6 +149,24 @@ static void write_header(std::ostream &ofs, uint32_t &file_offset,
         write_byte(ofs, file_offset, 0x00);
 }
 
+static std::unique_ptr<Image> images[NUM_IMAGES];
+static int image_count = 0;
+
+static Image *load_image(const char *path)
+{
+    for (int i = 0; i < image_count; i++)
+        if (strcmp(path, images[i]->filename) == 0)
+            return &*images[i];
+
+    if (image_count >= NUM_IMAGES)
+        errx(EXIT_FAILURE, "internal error: too many images");
+
+    Image *image = new Image(path);
+    images[image_count].reset(image);
+    image_count++;
+    return image;
+}
+
 void usage(const char *program_name)
 {
     fprintf(stderr, "Create a multi-configuration image from up to four configuration images.\n");
@@ -179,11 +197,9 @@ int main(int argc, char **argv)
     int por_image = 0;
     int default_image = -1;  /* use power-on/reset image by default */
     int header_count = 0;
-    int image_count = 0;
     int align_bits = 0;
     bool align_first = false;
     Image *header_images[NUM_IMAGES];
-    std::unique_ptr<Image> images[NUM_IMAGES];
     const char *outfile_name = NULL;
     bool print_offsets = false;
 
@@ -255,16 +271,7 @@ int main(int argc, char **argv)
     while (optind != argc) {
         if (header_count >= NUM_IMAGES)
             errx(EXIT_FAILURE, "too many images supplied (maximum is 4)");
-        for (int i = 0; i < image_count; i++)
-            if (strcmp(argv[optind], images[i]->filename) == 0) {
-                header_images[header_count] = &*images[i];
-                goto image_found;
-            }
-        images[image_count].reset(new Image(argv[optind]));
-        header_images[header_count] = &*images[image_count];
-        image_count++;
-
-    image_found:
+        header_images[header_count] = load_image(argv[optind]);
         header_count++;
         optind++;
     }
