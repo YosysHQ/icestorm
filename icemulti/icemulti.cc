@@ -299,10 +299,6 @@ int main(int argc, char **argv)
             fprintf(stderr, "Place image %d at %06x .. %06x (`%s')\n", i, int(images[i]->offset()), int(offs), images[i]->filename);
     }
 
-    // Populate headers
-    for (int i=header_count; i < NUM_IMAGES; i++)
-        header_images[i] = header_images[default_image];
-
     std::ofstream ofs;
     std::ostream *osp;
 
@@ -321,8 +317,10 @@ int main(int argc, char **argv)
         pad_to(*osp, file_offset, i * HEADER_SIZE);
         if (i == 0)
             write_header(*osp, file_offset, header_images[por_image], coldboot);
-        else
+        else if (i - 1 < header_count)
             write_header(*osp, file_offset, header_images[i - 1], false);
+        else
+            write_header(*osp, file_offset, header_images[default_image], false);
     }
     for (int i=0; i<image_count; i++)
     {
