@@ -159,6 +159,8 @@ void usage(const char *program_name)
     fprintf(stderr, "                          pins CBSEL0 and CBSEL1\n");
     fprintf(stderr, "  -p0, -p1, -p2, -p3    specifies image to be loaded on power-on or after a low\n");
     fprintf(stderr, "                          pulse on CRESET_B (not applicable in coldboot mode)\n");
+    fprintf(stderr, "  -d0, -d1, -d2, -d3    specifies default image to be used if less than four\n");
+    fprintf(stderr, "                          images are given (defaults to power-on/reset image)\n");
     fprintf(stderr, "  -a N                  align images at 2^N bytes\n");
     fprintf(stderr, "  -A N                  like `-a N', but align the first image, too\n");
     fprintf(stderr, "  -o OUTPUT-FILE        write output to OUTPUT-FILE instead of stdout\n");
@@ -175,6 +177,7 @@ int main(int argc, char **argv)
     char *endptr = NULL;
     bool coldboot = false;
     int por_image = 0;
+    int default_image = -1;  /* use power-on/reset image by default */
     int header_count = 0;
     int image_count = 0;
     int align_bits = 0;
@@ -189,7 +192,7 @@ int main(int argc, char **argv)
         {NULL, 0, NULL, 0}
     };
 
-    while ((c = getopt_long(argc, argv, "cp:a:A:o:v",
+    while ((c = getopt_long(argc, argv, "cp:d:a:A:o:v",
                 long_options, NULL)) != -1)
         switch (c) {
             case 'c':
@@ -206,6 +209,18 @@ int main(int argc, char **argv)
                     por_image = 3;
                 else
                     errx(EXIT_FAILURE, "`%s' is not a valid power-on/reset image (must be 0, 1, 2, or 3)", optarg);
+                break;
+            case 'd':
+                if (optarg[0] == '0' && optarg[1] == '\0')
+                    default_image = 0;
+                else if (optarg[0] == '1' && optarg[1] == '\0')
+                    default_image = 1;
+                else if (optarg[0] == '2' && optarg[1] == '\0')
+                    default_image = 2;
+                else if (optarg[0] == '3' && optarg[1] == '\0')
+                    default_image = 3;
+                else
+                    errx(EXIT_FAILURE, "`%s' is not a valid default image (must be 0, 1, 2, or 3)", optarg);
                 break;
             case 'A':
                 align_first = true;
@@ -260,6 +275,12 @@ int main(int argc, char **argv)
     if (por_image >= header_count)
         errx(EXIT_FAILURE, "specified non-existing image for power-on/reset");
 
+    if (default_image >= header_count)
+        errx(EXIT_FAILURE, "specified non-existing default image");
+
+    if (default_image == -1)
+        default_image = por_image;
+
     // Place images
     uint32_t offs = (NUM_IMAGES + 1) * HEADER_SIZE;
     if (align_first)
@@ -274,7 +295,7 @@ int main(int argc, char **argv)
 
     // Populate headers
     for (int i=header_count; i < NUM_IMAGES; i++)
-        header_images[i] = header_images[por_image];
+        header_images[i] = header_images[default_image];
 
     std::ofstream ofs;
     std::ostream *osp;
