@@ -23,12 +23,12 @@ iceprog$(EXE): iceprog.o
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp iceprog $(DESTDIR)$(PREFIX)/bin/iceprog
+	cp iceprog$(EXE) $(DESTDIR)$(PREFIX)/bin/iceprog$(EXE)
 	mkdir -p $(DESTDIR)$(PREFIX)/share/man/man1
 	install -c -m 644 iceprog.1 $(DESTDIR)$(PREFIX)/share/man/man1
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/iceprog
+	rm -f $(DESTDIR)$(PREFIX)/bin/iceprog$(EXE)
 	rm -f $(DESTDIR)$(PREFIX)/share/man/man1/iceprog.1
 
 clean:

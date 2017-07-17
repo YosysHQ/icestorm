@@ -19,10 +19,10 @@ timings.inc: timings.py ../icefuzz/timings_*.txt
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp icetime $(DESTDIR)$(PREFIX)/bin/icetime
+	cp icetime$(EXE) $(DESTDIR)$(PREFIX)/bin/icetime$(EXE)
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/icetime
+	rm -f $(DESTDIR)$(PREFIX)/bin/icetime$(EXE)
 
 
 # View timing netlist:
