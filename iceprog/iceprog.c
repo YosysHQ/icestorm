@@ -347,6 +347,12 @@ static void help(const char *progname)
 
 int main(int argc, char **argv)
 {
+	/* used for error reporting */
+	const char *my_name = argv[0];
+	for (size_t i = 0; argv[0][i]; i++)
+		if (argv[0][i] == '/')
+			my_name = argv[0] + i + 1;
+
 	int read_size = 256 * 1024;
 	int rw_offset = 0;
 
@@ -382,7 +388,7 @@ int main(int argc, char **argv)
 			else if (!strcmp(optarg, "D"))
 				ifnum = INTERFACE_D;
 			else {
-				fprintf(stderr, "%s: `%s' is not a valid interface (must be `A', `B', `C', or `D')\n", argv[0], optarg);
+				fprintf(stderr, "%s: `%s' is not a valid interface (must be `A', `B', `C', or `D')\n", my_name, optarg);
 				return EXIT_FAILURE;
 			}
 			break;
@@ -399,7 +405,7 @@ int main(int argc, char **argv)
 			else if (!strcmp(endptr, "M"))
 				read_size *= 1024 * 1024;
 			else {
-				fprintf(stderr, "%s: `%s' is not a valid size\n", argv[0], optarg);
+				fprintf(stderr, "%s: `%s' is not a valid size\n", my_name, optarg);
 				return EXIT_FAILURE;
 			}
 			break;
@@ -412,7 +418,7 @@ int main(int argc, char **argv)
 			else if (!strcmp(endptr, "M"))
 				rw_offset *= 1024 * 1024;
 			else {
-				fprintf(stderr, "%s: `%s' is not a valid offset\n", argv[0], optarg);
+				fprintf(stderr, "%s: `%s' is not a valid offset\n", my_name, optarg);
 				return EXIT_FAILURE;
 			}
 			break;
@@ -445,50 +451,50 @@ int main(int argc, char **argv)
 	}
 
 	if (read_mode + check_mode + prog_sram + test_mode > 1) {
-		fprintf(stderr, "%s: options `-r'/`-R', `-c', `-S', and `-t' are mutually exclusive\n", argv[0]);
+		fprintf(stderr, "%s: options `-r'/`-R', `-c', `-S', and `-t' are mutually exclusive\n", my_name);
 		return EXIT_FAILURE;
 	}
 
 	if (bulk_erase && dont_erase) {
-		fprintf(stderr, "%s: options `-b' and `-n' are mutually exclusive\n", argv[0]);
+		fprintf(stderr, "%s: options `-b' and `-n' are mutually exclusive\n", my_name);
 		return EXIT_FAILURE;
 	}
 
 	if (bulk_erase && (read_mode || check_mode || prog_sram || test_mode)) {
-		fprintf(stderr, "%s: option `-b' only valid in programming mode\n", argv[0]);
+		fprintf(stderr, "%s: option `-b' only valid in programming mode\n", my_name);
 		return EXIT_FAILURE;
 	}
 
 	if (dont_erase && (read_mode || check_mode || prog_sram || test_mode)) {
-		fprintf(stderr, "%s: option `-n' only valid in programming mode\n", argv[0]);
+		fprintf(stderr, "%s: option `-n' only valid in programming mode\n", my_name);
 		return EXIT_FAILURE;
 	}
 
 	if (rw_offset != 0 && prog_sram) {
-		fprintf(stderr, "%s: option `-o' not supported in SRAM mode\n", argv[0]);
+		fprintf(stderr, "%s: option `-o' not supported in SRAM mode\n", my_name);
 		return EXIT_FAILURE;
 	}
 
 	if (rw_offset != 0 && test_mode) {
-		fprintf(stderr, "%s: option `-o' not supported in test mode\n", argv[0]);
+		fprintf(stderr, "%s: option `-o' not supported in test mode\n", my_name);
 		return EXIT_FAILURE;
 	}
 
 	if (optind + 1 == argc) {
 		if (test_mode) {
-			fprintf(stderr, "%s: test mode doesn't take a file name\n", argv[0]);
+			fprintf(stderr, "%s: test mode doesn't take a file name\n", my_name);
 			fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
 			return EXIT_FAILURE;
 		}
 		filename = argv[optind];
 	} else if (optind != argc) {
-		fprintf(stderr, "%s: too many arguments\n", argv[0]);
+		fprintf(stderr, "%s: too many arguments\n", my_name);
 		fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
 		return EXIT_FAILURE;
 	} else if (bulk_erase) {
 		filename = "/dev/null";
 	} else if (!test_mode) {
-		fprintf(stderr, "%s: missing argument\n", argv[0]);
+		fprintf(stderr, "%s: missing argument\n", my_name);
 		fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
 		return EXIT_FAILURE;
 	}
@@ -504,14 +510,14 @@ int main(int argc, char **argv)
 	else if (read_mode) {
 		f = (strcmp(filename, "-") == 0) ? stdout : fopen(filename, "wb");
 		if (f == NULL) {
-			fprintf(stderr, "%s: can't open '%s' for writing: ", argv[0], filename);
+			fprintf(stderr, "%s: can't open '%s' for writing: ", my_name, filename);
 			perror(0);
 			return EXIT_FAILURE;
 		}
 	} else {
 		f = (strcmp(filename, "-") == 0) ? stdin : fopen(filename, "rb");
 		if (f == NULL) {
-			fprintf(stderr, "%s: can't open '%s' for reading: ", argv[0], filename);
+			fprintf(stderr, "%s: can't open '%s' for reading: ", my_name, filename);
 			perror(0);
 			return EXIT_FAILURE;
 		}
@@ -530,12 +536,12 @@ int main(int argc, char **argv)
 			if (fseek(f, 0L, SEEK_END) != -1) {
 				file_size = ftell(f);
 				if (file_size == -1) {
-					fprintf(stderr, "%s: %s: ftell: ", argv[0], filename);
+					fprintf(stderr, "%s: %s: ftell: ", my_name, filename);
 					perror(0);
 					return EXIT_FAILURE;
 				}
 				if (fseek(f, 0L, SEEK_SET) == -1) {
-					fprintf(stderr, "%s: %s: fseek: ", argv[0], filename);
+					fprintf(stderr, "%s: %s: fseek: ", my_name, filename);
 					perror(0);
 					return EXIT_FAILURE;
 				}
@@ -544,7 +550,7 @@ int main(int argc, char **argv)
 
 				f = tmpfile();
 				if (f == NULL) {
-					fprintf(stderr, "%s: can't open temporary file\n", argv[0]);
+					fprintf(stderr, "%s: can't open temporary file\n", my_name);
 					return EXIT_FAILURE;
 				}
 				file_size = 0;
@@ -556,7 +562,7 @@ int main(int argc, char **argv)
 						break;
 					size_t wc = fwrite(buffer, 1, rc, f);
 					if (wc != rc) {
-						fprintf(stderr, "%s: can't write to temporary file\n", argv[0]);
+						fprintf(stderr, "%s: can't write to temporary file\n", my_name);
 						return EXIT_FAILURE;
 					}
 					file_size += rc;
