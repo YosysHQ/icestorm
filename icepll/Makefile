@@ -11,10 +11,10 @@ icepll$(EXE): icepll.o
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp icepll $(DESTDIR)$(PREFIX)/bin/icepll
+	cp icepll$(EXE) $(DESTDIR)$(PREFIX)/bin/icepll$(EXE)
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/icepll
+	rm -f $(DESTDIR)$(PREFIX)/bin/icepll$(EXE)
 
 clean:
 	rm -f icepll

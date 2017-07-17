@@ -14,10 +14,10 @@ test: icebram
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp icebram $(DESTDIR)$(PREFIX)/bin/icebram
+	cp icebram$(EXE) $(DESTDIR)$(PREFIX)/bin/icebram$(EXE)
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebram
+	rm -f $(DESTDIR)$(PREFIX)/bin/icebram$(EXE)
 
 clean:
 	rm -f icebram
