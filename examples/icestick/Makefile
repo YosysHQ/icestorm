@@ -18,6 +18,21 @@ all: $(PROJ).rpt $(PROJ).bin
 %.rpt: %.asc
 	icetime -d $(DEVICE) -mtr $@ $<
 
+%_tb: %_tb.v %.v
+	iverilog -o $@ $^
+
+%_tb.vcd: %_tb
+	./$< +vcd=$@
+
+%_syn.v: %.blif
+	yosys -o $@ $^
+
+%_syntb: %_tb.v %_syn.v
+	iverilog -o $@ $^ `yosys-config --datdir/ice40/cells_sim.v`
+
+%_syntb.vcd: %_syntb
+	./$< +vcd=$@
+
 prog: $(PROJ).bin
 	iceprog $<
 

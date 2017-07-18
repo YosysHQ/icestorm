@@ -19,6 +19,14 @@ module top (
 	reg [3:0] bit_cnt = 0;
 	reg recv = 0;
 
+	initial begin
+		LED1 = 0;
+		LED2 = 0;
+		LED3 = 0;
+		LED4 = 0;
+		LED5 = 0;
+	end
+
 	always @(posedge clk) begin
 		buffer_valid <= 0;
 		if (!recv) begin
