@@ -1,8 +1,11 @@
 module testbench;
 	localparam integer PERIOD = 12000000 / 9600;
 
-	reg clk = 1;
-	always #5 clk = ~clk;
+	// reg clk = 0;
+	// initial #10 forever #5 clk = ~clk;
+
+	reg clk;
+	always #5 clk = (clk === 1'b0);
 
 	reg RX = 1;
 	wire TX;
@@ -48,12 +51,7 @@ module testbench;
 			$dumpvars(0, testbench);
 		end
 
-		// send break
-		repeat (20 * PERIOD) @(posedge clk);
-		RX <= 0;
-		repeat (20 * PERIOD) @(posedge clk);
-		RX <= 1;
-		repeat (20 * PERIOD) @(posedge clk);
+		repeat (10 * PERIOD) @(posedge clk);
 
 		// turn all LEDs on
 		send_byte("1");
@@ -70,6 +68,7 @@ module testbench;
 		send_byte("5");
 
 		repeat (10 * PERIOD) @(posedge clk);
+
 		$finish;
 	end
 endmodule
