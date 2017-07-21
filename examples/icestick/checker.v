@@ -51,5 +51,5 @@ module top (
 	end
 
 	wire ok = resetn && rdfin && !error;
-	assign LED1 = error, LED2 = error, LED3 = error, LED4 = error, LED5 = ok;
+	assign LED1 = 0, LED2 = error, LED3 = 0, LED4 = error, LED5 = ok;
 endmodule
