@@ -40,6 +40,9 @@ def read_database(filename, tile_type):
                 if bit == "B9[3]" and line == ['IoCtrl', 'IE_1']: continue
                 if bit == "B1[3]" and line == ['IoCtrl', 'REN_0']: continue
                 if bit == "B6[2]" and line == ['IoCtrl', 'REN_1']: continue
+                # Ignore some additional configuration bits that sneaked in via ice5k fuzzing
+                if line[0] == "IoCtrl" and line[1].startswith("cf_bit_"): continue
+                if line[0] == "IoCtrl" and line[1].startswith("extra_padeb_test_"): continue
                 raw_db.append((bit, (line[0], line[1])))
             elif line[0] in ("IOB_0", "IOB_1"):
                 if line[1] != "IO":

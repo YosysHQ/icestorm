@@ -25,10 +25,6 @@ B6[3]	IoCtrl	IE_1
 B8[2]	IoCtrl	LVDS
 B6[2]	IoCtrl	REN_0
 B1[3]	IoCtrl	REN_1
-B6[15]	IoCtrl	cf_bit_35
-B12[15]	IoCtrl	cf_bit_39
-B15[14]	IoCtrl	extra_padeb_test_0
-B14[15]	IoCtrl	extra_padeb_test_1
 B9[13],B15[13]	NegClk
 B0[2]	PLL	PLLCONFIG_1
 B0[3]	PLL	PLLCONFIG_2
