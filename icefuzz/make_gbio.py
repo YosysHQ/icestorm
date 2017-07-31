@@ -25,7 +25,7 @@ for idx in range(num):
         if w <= 4:
           din_0 = (w - 2, w)
         else:
-          din_0 = (4, "%d:4" % (w - 1,))
+          din_0 = (3, "%d:4" % (w - 1,))
         din_0 = np.random.choice(["din_0",    "{din_0[%d:0], din_0[%s]}" % din_0])
         din_1 = np.random.choice(["din_1",    "{din_1[1:0], din_1[%d:2]}" % (w - 1,)])
         globals_0 = np.random.choice(["globals",  "{globals[0], globals[%d:1]}" % (w - 1, )])

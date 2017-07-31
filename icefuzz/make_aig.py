@@ -30,7 +30,7 @@ for idx in range(num):
 
             sigs.append(newnet)
 
-        while len(sigs) > 32:
+        while len(sigs) > w:
             netidx += 1
             newnet = "n_%d" % netidx
 
