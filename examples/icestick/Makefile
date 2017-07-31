@@ -1,5 +1,6 @@
 PROJ = example
 # PROJ = rs232demo
+# PROJ = checker
 
 PIN_DEF = icestick.pcf
 DEVICE = hx1k
@@ -17,6 +18,21 @@ all: $(PROJ).rpt $(PROJ).bin
 
 %.rpt: %.asc
 	icetime -d $(DEVICE) -mtr $@ $<
+
+%_tb: %_tb.v %.v
+	iverilog -o $@ $^
+
+%_tb.vcd: %_tb
+	vvp -N $< +vcd=$@
+
+%_syn.v: %.blif
+	yosys -p 'read_blif -wideports $^; write_verilog $@'
+
+%_syntb: %_tb.v %_syn.v
+	iverilog -o $@ $^ `yosys-config --datdir/ice40/cells_sim.v`
+
+%_syntb.vcd: %_syntb
+	vvp -N $< +vcd=$@
 
 prog: $(PROJ).bin
 	iceprog $<

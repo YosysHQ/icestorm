@@ -6,3 +6,17 @@ rs232demo.bin
 rs232demo.blif
 rs232demo.asc
 rs232demo.rpt
+rs232demo_tb
+rs232demo_tb.vcd
+rs232demo_syn.v
+rs232demo_syntb
+rs232demo_syntb.vcd
+checker.bin
+checker.blif
+checker.asc
+checker.rpt
+checker_tb
+checker_tb.vcd
+checker_syn.v
+checker_syntb
+checker_syntb.vcd

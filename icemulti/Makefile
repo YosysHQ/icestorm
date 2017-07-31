@@ -11,10 +11,10 @@ icemulti$(EXE): icemulti.o
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp icemulti $(DESTDIR)$(PREFIX)/bin/icemulti
+	cp icemulti$(EXE) $(DESTDIR)$(PREFIX)/bin/icemulti$(EXE)
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/icemulti
+	rm -f $(DESTDIR)$(PREFIX)/bin/icemulti$(EXE)
 
 clean:
 	rm -f icemulti

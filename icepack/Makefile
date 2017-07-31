@@ -18,12 +18,12 @@ iceunpack.exe:
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp icepack $(DESTDIR)$(PREFIX)/bin/icepack
-	ln -sf icepack $(DESTDIR)$(PREFIX)/bin/iceunpack
+	cp icepack$(EXE) $(DESTDIR)$(PREFIX)/bin/icepack$(EXE)
+	ln -sf icepack$(EXE) $(DESTDIR)$(PREFIX)/bin/iceunpack$(EXE)
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/icepack
-	rm -f $(DESTDIR)$(PREFIX)/bin/iceunpack
+	rm -f $(DESTDIR)$(PREFIX)/bin/icepack$(EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/iceunpack$(EXE)
 
 clean:
 	rm -f icepack
