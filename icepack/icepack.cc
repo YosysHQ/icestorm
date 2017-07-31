@@ -415,7 +415,7 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 	for (auto byte : this->initblop)
 		ofs << byte;
 
-	info("Writing preamble.\n");
+	debug("Writing preamble.\n");
 	write_byte(ofs, crc_value, file_offset, 0x7E);
 	write_byte(ofs, crc_value, file_offset, 0xAA);
 	write_byte(ofs, crc_value, file_offset, 0x99);
