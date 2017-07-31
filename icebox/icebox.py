@@ -476,8 +476,6 @@ class iceconfig:
         for seg in extra_segments:
             seed_segments.add(seg)
             
-        print("extra seg", extra_segments)
-
         for conn in extra_connections:
             s1, s2 = conn
             connected_segments.setdefault(s1, set()).add(s2)
@@ -485,8 +483,6 @@ class iceconfig:
             seed_segments.add(s1)
             seed_segments.add(s2)
             
-        print("extra connections", extra_connections)
-
         for idx, tile in self.io_tiles.items():
             tc = tileconfig(tile)
             pintypes = [ list("000000"), list("000000") ]
@@ -598,7 +594,7 @@ class iceconfig:
                         if s in seen_segments:
                           print("//", s, "has already been seen. Check your bitmapping.")
                           assert False
-                        seen_segments.insert(s)
+                        seen_segments.add(s)
                         seed_segments.discard(s)
                         if s in connected_segments:
                             for cs in connected_segments[s]:
