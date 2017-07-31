@@ -4,29 +4,26 @@ from fuzzconfig import *
 import numpy as np
 import os
 
-os.system("rm -rf work_fanout")
-os.mkdir("work_fanout")
+device_class = os.getenv("ICEDEVICE")
+
+working_dir = "work_%s_fanout" % (device_class, )
+
+os.system("rm -rf " + working_dir)
+os.mkdir(working_dir)
+
 
 for idx in range(num):
-    with open("work_fanout/fanout_%02d.v" % idx, "w") as f:
-        if os.getenv('ICE384PINS'):
-            print("module top(input [1:0] a, output [33:0] y);", file=f)
-            print("  assign y = {8{a}};", file=f)
-        else:
-            print("module top(input [1:0] a, output [63:0] y);", file=f)
-            print("  assign y = {32{a}};", file=f)
+    output_count = len(pins) - 2
+    with open(working_dir + "/fanout_%02d.v" % idx, "w") as f:
+        print("module top(input [1:0] a, output [%d:0] y);" % (output_count,), file=f)
+        print("  assign y = {%d{a}};" % (output_count,), file=f)
         print("endmodule", file=f)
-    with open("work_fanout/fanout_%02d.pcf" % idx, "w") as f:
+    with open(working_dir + "/fanout_%02d.pcf" % idx, "w") as f:
         p = np.random.permutation(pins)
-        r = 34 if os.getenv('ICE384PINS') else 64
-        for i in range(r):
+        for i in range(output_count):
             print("set_io y[%d] %s" % (i, p[i]), file=f)
-        print("set_io a[0] %s" % p[r], file=f)
-        print("set_io a[1] %s" % p[r+1], file=f)
+        print("set_io a[0] %s" % p[output_count], file=f)
+        print("set_io a[1] %s" % p[output_count+1], file=f)
 
-with open("work_fanout/Makefile", "w") as f:
-    print("all: %s" % " ".join(["fanout_%02d.bin" % i for i in range(num)]), file=f)
-    for i in range(num):
-        print("fanout_%02d.bin:" % i, file=f)
-        print("\t-bash ../icecube.sh fanout_%02d > fanout_%02d.log 2>&1 && rm -rf fanout_%02d.tmp || tail fanout_%02d.log" % (i, i, i, i), file=f)
 
+output_makefile(working_dir, "fanout")

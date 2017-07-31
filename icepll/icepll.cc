@@ -108,14 +108,10 @@ int main(int argc, char **argv)
 	int best_divf = 0;
 	int best_divq = 0;
 
-	//The documentation in the iCE40 PLL Usage Guide incorrectly lists the
-	//maximum value of DIVF as 63, when it is only limited to 63 when using
-	//feedback modes other that SIMPLE.
-	int divf_max = 63;
-	if(simple_feedback)
-	{
-		divf_max = 127;
-	}
+	// The documentation in the iCE40 PLL Usage Guide incorrectly lists the
+	// maximum value of DIVF as 63, when it is only limited to 63 when using
+	// feedback modes other that SIMPLE.
+	int divf_max = simple_feedback ? 127 : 63;
 
 	if (f_pllin < 10 || f_pllin > 133) {
 		fprintf(stderr, "Error: PLL input frequency %.3f MHz is outside range 10 MHz - 133 MHz!\n", f_pllin);

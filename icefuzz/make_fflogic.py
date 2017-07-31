@@ -4,8 +4,14 @@ from fuzzconfig import *
 import numpy as np
 import os
 
-os.system("rm -rf work_fflogic")
-os.mkdir("work_fflogic")
+device_class = os.getenv("ICEDEVICE")
+
+working_dir = "work_%s_fflogic" % (device_class, )
+
+os.system("rm -rf " + working_dir)
+os.mkdir(working_dir)
+
+w = (len(pins) - 4) // 5
 
 def random_op():
     return np.random.choice(["+", "-", "*", "^", "&", "|"])
@@ -36,22 +42,14 @@ def print_seq_op(dst, src1, src2, op, f):
         assert False
 
 for idx in range(num):
-    with open("work_fflogic/fflogic_%02d.v" % idx, "w") as f:
-        if os.getenv('ICE384PINS'):
-            print("module top(input clk, rst, en, input [4:0] a, b, c, d, output [4:0] y, output z);", file=f)
-            print("  reg [4:0] p, q;", file=f)
-        else:
-            print("module top(input clk, rst, en, input [15:0] a, b, c, d, output [15:0] y, output z);", file=f)
-            print("  reg [15:0] p, q;", file=f)
+    with open(working_dir + "/fflogic_%02d.v" % idx, "w") as f:
+        print("module top(input clk, rst, en, input [%d:0] a, b, c, d, output [%d:0] y, output z);" % (w-1, w-1), file=f)
+        print("  reg [%d:0] p, q;" % (w-1,), file=f)
 
         print_seq_op("p", "a", "b", random_op(), f)
         print_seq_op("q", "c", "d", random_op(), f)
         print("  assign y = p %s q, z = clk ^ rst ^ en;" % random_op(), file=f)
         print("endmodule", file=f)
 
-with open("work_fflogic/Makefile", "w") as f:
-    print("all: %s" % " ".join(["fflogic_%02d.bin" % i for i in range(num)]), file=f)
-    for i in range(num):
-        print("fflogic_%02d.bin:" % i, file=f)
-        print("\t-bash ../icecube.sh fflogic_%02d > fflogic_%02d.log 2>&1 && rm -rf fflogic_%02d.tmp || tail fflogic_%02d.log" % (i, i, i, i), file=f)
 
+output_makefile(working_dir, "fflogic")

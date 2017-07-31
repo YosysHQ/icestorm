@@ -2,8 +2,26 @@ include ../config.mk
 export LC_ALL=C
 export ICE_SBTIMER_LP=1
 
-#EIGTHK = _8k
-THREEH = _384
+DEVICECLASS = 1k
+
+ifeq ($(DEVICECLASS), 384)
+  DEVICE := lp384-cm49
+	THREEH = _384
+endif
+
+ifeq ($(DEVICECLASS), 1k)
+	DEVICE := hx1k-tq144
+endif
+
+ifeq ($(DEVICECLASS), 5k)
+	DEVICE := up5k-sg48
+	RAM_SUFFIX := _5k
+endif
+
+ifeq ($(DEVICECLASS), 8k)
+  DEVICE := hx8k-ct256
+  RAM_SUFFIX = _8k
+endif
 
 TESTS =
 TESTS += binop
@@ -18,49 +36,52 @@ TESTS += gbio
 TESTS += gbio2
 TESTS += prim
 TESTS += fflogic
-ifneq ($(THREEH),_384)
+ifneq ($(DEVICECLASS),384)
  TESTS += ram40
  TESTS += mem
  TESTS += pll
  TESTS += aig
 endif
 
-database: bitdata_io.txt bitdata_logic.txt bitdata_ramb$(EIGTHK).txt bitdata_ramt$(EIGTHK).txt
-ifeq ($(EIGTHK),_8k)
+database: bitdata_io.txt bitdata_logic.txt bitdata_ramb$(RAM_SUFFIX).txt bitdata_ramt$(RAM_SUFFIX).txt
+ifneq ($(RAM_SUFFIX),)
 	cp cached_ramb.txt bitdata_ramb.txt
 	cp cached_ramt.txt bitdata_ramt.txt
-else
+endif
+ifneq ($(RAM_SUFFIX),_8k)
 	cp cached_ramb_8k.txt bitdata_ramb_8k.txt
 	cp cached_ramt_8k.txt bitdata_ramt_8k.txt
 endif
-	python3 database.py
+ifneq ($(RAM_SUFFIX),_5k)
+	cp cached_ramb_5k.txt bitdata_ramb_5k.txt
+	cp cached_ramt_5k.txt bitdata_ramt_5k.txt
+endif
+	ICEDEVICE=$(DEVICECLASS) python3 database.py
 	python3 export.py
 	diff -U0 cached_io.txt bitdata_io.txt || cp -v bitdata_io.txt cached_io.txt
 	diff -U0 cached_logic.txt bitdata_logic.txt || cp -v bitdata_logic.txt cached_logic.txt
-	diff -U0 cached_ramb.txt bitdata_ramb.txt || cp -v bitdata_ramb.txt cached_ramb.txt
-	diff -U0 cached_ramt.txt bitdata_ramt.txt || cp -v bitdata_ramt.txt cached_ramt.txt
-	diff -U0 cached_ramb_8k.txt bitdata_ramb_8k.txt || cp -v bitdata_ramb_8k.txt cached_ramb_8k.txt
-	diff -U0 cached_ramt_8k.txt bitdata_ramt_8k.txt || cp -v bitdata_ramt_8k.txt cached_ramt_8k.txt
+	diff -U0 cached_ramb$(RAM_SUFFIX).txt bitdata_ramb$(RAM_SUFFIX).txt || cp -v bitdata_ramb$(RAM_SUFFIX).txt cached_ramb$(RAM_SUFFIX).txt
+	diff -U0 cached_ramt$(RAM_SUFFIX).txt bitdata_ramt$(RAM_SUFFIX).txt || cp -v bitdata_ramt$(RAM_SUFFIX).txt cached_ramt$(RAM_SUFFIX).txt
 
 timings:
-ifeq ($(EIGTHK),_8k)
+ifeq ($(DEVICECLASS),8k)
 	cp tmedges.txt tmedges.tmp
-	set -e; for f in work_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
+	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
 	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
 	python3 timings.py -t timings_hx8k.txt work_*/*.sdf > timings_hx8k.new
 	mv timings_hx8k.new timings_hx8k.txt
 	python3 timings.py -t timings_lp8k.txt work_*/*.slp > timings_lp8k.new
 	mv timings_lp8k.new timings_lp8k.txt
 else
- ifeq ($(THREEH),_384)
+ ifeq ($(DEVICECLASS),384)
 	cp tmedges.txt tmedges.tmp
-	set -e; for f in work_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
+	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
 	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
 	python3 timings.py -t timings_lp384.txt work_*/*.slp > timings_lp384.new
 	mv timings_lp384.new timings_lp384.txt
  else
 	cp tmedges.txt tmedges.tmp
-	set -e; for f in work_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
+	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
 	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
 	python3 timings.py -t timings_hx1k.txt work_*/*.sdf > timings_hx1k.new
 	mv timings_hx1k.new timings_hx1k.txt
@@ -76,24 +97,24 @@ timings_html:
 	python3 timings.py -h tmedges.txt -t timings_lp8k.txt -l "LP8K with default temp/volt settings" > timings_lp8k.html
 	python3 timings.py -h tmedges.txt -t timings_lp384.txt -l "LP384 with default temp/volt settings" > timings_lp384.html
 
-data_cached.txt: cached_io.txt cached_logic.txt cached_ramb$(EIGTHK).txt cached_ramt$(EIGTHK).txt
+data_cached.txt: cached_io.txt cached_logic.txt cached_ramb$(RAM_SUFFIX).txt cached_ramt$(RAM_SUFFIX).txt
 	gawk '{ print "io", $$0; }' cached_io.txt > data_cached.new
 	gawk '{ print "logic", $$0; }' cached_logic.txt >> data_cached.new
-	gawk '{ print "ramb$(EIGTHK)", $$0; }' cached_ramb$(EIGTHK).txt >> data_cached.new
-	gawk '{ print "ramt$(EIGTHK)", $$0; }' cached_ramt$(EIGTHK).txt >> data_cached.new
+	gawk '{ print "ramb$(RAM_SUFFIX)", $$0; }' cached_ramb$(RAM_SUFFIX).txt >> data_cached.new
+	gawk '{ print "ramt$(RAM_SUFFIX)", $$0; }' cached_ramt$(RAM_SUFFIX).txt >> data_cached.new
 	mv data_cached.new data_cached.txt
 
-bitdata_io.txt: data_cached.txt $(addprefix data_,$(addsuffix .txt,$(TESTS)))
+bitdata_io.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
 	grep ^io $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@
 
-bitdata_logic.txt: data_cached.txt $(addprefix data_,$(addsuffix .txt,$(TESTS)))
+bitdata_logic.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
 	grep ^logic $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@
 
-bitdata_ramb$(EIGTHK).txt: data_cached.txt $(addprefix data_,$(addsuffix .txt,$(TESTS)))
-	grep ^ramb$(EIGTHK) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@
+bitdata_ramb$(RAM_SUFFIX).txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
+	grep ^ramb$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@
 
-bitdata_ramt$(EIGTHK).txt: data_cached.txt $(addprefix data_,$(addsuffix .txt,$(TESTS)))
-	grep ^ramt$(EIGTHK) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@
+bitdata_ramt$(RAM_SUFFIX).txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
+	grep ^ramt$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@
 
 datafiles: $(addprefix data_,$(addsuffix .txt,$(TESTS)))
 
@@ -101,22 +122,10 @@ datafiles: $(addprefix data_,$(addsuffix .txt,$(TESTS)))
 	$(MAKE) -C ../icepack
 
 define data_template
-data_$(1).txt: make_$(1).py ../icepack/icepack
-ifeq ($(EIGTHK),_8k)
-	ICE8KPINS=1 python3 make_$(1).py
-	+ICEDEV=hx8k-ct256 $(MAKE) -C work_$(1)
-	python3 extract.py -8 work_$(1)/*.glb > $$@
-else
- ifeq ($(THREEH),_384)
-	ICE384PINS=1 python3 make_$(1).py
-	+ICEDEV=lp384-cm49 $(MAKE) -C work_$(1)
-	python3 extract.py -3 work_$(1)/*.glb > $$@
- else
-	python3 make_$(1).py
-	+$(MAKE) -C work_$(1)
-	python3 extract.py work_$(1)/*.glb > $$@
- endif
-endif
+data_$(DEVICECLASS)_$(1).txt: make_$(1).py ../icepack/icepack
+	ICEDEVICE=$(DEVICECLASS) python3 make_$(1).py
+	+ICEDEV=$(DEVICE) $(MAKE) -C work_$(DEVICECLASS)_$(1)
+	ICEDEVICE=$(DEVICECLASS) python3 extract.py work_$(DEVICECLASS)_$(1)/*.glb > $$@
 endef
 
 $(foreach test,$(TESTS),$(eval $(call data_template,$(test))))
@@ -124,21 +133,20 @@ $(foreach test,$(TESTS),$(eval $(call data_template,$(test))))
 %.ok: %.bin
 	bash check.sh $<
 
-check: $(addsuffix .ok,$(basename $(wildcard work_binop/*.bin)))
-check: $(addsuffix .ok,$(basename $(wildcard work_pin2pin/*.bin)))
-check: $(addsuffix .ok,$(basename $(wildcard work_mesh/*.bin)))
-check: $(addsuffix .ok,$(basename $(wildcard work_fanout/*.bin)))
-check: $(addsuffix .ok,$(basename $(wildcard work_logic/*.bin)))
-check: $(addsuffix .ok,$(basename $(wildcard work_cluster/*.bin)))
-check: $(addsuffix .ok,$(basename $(wildcard work_iopack/*.bin)))
-check: $(addsuffix .ok,$(basename $(wildcard work_pll/*.bin)))
+check: $(addsuffix .ok,$(basename $(wildcard work_$(DEVICECLASS)_binop/*.bin)))
+check: $(addsuffix .ok,$(basename $(wildcard work_$(DEVICECLASS)_pin2pin/*.bin)))
+check: $(addsuffix .ok,$(basename $(wildcard work_$(DEVICECLASS)_mesh/*.bin)))
+check: $(addsuffix .ok,$(basename $(wildcard work_$(DEVICECLASS)_fanout/*.bin)))
+check: $(addsuffix .ok,$(basename $(wildcard work_$(DEVICECLASS)_logic/*.bin)))
+check: $(addsuffix .ok,$(basename $(wildcard work_$(DEVICECLASS)_cluster/*.bin)))
+check: $(addsuffix .ok,$(basename $(wildcard work_$(DEVICECLASS)_iopack/*.bin)))
+check: $(addsuffix .ok,$(basename $(wildcard work_$(DEVICECLASS)_pll/*.bin)))
 
 clean:
-	rm -rf work_*
+	rm -rf work_$(DEVICECLASS)_*
 	rm -rf data_*.txt
 	rm -rf bitdata_*.txt
 	rm -rf database_*.txt
 	rm -rf timings_*.html
 
 .PHONY: database datafiles check clean
-

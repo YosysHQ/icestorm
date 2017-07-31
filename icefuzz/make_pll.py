@@ -11,9 +11,14 @@ def randbin(n):
 
 for p in gpins:
     if p in pins: pins.remove(p)
+    
 
-os.system("rm -rf work_pll")
-os.mkdir("work_pll")
+device_class = os.getenv("ICEDEVICE")
+
+working_dir = "work_%s_pll" % (device_class, )
+
+os.system("rm -rf " + working_dir)
+os.mkdir(working_dir)
 
 for idx in range(num):
     pin_names = list()
@@ -110,20 +115,17 @@ for idx in range(num):
 
     pll_inst.append("defparam uut.TEST_MODE = 1'b0;")
 
-    with open("work_pll/pll_%02d.v" % idx, "w") as f:
+    with open(working_dir + "/pll_%02d.v" % idx, "w") as f:
         print("module top(%s);" % ", ".join(pin_names), file=f)
         print("\n".join(vlog_body), file=f)
         print("\n".join(pll_inst), file=f)
         print("endmodule", file=f)
 
-    with open("work_pll/pll_%02d.pcf" % idx, "w") as f:
+    with open(working_dir + "/pll_%02d.pcf" % idx, "w") as f:
         for pll_pin, package_pin in zip(pin_names, list(permutation(pins))[0:len(pin_names)]):
             if pll_pin == "packagepin": package_pin = "49"
             print("set_io %s %s" % (pll_pin, package_pin), file=f)
 
-with open("work_pll/Makefile", "w") as f:
-    print("all: %s" % " ".join(["pll_%02d.bin" % i for i in range(num)]), file=f)
-    for i in range(num):
-        print("pll_%02d.bin:" % i, file=f)
-        print("\t-bash ../icecube.sh pll_%02d > pll_%02d.log 2>&1 && rm -rf pll_%02d.tmp || tail pll_%02d.log" % (i, i, i, i), file=f)
+
+output_makefile(working_dir, "pll")
 

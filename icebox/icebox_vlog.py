@@ -396,6 +396,7 @@ if lookup_symbols:
                     current_net = -1
     text_func.append("")
 
+#print(nets)
 wb_boot = seg_to_net(icebox.warmbootinfo_db[ic.device]["BOOT"], "")
 wb_s0 = seg_to_net(icebox.warmbootinfo_db[ic.device]["S0"], "")
 wb_s1 = seg_to_net(icebox.warmbootinfo_db[ic.device]["S1"], "")
@@ -728,7 +729,7 @@ for tile in ic.ramb_tiles:
         if len(wire_bits) > 1:
             return "{%s}" % ", ".join(wire_bits)
         return wire_bits[0]
-    if get_ram_config('PowerUp') == (ic.device == "8k"):
+    if get_ram_config('PowerUp') == (ic.device in ("8k", "5k")):
         if not strip_comments:
             text_func.append("// RAM TILE %d %d" % tile)
         text_func.append("SB_RAM40_4K%s%s #(" % ("NR" if negclk_rd else "", "NW" if negclk_wr else ""));

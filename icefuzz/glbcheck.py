@@ -30,13 +30,13 @@ with open(argv[1]) as f:
 with open(argv[2]) as f:
     current_tile = None
     for line in f:
-        if line.find("Tile_") >= 0:
+        if line.startswith(("Tile", "IO_Tile", "RAM_Tile", "LogicTile")):
             f = line.replace("IO_", "").replace("RAM_", "").split("_")
             assert len(f) == 3
             current_tile = "%02d.%02d" % (int(f[1]), int(f[2]))
             continue
 
-        if line.find("GlobalNetwork") >= 0:
+        if line.find("GlobalNetwork") >= 0 or line.startswith(("IpCon", "DSP")):
             current_tile = None
             continue
 
@@ -54,10 +54,15 @@ only_in_asc = asc_bits - glb_bits
 only_in_glb = glb_bits - asc_bits
 assert len(only_in_asc) != 0 or len(only_in_glb) != 0
 
-if len(only_in_asc) != 0:
-    print("Only in ASC: %s" % sorted(only_in_asc))
-if len(only_in_glb) != 0:
-    print("Only in GLB: %s" % sorted(only_in_glb))
+print("Only in ASC:")
+for bit in sorted(only_in_asc):
+  print(bit)
+
+print()
+
+print("Only in GLB:")
+for bit in sorted(only_in_glb):
+  print(bit)
 
 exit(1)
 

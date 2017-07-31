@@ -2,8 +2,11 @@ import os
 
 num = 20
 
-if os.getenv('ICE8KPINS'):
+device_class = os.getenv("ICEDEVICE")
+
+if device_class == "8k":
     num_ramb40 = 32
+    num_iobanks = 4
 
     pins="""
         A1  A2          A5  A6  A7      A9  A10 A11             A15 A16
@@ -26,8 +29,9 @@ if os.getenv('ICE8KPINS'):
 
     gpins = "C8 F7 G1 H11 H16 I3 K9 R9".split()
 
-elif os.getenv('ICE384PINS'):
+elif device_class == "384":
     num_ramb40 = 0
+    num_iobanks = 3
 
     pins = """
         A1 A2 A3 A4 A5 A6 A7
@@ -41,8 +45,9 @@ elif os.getenv('ICE384PINS'):
 
     gpins = "B4 C4 D2 D6 D7 E2 F3 F4".split()
 
-else:
+elif device_class == "1k":
     num_ramb40 = 16
+    num_iobanks = 4
 
     pins = """
         1 2 3 4 7 8 9 10 11 12 19 22 23 24 25 26 28 29 31 32 33 34
@@ -52,4 +57,26 @@ else:
     """.split()
 
     gpins = "20 21 49 50 93 94 128 129".split()
+elif device_class == "5k":
+    num_ramb40 = 30
+    num_iobanks = 2
 
+    #TODO(tannewt): Add 39, 40, 41 to this list. It causes placement failures for some reason.
+    # Also add 14 15 16 17 which are constrained to SPI.
+    pins = """2 3 4 6 9 10 11 12
+    13 18 19 20 21 23
+    25 26 27 28 31 32 34 35 36
+    37 38 42 43 44 45 46 47 48
+    """.split()
+
+    #TODO(tannewt): Add 39, 40, 41 to this list. It causes placement failures for some reason.
+    gpins = "20 35 37 44".split()
+    
+def output_makefile(working_dir, fuzzname):
+  with open(working_dir + "/Makefile", "w") as f:
+      print("all: %s" % " ".join(["%s_%02d.bin" % (fuzzname, i) for i in range(num)]), file=f)
+      for i in range(num):
+          basename = "%s_%02d" % (fuzzname, i)
+          print("%s.bin:" % basename, file=f)
+          print("\t-bash ../icecube.sh %s > %s.log 2>&1 && rm -rf %s.tmp || tail %s.log" % (basename, basename, basename, basename), file=f)
+          print("\tpython3 ../glbcheck.py %s.asc %s.glb" % (basename, basename), file=f)

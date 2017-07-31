@@ -4,17 +4,21 @@ from fuzzconfig import *
 import numpy as np
 import os
 
-os.system("rm -rf work_ram40")
-os.mkdir("work_ram40")
+device_class = os.getenv("ICEDEVICE")
+
+working_dir = "work_%s_ram40" % (device_class, )
+
+os.system("rm -rf " + working_dir)
+os.mkdir(working_dir)
 
 for idx in range(num):
-    with open("work_ram40/ram40_%02d.v" % idx, "w") as f:
-        glbs = ["glb[%d]" % i for i in range(np.random.randint(9))]
+    with open(working_dir + "/ram40_%02d.v" % idx, "w") as f:
+        glbs = ["glb[%d]" % i for i in range(np.random.randint(8)+1)]
         glbs_choice = ["wa", "ra", "msk", "wd", "we", "wce", "wc", "re", "rce", "rc"]
         print("""
             module top (
                 input  [%d:0] glb_pins,
-                input  [59:0] in_pins,
+                input  [%d:0] in_pins,
                 output [15:0] out_pins
             );
             wire [%d:0] glb, glb_pins;
@@ -22,7 +26,7 @@ for idx in range(num):
                 .USER_SIGNAL_TO_GLOBAL_BUFFER(glb_pins),
                 .GLOBAL_BUFFER_OUTPUT(glb)
             );
-        """ % (len(glbs)-1, len(glbs)-1, len(glbs)-1), file=f)
+        """ % (len(glbs)-1, len(pins) - 16 - 1, len(glbs)-1, len(glbs)-1), file=f)
         bits = ["in_pins[%d]" % i for i in range(60)]
         bits = list(np.random.permutation(bits))
         for i in range(num_ramb40):
@@ -96,16 +100,12 @@ for idx in range(num):
                 bits[k] = "rdata_%d[%d] ^ %s" % (i, k, bits[k])
         print("assign out_pins = rdata_%d;" % i, file=f)
         print("endmodule", file=f)
-    with open("work_ram40/ram40_%02d.pcf" % idx, "w") as f:
+    with open(working_dir + "/ram40_%02d.pcf" % idx, "w") as f:
         p = list(np.random.permutation(pins))
-        for i in range(60):
+        for i in range(len(pins) - 16):
             print("set_io in_pins[%d] %s" % (i, p.pop()), file=f)
         for i in range(16):
             print("set_io out_pins[%d] %s" % (i, p.pop()), file=f)
 
-with open("work_ram40/Makefile", "w") as f:
-    print("all: %s" % " ".join(["ram40_%02d.bin" % i for i in range(num)]), file=f)
-    for i in range(num):
-        print("ram40_%02d.bin:" % i, file=f)
-        print("\t-bash ../icecube.sh ram40_%02d > ram40_%02d.log 2>&1 && rm -rf ram40_%02d.tmp || tail ram40_%02d.log" % (i, i, i, i), file=f)
 
+output_makefile(working_dir, "ram40")

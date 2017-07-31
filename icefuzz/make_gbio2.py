@@ -4,16 +4,22 @@ from fuzzconfig import *
 import numpy as np
 import os
 
-os.system("rm -rf work_gbio2")
-os.mkdir("work_gbio2")
+device_class = os.getenv("ICEDEVICE")
 
-w = 4 if os.getenv('ICE384PINS') else 8
+working_dir = "work_%s_gbio2" % (device_class, )
+
+os.system("rm -rf " + working_dir)
+os.mkdir(working_dir)
 
 for p in gpins:
     if p in pins: pins.remove(p)
 
+# We can either tickle every global buffer or we don't have enough pins to do
+# the full logic for each one.
+w = min(min((len(pins) - 8) // 4, len(gpins)), 8)
+
 for idx in range(num):
-    with open("work_gbio2/gbio2_%02d.v" % idx, "w") as f:
+    with open(working_dir + "/gbio2_%02d.v" % idx, "w") as f:
         glbs = np.random.permutation(list(range(8)))
         print("""
             module top (
@@ -69,7 +75,7 @@ for idx in range(num):
         """ % (
             glbs[0], glbs[1], glbs[1], glbs[2], glbs[3]
         ), file=f)
-    with open("work_gbio2/gbio2_%02d.pcf" % idx, "w") as f:
+    with open(working_dir + "/gbio2_%02d.pcf" % idx, "w") as f:
         p = np.random.permutation(pins)
         g = np.random.permutation(gpins)
         for i in range(w):
@@ -81,9 +87,5 @@ for idx in range(num):
             print("set_io %s %s" % (n, p[4*w+i]), file=f)
         print("set_io q %s" % (p[-1]), file=f)
 
-with open("work_gbio2/Makefile", "w") as f:
-    print("all: %s" % " ".join(["gbio2_%02d.bin" % i for i in range(num)]), file=f)
-    for i in range(num):
-        print("gbio2_%02d.bin:" % i, file=f)
-        print("\t-bash ../icecube.sh gbio2_%02d > gbio2_%02d.log 2>&1 && rm -rf gbio2_%02d.tmp || tail gbio2_%02d.log" % (i, i, i, i), file=f)
 
+output_makefile(working_dir, "gbio2")
