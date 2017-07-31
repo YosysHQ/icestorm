@@ -56,11 +56,10 @@ if [ "$1" == "-up5k" ]; then
 	shift
 fi
 
-ICECUBEDIR=~/lscc/iCEcube2.2017.01
-
 set -ex
 set -- ${1%.v}
 icecubedir="${ICECUBEDIR:-/opt/lscc/iCEcube2.2015.08}"
+if [ -d $icecubedir/LSE/bin/lin64 ]; then lin_lin64=lin64; else lin_lin64=lin; fi
 export FOUNDRY="$icecubedir/LSE"
 export SBT_DIR="$icecubedir/sbt_backend"
 export SYNPLIFY_PATH="$icecubedir/synpbase"
@@ -69,7 +68,7 @@ export TCL_LIBRARY="$icecubedir/sbt_backend/bin/linux/lib/tcl8.4"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH${LD_LIBRARY_PATH:+:}$icecubedir/sbt_backend/bin/linux/opt"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH${LD_LIBRARY_PATH:+:}$icecubedir/sbt_backend/bin/linux/opt/synpwrap"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH${LD_LIBRARY_PATH:+:}$icecubedir/sbt_backend/lib/linux/opt"
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH${LD_LIBRARY_PATH:+:}$icecubedir/LSE/bin/lin64"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH${LD_LIBRARY_PATH:+:}$icecubedir/LSE/bin/${lin_lin64}"
 
 case "${ICEDEV:-hx1k-tq144}" in
 	hx1k-cb132)
@@ -350,7 +349,7 @@ fi
 
 # synthesis (Lattice LSE)
 if true; then
-	"$icecubedir"/LSE/bin/lin64/synthesis -f "impl_lse.prj"
+	"$icecubedir"/LSE/bin/${lin_lin64}/synthesis -f "impl_lse.prj"
 fi
 
 # convert netlist
@@ -419,4 +418,5 @@ if [ -n "$ICE_SBTIMER_LP" ]; then
 fi
 
 export LD_LIBRARY_PATH=""
-$scriptdir/../icepack/iceunpack -vv "$1.bin" "$1.asc"
+$scriptdir/../icepack/iceunpack "$1.bin" "$1.asc"
+
