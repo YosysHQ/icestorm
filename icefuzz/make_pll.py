@@ -11,7 +11,6 @@ def randbin(n):
 
 for p in gpins:
     if p in pins: pins.remove(p)
-    
 
 device_class = os.getenv("ICEDEVICE")
 

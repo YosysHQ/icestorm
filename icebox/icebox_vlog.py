@@ -592,7 +592,7 @@ for cell in iocells:
             text_func.append("// OUT_CLK = %s" % net_oclk)
             text_func.append("// LATCH   = %s" % net_latch)
             text_func.append("// TYPE    = %s (LSB:MSB)" % iotype)
-        
+
         if net_din0 != "" or net_din1 != "":
             if net_cen == "1":
                 icen_cond = ""

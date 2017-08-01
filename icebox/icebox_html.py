@@ -556,7 +556,7 @@ if outdir is not None:
     print("Writing %s/index.html.." % outdir, file=stdout)
     sys.stdout = open("%s/index.html" % outdir, "w")
     print_index()
-    
+
     for x in range(ic.max_x+1):
         for y in range(ic.max_y+1):
             if (x, y) in mktiles:
@@ -571,7 +571,7 @@ if outdir is not None:
         os.system("icebox_chipdb %s > %s/%s" % ("-8" if mode8k else "", outdir, chipdbfile))
 
     sys.stdout = stdout
-    
+
 elif (tx, ty) == (0, 0):
     print_index()
 

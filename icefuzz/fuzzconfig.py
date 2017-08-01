@@ -71,7 +71,7 @@ elif device_class == "5k":
 
     #TODO(tannewt): Add 39, 40, 41 to this list. It causes placement failures for some reason.
     gpins = "20 35 37 44".split()
-    
+
 def output_makefile(working_dir, fuzzname):
   with open(working_dir + "/Makefile", "w") as f:
       print("all: %s" % " ".join(["%s_%02d.bin" % (fuzzname, i) for i in range(num)]), file=f)

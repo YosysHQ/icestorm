@@ -19,7 +19,7 @@ for line in fileinput.input():
     if line[0] == "IOB_1":
         iob = (current_tile[0], current_tile[1], 1)
 
-if ren is None: 
+if ren is None:
     print("(%2d, %2d, %2d,  ? ,  ? ,  ? )," % (iob[0], iob[1], iob[2]))
 else:
     print("(%2d, %2d, %2d, %2d, %2d, %2d)," % (iob[0], iob[1], iob[2], ren[0], ren[1], ren[2]))

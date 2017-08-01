@@ -1,6 +1,6 @@
 // ICEDEV=hx8k-ct256 bash ../icecube.sh sb_ram40.v
-// ../../icebox/icebox_vlog.py -P sb_ram40.psb sb_ram40.txt 
-// ../../icebox/icebox_explain.py -t '7 21' sb_ram40.txt 
+// ../../icebox/icebox_vlog.py -P sb_ram40.psb sb_ram40.txt
+// ../../icebox/icebox_explain.py -t '7 21' sb_ram40.txt
 
 module top (
 	input  [10:0] WADDR,

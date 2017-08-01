@@ -37,7 +37,7 @@ static void write_bit(int value)
 
 	if (value)
 		write_buffer |= 1 << write_bitcounter;
-	
+
 	if (write_bitcounter == 0) {
 		fputc(write_buffer, output_file);
 		write_bitcounter = 8;

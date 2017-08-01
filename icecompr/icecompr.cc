@@ -298,7 +298,7 @@ int main(int argc, char **argv)
 				value |= 1 << (7-j);
 		fputc(value, output_file);
 	}
-	
+
 	return 0;
 }
 

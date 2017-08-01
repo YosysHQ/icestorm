@@ -386,7 +386,7 @@ class iceconfig:
     def follow_net(self, netspec):
         x, y, netname = netspec
         neighbours = self.rlookup_funcnet(x, y, netname)
-        
+
         #print(netspec)
         #print('\t', neighbours)
 
@@ -463,7 +463,7 @@ class iceconfig:
 
                 if self.tile_has_net(s[0], s[1], s[2]):
                     neighbours.add((s[0], s[1], s[2]))
-        
+
         #print('\tafter directions', neighbours)
         return neighbours
 
@@ -475,14 +475,14 @@ class iceconfig:
 
         for seg in extra_segments:
             seed_segments.add(seg)
-            
+
         for conn in extra_connections:
             s1, s2 = conn
             connected_segments.setdefault(s1, set()).add(s2)
             connected_segments.setdefault(s2, set()).add(s1)
             seed_segments.add(s1)
             seed_segments.add(s2)
-            
+
         for idx, tile in self.io_tiles.items():
             tc = tileconfig(tile)
             pintypes = [ list("000000"), list("000000") ]

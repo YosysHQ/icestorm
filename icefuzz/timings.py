@@ -435,4 +435,3 @@ if output_mode == "html":
                 print("<td>%s</td><td>%s</td><td>%s</td>" % tuple(entry[3].split(":")), end="")
                 print("</tr>")
             print("</table>")
-

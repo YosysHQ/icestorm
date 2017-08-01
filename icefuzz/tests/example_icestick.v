@@ -24,6 +24,6 @@ module top (
 
 	always@(posedge clk)
 		counter <= counter + 1;
-	
+
 	assign {LED1, LED2, LED3, LED4, LED5} = bin2gray(counter >> LOG2DELAY);
 endmodule
