@@ -51,10 +51,10 @@ Edit the Makefile of yosys and replace the two first lines for this, i.e., comme
 CONFIG := gcc
 </pre>
 
-<h2>error "Can't find iCE FTDI USB device (vedor_id 0x0403, device_id 0x6010)." while uploading code to FPGA (e.g., "iceprog example.bin")</h2>
+<h2>error "Can't find iCE FTDI USB device (vendor_id 0x0403, device_id 0x6010)." while uploading code to FPGA (e.g., "iceprog example.bin")</h2>
 
 <p>
-You need to unload the FTDI driver. (notes below are from Mountain Lion, 10.8.2).
+You need to unload the FTDI driver (notes below are from Mountain Lion, 10.8.2).
 First check if it is running:
 </p>
 
@@ -63,11 +63,11 @@ kextstat | grep FTDIUSBSerialDriver
 </pre>
 
 <p>
-If you see if on the kextstat, we need to unload it:
+If you see it on the kextstat, we need to unload it:
 </p>
 
 <pre style="padding-left: 3em">
-sudo kextunload -b com.FTDI.driver.FTDIUSBSerialDriver`
+sudo kextunload -b com.FTDI.driver.FTDIUSBSerialDriver
 </pre>
 
 <p>
