@@ -10,6 +10,7 @@ icemulti$(EXE): icemulti.o
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 check: all
+	cd tests; ./run-tests
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin

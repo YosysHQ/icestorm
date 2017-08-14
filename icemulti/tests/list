@@ -1,0 +1,162 @@
+tc-0-0.hex	../icemulti image0
+tc-0-00.hex	../icemulti image0 image0
+tc-0-000.hex	../icemulti image0 image0 image0
+tc-0-0000.hex	../icemulti image0 image0 image0 image0
+tc-0-0001.hex	../icemulti image0 image0 image0 image1
+tc-0-001.hex	../icemulti image0 image0 image1
+tc-0-0010.hex	../icemulti image0 image0 image1 image0
+tc-0-0011.hex	../icemulti image0 image0 image1 image1
+tc-0-0012.hex	../icemulti image0 image0 image1 image2
+tc-0-01.hex	../icemulti image0 image1
+tc-0-010.hex	../icemulti image0 image1 image0
+tc-0-0100.hex	../icemulti image0 image1 image0 image0
+tc-0-0101.hex	../icemulti image0 image1 image0 image1
+tc-0-0102.hex	../icemulti image0 image1 image0 image2
+tc-0-011.hex	../icemulti image0 image1 image1
+tc-0-0110.hex	../icemulti image0 image1 image1 image0
+tc-0-0111.hex	../icemulti image0 image1 image1 image1
+tc-0-0112.hex	../icemulti image0 image1 image1 image2
+tc-0-012.hex	../icemulti image0 image1 image2
+tc-0-0120.hex	../icemulti image0 image1 image2 image0
+tc-0-0121.hex	../icemulti image0 image1 image2 image1
+tc-0-0122.hex	../icemulti image0 image1 image2 image2
+tc-0-0123.hex	../icemulti image0 image1 image2 image3
+tc-0-0.hex	../icemulti -p0 image0
+tc-0-00.hex	../icemulti -p0 image0 image0
+tc-0-000.hex	../icemulti -p0 image0 image0 image0
+tc-0-0000.hex	../icemulti -p0 image0 image0 image0 image0
+tc-0-0001.hex	../icemulti -p0 image0 image0 image0 image1
+tc-0-001.hex	../icemulti -p0 image0 image0 image1
+tc-0-0010.hex	../icemulti -p0 image0 image0 image1 image0
+tc-0-0011.hex	../icemulti -p0 image0 image0 image1 image1
+tc-0-0012.hex	../icemulti -p0 image0 image0 image1 image2
+tc-0-01.hex	../icemulti -p0 image0 image1
+tc-0-010.hex	../icemulti -p0 image0 image1 image0
+tc-0-0100.hex	../icemulti -p0 image0 image1 image0 image0
+tc-0-0101.hex	../icemulti -p0 image0 image1 image0 image1
+tc-0-0102.hex	../icemulti -p0 image0 image1 image0 image2
+tc-0-011.hex	../icemulti -p0 image0 image1 image1
+tc-0-0110.hex	../icemulti -p0 image0 image1 image1 image0
+tc-0-0111.hex	../icemulti -p0 image0 image1 image1 image1
+tc-0-0112.hex	../icemulti -p0 image0 image1 image1 image2
+tc-0-012.hex	../icemulti -p0 image0 image1 image2
+tc-0-0120.hex	../icemulti -p0 image0 image1 image2 image0
+tc-0-0121.hex	../icemulti -p0 image0 image1 image2 image1
+tc-0-0122.hex	../icemulti -p0 image0 image1 image2 image2
+tc-0-0123.hex	../icemulti -p0 image0 image1 image2 image3
+tc-1-00.hex	../icemulti -p1 image0 image0
+tc-1-000.hex	../icemulti -p1 image0 image0 image0
+tc-1-0000.hex	../icemulti -p1 image0 image0 image0 image0
+tc-1-0001.hex	../icemulti -p1 image0 image0 image0 image1
+tc-1-001.hex	../icemulti -p1 image0 image0 image1
+tc-1-0010.hex	../icemulti -p1 image0 image0 image1 image0
+tc-1-0011.hex	../icemulti -p1 image0 image0 image1 image1
+tc-1-0012.hex	../icemulti -p1 image0 image0 image1 image2
+tc-1-01.hex	../icemulti -p1 image0 image1
+tc-1-010.hex	../icemulti -p1 image0 image1 image0
+tc-1-0100.hex	../icemulti -p1 image0 image1 image0 image0
+tc-1-0101.hex	../icemulti -p1 image0 image1 image0 image1
+tc-1-0102.hex	../icemulti -p1 image0 image1 image0 image2
+tc-1-011.hex	../icemulti -p1 image0 image1 image1
+tc-1-0110.hex	../icemulti -p1 image0 image1 image1 image0
+tc-1-0111.hex	../icemulti -p1 image0 image1 image1 image1
+tc-1-0112.hex	../icemulti -p1 image0 image1 image1 image2
+tc-1-012.hex	../icemulti -p1 image0 image1 image2
+tc-1-0120.hex	../icemulti -p1 image0 image1 image2 image0
+tc-1-0121.hex	../icemulti -p1 image0 image1 image2 image1
+tc-1-0122.hex	../icemulti -p1 image0 image1 image2 image2
+tc-1-0123.hex	../icemulti -p1 image0 image1 image2 image3
+tc-2-000.hex	../icemulti -p2 image0 image0 image0
+tc-2-0000.hex	../icemulti -p2 image0 image0 image0 image0
+tc-2-0001.hex	../icemulti -p2 image0 image0 image0 image1
+tc-2-001.hex	../icemulti -p2 image0 image0 image1
+tc-2-0010.hex	../icemulti -p2 image0 image0 image1 image0
+tc-2-0011.hex	../icemulti -p2 image0 image0 image1 image1
+tc-2-0012.hex	../icemulti -p2 image0 image0 image1 image2
+tc-2-010.hex	../icemulti -p2 image0 image1 image0
+tc-2-0100.hex	../icemulti -p2 image0 image1 image0 image0
+tc-2-0101.hex	../icemulti -p2 image0 image1 image0 image1
+tc-2-0102.hex	../icemulti -p2 image0 image1 image0 image2
+tc-2-011.hex	../icemulti -p2 image0 image1 image1
+tc-2-0110.hex	../icemulti -p2 image0 image1 image1 image0
+tc-2-0111.hex	../icemulti -p2 image0 image1 image1 image1
+tc-2-0112.hex	../icemulti -p2 image0 image1 image1 image2
+tc-2-012.hex	../icemulti -p2 image0 image1 image2
+tc-2-0120.hex	../icemulti -p2 image0 image1 image2 image0
+tc-2-0121.hex	../icemulti -p2 image0 image1 image2 image1
+tc-2-0122.hex	../icemulti -p2 image0 image1 image2 image2
+tc-2-0123.hex	../icemulti -p2 image0 image1 image2 image3
+tc-3-0000.hex	../icemulti -p3 image0 image0 image0 image0
+tc-3-0001.hex	../icemulti -p3 image0 image0 image0 image1
+tc-3-0010.hex	../icemulti -p3 image0 image0 image1 image0
+tc-3-0011.hex	../icemulti -p3 image0 image0 image1 image1
+tc-3-0012.hex	../icemulti -p3 image0 image0 image1 image2
+tc-3-0100.hex	../icemulti -p3 image0 image1 image0 image0
+tc-3-0101.hex	../icemulti -p3 image0 image1 image0 image1
+tc-3-0102.hex	../icemulti -p3 image0 image1 image0 image2
+tc-3-0110.hex	../icemulti -p3 image0 image1 image1 image0
+tc-3-0111.hex	../icemulti -p3 image0 image1 image1 image1
+tc-3-0112.hex	../icemulti -p3 image0 image1 image1 image2
+tc-3-0120.hex	../icemulti -p3 image0 image1 image2 image0
+tc-3-0121.hex	../icemulti -p3 image0 image1 image2 image1
+tc-3-0122.hex	../icemulti -p3 image0 image1 image2 image2
+tc-3-0123.hex	../icemulti -p3 image0 image1 image2 image3
+
+tc-0-0-coldboot.hex	../icemulti -c image0
+tc-0-01-coldboot.hex	../icemulti -c image0 image1
+tc-0-012-coldboot.hex	../icemulti -c image0 image1 image2
+tc-0-0123-coldboot.hex	../icemulti -c image0 image1 image2 image3
+
+tc-0-0.hex		../icemulti -a0 image0
+tc-0-01.hex		../icemulti -a0 image0 image1
+tc-0-012.hex		../icemulti -a0 image0 image1 image2
+tc-0-0123.hex		../icemulti -a0 image0 image1 image2 image3
+
+tc-0-0.hex		../icemulti -A0 image0
+tc-0-01.hex		../icemulti -A0 image0 image1
+tc-0-012.hex		../icemulti -A0 image0 image1 image2
+tc-0-0123.hex		../icemulti -A0 image0 image1 image2 image3
+
+tc-0-0.hex		../icemulti -a5 image0
+tc-0-01-a32.hex		../icemulti -a5 image0 image1
+tc-0-012-a32.hex	../icemulti -a5 image0 image1 image2
+tc-0-0123-a32.hex	../icemulti -a5 image0 image1 image2 image3
+
+tc-0-0.hex		../icemulti -A5 image0
+tc-0-01-a32.hex		../icemulti -A5 image0 image1
+tc-0-012-a32.hex	../icemulti -A5 image0 image1 image2
+tc-0-0123-a32.hex	../icemulti -A5 image0 image1 image2 image3
+
+tc-0-0.hex		../icemulti -a10 image0
+tc-0-01-a1k.hex		../icemulti -a10 image0 image1
+tc-0-012-a1k.hex	../icemulti -a10 image0 image1 image2
+tc-0-0123-a1k.hex	../icemulti -a10 image0 image1 image2 image3
+
+tc-0-0-A1k.hex		../icemulti -A10 image0
+tc-0-01-A1k.hex		../icemulti -A10 image0 image1
+tc-0-012-A1k.hex	../icemulti -A10 image0 image1 image2
+tc-0-0123-A1k.hex	../icemulti -A10 image0 image1 image2 image3
+
+ERR		../icemulti
+ERR		../icemulti -c
+ERR		../icemulti -p0
+ERR		../icemulti -a0
+ERR		../icemulti -A0
+ERR		../icemulti -o tmp
+ERR		../icemulti -v
+ERR		../icemulti image0 -p
+ERR		../icemulti image0 -a
+ERR		../icemulti image0 -A
+ERR		../icemulti image0 -o
+ERR		../icemulti image0 -Y
+ERR		../icemulti image0 image0 image0 image0 image0
+
+ERR		../icemulti -p4 image0
+ERR		../icemulti -p-1 image0
+ERR		../icemulti -px image0
+ERR		../icemulti -p1 image0
+ERR		../icemulti -p2 image0
+ERR		../icemulti -p2 image0 image1
+ERR		../icemulti -p3 image0
+ERR		../icemulti -p3 image0 image1
+ERR		../icemulti -p3 image0 image1 image2

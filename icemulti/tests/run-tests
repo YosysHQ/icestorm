@@ -1,0 +1,32 @@
+#!/bin/bash
+
+while read name cmd; do
+    if [ x"${name}" = x ]; then
+	:
+    elif [ x"${name}" = xERR ]; then
+	if sh -c "${cmd}" >out.$$ 2>err.$$; then
+	    echo
+	    echo "FAIL: ${cmd}"
+	    od -A x -t x2z -v <out.$$
+	    cat err.$$
+	    rm -f out.$$ err.$$
+	    exit 1
+	else
+	    echo -n .
+	fi
+    else
+	if sh -c "${cmd}" 2>err.$$ | od -A x -t x2z -v |
+		diff -u "${name}" - >out.$$ 2>&1; then
+	    echo -n .
+	else
+	    echo
+	    echo "FAIL: ${cmd}"
+	    cat out.$$ err.$$
+	    rm -f out.$$ err.$$
+	    exit 1
+	fi
+    fi
+done <list
+
+echo
+rm -f out.$$ err.$$
