@@ -79,11 +79,12 @@ static void pad_to(std::ostream &ofs, uint32_t &file_offset, uint32_t target)
 }
 
 class Image {
-    const char *filename;
     std::ifstream ifs;
     uint32_t offs;
 
 public:
+    const char *const filename;
+
     Image(const char *filename);
     size_t size();
     void write(std::ostream &ofs, uint32_t &file_offset);
@@ -91,7 +92,7 @@ public:
     uint32_t offset() const { return offs; }
 };
 
-Image::Image(const char *filename) : filename(filename), ifs(filename, std::ifstream::binary)
+Image::Image(const char *filename) : ifs(filename, std::ifstream::binary), filename(filename)
 {
     if (ifs.fail())
         error("can't open input image `%s': %s\n", filename, strerror(errno));
@@ -267,7 +268,7 @@ int main(int argc, char **argv)
         offs += images[i]->size();
         align_offset(offs, align_bits);
         if (print_offsets)
-            fprintf(stderr, "Place image %d at %06x .. %06x.\n", i, int(images[i]->offset()), int(offs));
+            fprintf(stderr, "Place image %d at %06x .. %06x (`%s')\n", i, int(images[i]->offset()), int(offs), images[i]->filename);
     }
 
     // Populate headers
