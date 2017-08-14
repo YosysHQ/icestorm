@@ -106,6 +106,9 @@ size_t Image::size()
     ifs.seekg (0, ifs.beg);
     if (ifs.fail())
         err(EXIT_FAILURE, "can't seek on input image `%s'", filename);
+
+    if (length == 0)
+        errx(EXIT_FAILURE, "input image `%s' doesn't contain any data", filename);
     return length;
 }
 

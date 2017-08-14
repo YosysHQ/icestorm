@@ -137,6 +137,20 @@ tc-0-01-A1k.hex		../icemulti -A10 image0 image1
 tc-0-012-A1k.hex	../icemulti -A10 image0 image1 image2
 tc-0-0123-A1k.hex	../icemulti -A10 image0 image1 image2 image3
 
+ERR		../icemulti /dev/null
+ERR		../icemulti /dev/null /dev/null
+ERR		../icemulti /dev/null /dev/null /dev/null
+ERR		../icemulti /dev/null /dev/null /dev/null /dev/null
+ERR		../icemulti /dev/null image0
+ERR		../icemulti /dev/null image0 image1
+ERR		../icemulti /dev/null image0 image1 image2
+ERR		../icemulti image0 /dev/null
+ERR		../icemulti image0 /dev/null image1
+ERR		../icemulti image0 /dev/null image1 image2
+ERR		../icemulti image0 image1 /dev/null
+ERR		../icemulti image0 image1 /dev/null image2
+ERR		../icemulti image0 image1 image2 /dev/null
+
 ERR		../icemulti
 ERR		../icemulti -c
 ERR		../icemulti -p0
