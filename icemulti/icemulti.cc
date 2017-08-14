@@ -158,7 +158,7 @@ void usage(const char *program_name)
     fprintf(stderr, "                          pulse on CRESET_B is determined by the value of the\n");
     fprintf(stderr, "                          pins CBSEL0 and CBSEL1\n");
     fprintf(stderr, "  -p0, -p1, -p2, -p3    specifies image to be loaded on power-on or after a low\n");
-    fprintf(stderr, "                          pulse on CRESET_B (not applicable in coldboot mode)\n");
+    fprintf(stderr, "                          pulse on CRESET_B (has no effect in coldboot mode)\n");
     fprintf(stderr, "  -d0, -d1, -d2, -d3    specifies default image to be used if less than four\n");
     fprintf(stderr, "                          images are given (defaults to power-on/reset image)\n");
     fprintf(stderr, "  -a N                  align images at 2^N bytes\n");
@@ -270,7 +270,7 @@ int main(int argc, char **argv)
     }
 
     if (coldboot && por_image != 0)
-        errx(EXIT_FAILURE, "can't select power-on/reset boot image in cold boot mode");
+        warnx("warning: power-on/reset boot image isn't loaded in cold boot mode");
 
     if (por_image >= header_count)
         errx(EXIT_FAILURE, "specified non-existing image for power-on/reset");

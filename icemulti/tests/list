@@ -481,6 +481,8 @@ tc-00100-coldboot.hex	../icemulti -c image0 image1
 tc-00120-coldboot.hex	../icemulti -c image0 image1 image2
 tc-00123-coldboot.hex	../icemulti -c image0 image1 image2 image3
 
+tc-10100-coldboot.hex	../icemulti -c -p1 -d0 image0 image1
+
 tc-00000.hex		../icemulti -a0 image0
 tc-00100.hex		../icemulti -a0 image0 image1
 tc-00120.hex		../icemulti -a0 image0 image1 image2
