@@ -24,10 +24,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define info(...) do { if (log_level > 0) fprintf(stderr, __VA_ARGS__); } while (0)
-
-int log_level = 0;
-
 static const int NUM_IMAGES = 4;
 static const int HEADER_SIZE = 32;
 
@@ -184,6 +180,7 @@ int main(int argc, char **argv)
     Image *header_images[NUM_IMAGES];
     std::unique_ptr<Image> images[NUM_IMAGES];
     const char *outfile_name = NULL;
+    bool print_offsets = false;
 
     static struct option long_options[] = {
         {"help", no_argument, NULL, -2},
@@ -222,7 +219,7 @@ int main(int argc, char **argv)
                 outfile_name = optarg;
                 break;
             case 'v':
-                log_level++;
+                print_offsets = true;
                 break;
             case -2:
                 usage(argv[0]);
@@ -261,7 +258,8 @@ int main(int argc, char **argv)
         images[i]->place(offs);
         offs += images[i]->size();
         align_offset(offs, align_bits);
-        info("Place image %d at %06x .. %06x.\n", i, int(images[i]->offset()), int(offs));
+        if (print_offsets)
+            fprintf(stderr, "Place image %d at %06x .. %06x.\n", i, int(images[i]->offset()), int(offs));
     }
 
     // Populate headers
@@ -295,6 +293,5 @@ int main(int argc, char **argv)
         images[i]->write(*osp, file_offset);
     }
 
-    info("Done.\n");
     return EXIT_SUCCESS;
 }
