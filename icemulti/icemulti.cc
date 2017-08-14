@@ -292,6 +292,13 @@ int main(int argc, char **argv)
         default_image = header_images[default_index];
     }
 
+    /* move power-on/reset image to first place */
+    for (int i = image_count - 1; i > 0; i--)
+        if (images[i] == por_image) {
+            images[i] = images[i - 1];
+            images[i - 1] = por_image;
+        }
+
     // Place images
     uint32_t offs = (NUM_IMAGES + 1) * HEADER_SIZE;
     if (align_first)
