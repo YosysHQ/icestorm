@@ -193,8 +193,10 @@ int main(int argc, char **argv)
     int c;
     char *endptr = NULL;
     bool coldboot = false;
-    int por_image = 0;
-    int default_image = -1;  /* use power-on/reset image by default */
+    int por_index = 0;
+    Image *por_image = NULL;
+    int default_index = -1;  /* use power-on/reset image by default */
+    Image *default_image = NULL;
     int header_count = 0;
     int align_bits = 0;
     bool align_first = false;
@@ -215,25 +217,25 @@ int main(int argc, char **argv)
                 break;
             case 'p':
                 if (optarg[0] == '0' && optarg[1] == '\0')
-                    por_image = 0;
+                    por_index = 0;
                 else if (optarg[0] == '1' && optarg[1] == '\0')
-                    por_image = 1;
+                    por_index = 1;
                 else if (optarg[0] == '2' && optarg[1] == '\0')
-                    por_image = 2;
+                    por_index = 2;
                 else if (optarg[0] == '3' && optarg[1] == '\0')
-                    por_image = 3;
+                    por_index = 3;
                 else
                     errx(EXIT_FAILURE, "`%s' is not a valid power-on/reset image (must be 0, 1, 2, or 3)", optarg);
                 break;
             case 'd':
                 if (optarg[0] == '0' && optarg[1] == '\0')
-                    default_image = 0;
+                    default_index = 0;
                 else if (optarg[0] == '1' && optarg[1] == '\0')
-                    default_image = 1;
+                    default_index = 1;
                 else if (optarg[0] == '2' && optarg[1] == '\0')
-                    default_image = 2;
+                    default_index = 2;
                 else if (optarg[0] == '3' && optarg[1] == '\0')
-                    default_image = 3;
+                    default_index = 3;
                 else
                     errx(EXIT_FAILURE, "`%s' is not a valid default image (must be 0, 1, 2, or 3)", optarg);
                 break;
@@ -275,17 +277,20 @@ int main(int argc, char **argv)
         optind++;
     }
 
-    if (coldboot && por_image != 0)
+    if (coldboot && por_index != 0)
         warnx("warning: power-on/reset boot image isn't loaded in cold boot mode");
 
-    if (por_image >= header_count)
+    if (por_index >= header_count)
         errx(EXIT_FAILURE, "specified non-existing image for power-on/reset");
+    por_image = header_images[por_index];
 
-    if (default_image >= header_count)
-        errx(EXIT_FAILURE, "specified non-existing default image");
-
-    if (default_image == -1)
+    if (default_index == -1)
         default_image = por_image;
+    else {
+        if (default_index >= header_count)
+            errx(EXIT_FAILURE, "specified non-existing default image");
+        default_image = header_images[default_index];
+    }
 
     // Place images
     uint32_t offs = (NUM_IMAGES + 1) * HEADER_SIZE;
@@ -316,11 +321,11 @@ int main(int argc, char **argv)
     {
         pad_to(*osp, file_offset, i * HEADER_SIZE);
         if (i == 0)
-            write_header(*osp, file_offset, header_images[por_image], coldboot);
+            write_header(*osp, file_offset, por_image, coldboot);
         else if (i - 1 < header_count)
             write_header(*osp, file_offset, header_images[i - 1], false);
         else
-            write_header(*osp, file_offset, header_images[default_image], false);
+            write_header(*osp, file_offset, default_image, false);
     }
     for (int i=0; i<image_count; i++)
     {
