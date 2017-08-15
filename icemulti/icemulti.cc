@@ -17,7 +17,6 @@
 #include <fstream>
 #include <iostream>
 #include <cstdint>
-#include <memory>
 
 #include <err.h>
 #include <getopt.h>
@@ -149,20 +148,20 @@ static void write_header(std::ostream &ofs, uint32_t &file_offset,
         write_byte(ofs, file_offset, 0x00);
 }
 
-static std::unique_ptr<Image> images[NUM_IMAGES];
+static Image *images[NUM_IMAGES];
 static int image_count = 0;
 
 static Image *load_image(const char *path)
 {
     for (int i = 0; i < image_count; i++)
         if (strcmp(path, images[i]->filename) == 0)
-            return &*images[i];
+            return images[i];
 
     if (image_count >= NUM_IMAGES)
         errx(EXIT_FAILURE, "internal error: too many images");
 
     Image *image = new Image(path);
-    images[image_count].reset(image);
+    images[image_count] = image;
     image_count++;
     return image;
 }
@@ -329,6 +328,7 @@ int main(int argc, char **argv)
     {
         pad_to(*osp, file_offset, images[i]->offset());
         images[i]->write(*osp, file_offset);
+        delete images[i];
     }
 
     return EXIT_SUCCESS;
