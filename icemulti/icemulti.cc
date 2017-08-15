@@ -148,7 +148,7 @@ static void write_header(std::ostream &ofs, uint32_t &file_offset,
         write_byte(ofs, file_offset, 0x00);
 }
 
-static Image *images[NUM_IMAGES];
+static Image *images[NUM_IMAGES + 1];
 static int image_count = 0;
 
 static Image *load_image(const char *path)
@@ -157,7 +157,7 @@ static Image *load_image(const char *path)
         if (strcmp(path, images[i]->filename) == 0)
             return images[i];
 
-    if (image_count >= NUM_IMAGES)
+    if (image_count >= NUM_IMAGES + 1)
         errx(EXIT_FAILURE, "internal error: too many images");
 
     Image *image = new Image(path);
@@ -168,15 +168,17 @@ static Image *load_image(const char *path)
 
 void usage(const char *program_name)
 {
-    fprintf(stderr, "Create a multi-configuration image from up to four configuration images.\n");
+    fprintf(stderr, "Create a multi-configuration image from up to five configuration images.\n");
     fprintf(stderr, "Usage: %s [OPTION]... INPUT-FILE...\n", program_name);
     fprintf(stderr, "\n");
     fprintf(stderr, "  -c                    coldboot mode: image loaded on power-on or after a low\n");
     fprintf(stderr, "                          pulse on CRESET_B is determined by the value of the\n");
     fprintf(stderr, "                          pins CBSEL0 and CBSEL1\n");
-    fprintf(stderr, "  -p0, -p1, -p2, -p3    specifies image to be loaded on power-on or after a low\n");
+    fprintf(stderr, "  -p0, -p1, -p2, -p3\n");
+    fprintf(stderr, "  -P INPUT-FILE         specifies image to be loaded on power-on or after a low\n");
     fprintf(stderr, "                          pulse on CRESET_B (has no effect in coldboot mode)\n");
-    fprintf(stderr, "  -d0, -d1, -d2, -d3    specifies default image to be used if less than four\n");
+    fprintf(stderr, "  -d0, -d1, -d2, -d3\n");
+    fprintf(stderr, "  -D INPUT-FILE         specifies default image to be used if less than four\n");
     fprintf(stderr, "                          images are given (defaults to power-on/reset image)\n");
     fprintf(stderr, "  -a N                  align images at 2^N bytes\n");
     fprintf(stderr, "  -A N                  like `-a N', but align the first image, too\n");
@@ -194,8 +196,10 @@ int main(int argc, char **argv)
     char *endptr = NULL;
     bool coldboot = false;
     int por_index = 0;
+    const char *por_filename = NULL;
     Image *por_image = NULL;
     int default_index = -1;  /* use power-on/reset image by default */
+    const char *default_filename = NULL;
     Image *default_image = NULL;
     int header_count = 0;
     int align_bits = 0;
@@ -209,7 +213,7 @@ int main(int argc, char **argv)
         {NULL, 0, NULL, 0}
     };
 
-    while ((c = getopt_long(argc, argv, "cp:d:a:A:o:v",
+    while ((c = getopt_long(argc, argv, "cp:P:d:D:a:A:o:v",
                 long_options, NULL)) != -1)
         switch (c) {
             case 'c':
@@ -226,6 +230,10 @@ int main(int argc, char **argv)
                     por_index = 3;
                 else
                     errx(EXIT_FAILURE, "`%s' is not a valid power-on/reset image (must be 0, 1, 2, or 3)", optarg);
+                por_filename = NULL;
+                break;
+            case 'P':
+                por_filename = optarg;
                 break;
             case 'd':
                 if (optarg[0] == '0' && optarg[1] == '\0')
@@ -238,6 +246,10 @@ int main(int argc, char **argv)
                     default_index = 3;
                 else
                     errx(EXIT_FAILURE, "`%s' is not a valid default image (must be 0, 1, 2, or 3)", optarg);
+                default_filename = NULL;
+                break;
+            case 'D':
+                default_filename = optarg;
                 break;
             case 'A':
                 align_first = true;
@@ -277,14 +289,20 @@ int main(int argc, char **argv)
         optind++;
     }
 
-    if (coldboot && por_index != 0)
+    if (coldboot && (por_index != 0 || por_filename != NULL))
         warnx("warning: power-on/reset boot image isn't loaded in cold boot mode");
 
-    if (por_index >= header_count)
-        errx(EXIT_FAILURE, "specified non-existing image for power-on/reset");
-    por_image = header_images[por_index];
+    if (por_filename != NULL)
+        por_image = load_image(por_filename);
+    else {
+        if (por_index >= header_count)
+            errx(EXIT_FAILURE, "specified non-existing image for power-on/reset");
+        por_image = header_images[por_index];
+    }
 
-    if (default_index == -1)
+    if (default_filename != NULL && header_count < NUM_IMAGES)
+        default_image = load_image(default_filename);
+    else if (default_index == -1)
         default_image = por_image;
     else {
         if (default_index >= header_count)
