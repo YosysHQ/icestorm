@@ -1,5 +1,6 @@
 //
 //  Copyright (C) 2015  Marcus Comstedt <marcus@mc.pp.se>
+//  Copyright (C) 2017  Roland Lutz
 //
 //  Permission to use, copy, modify, and/or distribute this software for any
 //  purpose with or without fee is hereby granted, provided that the above
