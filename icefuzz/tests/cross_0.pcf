@@ -14,4 +14,3 @@ set_io out_top 137
 # col 8, block 0
 set_io out_bottom 58
 set_io in_top 121
-

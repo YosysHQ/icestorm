@@ -908,4 +908,3 @@ if failed_drivers_check:
     print("// Single-driver-check failed for %d nets:" % len(failed_drivers_check))
     print("// %s" % " ".join(failed_drivers_check))
     assert False
-

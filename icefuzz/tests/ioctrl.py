@@ -18,4 +18,3 @@ for line in fileinput.input():
         iob = (current_tile[0], current_tile[1], 1)
 
 print("(%2d, %2d, %2d, %2d, %2d, %2d)," % (iob[0], iob[1], iob[2], ren[0], ren[1], ren[2]))
-

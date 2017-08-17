@@ -28,4 +28,3 @@ for pin in $pins; do
 	ICEDEV=lp384-cm49 bash ../../icecube.sh ${pf}.v
 	../../../icebox/icebox_vlog.py -SP ${pf}.psb ${pf}.asc > ${pf}.ve
 done
-

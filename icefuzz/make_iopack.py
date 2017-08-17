@@ -54,4 +54,3 @@ for idx in range(num):
             print("set_io p%d %s" % (i, pins[i]), file=f)
 
 output_makefile(working_dir, "iopack")
-

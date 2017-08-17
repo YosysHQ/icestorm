@@ -28,4 +28,3 @@ for line in fileinput.input():
         if len(fields) <= 1: continue
         fields = [int(fields[i+1]) for i in range(4)]
         print("%-5s %2d %2d %2d %2d %3d %3d" % (tiletype, x, y, fields[0], fields[1], fields[2], fields[3]))
-

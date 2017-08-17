@@ -47,4 +47,3 @@ for id; do
 
 	touch $id.ok
 done
-

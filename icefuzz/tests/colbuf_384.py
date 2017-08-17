@@ -26,4 +26,3 @@ elif glbnet_tile is None:
     else: print("(%2d, %2d,  ? ,  ? )," % (colbuf_tile[0], colbuf_tile[1]))
 else:
     print("(%2d, %2d, %2d, %2d)," % (colbuf_tile[0], colbuf_tile[1], glbnet_tile[0], glbnet_tile[1]))
-

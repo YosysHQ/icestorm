@@ -44,4 +44,3 @@ fi
 set -ex
 make -f pinloc-4k-cm81.mk -j4
 python3 ../pinlocdb.py pinloc-4k-cm81_*.exp > ../pinloc-4k-cm81.txt
-

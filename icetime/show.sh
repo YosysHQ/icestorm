@@ -26,4 +26,3 @@ yosys -p '
 rm -f equiv_graph.segs
 rm -f equiv_graph.dot
 rm -f icetime_graph.dot
-

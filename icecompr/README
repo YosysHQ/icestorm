@@ -49,4 +49,3 @@ only used for integrity checking the compressed bit-stream.
 The program "iceuncompr" (plain C, public domain) contains an implementation
 of a stand-alone decompressor. Simply copy&paste this implementation into
 your uC firmware.
-

@@ -52,4 +52,3 @@ fi
 set -ex
 make -f pinloc-8k-cm225.mk -j4
 python3 ../pinlocdb.py pinloc-8k-cm225_*.exp > ../pinloc-8k-cm225.txt
-

@@ -57,4 +57,3 @@ for OUTTYPE in 0000 0110 1010 1110 0101 1001 1101 \
 done; done; done
 
 echo "All tests passed."
-

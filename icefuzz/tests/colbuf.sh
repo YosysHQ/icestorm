@@ -45,4 +45,3 @@ get_colbuf_data()
 	done < <( get_colbuf_data; )
 	echo "</svg>"
 } > colbuf.svg
-

@@ -40,4 +40,3 @@ for entry in sorted(pinloc_db, key=lambda n: re.sub(r"[0-9]+", lambda d: "%03d" 
     print("        (%5s, %2d, %2d, %d)," % entry)
 
 print()
-

@@ -172,4 +172,3 @@ for bit in ic.extra_bits:
     print(" ".join(ic.lookup_extra_bit(bit)))
 
 print()
-

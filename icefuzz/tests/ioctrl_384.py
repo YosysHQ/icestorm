@@ -23,4 +23,3 @@ if ren is None:
     print("(%2d, %2d, %2d,  ? ,  ? ,  ? )," % (iob[0], iob[1], iob[2]))
 else:
     print("(%2d, %2d, %2d, %2d, %2d, %2d)," % (iob[0], iob[1], iob[2], ren[0], ren[1], ren[2]))
-

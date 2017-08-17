@@ -36,4 +36,3 @@ fi
 set -ex
 make -f pinloc-1k-swg16tr.mk -j4
 python3 ../pinlocdb.py pinloc-1k-swg16tr_*.exp > ../pinloc-1k-swg16tr.txt
-

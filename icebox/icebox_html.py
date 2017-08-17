@@ -577,4 +577,3 @@ elif (tx, ty) == (0, 0):
 
 else:
     print_tile(tx, ty)
-

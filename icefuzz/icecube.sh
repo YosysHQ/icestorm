@@ -419,4 +419,3 @@ fi
 
 export LD_LIBRARY_PATH=""
 $scriptdir/../icepack/iceunpack "$1.bin" "$1.asc"
-

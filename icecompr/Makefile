@@ -33,4 +33,3 @@ clean:
 
 .SECONDARY:
 .PHONY: all test clean
-
