@@ -15,4 +15,3 @@ mxebin: clean
 	zip -r icestorm-win32.zip icestorm-win32/
 
 .PHONY: all clean install uninstall
-

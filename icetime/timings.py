@@ -44,4 +44,3 @@ def timings_to_c(chip, f):
 for db in "lp384 lp1k lp8k hx1k hx8k".split():
     with open("../icefuzz/timings_%s.txt" % db, "r") as f:
         timings_to_c(db, f);
-

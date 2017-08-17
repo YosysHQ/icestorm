@@ -30,4 +30,3 @@ for pin in $pins; do
 	python3 ../ioctrl_384.py ioctrl_384_${pin}.exp
 done | tee ioctrl_384_db.txt
 echo "--snap--"
-

@@ -47,4 +47,3 @@ for pin in $pins; do
 	../../../icebox/icebox_explain.py ${pf}.asc > ${pf}.exp
 	rm -rf ${pf}.tmp
 done
-

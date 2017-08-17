@@ -136,4 +136,3 @@ print("BRAMs:  %4d" % len(bram_locations))
 print("IOBs:   %4d" % len(io_locations))
 print("PLLs:   %4d" % len(pll_locations))
 print("GLBs:   %4d" % len(global_nets))
-

@@ -39,4 +39,3 @@ fi
 set -ex
 make -f pinloc-4k-tq144.mk -j4
 python3 ../pinlocdb.py pinloc-4k-tq144_*.exp > ../pinloc-4k-tq144.txt
-

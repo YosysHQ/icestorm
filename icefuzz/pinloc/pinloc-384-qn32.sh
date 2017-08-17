@@ -39,4 +39,3 @@ fi
 set -ex
 make -f pinloc-384-qn32.mk -j4
 python3 ../pinlocdb.py pinloc-384-qn32_*.exp > ../pinloc-384-qn32.txt
-

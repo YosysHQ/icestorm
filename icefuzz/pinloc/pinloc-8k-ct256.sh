@@ -51,4 +51,3 @@ fi
 set -ex
 make -f pinloc-8k-ct256.mk -j4
 python3 ../pinlocdb.py pinloc-8k-ct256_*.exp > ../pinloc-8k-ct256.txt
-

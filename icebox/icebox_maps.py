@@ -154,4 +154,3 @@ elif mode == "ramt_tile_nets":
 
 else:
     usage()
-

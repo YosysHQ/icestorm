@@ -132,4 +132,3 @@ if __name__ == '__main__':
     inbytes = sys.stdin.buffer.read()
     outbytes = ice_compress_bytes(inbytes)
     sys.stdout.buffer.write(outbytes)
-

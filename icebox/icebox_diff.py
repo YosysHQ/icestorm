@@ -103,4 +103,3 @@ diff_tiles(".io_tile", ic1.io_tiles, ic2.io_tiles)
 diff_tiles(".logic_tile", ic1.logic_tiles, ic2.logic_tiles)
 diff_tiles(".ramb_tile", ic1.ramb_tiles, ic2.ramb_tiles)
 diff_tiles(".ramt_tile", ic1.ramt_tiles, ic2.ramt_tiles)
-

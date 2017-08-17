@@ -69,4 +69,3 @@ with open("demo_dat0.hex", "wt") as f:
 with open("demo_dat1.hex", "wt") as f:
     for i in range(bram_depth):
         print("%0*x" % (bram_width//4, np.random.randint(1 << bram_width)), file=f)
-

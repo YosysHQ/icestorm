@@ -43,4 +43,3 @@ fi
 set -ex
 make -f pinloc-384-cm49.mk -j4
 python3 ../pinlocdb.py pinloc-384-cm49_*.exp > ../pinloc-384-cm49.txt
-

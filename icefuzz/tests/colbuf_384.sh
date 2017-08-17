@@ -32,4 +32,3 @@ get_colbuf_data()
 	done < <( get_colbuf_data; )
 	echo "</svg>"
 } > colbuf_384.svg
-

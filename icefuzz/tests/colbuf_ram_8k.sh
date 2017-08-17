@@ -54,4 +54,3 @@ for y in {1..32}; do
 	../../../icebox/icebox_explain.py ${pf}.asc > ${pf}.exp
 	rm -rf ${pf}.tmp
 done; done
-

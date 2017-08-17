@@ -24,4 +24,3 @@ for idx in range(num):
 
 
 output_makefile(working_dir, "binop")
-

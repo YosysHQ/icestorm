@@ -18,4 +18,3 @@ pbm_to_ppm() {
 
 convert -evaluate-sequence add checkerboard_[01234567].ppm checkerboard.png
 rm -f checkerboard_[01234567].ppm
-

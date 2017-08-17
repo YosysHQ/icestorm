@@ -65,4 +65,3 @@ for bit in sorted(only_in_glb):
   print(bit)
 
 exit(1)
-

@@ -11,4 +11,3 @@ set_io clk[0] H16
 
 set_location bitslice[0].ram40_upper 8 11 0
 set_location bitslice[0].ram40_lower 25 5 0
-

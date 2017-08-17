@@ -210,4 +210,3 @@ os.remove("%s.glb" % sys.argv[1])
 os.remove("%s.psb" % sys.argv[1])
 os.remove("%s.sdf" % sys.argv[1])
 shutil.rmtree("%s.tmp" % sys.argv[1])
-
