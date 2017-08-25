@@ -64,4 +64,4 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-8k.txt
 	-rmdir $(DESTDIR)$(PREFIX)/share/icebox
 
-.PHONY: all clean install uninstall
+.PHONY: all check clean install uninstall

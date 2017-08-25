@@ -21,6 +21,8 @@ all: iceprog$(EXE)
 iceprog$(EXE): iceprog.o
 	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
+check: all
+
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp iceprog$(EXE) $(DESTDIR)$(PREFIX)/bin/iceprog$(EXE)
@@ -38,5 +40,5 @@ clean:
 
 -include *.d
 
-.PHONY: all install uninstall clean
+.PHONY: all check install uninstall clean
 

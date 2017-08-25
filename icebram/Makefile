@@ -9,7 +9,7 @@ all: icebram$(EXE)
 icebram$(EXE): icebram.o
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
-test: icebram
+check: all
 	bash rundemo.sh
 
 install: all
@@ -27,5 +27,5 @@ clean:
 
 -include *.d
 
-.PHONY: all test install uninstall clean
+.PHONY: all check install uninstall clean
 
