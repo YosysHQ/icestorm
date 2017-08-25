@@ -690,6 +690,8 @@ class iceconfig:
                 print(".ram_data %d %d" % (x, y), file=f)
                 for line in self.ram_data[(x, y)]:
                     print(line, file=f)
+            for extra_bit in sorted(self.extra_bits):
+                print(".extra_bit %d %d %d" % extra_bit, file=f)
 
 class tileconfig:
     def __init__(self, tile):
