@@ -955,13 +955,13 @@ class IOBlock:
             prefix = 'io_%d/' % self.index
             if fields[0] in ('D_IN_0', 'D_IN_1'):
                 self.tile.read([prefix + fields[0]] + fields[1:])
-            elif fields[-1] in ('CLOCK_ENABLE',
+            elif fields[-1] in ('cen',
                                 'D_OUT_0',
                                 'D_OUT_1',
-                                'INPUT_CLK',
-                                'LATCH_INPUT_VALUE',
-                                'OUTPUT_CLK',
-                                'OUTPUT_ENABLE'):
+                                'inclk',
+                                #'LATCH_INPUT_VALUE',
+                                'outclk',
+                                'OUT_ENB'):
                 self.tile.read(fields[:-1] + [prefix + fields[-1]])
             else:
                 raise ParseError
