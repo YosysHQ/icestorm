@@ -879,7 +879,10 @@ class IOTile(Tile):
         self.blocks = [None, None]
 
     def read(self, fields):
-        super().read(fields)
+        if len(fields) == 2 and fields[0] == 'PLL':
+            self.apply_directive(*fields)  # TODO
+        else:
+            super().read(fields)
 
     def new_block(self, fields):
         if fields == ['io_0'] and self.blocks[0] is None:
