@@ -971,20 +971,26 @@ class IOBlock:
 def main1(path):
     f = open(path, 'r')
     stack = [Main()]
-    for line in f:
+    for i, line in enumerate(f):
         fields = line.split('#')[0].split()
-        if not fields:
-            pass  # empty line
-        elif fields == ['}']:
-            stack.pop()
-            if not stack:
-                raise ParseError
-        elif fields[-1] == '{':
-            stack.append(stack[-1].new_block(fields[:-1]))
-        else:
-            stack[-1].read(fields)
+        try:
+            if not fields:
+                pass  # empty line
+            elif fields == ['}']:
+                stack.pop()
+                if not stack:
+                    raise ParseError
+            elif fields[-1] == '{':
+                stack.append(stack[-1].new_block(fields[:-1]))
+            else:
+                stack[-1].read(fields)
+        except ParseError:
+            sys.stderr.write("Parse error in line %d:\n" % (i + 1))
+            sys.stderr.write(line)
+            sys.exit(1)
     if len(stack) != 1:
-        raise ParseError
+        sys.stderr.write("Parse error: unexpected end of file")
+        sys.exit(1)
     f.close()
 
     stack[0].writeout()
