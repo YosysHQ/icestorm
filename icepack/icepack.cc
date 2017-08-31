@@ -649,6 +649,18 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 			continue;
 		}
 
+		if (command == ".warmboot")
+		{
+			is >> this->warmboot;
+
+			if (this->warmboot != "disabled" &&
+			    this->warmboot != "enabled")
+				error("Unknown warmboot setting '%s'.\n",
+				      this->warmboot.c_str());
+
+			continue;
+		}
+
 		if (command == ".io_tile" || command == ".logic_tile" || command == ".ramb_tile" || command == ".ramt_tile")
 		{
 			if (!got_device)
@@ -764,6 +776,8 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 	}
 
 	ofs << stringf("\n.device %s\n", this->device.c_str());
+	if (this->warmboot != "enabled")
+		ofs << stringf(".warmboot %s\n", this->warmboot.c_str());
 
 	typedef std::tuple<int, int, int> tile_bit_t;
 	std::set<tile_bit_t> tile_bits;
