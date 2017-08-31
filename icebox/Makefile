@@ -18,11 +18,6 @@ chipdb-8k.txt: icebox.py iceboxdb.py icebox_chipdb.py
 	python3 icebox_chipdb.py -8 > chipdb-8k.new
 	mv chipdb-8k.new chipdb-8k.txt
 
-check: all
-	python3 tc_xlat_netnames.py
-	python3 tc_rxlat_netnames.py
-	python3 tc_logic_xpr.py
-
 clean:
 	rm -f chipdb-1k.txt chipdb-8k.txt chipdb-384.txt chipdb-5k.txt
 	rm -f icebox.pyc iceboxdb.pyc
@@ -38,8 +33,6 @@ install: all
 	cp icebox_chipdb.py  $(DESTDIR)$(PREFIX)/bin/icebox_chipdb$(PY_EXE)
 	cp icebox_diff.py    $(DESTDIR)$(PREFIX)/bin/icebox_diff$(PY_EXE)
 	cp icebox_explain.py $(DESTDIR)$(PREFIX)/bin/icebox_explain$(PY_EXE)
-	cp icebox_asc2hlc.py $(DESTDIR)$(PREFIX)/bin/icebox_asc2hlc$(PY_EXE)
-	cp icebox_hlc2asc.py $(DESTDIR)$(PREFIX)/bin/icebox_hlc2asc$(PY_EXE)
 	cp icebox_colbuf.py  $(DESTDIR)$(PREFIX)/bin/icebox_colbuf$(PY_EXE)
 	cp icebox_html.py    $(DESTDIR)$(PREFIX)/bin/icebox_html$(PY_EXE)
 	cp icebox_maps.py    $(DESTDIR)$(PREFIX)/bin/icebox_maps$(PY_EXE)
@@ -52,8 +45,6 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_chipdb$(PY_EXE)
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_diff$(PY_EXE)
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_explain$(PY_EXE)
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_asc2hlc$(PY_EXE)
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_hlc2asc$(PY_EXE)
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_colbuf$(PY_EXE)
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_html$(PY_EXE)
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_maps$(PY_EXE)
