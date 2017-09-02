@@ -26,6 +26,7 @@ class iceconfig:
         self.max_x = 0
         self.max_y = 0
         self.device = ""
+        self.warmboot = True
         self.logic_tiles = dict()
         self.io_tiles = dict()
         self.ramb_tiles = dict()
@@ -668,6 +669,10 @@ class iceconfig:
                     assert line[1] in ["1k", "5k", "8k", "384"]
                     self.device = line[1]
                     continue
+                if line[0] == ".warmboot":
+                    assert line[1] in ["disabled", "enabled"]
+                    self.warmboot = line[1] == "enabled"
+                    continue
                 if line[0] == ".sym":
                     self.symbols.setdefault(int(line[1]), set()).add(line[2])
                     continue
@@ -680,6 +685,8 @@ class iceconfig:
     def write_file(self, filename):
         with open(filename, "w") as f:
             print(".device %s" % self.device, file=f)
+            if not self.warmboot:
+                print(".warmboot disabled", file=f)
             for y in range(self.max_y+1):
                 for x in range(self.max_x+1):
                     if self.tile_pos(x, y) is not None:
