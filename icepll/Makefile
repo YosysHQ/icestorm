@@ -9,6 +9,8 @@ all: icepll$(EXE)
 icepll$(EXE): icepll.o
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
+check: all
+
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp icepll$(EXE) $(DESTDIR)$(PREFIX)/bin/icepll$(EXE)
@@ -23,5 +25,5 @@ clean:
 
 -include *.d
 
-.PHONY: all install uninstall clean
+.PHONY: all check install uninstall clean
 

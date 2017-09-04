@@ -1,5 +1,6 @@
 //
 //  Copyright (C) 2015  Marcus Comstedt <marcus@mc.pp.se>
+//  Copyright (C) 2017  Roland Lutz
 //
 //  Permission to use, copy, modify, and/or distribute this software for any
 //  purpose with or without fee is hereby granted, provided that the above
@@ -17,19 +18,14 @@
 #include <fstream>
 #include <iostream>
 #include <cstdint>
-#include <memory>
 
+#include <err.h>
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define log(...) fprintf(stderr, __VA_ARGS__);
-#define info(...) do { if (log_level > 0) fprintf(stderr, __VA_ARGS__); } while (0)
-#define error(...) do { fprintf(stderr, "Error: " __VA_ARGS__); exit(1); } while (0)
-
-int log_level = 0;
+#include <string.h>
 
 static const int NUM_IMAGES = 4;
-static const int NUM_HEADERS = NUM_IMAGES + 1;
 static const int HEADER_SIZE = 32;
 
 static void align_offset(uint32_t &offset, int bits)
@@ -55,7 +51,7 @@ static void write_bytes(std::ostream &ofs, uint32_t &file_offset,
 }
 
 static void write_file(std::ostream &ofs, uint32_t &file_offset,
-                       std::istream &ifs)
+                       std::istream &ifs, const char *filename)
 {
     const size_t bufsize = 8192;
     uint8_t *buffer = new uint8_t[bufsize];
@@ -63,7 +59,7 @@ static void write_file(std::ostream &ofs, uint32_t &file_offset,
     while(!ifs.eof()) {
         ifs.read(reinterpret_cast<char *>(buffer), bufsize);
         if (ifs.bad())
-            error("Read error on input image");
+            err(EXIT_FAILURE, "can't read input image `%s'", filename);
         write_bytes(ofs, file_offset, buffer, ifs.gcount());
     }
 
@@ -73,7 +69,7 @@ static void write_file(std::ostream &ofs, uint32_t &file_offset,
 static void pad_to(std::ostream &ofs, uint32_t &file_offset, uint32_t target)
 {
     if (target < file_offset)
-        error("Trying to pad backwards!\n");
+        errx(EXIT_FAILURE, "trying to pad backwards");
     while(file_offset < target)
         write_byte(ofs, file_offset, 0xff);
 }
@@ -83,44 +79,44 @@ class Image {
     uint32_t offs;
 
 public:
-    Image(const char *filename) : ifs(filename, std::ifstream::binary) {}
+    const char *const filename;
 
+    Image(const char *filename);
     size_t size();
     void write(std::ostream &ofs, uint32_t &file_offset);
     void place(uint32_t o) { offs = o; }
     uint32_t offset() const { return offs; }
 };
 
+Image::Image(const char *filename) : ifs(filename, std::ifstream::binary), filename(filename)
+{
+    if (ifs.fail())
+        err(EXIT_FAILURE, "can't open input image `%s'", filename);
+}
+
 size_t Image::size()
 {
     ifs.seekg (0, ifs.end);
+    if (ifs.fail())
+        err(EXIT_FAILURE, "can't seek on input image `%s'", filename);
     size_t length = ifs.tellg();
     ifs.seekg (0, ifs.beg);
+    if (ifs.fail())
+        err(EXIT_FAILURE, "can't seek on input image `%s'", filename);
+
+    if (length == 0)
+        errx(EXIT_FAILURE, "input image `%s' doesn't contain any data", filename);
     return length;
 }
 
 void Image::write(std::ostream &ofs, uint32_t &file_offset)
 {
-    write_file(ofs, file_offset, ifs);
+    write_file(ofs, file_offset, ifs, filename);
 }
 
-class Header {
-    uint32_t image_offs;
-    bool coldboot_flag;
-    bool empty;
-public:
-    Header() : empty(true) {}
-    Header(const Image &i) :
-        image_offs(i.offset()), coldboot_flag(false), empty(false) {}
-    void set_coldboot_flag() { coldboot_flag = true; }
-    void write(std::ostream &ofs, uint32_t &file_offset);
-};
-
-void Header::write(std::ostream &ofs, uint32_t &file_offset)
+static void write_header(std::ostream &ofs, uint32_t &file_offset,
+                         Image const *image, bool coldboot)
 {
-    if (empty)
-        return;
-
     // Preamble
     write_byte(ofs, file_offset, 0x7e);
     write_byte(ofs, file_offset, 0xaa);
@@ -130,14 +126,14 @@ void Header::write(std::ostream &ofs, uint32_t &file_offset)
     // Boot mode
     write_byte(ofs, file_offset, 0x92);
     write_byte(ofs, file_offset, 0x00);
-    write_byte(ofs, file_offset, (coldboot_flag? 0x10: 0x00));
+    write_byte(ofs, file_offset, coldboot ? 0x10 : 0x00);
 
     // Boot address
     write_byte(ofs, file_offset, 0x44);
     write_byte(ofs, file_offset, 0x03);
-    write_byte(ofs, file_offset, (image_offs >> 16) & 0xff);
-    write_byte(ofs, file_offset, (image_offs >> 8) & 0xff);
-    write_byte(ofs, file_offset, image_offs & 0xff);
+    write_byte(ofs, file_offset, (image->offset() >> 16) & 0xff);
+    write_byte(ofs, file_offset, (image->offset() >> 8) & 0xff);
+    write_byte(ofs, file_offset, image->offset() & 0xff);
 
     // Bank offset
     write_byte(ofs, file_offset, 0x82);
@@ -153,105 +149,186 @@ void Header::write(std::ostream &ofs, uint32_t &file_offset)
         write_byte(ofs, file_offset, 0x00);
 }
 
-void usage()
+static Image *images[NUM_IMAGES + 1];
+static int image_count = 0;
+
+static Image *load_image(const char *path)
 {
-    log("\n");
-    log("Usage: icemulti [options] input-files\n");
-    log("\n");
-    log(" -c\n");
-    log(" coldboot mode, power on reset image is selected by CBSEL0/CBSEL1\n");
-    log("\n");
-    log(" -p0, -p1, -p2, -p3\n");
-    log(" select power on reset image when not using coldboot mode\n");
-    log("\n");
-    log(" -a<n>, -A<n>\n");
-    log(" align images at 2^<n> bytes. -A also aligns image 0.\n");
-    log("\n");
-    log(" -o filename\n");
-    log(" write output image to file instead of stdout\n");
-    log("\n");
-    log(" -v\n");
-    log(" verbose (repeat to increase verbosity)\n");
-    log("\n");
-    exit(1);
+    for (int i = 0; i < image_count; i++)
+        if (strcmp(path, images[i]->filename) == 0)
+            return images[i];
+
+    if (image_count >= NUM_IMAGES + 1)
+        errx(EXIT_FAILURE, "internal error: too many images");
+
+    Image *image = new Image(path);
+    images[image_count] = image;
+    image_count++;
+    return image;
+}
+
+void usage(const char *program_name)
+{
+    fprintf(stderr, "Create a multi-configuration image from up to five configuration images.\n");
+    fprintf(stderr, "Usage: %s [OPTION]... INPUT-FILE...\n", program_name);
+    fprintf(stderr, "\n");
+    fprintf(stderr, "  -c                    coldboot mode: image loaded on power-on or after a low\n");
+    fprintf(stderr, "                          pulse on CRESET_B is determined by the value of the\n");
+    fprintf(stderr, "                          pins CBSEL0 and CBSEL1\n");
+    fprintf(stderr, "  -p0, -p1, -p2, -p3\n");
+    fprintf(stderr, "  -P INPUT-FILE         specifies image to be loaded on power-on or after a low\n");
+    fprintf(stderr, "                          pulse on CRESET_B (has no effect in coldboot mode)\n");
+    fprintf(stderr, "  -d0, -d1, -d2, -d3\n");
+    fprintf(stderr, "  -D INPUT-FILE         specifies default image to be used if less than four\n");
+    fprintf(stderr, "                          images are given (defaults to power-on/reset image)\n");
+    fprintf(stderr, "  -a N                  align images at 2^N bytes\n");
+    fprintf(stderr, "  -A N                  like `-a N', but align the first image, too\n");
+    fprintf(stderr, "  -o OUTPUT-FILE        write output to OUTPUT-FILE instead of stdout\n");
+    fprintf(stderr, "  -v                    print image offsets to stderr\n");
+    fprintf(stderr, "      --help            display this help and exit\n");
+    fprintf(stderr, "\n");
+    fprintf(stderr, "If you have a bug report, please file an issue on github:\n");
+    fprintf(stderr, "  https://github.com/cliffordwolf/icestorm/issues\n");
 }
 
 int main(int argc, char **argv)
 {
+    int c;
+    char *endptr = NULL;
     bool coldboot = false;
-    int por_image = 0;
-    int image_count = 0;
+    int por_index = 0;
+    const char *por_filename = NULL;
+    Image *por_image = NULL;
+    int default_index = -1;  /* use power-on/reset image by default */
+    const char *default_filename = NULL;
+    Image *default_image = NULL;
+    int header_count = 0;
     int align_bits = 0;
     bool align_first = false;
-    Header headers[NUM_HEADERS];
-    std::unique_ptr<Image> images[NUM_IMAGES];
+    Image *header_images[NUM_IMAGES];
     const char *outfile_name = NULL;
+    bool print_offsets = false;
 
-    for (int i = 1; i < argc; i++)
-    {
-	if (argv[i][0] == '-' && argv[i][1]) {
-            for (int j = 1; argv[i][j]; j++)
-                if (argv[i][j] == 'c') {
-                    coldboot = true;
-                } else if (argv[i][j] == 'p' && argv[i][j+1]) {
-                    por_image = argv[i][++j] - '0';
-                } else if (argv[i][j] == 'a' || argv[i][j] == 'A') {
-                    align_first = argv[i][j] == 'A';
-                    if (argv[i][j+1])
-                        align_bits = atoi(&argv[i][j+1]);
-                    else if(i+1 < argc)
-                        align_bits = atoi(argv[++i]);
-                    else
-                        usage();
-                    break;
-                } else if (argv[i][j] == 'o') {
-                    if (argv[i][j+1])
-                        outfile_name = &argv[i][j+1];
-                    else if(i+1 < argc)
-                        outfile_name = argv[++i];
-                    else
-                        usage();
-                    break;
-                } else if (argv[i][j] == 'v') {
-                    log_level++;
-                } else
-                    usage();
-            continue;
+    static struct option long_options[] = {
+        {"help", no_argument, NULL, -2},
+        {NULL, 0, NULL, 0}
+    };
+
+    while ((c = getopt_long(argc, argv, "cp:P:d:D:a:A:o:v",
+                long_options, NULL)) != -1)
+        switch (c) {
+            case 'c':
+                coldboot = true;
+                break;
+            case 'p':
+                if (optarg[0] == '0' && optarg[1] == '\0')
+                    por_index = 0;
+                else if (optarg[0] == '1' && optarg[1] == '\0')
+                    por_index = 1;
+                else if (optarg[0] == '2' && optarg[1] == '\0')
+                    por_index = 2;
+                else if (optarg[0] == '3' && optarg[1] == '\0')
+                    por_index = 3;
+                else
+                    errx(EXIT_FAILURE, "`%s' is not a valid power-on/reset image (must be 0, 1, 2, or 3)", optarg);
+                por_filename = NULL;
+                break;
+            case 'P':
+                por_filename = optarg;
+                break;
+            case 'd':
+                if (optarg[0] == '0' && optarg[1] == '\0')
+                    default_index = 0;
+                else if (optarg[0] == '1' && optarg[1] == '\0')
+                    default_index = 1;
+                else if (optarg[0] == '2' && optarg[1] == '\0')
+                    default_index = 2;
+                else if (optarg[0] == '3' && optarg[1] == '\0')
+                    default_index = 3;
+                else
+                    errx(EXIT_FAILURE, "`%s' is not a valid default image (must be 0, 1, 2, or 3)", optarg);
+                default_filename = NULL;
+                break;
+            case 'D':
+                default_filename = optarg;
+                break;
+            case 'A':
+                align_first = true;
+                /* fallthrough */
+            case 'a':
+                align_bits = strtol(optarg, &endptr, 0);
+                if (*endptr != '\0')
+                    errx(EXIT_FAILURE, "`%s' is not a valid number", optarg);
+                if (align_bits < 0)
+                    errx(EXIT_FAILURE, "argument to `-%c' must be non-negative", c);
+                break;
+            case 'o':
+                outfile_name = optarg;
+                break;
+            case 'v':
+                print_offsets = true;
+                break;
+            case -2:
+                usage(argv[0]);
+                exit(EXIT_SUCCESS);
+            default:
+                fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
+                return EXIT_FAILURE;
         }
 
-        if (image_count >= NUM_IMAGES)
-            error("Too many images supplied\n");
-        images[image_count++].reset(new Image(argv[i]));
+    if (optind == argc) {
+        warnx("missing argument");
+        fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
+        return EXIT_FAILURE;
     }
 
-    if (!image_count)
-        usage();
+    while (optind != argc) {
+        if (header_count >= NUM_IMAGES)
+            errx(EXIT_FAILURE, "too many images supplied (maximum is 4)");
+        header_images[header_count] = load_image(argv[optind]);
+        header_count++;
+        optind++;
+    }
 
-    if (coldboot && por_image != 0)
-        error("Can't select power on reset boot image in cold boot mode\n");
+    if (coldboot && (por_index != 0 || por_filename != NULL))
+        warnx("warning: power-on/reset boot image isn't loaded in cold boot mode");
 
-    if (por_image >= image_count)
-        error("Specified non-existing image for power on reset\n");
+    if (por_filename != NULL)
+        por_image = load_image(por_filename);
+    else {
+        if (por_index >= header_count)
+            errx(EXIT_FAILURE, "specified non-existing image for power-on/reset");
+        por_image = header_images[por_index];
+    }
+
+    if (default_filename != NULL && header_count < NUM_IMAGES)
+        default_image = load_image(default_filename);
+    else if (default_index == -1)
+        default_image = por_image;
+    else {
+        if (default_index >= header_count)
+            errx(EXIT_FAILURE, "specified non-existing default image");
+        default_image = header_images[default_index];
+    }
+
+    /* move power-on/reset image to first place */
+    for (int i = image_count - 1; i > 0; i--)
+        if (images[i] == por_image) {
+            images[i] = images[i - 1];
+            images[i - 1] = por_image;
+        }
 
     // Place images
-    uint32_t offs = NUM_HEADERS * HEADER_SIZE;
+    uint32_t offs = (NUM_IMAGES + 1) * HEADER_SIZE;
     if (align_first)
         align_offset(offs, align_bits);
     for (int i=0; i<image_count; i++) {
         images[i]->place(offs);
         offs += images[i]->size();
         align_offset(offs, align_bits);
-        info("Place image %d at %06x .. %06x.\n", i, int(images[i]->offset()), int(offs));
+        if (print_offsets)
+            fprintf(stderr, "Place image %d at %06x .. %06x (`%s')\n", i, int(images[i]->offset()), int(offs), images[i]->filename);
     }
-
-    // Populate headers
-    for (int i=0; i<image_count; i++)
-        headers[i + 1] = Header(*images[i]);
-    headers[0] = headers[por_image + 1];
-    for (int i=image_count; i < NUM_IMAGES; i++)
-        headers[i + 1] = headers[0];
-    if (coldboot)
-        headers[0].set_coldboot_flag();
 
     std::ofstream ofs;
     std::ostream *osp;
@@ -259,24 +336,29 @@ int main(int argc, char **argv)
     if (outfile_name != NULL) {
         ofs.open(outfile_name, std::ofstream::binary);
         if (!ofs.is_open())
-            error("Failed to open output file.\n");
+            err(EXIT_FAILURE, "can't open output file `%s'", outfile_name);
         osp = &ofs;
     } else {
         osp = &std::cout;
     }
 
     uint32_t file_offset = 0;
-    for (int i=0; i<NUM_HEADERS; i++)
+    for (int i=0; i<NUM_IMAGES + 1; i++)
     {
         pad_to(*osp, file_offset, i * HEADER_SIZE);
-        headers[i].write(*osp, file_offset);
+        if (i == 0)
+            write_header(*osp, file_offset, por_image, coldboot);
+        else if (i - 1 < header_count)
+            write_header(*osp, file_offset, header_images[i - 1], false);
+        else
+            write_header(*osp, file_offset, default_image, false);
     }
     for (int i=0; i<image_count; i++)
     {
         pad_to(*osp, file_offset, images[i]->offset());
         images[i]->write(*osp, file_offset);
+        delete images[i];
     }
 
-    info("Done.\n");
-    return 0;
+    return EXIT_SUCCESS;
 }
