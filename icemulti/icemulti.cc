@@ -21,10 +21,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define log(...) fprintf(stderr, __VA_ARGS__);
 #define info(...) do { if (log_level > 0) fprintf(stderr, __VA_ARGS__); } while (0)
-#define error(...) do { fprintf(stderr, "Error: " __VA_ARGS__); exit(EXIT_FAILURE); } while (0)
+#define error(...) do { fprintf(stderr, "%s: ", program_short_name); fprintf(stderr, __VA_ARGS__); exit(EXIT_FAILURE); } while (0)
+
+static char *program_short_name;
 
 int log_level = 0;
 
@@ -186,6 +189,12 @@ int main(int argc, char **argv)
     Header headers[NUM_HEADERS];
     std::unique_ptr<Image> images[NUM_IMAGES];
     const char *outfile_name = NULL;
+
+    program_short_name = strrchr(argv[0], '/');
+    if (program_short_name == NULL)
+        program_short_name = argv[0];
+    else
+        program_short_name++;
 
     for (int i = 1; i < argc; i++)
     {
