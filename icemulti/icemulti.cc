@@ -25,15 +25,11 @@
 #include <string.h>
 
 #define log(...) fprintf(stderr, __VA_ARGS__);
-#define info(...) do { if (log_level > 0) fprintf(stderr, __VA_ARGS__); } while (0)
 #define error(...) do { fprintf(stderr, "%s: ", program_short_name); fprintf(stderr, __VA_ARGS__); exit(EXIT_FAILURE); } while (0)
 
 static char *program_short_name;
 
-int log_level = 0;
-
 static const int NUM_IMAGES = 4;
-static const int NUM_HEADERS = NUM_IMAGES + 1;
 static const int HEADER_SIZE = 32;
 
 static void align_offset(uint32_t &offset, int bits)
@@ -83,11 +79,12 @@ static void pad_to(std::ostream &ofs, uint32_t &file_offset, uint32_t target)
 }
 
 class Image {
-    const char *filename;
     std::ifstream ifs;
     uint32_t offs;
 
 public:
+    const char *const filename;
+
     Image(const char *filename);
     size_t size();
     void write(std::ostream &ofs, uint32_t &file_offset);
@@ -95,7 +92,7 @@ public:
     uint32_t offset() const { return offs; }
 };
 
-Image::Image(const char *filename) : filename(filename), ifs(filename, std::ifstream::binary)
+Image::Image(const char *filename) : ifs(filename, std::ifstream::binary), filename(filename)
 {
     if (ifs.fail())
         error("can't open input image `%s': %s\n", filename, strerror(errno));
@@ -121,23 +118,9 @@ void Image::write(std::ostream &ofs, uint32_t &file_offset)
     write_file(ofs, file_offset, ifs, filename);
 }
 
-class Header {
-    uint32_t image_offs;
-    bool coldboot_flag;
-    bool empty;
-public:
-    Header() : empty(true) {}
-    Header(const Image &i) :
-        image_offs(i.offset()), coldboot_flag(false), empty(false) {}
-    void set_coldboot_flag() { coldboot_flag = true; }
-    void write(std::ostream &ofs, uint32_t &file_offset);
-};
-
-void Header::write(std::ostream &ofs, uint32_t &file_offset)
+static void write_header(std::ostream &ofs, uint32_t &file_offset,
+                         Image const *image, bool coldboot)
 {
-    if (empty)
-        return;
-
     // Preamble
     write_byte(ofs, file_offset, 0x7e);
     write_byte(ofs, file_offset, 0xaa);
@@ -147,14 +130,14 @@ void Header::write(std::ostream &ofs, uint32_t &file_offset)
     // Boot mode
     write_byte(ofs, file_offset, 0x92);
     write_byte(ofs, file_offset, 0x00);
-    write_byte(ofs, file_offset, (coldboot_flag? 0x10: 0x00));
+    write_byte(ofs, file_offset, coldboot ? 0x10 : 0x00);
 
     // Boot address
     write_byte(ofs, file_offset, 0x44);
     write_byte(ofs, file_offset, 0x03);
-    write_byte(ofs, file_offset, (image_offs >> 16) & 0xff);
-    write_byte(ofs, file_offset, (image_offs >> 8) & 0xff);
-    write_byte(ofs, file_offset, image_offs & 0xff);
+    write_byte(ofs, file_offset, (image->offset() >> 16) & 0xff);
+    write_byte(ofs, file_offset, (image->offset() >> 8) & 0xff);
+    write_byte(ofs, file_offset, image->offset() & 0xff);
 
     // Bank offset
     write_byte(ofs, file_offset, 0x82);
@@ -199,12 +182,14 @@ int main(int argc, char **argv)
     char *endptr = NULL;
     bool coldboot = false;
     int por_image = 0;
+    int header_count = 0;
     int image_count = 0;
     int align_bits = 0;
     bool align_first = false;
-    Header headers[NUM_HEADERS];
+    Image *header_images[NUM_IMAGES];
     std::unique_ptr<Image> images[NUM_IMAGES];
     const char *outfile_name = NULL;
+    bool print_offsets = false;
 
     static struct option long_options[] = {
         {NULL, 0, NULL, 0}
@@ -248,7 +233,7 @@ int main(int argc, char **argv)
                 outfile_name = optarg;
                 break;
             case 'v':
-                log_level++;
+                print_offsets = true;
                 break;
             default:
                 usage();
@@ -260,36 +245,43 @@ int main(int argc, char **argv)
     }
 
     while (optind != argc) {
-        if (image_count >= NUM_IMAGES)
+        if (header_count >= NUM_IMAGES)
             error("Too many images supplied\n");
-        images[image_count++].reset(new Image(argv[optind++]));
+        for (int i = 0; i < image_count; i++)
+            if (strcmp(argv[optind], images[i]->filename) == 0) {
+                header_images[header_count] = &*images[i];
+                goto image_found;
+            }
+        images[image_count].reset(new Image(argv[optind]));
+        header_images[header_count] = &*images[image_count];
+        image_count++;
+
+    image_found:
+        header_count++;
+        optind++;
     }
 
     if (coldboot && por_image != 0)
         error("Can't select power on reset boot image in cold boot mode\n");
 
-    if (por_image >= image_count)
+    if (por_image >= header_count)
         error("Specified non-existing image for power on reset\n");
 
     // Place images
-    uint32_t offs = NUM_HEADERS * HEADER_SIZE;
+    uint32_t offs = (NUM_IMAGES + 1) * HEADER_SIZE;
     if (align_first)
         align_offset(offs, align_bits);
     for (int i=0; i<image_count; i++) {
         images[i]->place(offs);
         offs += images[i]->size();
         align_offset(offs, align_bits);
-        info("Place image %d at %06x .. %06x.\n", i, int(images[i]->offset()), int(offs));
+        if (print_offsets)
+            fprintf(stderr, "Place image %d at %06x .. %06x (`%s')\n", i, int(images[i]->offset()), int(offs), images[i]->filename);
     }
 
     // Populate headers
-    for (int i=0; i<image_count; i++)
-        headers[i + 1] = Header(*images[i]);
-    headers[0] = headers[por_image + 1];
-    for (int i=image_count; i < NUM_IMAGES; i++)
-        headers[i + 1] = headers[0];
-    if (coldboot)
-        headers[0].set_coldboot_flag();
+    for (int i=header_count; i < NUM_IMAGES; i++)
+        header_images[i] = header_images[por_image];
 
     std::ofstream ofs;
     std::ostream *osp;
@@ -304,10 +296,13 @@ int main(int argc, char **argv)
     }
 
     uint32_t file_offset = 0;
-    for (int i=0; i<NUM_HEADERS; i++)
+    for (int i=0; i<NUM_IMAGES + 1; i++)
     {
         pad_to(*osp, file_offset, i * HEADER_SIZE);
-        headers[i].write(*osp, file_offset);
+        if (i == 0)
+            write_header(*osp, file_offset, header_images[por_image], coldboot);
+        else
+            write_header(*osp, file_offset, header_images[i - 1], false);
     }
     for (int i=0; i<image_count; i++)
     {
@@ -315,6 +310,5 @@ int main(int argc, char **argv)
         images[i]->write(*osp, file_offset);
     }
 
-    info("Done.\n");
     return EXIT_SUCCESS;
 }
