@@ -1,0 +1,6 @@
+
+A simple example for icemulti using the iCEstick dev board.
+
+Each of the four images blinks another LED. After 7 blinks
+the next image is loaded automatically.
+
