@@ -22,6 +22,7 @@ chipname = "iCE40 HX1K"
 chipdbfile = "chipdb-1k.txt"
 outdir = None
 mode8k = False
+mode384 = False
 tx, ty = 0, 0
 
 def usage():
@@ -30,10 +31,11 @@ def usage():
     print("  -y tile_y_coordinate")
     print("  -d outdir")
     print("  -8")
+    print("  -3")
     sys.exit(0)
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "x:y:d:8")
+    opts, args = getopt.getopt(sys.argv[1:], "x:y:d:8:3")
 except:
     usage()
 
@@ -48,6 +50,10 @@ for o, a in opts:
         mode8k = True
         chipname = "iCE40 HX8K"
         chipdbfile = "chipdb-8k.txt"
+    elif o == "-3":
+        mode384 = True
+        chipname = "iCE40 LP384"
+        chipdbfile = "chipdb-384.txt"
     else:
         usage()
 
@@ -58,7 +64,30 @@ ic = icebox.iceconfig()
 
 mktiles = set()
 
-if mode8k:
+if mode384:
+    ic.setup_empty_384()
+
+    for x in range(1, 7): # IO top/bottom
+        mktiles.add((x, 0))
+        mktiles.add((x, 9))
+
+    for x in list(range(1, 3)) + list(range(5, 7)): # corners
+        mktiles.add((x, 1))
+        mktiles.add((x, 8))
+
+    for x in [1,6]:
+        mktiles.add((x, 2))
+        mktiles.add((x, 7))
+
+    for y in range(1, 9): # left/right IO
+        mktiles.add((0, y))
+        mktiles.add((7, y))
+
+    for x in range(3, 5): # middle square
+        for y in range(4, 6):
+            mktiles.add((x, y))
+
+elif mode8k:
     ic.setup_empty_8k()
 
     for x in list(range(1, 3)) + list(range(8-2, 8+3)) + list(range(15, 19)) + list(range(25-2, 25+3)) + list(range(33-2, 33)):
@@ -577,4 +606,3 @@ elif (tx, ty) == (0, 0):
 
 else:
     print_tile(tx, ty)
-
