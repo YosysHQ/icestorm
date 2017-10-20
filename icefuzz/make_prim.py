@@ -31,20 +31,40 @@ for idx in range(num):
         print("endmodule", file=f)
     with open(working_dir + "/prim_%02d.pcf" % idx, "w") as f:
         p = np.random.permutation(pins)
+        used_pins = []
         if np.random.choice([True, False]):
             for i in range(w):
                 print("set_io a[%d] %s" % (i, p[i]), file=f)
+                used_pins.append(p[i])
         if np.random.choice([True, False]):
             for i in range(w):
                 print("set_io b[%d] %s" % (i, p[w+i]), file=f)
+                used_pins.append(p[w+i])
         if np.random.choice([True, False]):
             for i in range(w):
                 print("set_io y[%d] %s" % (i, p[2*w+i]), file=f)
+                used_pins.append(p[2*w+i])
         if np.random.choice([True, False]):
             print("set_io x %s" % p[3*w], file=f)
+            used_pins.append(p[3*w])
+
         if np.random.choice([True, False]):
             print("set_io y %s" % p[3*w+1], file=f)
-        if np.random.choice([True, False]):
+            used_pins.append(p[3*w+1])
+
+        # There is a low but non-zero probability, particularly on devices with
+        # fewer pins and GBINs such as the UltraPlus, that a permutation will be
+        # picked where all of the GBINs are already constrained at this point,
+        # hence icecube fails to assign clk successfully. This is fixed by
+        # forcing clock assignment if no GBINs are free.
+
+        global_free = False
+        for glbi in gpins:
+            if not glbi in used_pins:
+                global_free = True
+                break
+
+        if np.random.choice([True, False]) or not global_free:
             print("set_io clk %s" % p[3*w+2], file=f)
 
 
