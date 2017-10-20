@@ -14,7 +14,11 @@ os.mkdir(working_dir)
 for idx in range(num):
     with open(working_dir + "/ram40_%02d.v" % idx, "w") as f:
         glbs = ["glb[%d]" % i for i in range(np.random.randint(8)+1)]
-        glbs_choice = ["wa", "ra", "msk", "wd", "we", "wce", "wc", "re", "rce", "rc"]
+        # Connecting GLB to CE pins seemingly disallowed
+        if device_class == "5k":
+            glbs_choice = ["wa", "ra", "msk", "wd", "we", "wc", "re", "rc"]
+        else:
+            glbs_choice = ["wa", "ra", "msk", "wd", "we", "wce", "wc", "re", "rce", "rc"]
         print("""
             module top (
                 input  [%d:0] glb_pins,
@@ -26,7 +30,7 @@ for idx in range(num):
                 .USER_SIGNAL_TO_GLOBAL_BUFFER(glb_pins),
                 .GLOBAL_BUFFER_OUTPUT(glb)
             );
-        """ % (len(glbs)-1, len(pins) - 16 - 1, len(glbs)-1, len(glbs)-1), file=f)
+        """ % (len(glbs)-1, len(pins) - len(glbs) - 16 - 1, len(glbs)-1, len(glbs)-1), file=f)
         bits = ["in_pins[%d]" % i for i in range(60)]
         bits = list(np.random.permutation(bits))
         for i in range(num_ramb40):
@@ -102,7 +106,7 @@ for idx in range(num):
         print("endmodule", file=f)
     with open(working_dir + "/ram40_%02d.pcf" % idx, "w") as f:
         p = list(np.random.permutation(pins))
-        for i in range(len(pins) - 16):
+        for i in range(len(pins) - len(glbs) - 16):
             print("set_io in_pins[%d] %s" % (i, p.pop()), file=f)
         for i in range(16):
             print("set_io out_pins[%d] %s" % (i, p.pop()), file=f)
