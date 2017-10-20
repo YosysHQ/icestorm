@@ -194,6 +194,18 @@ class iceconfig:
                     entries.append((x, src_y, x, y))
             return entries
 
+        if self.device == "5k": #Assume same as 8k because same height, is this valid???
+            entries = list()
+            for x in range(self.max_x+1):
+                for y in range(self.max_y+1):
+                    src_y = None
+                    if  0 <= y <=  8: src_y =  8
+                    if  9 <= y <= 16: src_y =  9
+                    if 17 <= y <= 24: src_y = 24
+                    if 25 <= y <= 33: src_y = 25
+                    entries.append((x, src_y, x, y))
+            return entries
+
         if self.device == "384":
             entries = list()
             for x in range(self.max_x+1):
