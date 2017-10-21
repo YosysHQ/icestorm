@@ -159,8 +159,8 @@ class iceconfig:
     def pll_list(self):
         if self.device == "1k":
             return ["1k"]
-        if self.device == "5k":
-            return ["5k"]
+        if self.device == "5k": #FIXME: PLL removed as it was causing problems in arachne, likely due to broken pin config for it
+            return [ ]
         if self.device == "8k":
             return ["8k_0", "8k_1"]
         if self.device == "384":
@@ -1384,7 +1384,7 @@ pllinfo_db = {
         "SDI":                  ( 4,  0, "fabout"),
         "SCLK":                 ( 3,  0, "fabout"),
     },
-    "5k": {
+    "5k": { #FIXME: pins are definitely not correct
         "LOC" : (12, 31),
 
         # 3'b000 = "DISABLED"
@@ -1473,7 +1473,7 @@ pllinfo_db = {
         "BYPASS":               ( 19, 0, "fabout"),
         "RESETB":               ( 20, 0, "fabout"),
         "LATCHINPUTVALUE":      ( 15, 0, "fabout"),
-        "SDO":                  ( 32, 1, "neigh_op_bnr_3"),
+        "SDO":                  ( 24, 30, "neigh_op_bnr_3"),
         "SDI":                  ( 22, 0, "fabout"),
         "SCLK":                 ( 21, 0, "fabout"),
     },
