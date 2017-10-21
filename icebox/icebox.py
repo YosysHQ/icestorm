@@ -85,7 +85,7 @@ class iceconfig:
 
         for x in range(1, self.max_x):
             for y in range(1, self.max_y):
-                if x in (7, 20):
+                if x in (6, 19):
                     if y % 2 == 1:
                         self.ramb_tiles[(x, y)] = ["0" * 42 for i in range(16)]
                     else:
