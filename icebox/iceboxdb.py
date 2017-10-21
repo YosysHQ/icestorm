@@ -5371,7 +5371,9 @@ B6[14],B7[14],!B7[15],!B7[16],B7[17]	buffer	bnr_op_4	lc_trk_g1_4
 B2[25],B3[22],!B3[23],!B3[24],B3[25]	buffer	bnr_op_6	lc_trk_g0_6
 B6[25],B7[22],!B7[23],!B7[24],B7[25]	buffer	bnr_op_6	lc_trk_g1_6
 B2[21],B2[22],!B2[23],!B2[24],B3[21]	buffer	bnr_op_7	lc_trk_g0_7
+B6[21],B6[22],!B6[23],!B6[24],B7[21]	buffer	bnr_op_7	lc_trk_g1_7
 !B0[25],B1[22],!B1[23],B1[24],!B1[25]	buffer	bot_op_2	lc_trk_g0_2
+!B6[25],B7[22],!B7[23],B7[24],!B7[25]	buffer	bot_op_6	lc_trk_g1_6
 !B2[14],!B3[14],!B3[15],!B3[16],B3[17]	buffer	glb2local_0	lc_trk_g0_4
 !B2[15],!B2[16],B2[17],!B2[18],!B3[18]	buffer	glb2local_1	lc_trk_g0_5
 !B2[25],B3[22],!B3[23],!B3[24],!B3[25]	buffer	glb2local_2	lc_trk_g0_6
@@ -5383,6 +5385,7 @@ B2[0],!B2[1],B2[2],!B3[0],!B3[2]	buffer	glb_netwk_2	wire_bram/ram/RCLK
 B6[0],B6[1],B7[0],!B7[1]	buffer	glb_netwk_3	glb2local_0
 B12[0],B12[1],B13[0],!B13[1]	buffer	glb_netwk_3	glb2local_3
 B2[0],!B2[1],B2[2],B3[0],!B3[2]	buffer	glb_netwk_3	wire_bram/ram/RCLK
+!B8[0],B8[1],!B9[0],B9[1]	buffer	glb_netwk_4	glb2local_1
 !B10[0],B10[1],!B11[0],B11[1]	buffer	glb_netwk_4	glb2local_2
 !B12[0],B12[1],!B13[0],B13[1]	buffer	glb_netwk_4	glb2local_3
 !B2[0],B2[1],B2[2],!B3[0],!B3[2]	buffer	glb_netwk_4	wire_bram/ram/RCLK
@@ -5417,6 +5420,7 @@ B2[0],B2[1],B2[2],B3[0],!B3[2]	buffer	glb_netwk_7	wire_bram/ram/RCLK
 !B14[35],B15[32],!B15[33],!B15[34],!B15[35]	buffer	lc_trk_g0_1	input2_7
 !B8[27],!B8[28],B8[29],!B8[30],!B9[30]	buffer	lc_trk_g0_1	wire_bram/ram/WDATA_11
 !B4[27],!B4[28],B4[29],!B4[30],!B5[30]	buffer	lc_trk_g0_1	wire_bram/ram/WDATA_13
+!B0[27],!B0[28],B0[29],!B0[30],!B1[30]	buffer	lc_trk_g0_1	wire_bram/ram/WDATA_15
 !B12[27],!B12[28],B12[29],!B12[30],!B13[30]	buffer	lc_trk_g0_1	wire_bram/ram/WDATA_9
 !B0[26],B1[26],!B1[27],!B1[28],B1[29]	buffer	lc_trk_g0_2	input0_0
 !B4[26],B5[26],!B5[27],!B5[28],B5[29]	buffer	lc_trk_g0_2	input0_2
@@ -5424,6 +5428,7 @@ B2[0],B2[1],B2[2],B3[0],!B3[2]	buffer	glb_netwk_7	wire_bram/ram/RCLK
 !B12[26],B13[26],!B13[27],!B13[28],B13[29]	buffer	lc_trk_g0_2	input0_6
 !B12[35],B13[32],!B13[33],!B13[34],B13[35]	buffer	lc_trk_g0_2	input2_6
 !B10[31],B10[32],!B10[33],!B10[34],B11[31]	buffer	lc_trk_g0_2	wire_bram/ram/MASK_10
+!B6[31],B6[32],!B6[33],!B6[34],B7[31]	buffer	lc_trk_g0_2	wire_bram/ram/MASK_12
 !B2[31],B2[32],!B2[33],!B2[34],B3[31]	buffer	lc_trk_g0_2	wire_bram/ram/MASK_14
 !B14[31],B14[32],!B14[33],!B14[34],B15[31]	buffer	lc_trk_g0_2	wire_bram/ram/MASK_8
 !B4[0],B4[1],!B5[0],B5[1]	buffer	lc_trk_g0_2	wire_bram/ram/RCLKE
@@ -5439,6 +5444,7 @@ B2[0],B2[1],B2[2],B3[0],!B3[2]	buffer	glb_netwk_7	wire_bram/ram/RCLK
 !B14[35],B15[32],!B15[33],!B15[34],B15[35]	buffer	lc_trk_g0_3	input2_7
 !B8[31],B8[32],!B8[33],!B8[34],B9[31]	buffer	lc_trk_g0_3	wire_bram/ram/MASK_11
 !B4[31],B4[32],!B4[33],!B4[34],B5[31]	buffer	lc_trk_g0_3	wire_bram/ram/MASK_13
+!B0[31],B0[32],!B0[33],!B0[34],B1[31]	buffer	lc_trk_g0_3	wire_bram/ram/MASK_15
 !B12[31],B12[32],!B12[33],!B12[34],B13[31]	buffer	lc_trk_g0_3	wire_bram/ram/MASK_9
 !B8[27],!B8[28],B8[29],!B8[30],B9[30]	buffer	lc_trk_g0_3	wire_bram/ram/WDATA_11
 !B4[27],!B4[28],B4[29],!B4[30],B5[30]	buffer	lc_trk_g0_3	wire_bram/ram/WDATA_13
@@ -5479,6 +5485,7 @@ B12[35],B13[32],!B13[33],!B13[34],B13[35]	buffer	lc_trk_g0_6	input2_6
 B10[31],B10[32],!B10[33],!B10[34],B11[31]	buffer	lc_trk_g0_6	wire_bram/ram/MASK_10
 B6[31],B6[32],!B6[33],!B6[34],B7[31]	buffer	lc_trk_g0_6	wire_bram/ram/MASK_12
 B2[31],B2[32],!B2[33],!B2[34],B3[31]	buffer	lc_trk_g0_6	wire_bram/ram/MASK_14
+B14[31],B14[32],!B14[33],!B14[34],B15[31]	buffer	lc_trk_g0_6	wire_bram/ram/MASK_8
 !B10[27],!B10[28],B10[29],B10[30],B11[30]	buffer	lc_trk_g0_6	wire_bram/ram/WDATA_10
 !B6[27],!B6[28],B6[29],B6[30],B7[30]	buffer	lc_trk_g0_6	wire_bram/ram/WDATA_12
 !B2[27],!B2[28],B2[29],B2[30],B3[30]	buffer	lc_trk_g0_6	wire_bram/ram/WDATA_14
@@ -5505,6 +5512,7 @@ B12[31],B12[32],!B12[33],!B12[34],B13[31]	buffer	lc_trk_g0_7	wire_bram/ram/MASK_
 !B8[31],B8[32],!B8[33],B8[34],!B9[31]	buffer	lc_trk_g1_0	wire_bram/ram/MASK_11
 !B0[31],B0[32],!B0[33],B0[34],!B1[31]	buffer	lc_trk_g1_0	wire_bram/ram/MASK_15
 !B12[31],B12[32],!B12[33],B12[34],!B13[31]	buffer	lc_trk_g1_0	wire_bram/ram/MASK_9
+B8[27],!B8[28],B8[29],!B8[30],!B9[30]	buffer	lc_trk_g1_0	wire_bram/ram/WDATA_11
 B4[27],!B4[28],B4[29],!B4[30],!B5[30]	buffer	lc_trk_g1_0	wire_bram/ram/WDATA_13
 B0[27],!B0[28],B0[29],!B0[30],!B1[30]	buffer	lc_trk_g1_0	wire_bram/ram/WDATA_15
 B12[27],!B12[28],B12[29],!B12[30],!B13[30]	buffer	lc_trk_g1_0	wire_bram/ram/WDATA_9
@@ -5516,6 +5524,7 @@ B12[27],!B12[28],B12[29],!B12[30],!B13[30]	buffer	lc_trk_g1_0	wire_bram/ram/WDAT
 !B10[31],B10[32],!B10[33],B10[34],!B11[31]	buffer	lc_trk_g1_1	wire_bram/ram/MASK_10
 !B6[31],B6[32],!B6[33],B6[34],!B7[31]	buffer	lc_trk_g1_1	wire_bram/ram/MASK_12
 !B2[31],B2[32],!B2[33],B2[34],!B3[31]	buffer	lc_trk_g1_1	wire_bram/ram/MASK_14
+!B14[31],B14[32],!B14[33],B14[34],!B15[31]	buffer	lc_trk_g1_1	wire_bram/ram/MASK_8
 !B2[0],!B2[1],B2[2],B3[0],B3[2]	buffer	lc_trk_g1_1	wire_bram/ram/RCLK
 B10[27],!B10[28],B10[29],!B10[30],!B11[30]	buffer	lc_trk_g1_1	wire_bram/ram/WDATA_10
 B6[27],!B6[28],B6[29],!B6[30],!B7[30]	buffer	lc_trk_g1_1	wire_bram/ram/WDATA_12
@@ -5526,10 +5535,12 @@ B14[27],!B14[28],B14[29],!B14[30],!B15[30]	buffer	lc_trk_g1_1	wire_bram/ram/WDAT
 !B10[26],B11[26],B11[27],!B11[28],B11[29]	buffer	lc_trk_g1_2	input0_5
 !B14[26],B15[26],B15[27],!B15[28],B15[29]	buffer	lc_trk_g1_2	input0_7
 !B14[35],B15[32],!B15[33],B15[34],B15[35]	buffer	lc_trk_g1_2	input2_7
+!B4[31],B4[32],!B4[33],B4[34],B5[31]	buffer	lc_trk_g1_2	wire_bram/ram/MASK_13
 !B0[31],B0[32],!B0[33],B0[34],B1[31]	buffer	lc_trk_g1_2	wire_bram/ram/MASK_15
 !B12[31],B12[32],!B12[33],B12[34],B13[31]	buffer	lc_trk_g1_2	wire_bram/ram/MASK_9
 B8[27],!B8[28],B8[29],!B8[30],B9[30]	buffer	lc_trk_g1_2	wire_bram/ram/WDATA_11
 B4[27],!B4[28],B4[29],!B4[30],B5[30]	buffer	lc_trk_g1_2	wire_bram/ram/WDATA_13
+B0[27],!B0[28],B0[29],!B0[30],B1[30]	buffer	lc_trk_g1_2	wire_bram/ram/WDATA_15
 B12[27],!B12[28],B12[29],!B12[30],B13[30]	buffer	lc_trk_g1_2	wire_bram/ram/WDATA_9
 !B0[26],B1[26],B1[27],!B1[28],B1[29]	buffer	lc_trk_g1_3	input0_0
 !B4[26],B5[26],B5[27],!B5[28],B5[29]	buffer	lc_trk_g1_3	input0_2
@@ -5548,10 +5559,12 @@ B2[26],!B3[26],B3[27],!B3[28],B3[29]	buffer	lc_trk_g1_4	input0_1
 B6[26],!B7[26],B7[27],!B7[28],B7[29]	buffer	lc_trk_g1_4	input0_3
 B10[26],!B11[26],B11[27],!B11[28],B11[29]	buffer	lc_trk_g1_4	input0_5
 B14[26],!B15[26],B15[27],!B15[28],B15[29]	buffer	lc_trk_g1_4	input0_7
+B10[35],B11[32],!B11[33],B11[34],!B11[35]	buffer	lc_trk_g1_4	input2_5
 B14[35],B15[32],!B15[33],B15[34],!B15[35]	buffer	lc_trk_g1_4	input2_7
 B8[31],B8[32],!B8[33],B8[34],!B9[31]	buffer	lc_trk_g1_4	wire_bram/ram/MASK_11
 B4[31],B4[32],!B4[33],B4[34],!B5[31]	buffer	lc_trk_g1_4	wire_bram/ram/MASK_13
 B0[31],B0[32],!B0[33],B0[34],!B1[31]	buffer	lc_trk_g1_4	wire_bram/ram/MASK_15
+B12[31],B12[32],!B12[33],B12[34],!B13[31]	buffer	lc_trk_g1_4	wire_bram/ram/MASK_9
 B8[27],!B8[28],B8[29],B8[30],!B9[30]	buffer	lc_trk_g1_4	wire_bram/ram/WDATA_11
 B4[27],!B4[28],B4[29],B4[30],!B5[30]	buffer	lc_trk_g1_4	wire_bram/ram/WDATA_13
 B0[27],!B0[28],B0[29],B0[30],!B1[30]	buffer	lc_trk_g1_4	wire_bram/ram/WDATA_15
@@ -5562,6 +5575,7 @@ B8[26],!B9[26],B9[27],!B9[28],B9[29]	buffer	lc_trk_g1_5	input0_4
 B12[26],!B13[26],B13[27],!B13[28],B13[29]	buffer	lc_trk_g1_5	input0_6
 B12[35],B13[32],!B13[33],B13[34],!B13[35]	buffer	lc_trk_g1_5	input2_6
 B10[31],B10[32],!B10[33],B10[34],!B11[31]	buffer	lc_trk_g1_5	wire_bram/ram/MASK_10
+B6[31],B6[32],!B6[33],B6[34],!B7[31]	buffer	lc_trk_g1_5	wire_bram/ram/MASK_12
 B2[31],B2[32],!B2[33],B2[34],!B3[31]	buffer	lc_trk_g1_5	wire_bram/ram/MASK_14
 B14[31],B14[32],!B14[33],B14[34],!B15[31]	buffer	lc_trk_g1_5	wire_bram/ram/MASK_8
 !B14[0],B14[1],B15[0],B15[1]	buffer	lc_trk_g1_5	wire_bram/ram/RE
@@ -5579,6 +5593,7 @@ B8[31],B8[32],!B8[33],B8[34],B9[31]	buffer	lc_trk_g1_6	wire_bram/ram/MASK_11
 B4[31],B4[32],!B4[33],B4[34],B5[31]	buffer	lc_trk_g1_6	wire_bram/ram/MASK_13
 B0[31],B0[32],!B0[33],B0[34],B1[31]	buffer	lc_trk_g1_6	wire_bram/ram/MASK_15
 B12[31],B12[32],!B12[33],B12[34],B13[31]	buffer	lc_trk_g1_6	wire_bram/ram/MASK_9
+B8[27],!B8[28],B8[29],B8[30],B9[30]	buffer	lc_trk_g1_6	wire_bram/ram/WDATA_11
 B4[27],!B4[28],B4[29],B4[30],B5[30]	buffer	lc_trk_g1_6	wire_bram/ram/WDATA_13
 B0[27],!B0[28],B0[29],B0[30],B1[30]	buffer	lc_trk_g1_6	wire_bram/ram/WDATA_15
 B12[27],!B12[28],B12[29],B12[30],B13[30]	buffer	lc_trk_g1_6	wire_bram/ram/WDATA_9
@@ -5593,6 +5608,7 @@ B2[31],B2[32],!B2[33],B2[34],B3[31]	buffer	lc_trk_g1_7	wire_bram/ram/MASK_14
 B14[31],B14[32],!B14[33],B14[34],B15[31]	buffer	lc_trk_g1_7	wire_bram/ram/MASK_8
 B10[27],!B10[28],B10[29],B10[30],B11[30]	buffer	lc_trk_g1_7	wire_bram/ram/WDATA_10
 B6[27],!B6[28],B6[29],B6[30],B7[30]	buffer	lc_trk_g1_7	wire_bram/ram/WDATA_12
+B14[27],!B14[28],B14[29],B14[30],B15[30]	buffer	lc_trk_g1_7	wire_bram/ram/WDATA_8
 !B0[26],!B1[26],!B1[27],B1[28],B1[29]	buffer	lc_trk_g2_0	input0_0
 !B4[26],!B5[26],!B5[27],B5[28],B5[29]	buffer	lc_trk_g2_0	input0_2
 !B8[26],!B9[26],!B9[27],B9[28],B9[29]	buffer	lc_trk_g2_0	input0_4
@@ -5613,6 +5629,7 @@ B2[0],!B2[1],B2[2],!B3[0],B3[2]	buffer	lc_trk_g2_0	wire_bram/ram/RCLK
 !B14[26],!B15[26],!B15[27],B15[28],B15[29]	buffer	lc_trk_g2_1	input0_7
 !B10[35],B11[32],B11[33],!B11[34],!B11[35]	buffer	lc_trk_g2_1	input2_5
 !B14[35],B15[32],B15[33],!B15[34],!B15[35]	buffer	lc_trk_g2_1	input2_7
+!B8[31],B8[32],B8[33],!B8[34],!B9[31]	buffer	lc_trk_g2_1	wire_bram/ram/MASK_11
 !B4[31],B4[32],B4[33],!B4[34],!B5[31]	buffer	lc_trk_g2_1	wire_bram/ram/MASK_13
 !B0[31],B0[32],B0[33],!B0[34],!B1[31]	buffer	lc_trk_g2_1	wire_bram/ram/MASK_15
 !B12[31],B12[32],B12[33],!B12[34],!B13[31]	buffer	lc_trk_g2_1	wire_bram/ram/MASK_9
@@ -5640,6 +5657,7 @@ B4[0],B4[1],!B5[0],B5[1]	buffer	lc_trk_g2_2	wire_bram/ram/RCLKE
 !B14[26],B15[26],!B15[27],B15[28],B15[29]	buffer	lc_trk_g2_3	input0_7
 !B14[35],B15[32],B15[33],!B15[34],B15[35]	buffer	lc_trk_g2_3	input2_7
 !B8[31],B8[32],B8[33],!B8[34],B9[31]	buffer	lc_trk_g2_3	wire_bram/ram/MASK_11
+!B4[31],B4[32],B4[33],!B4[34],B5[31]	buffer	lc_trk_g2_3	wire_bram/ram/MASK_13
 !B0[31],B0[32],B0[33],!B0[34],B1[31]	buffer	lc_trk_g2_3	wire_bram/ram/MASK_15
 !B12[31],B12[32],B12[33],!B12[34],B13[31]	buffer	lc_trk_g2_3	wire_bram/ram/MASK_9
 !B8[27],B8[28],B8[29],!B8[30],B9[30]	buffer	lc_trk_g2_3	wire_bram/ram/WDATA_11
@@ -5667,8 +5685,10 @@ B14[26],!B15[26],!B15[27],B15[28],B15[29]	buffer	lc_trk_g2_5	input0_7
 B10[35],B11[32],B11[33],!B11[34],!B11[35]	buffer	lc_trk_g2_5	input2_5
 B14[35],B15[32],B15[33],!B15[34],!B15[35]	buffer	lc_trk_g2_5	input2_7
 B8[31],B8[32],B8[33],!B8[34],!B9[31]	buffer	lc_trk_g2_5	wire_bram/ram/MASK_11
+B4[31],B4[32],B4[33],!B4[34],!B5[31]	buffer	lc_trk_g2_5	wire_bram/ram/MASK_13
 B0[31],B0[32],B0[33],!B0[34],!B1[31]	buffer	lc_trk_g2_5	wire_bram/ram/MASK_15
 B12[31],B12[32],B12[33],!B12[34],!B13[31]	buffer	lc_trk_g2_5	wire_bram/ram/MASK_9
+!B8[27],B8[28],B8[29],B8[30],!B9[30]	buffer	lc_trk_g2_5	wire_bram/ram/WDATA_11
 !B4[27],B4[28],B4[29],B4[30],!B5[30]	buffer	lc_trk_g2_5	wire_bram/ram/WDATA_13
 !B0[27],B0[28],B0[29],B0[30],!B1[30]	buffer	lc_trk_g2_5	wire_bram/ram/WDATA_15
 !B12[27],B12[28],B12[29],B12[30],!B13[30]	buffer	lc_trk_g2_5	wire_bram/ram/WDATA_9
@@ -5708,6 +5728,7 @@ B12[31],B12[32],B12[33],!B12[34],B13[31]	buffer	lc_trk_g2_7	wire_bram/ram/MASK_9
 !B4[31],B4[32],B4[33],B4[34],!B5[31]	buffer	lc_trk_g3_0	wire_bram/ram/MASK_13
 !B0[31],B0[32],B0[33],B0[34],!B1[31]	buffer	lc_trk_g3_0	wire_bram/ram/MASK_15
 !B12[31],B12[32],B12[33],B12[34],!B13[31]	buffer	lc_trk_g3_0	wire_bram/ram/MASK_9
+B8[27],B8[28],B8[29],!B8[30],!B9[30]	buffer	lc_trk_g3_0	wire_bram/ram/WDATA_11
 B4[27],B4[28],B4[29],!B4[30],!B5[30]	buffer	lc_trk_g3_0	wire_bram/ram/WDATA_13
 B0[27],B0[28],B0[29],!B0[30],!B1[30]	buffer	lc_trk_g3_0	wire_bram/ram/WDATA_15
 B12[27],B12[28],B12[29],!B12[30],!B13[30]	buffer	lc_trk_g3_0	wire_bram/ram/WDATA_9
@@ -5718,14 +5739,18 @@ B12[27],B12[28],B12[29],!B12[30],!B13[30]	buffer	lc_trk_g3_0	wire_bram/ram/WDATA
 !B12[35],B13[32],B13[33],B13[34],!B13[35]	buffer	lc_trk_g3_1	input2_6
 !B10[31],B10[32],B10[33],B10[34],!B11[31]	buffer	lc_trk_g3_1	wire_bram/ram/MASK_10
 !B6[31],B6[32],B6[33],B6[34],!B7[31]	buffer	lc_trk_g3_1	wire_bram/ram/MASK_12
+!B2[31],B2[32],B2[33],B2[34],!B3[31]	buffer	lc_trk_g3_1	wire_bram/ram/MASK_14
 !B14[31],B14[32],B14[33],B14[34],!B15[31]	buffer	lc_trk_g3_1	wire_bram/ram/MASK_8
 B2[0],!B2[1],B2[2],B3[0],B3[2]	buffer	lc_trk_g3_1	wire_bram/ram/RCLK
 B10[27],B10[28],B10[29],!B10[30],!B11[30]	buffer	lc_trk_g3_1	wire_bram/ram/WDATA_10
 B6[27],B6[28],B6[29],!B6[30],!B7[30]	buffer	lc_trk_g3_1	wire_bram/ram/WDATA_12
+B2[27],B2[28],B2[29],!B2[30],!B3[30]	buffer	lc_trk_g3_1	wire_bram/ram/WDATA_14
+B14[27],B14[28],B14[29],!B14[30],!B15[30]	buffer	lc_trk_g3_1	wire_bram/ram/WDATA_8
 !B2[26],B3[26],B3[27],B3[28],B3[29]	buffer	lc_trk_g3_2	input0_1
 !B6[26],B7[26],B7[27],B7[28],B7[29]	buffer	lc_trk_g3_2	input0_3
 !B10[26],B11[26],B11[27],B11[28],B11[29]	buffer	lc_trk_g3_2	input0_5
 !B14[26],B15[26],B15[27],B15[28],B15[29]	buffer	lc_trk_g3_2	input0_7
+!B10[35],B11[32],B11[33],B11[34],B11[35]	buffer	lc_trk_g3_2	input2_5
 !B14[35],B15[32],B15[33],B15[34],B15[35]	buffer	lc_trk_g3_2	input2_7
 !B8[31],B8[32],B8[33],B8[34],B9[31]	buffer	lc_trk_g3_2	wire_bram/ram/MASK_11
 !B4[31],B4[32],B4[33],B4[34],B5[31]	buffer	lc_trk_g3_2	wire_bram/ram/MASK_13
@@ -5745,6 +5770,8 @@ B12[27],B12[28],B12[29],!B12[30],B13[30]	buffer	lc_trk_g3_2	wire_bram/ram/WDATA_
 !B2[31],B2[32],B2[33],B2[34],B3[31]	buffer	lc_trk_g3_3	wire_bram/ram/MASK_14
 !B14[31],B14[32],B14[33],B14[34],B15[31]	buffer	lc_trk_g3_3	wire_bram/ram/MASK_8
 B4[0],B4[1],B5[0],B5[1]	buffer	lc_trk_g3_3	wire_bram/ram/RCLKE
+B6[27],B6[28],B6[29],!B6[30],B7[30]	buffer	lc_trk_g3_3	wire_bram/ram/WDATA_12
+B2[27],B2[28],B2[29],!B2[30],B3[30]	buffer	lc_trk_g3_3	wire_bram/ram/WDATA_14
 B14[27],B14[28],B14[29],!B14[30],B15[30]	buffer	lc_trk_g3_3	wire_bram/ram/WDATA_8
 B2[26],!B3[26],B3[27],B3[28],B3[29]	buffer	lc_trk_g3_4	input0_1
 B6[26],!B7[26],B7[27],B7[28],B7[29]	buffer	lc_trk_g3_4	input0_3
@@ -5771,6 +5798,7 @@ B2[31],B2[32],B2[33],B2[34],!B3[31]	buffer	lc_trk_g3_5	wire_bram/ram/MASK_14
 B14[31],B14[32],B14[33],B14[34],!B15[31]	buffer	lc_trk_g3_5	wire_bram/ram/MASK_8
 B14[0],B14[1],B15[0],B15[1]	buffer	lc_trk_g3_5	wire_bram/ram/RE
 B10[27],B10[28],B10[29],B10[30],!B11[30]	buffer	lc_trk_g3_5	wire_bram/ram/WDATA_10
+B6[27],B6[28],B6[29],B6[30],!B7[30]	buffer	lc_trk_g3_5	wire_bram/ram/WDATA_12
 B2[27],B2[28],B2[29],B2[30],!B3[30]	buffer	lc_trk_g3_5	wire_bram/ram/WDATA_14
 B14[27],B14[28],B14[29],B14[30],!B15[30]	buffer	lc_trk_g3_5	wire_bram/ram/WDATA_8
 B2[26],B3[26],B3[27],B3[28],B3[29]	buffer	lc_trk_g3_6	input0_1
@@ -5781,6 +5809,7 @@ B14[35],B15[32],B15[33],B15[34],B15[35]	buffer	lc_trk_g3_6	input2_7
 B8[31],B8[32],B8[33],B8[34],B9[31]	buffer	lc_trk_g3_6	wire_bram/ram/MASK_11
 B4[31],B4[32],B4[33],B4[34],B5[31]	buffer	lc_trk_g3_6	wire_bram/ram/MASK_13
 B0[31],B0[32],B0[33],B0[34],B1[31]	buffer	lc_trk_g3_6	wire_bram/ram/MASK_15
+B12[31],B12[32],B12[33],B12[34],B13[31]	buffer	lc_trk_g3_6	wire_bram/ram/MASK_9
 B8[27],B8[28],B8[29],B8[30],B9[30]	buffer	lc_trk_g3_6	wire_bram/ram/WDATA_11
 B4[27],B4[28],B4[29],B4[30],B5[30]	buffer	lc_trk_g3_6	wire_bram/ram/WDATA_13
 B0[27],B0[28],B0[29],B0[30],B1[30]	buffer	lc_trk_g3_6	wire_bram/ram/WDATA_15
@@ -5836,6 +5865,7 @@ B12[19]	buffer	sp12_h_l_1	sp4_h_r_13
 !B6[15],B6[16],B6[17],!B6[18],!B7[18]	buffer	sp12_h_l_10	lc_trk_g1_5
 !B2[21],B2[22],B2[23],!B2[24],!B3[21]	buffer	sp12_h_l_12	lc_trk_g0_7
 !B6[21],B6[22],B6[23],!B6[24],!B7[21]	buffer	sp12_h_l_12	lc_trk_g1_7
+!B0[15],B0[16],B0[17],!B0[18],B1[18]	buffer	sp12_h_l_14	lc_trk_g0_1
 !B4[15],B4[16],B4[17],!B4[18],B5[18]	buffer	sp12_h_l_14	lc_trk_g1_1
 !B0[14],B1[14],!B1[15],B1[16],B1[17]	buffer	sp12_h_l_15	lc_trk_g0_0
 !B4[14],B5[14],!B5[15],B5[16],B5[17]	buffer	sp12_h_l_15	lc_trk_g1_0
@@ -6002,6 +6032,7 @@ B12[15],B12[16],B12[17],!B12[18],B13[18]	buffer	sp4_h_r_25	lc_trk_g3_1
 B14[15],B14[16],B14[17],!B14[18],B15[18]	buffer	sp4_h_r_29	lc_trk_g3_5
 !B0[21],B0[22],B0[23],B0[24],B1[21]	buffer	sp4_h_r_3	lc_trk_g0_3
 !B4[21],B4[22],B4[23],B4[24],B5[21]	buffer	sp4_h_r_3	lc_trk_g1_3
+!B10[21],B10[22],B10[23],B10[24],B11[21]	buffer	sp4_h_r_31	lc_trk_g2_7
 !B14[21],B14[22],B14[23],B14[24],B15[21]	buffer	sp4_h_r_31	lc_trk_g3_7
 B8[14],!B9[14],B9[15],B9[16],B9[17]	buffer	sp4_h_r_32	lc_trk_g2_0
 B8[15],B8[16],B8[17],B8[18],!B9[18]	buffer	sp4_h_r_33	lc_trk_g2_1
@@ -6028,6 +6059,7 @@ B10[25],B11[22],B11[23],B11[24],B11[25]	buffer	sp4_h_r_46	lc_trk_g2_6
 B14[25],B15[22],B15[23],B15[24],B15[25]	buffer	sp4_h_r_46	lc_trk_g3_6
 B10[21],B10[22],B10[23],B10[24],B11[21]	buffer	sp4_h_r_47	lc_trk_g2_7
 B14[21],B14[22],B14[23],B14[24],B15[21]	buffer	sp4_h_r_47	lc_trk_g3_7
+B2[15],B2[16],B2[17],!B2[18],B3[18]	buffer	sp4_h_r_5	lc_trk_g0_5
 B6[15],B6[16],B6[17],!B6[18],B7[18]	buffer	sp4_h_r_5	lc_trk_g1_5
 !B2[25],B3[22],B3[23],B3[24],B3[25]	buffer	sp4_h_r_6	lc_trk_g0_6
 !B6[25],B7[22],B7[23],B7[24],B7[25]	buffer	sp4_h_r_6	lc_trk_g1_6
@@ -6167,6 +6199,7 @@ B12[14],!B13[14],!B13[15],B13[16],B13[17]	buffer	sp4_v_t_13	lc_trk_g3_0
 B8[25],B9[22],B9[23],!B9[24],!B9[25]	buffer	sp4_v_t_15	lc_trk_g2_2
 B12[25],B13[22],B13[23],!B13[24],!B13[25]	buffer	sp4_v_t_15	lc_trk_g3_2
 B10[25],B11[22],B11[23],!B11[24],!B11[25]	buffer	sp4_v_t_19	lc_trk_g2_6
+B14[25],B15[22],B15[23],!B15[24],!B15[25]	buffer	sp4_v_t_19	lc_trk_g3_6
 B2[21],B2[22],B2[23],!B2[24],B3[21]	buffer	sp4_v_t_2	lc_trk_g0_7
 B6[21],B6[22],B6[23],!B6[24],B7[21]	buffer	sp4_v_t_2	lc_trk_g1_7
 !B8[15],B8[16],B8[17],B8[18],B9[18]	buffer	sp4_v_t_20	lc_trk_g2_1
@@ -6209,13 +6242,16 @@ B14[15],!B14[16],B14[17],!B14[18],B15[18]	buffer	tnl_op_5	lc_trk_g3_5
 !B14[21],B14[22],!B14[23],B14[24],B15[21]	buffer	tnl_op_7	lc_trk_g3_7
 !B8[14],!B9[14],B9[15],!B9[16],B9[17]	buffer	tnr_op_0	lc_trk_g2_0
 !B12[14],!B13[14],B13[15],!B13[16],B13[17]	buffer	tnr_op_0	lc_trk_g3_0
+B8[15],!B8[16],B8[17],!B8[18],!B9[18]	buffer	tnr_op_1	lc_trk_g2_1
 B12[15],!B12[16],B12[17],!B12[18],!B13[18]	buffer	tnr_op_1	lc_trk_g3_1
 !B8[25],B9[22],!B9[23],B9[24],!B9[25]	buffer	tnr_op_2	lc_trk_g2_2
+!B12[25],B13[22],!B13[23],B13[24],!B13[25]	buffer	tnr_op_2	lc_trk_g3_2
 !B8[21],B8[22],!B8[23],B8[24],!B9[21]	buffer	tnr_op_3	lc_trk_g2_3
 !B12[21],B12[22],!B12[23],B12[24],!B13[21]	buffer	tnr_op_3	lc_trk_g3_3
 !B14[14],!B15[14],B15[15],!B15[16],B15[17]	buffer	tnr_op_4	lc_trk_g3_4
 B10[15],!B10[16],B10[17],!B10[18],!B11[18]	buffer	tnr_op_5	lc_trk_g2_5
 B14[15],!B14[16],B14[17],!B14[18],!B15[18]	buffer	tnr_op_5	lc_trk_g3_5
+!B14[25],B15[22],!B15[23],B15[24],!B15[25]	buffer	tnr_op_6	lc_trk_g3_6
 !B10[21],B10[22],!B10[23],B10[24],!B11[21]	buffer	tnr_op_7	lc_trk_g2_7
 B10[37]	buffer	wire_bram/ram/RDATA_10	sp12_h_l_1
 B11[38]	buffer	wire_bram/ram/RDATA_10	sp12_h_l_17
@@ -6233,6 +6269,7 @@ B8[37]	buffer	wire_bram/ram/RDATA_11	sp12_h_r_0
 B9[40]	buffer	wire_bram/ram/RDATA_11	sp12_v_t_7
 B9[37]	buffer	wire_bram/ram/RDATA_11	sp4_h_r_24
 B9[36]	buffer	wire_bram/ram/RDATA_11	sp4_h_r_8
+B8[40]	buffer	wire_bram/ram/RDATA_11	sp4_r_v_b_25
 B8[41]	buffer	wire_bram/ram/RDATA_11	sp4_r_v_b_41
 B9[41]	buffer	wire_bram/ram/RDATA_11	sp4_r_v_b_9
 B8[39]	buffer	wire_bram/ram/RDATA_11	sp4_v_b_40
@@ -6255,6 +6292,7 @@ B5[40]	buffer	wire_bram/ram/RDATA_13	sp12_v_b_20
 B4[39]	buffer	wire_bram/ram/RDATA_13	sp12_v_b_4
 B5[37]	buffer	wire_bram/ram/RDATA_13	sp4_h_l_9
 B4[36]	buffer	wire_bram/ram/RDATA_13	sp4_h_r_36
+B5[36]	buffer	wire_bram/ram/RDATA_13	sp4_h_r_4
 B4[40]	buffer	wire_bram/ram/RDATA_13	sp4_r_v_b_21
 B4[41]	buffer	wire_bram/ram/RDATA_13	sp4_r_v_b_37
 B5[41]	buffer	wire_bram/ram/RDATA_13	sp4_r_v_b_5
@@ -6267,6 +6305,7 @@ B2[39]	buffer	wire_bram/ram/RDATA_14	sp12_v_t_1
 B3[37]	buffer	wire_bram/ram/RDATA_14	sp4_h_r_18
 B2[36]	buffer	wire_bram/ram/RDATA_14	sp4_h_r_34
 B2[40]	buffer	wire_bram/ram/RDATA_14	sp4_r_v_b_19
+B3[41]	buffer	wire_bram/ram/RDATA_14	sp4_r_v_b_3
 B2[41]	buffer	wire_bram/ram/RDATA_14	sp4_r_v_b_35
 B3[38]	buffer	wire_bram/ram/RDATA_14	sp4_v_b_2
 B2[38]	buffer	wire_bram/ram/RDATA_14	sp4_v_b_34
@@ -6809,6 +6848,7 @@ B10[35],B11[32],!B11[33],!B11[34],!B11[35]	buffer	lc_trk_g0_5	input2_5
 B14[35],B15[32],!B15[33],!B15[34],!B15[35]	buffer	lc_trk_g0_5	input2_7
 B12[31],B12[32],!B12[33],!B12[34],!B13[31]	buffer	lc_trk_g0_5	wire_bram/ram/MASK_1
 B8[31],B8[32],!B8[33],!B8[34],!B9[31]	buffer	lc_trk_g0_5	wire_bram/ram/MASK_3
+B4[31],B4[32],!B4[33],!B4[34],!B5[31]	buffer	lc_trk_g0_5	wire_bram/ram/MASK_5
 B0[31],B0[32],!B0[33],!B0[34],!B1[31]	buffer	lc_trk_g0_5	wire_bram/ram/MASK_7
 !B12[27],!B12[28],B12[29],B12[30],!B13[30]	buffer	lc_trk_g0_5	wire_bram/ram/WDATA_1
 !B8[27],!B8[28],B8[29],B8[30],!B9[30]	buffer	lc_trk_g0_5	wire_bram/ram/WDATA_3
@@ -6833,6 +6873,7 @@ B14[26],B15[26],!B15[27],!B15[28],B15[29]	buffer	lc_trk_g0_7	input0_7
 B10[35],B11[32],!B11[33],!B11[34],B11[35]	buffer	lc_trk_g0_7	input2_5
 B14[35],B15[32],!B15[33],!B15[34],B15[35]	buffer	lc_trk_g0_7	input2_7
 B12[31],B12[32],!B12[33],!B12[34],B13[31]	buffer	lc_trk_g0_7	wire_bram/ram/MASK_1
+B8[31],B8[32],!B8[33],!B8[34],B9[31]	buffer	lc_trk_g0_7	wire_bram/ram/MASK_3
 !B12[27],!B12[28],B12[29],B12[30],B13[30]	buffer	lc_trk_g0_7	wire_bram/ram/WDATA_1
 !B8[27],!B8[28],B8[29],B8[30],B9[30]	buffer	lc_trk_g0_7	wire_bram/ram/WDATA_3
 !B4[27],!B4[28],B4[29],B4[30],B5[30]	buffer	lc_trk_g0_7	wire_bram/ram/WDATA_5
@@ -6869,6 +6910,7 @@ B2[27],!B2[28],B2[29],!B2[30],!B3[30]	buffer	lc_trk_g1_1	wire_bram/ram/WDATA_6
 !B6[26],B7[26],B7[27],!B7[28],B7[29]	buffer	lc_trk_g1_2	input0_3
 !B10[26],B11[26],B11[27],!B11[28],B11[29]	buffer	lc_trk_g1_2	input0_5
 !B14[26],B15[26],B15[27],!B15[28],B15[29]	buffer	lc_trk_g1_2	input0_7
+!B10[35],B11[32],!B11[33],B11[34],B11[35]	buffer	lc_trk_g1_2	input2_5
 !B14[35],B15[32],!B15[33],B15[34],B15[35]	buffer	lc_trk_g1_2	input2_7
 !B12[31],B12[32],!B12[33],B12[34],B13[31]	buffer	lc_trk_g1_2	wire_bram/ram/MASK_1
 !B8[31],B8[32],!B8[33],B8[34],B9[31]	buffer	lc_trk_g1_2	wire_bram/ram/MASK_3
@@ -6881,7 +6923,9 @@ B0[27],!B0[28],B0[29],!B0[30],B1[30]	buffer	lc_trk_g1_2	wire_bram/ram/WDATA_7
 !B8[26],B9[26],B9[27],!B9[28],B9[29]	buffer	lc_trk_g1_3	input0_4
 !B12[26],B13[26],B13[27],!B13[28],B13[29]	buffer	lc_trk_g1_3	input0_6
 !B12[35],B13[32],!B13[33],B13[34],B13[35]	buffer	lc_trk_g1_3	input2_6
+!B14[31],B14[32],!B14[33],B14[34],B15[31]	buffer	lc_trk_g1_3	wire_bram/ram/MASK_0
 !B10[31],B10[32],!B10[33],B10[34],B11[31]	buffer	lc_trk_g1_3	wire_bram/ram/MASK_2
+!B6[31],B6[32],!B6[33],B6[34],B7[31]	buffer	lc_trk_g1_3	wire_bram/ram/MASK_4
 !B2[31],B2[32],!B2[33],B2[34],B3[31]	buffer	lc_trk_g1_3	wire_bram/ram/MASK_6
 !B4[0],B4[1],B5[0],B5[1]	buffer	lc_trk_g1_3	wire_bram/ram/WCLKE
 B14[27],!B14[28],B14[29],!B14[30],B15[30]	buffer	lc_trk_g1_3	wire_bram/ram/WDATA_0
@@ -6897,6 +6941,7 @@ B14[35],B15[32],!B15[33],B15[34],!B15[35]	buffer	lc_trk_g1_4	input2_7
 B12[31],B12[32],!B12[33],B12[34],!B13[31]	buffer	lc_trk_g1_4	wire_bram/ram/MASK_1
 B8[31],B8[32],!B8[33],B8[34],!B9[31]	buffer	lc_trk_g1_4	wire_bram/ram/MASK_3
 B4[31],B4[32],!B4[33],B4[34],!B5[31]	buffer	lc_trk_g1_4	wire_bram/ram/MASK_5
+B0[31],B0[32],!B0[33],B0[34],!B1[31]	buffer	lc_trk_g1_4	wire_bram/ram/MASK_7
 B12[27],!B12[28],B12[29],B12[30],!B13[30]	buffer	lc_trk_g1_4	wire_bram/ram/WDATA_1
 B8[27],!B8[28],B8[29],B8[30],!B9[30]	buffer	lc_trk_g1_4	wire_bram/ram/WDATA_3
 B4[27],!B4[28],B4[29],B4[30],!B5[30]	buffer	lc_trk_g1_4	wire_bram/ram/WDATA_5
@@ -6910,6 +6955,7 @@ B10[31],B10[32],!B10[33],B10[34],!B11[31]	buffer	lc_trk_g1_5	wire_bram/ram/MASK_
 B6[31],B6[32],!B6[33],B6[34],!B7[31]	buffer	lc_trk_g1_5	wire_bram/ram/MASK_4
 B2[31],B2[32],!B2[33],B2[34],!B3[31]	buffer	lc_trk_g1_5	wire_bram/ram/MASK_6
 B14[27],!B14[28],B14[29],B14[30],!B15[30]	buffer	lc_trk_g1_5	wire_bram/ram/WDATA_0
+B10[27],!B10[28],B10[29],B10[30],!B11[30]	buffer	lc_trk_g1_5	wire_bram/ram/WDATA_2
 B6[27],!B6[28],B6[29],B6[30],!B7[30]	buffer	lc_trk_g1_5	wire_bram/ram/WDATA_4
 B2[27],!B2[28],B2[29],B2[30],!B3[30]	buffer	lc_trk_g1_5	wire_bram/ram/WDATA_6
 !B14[0],B14[1],B15[0],B15[1]	buffer	lc_trk_g1_5	wire_bram/ram/WE
@@ -6935,6 +6981,7 @@ B6[31],B6[32],!B6[33],B6[34],B7[31]	buffer	lc_trk_g1_7	wire_bram/ram/MASK_4
 B2[31],B2[32],!B2[33],B2[34],B3[31]	buffer	lc_trk_g1_7	wire_bram/ram/MASK_6
 B14[27],!B14[28],B14[29],B14[30],B15[30]	buffer	lc_trk_g1_7	wire_bram/ram/WDATA_0
 B10[27],!B10[28],B10[29],B10[30],B11[30]	buffer	lc_trk_g1_7	wire_bram/ram/WDATA_2
+B6[27],!B6[28],B6[29],B6[30],B7[30]	buffer	lc_trk_g1_7	wire_bram/ram/WDATA_4
 B2[27],!B2[28],B2[29],B2[30],B3[30]	buffer	lc_trk_g1_7	wire_bram/ram/WDATA_6
 !B0[26],!B1[26],!B1[27],B1[28],B1[29]	buffer	lc_trk_g2_0	input0_0
 !B4[26],!B5[26],!B5[27],B5[28],B5[29]	buffer	lc_trk_g2_0	input0_2
@@ -6943,6 +6990,7 @@ B2[27],!B2[28],B2[29],B2[30],B3[30]	buffer	lc_trk_g1_7	wire_bram/ram/WDATA_6
 !B12[35],B13[32],B13[33],!B13[34],!B13[35]	buffer	lc_trk_g2_0	input2_6
 !B14[31],B14[32],B14[33],!B14[34],!B15[31]	buffer	lc_trk_g2_0	wire_bram/ram/MASK_0
 !B10[31],B10[32],B10[33],!B10[34],!B11[31]	buffer	lc_trk_g2_0	wire_bram/ram/MASK_2
+!B6[31],B6[32],B6[33],!B6[34],!B7[31]	buffer	lc_trk_g2_0	wire_bram/ram/MASK_4
 !B2[31],B2[32],B2[33],!B2[34],!B3[31]	buffer	lc_trk_g2_0	wire_bram/ram/MASK_6
 B2[0],!B2[1],B2[2],!B3[0],B3[2]	buffer	lc_trk_g2_0	wire_bram/ram/WCLK
 !B14[27],B14[28],B14[29],!B14[30],!B15[30]	buffer	lc_trk_g2_0	wire_bram/ram/WDATA_0
@@ -6968,6 +7016,7 @@ B2[0],!B2[1],B2[2],!B3[0],B3[2]	buffer	lc_trk_g2_0	wire_bram/ram/WCLK
 !B8[26],B9[26],!B9[27],B9[28],B9[29]	buffer	lc_trk_g2_2	input0_4
 !B12[26],B13[26],!B13[27],B13[28],B13[29]	buffer	lc_trk_g2_2	input0_6
 !B12[35],B13[32],B13[33],!B13[34],B13[35]	buffer	lc_trk_g2_2	input2_6
+!B14[31],B14[32],B14[33],!B14[34],B15[31]	buffer	lc_trk_g2_2	wire_bram/ram/MASK_0
 !B10[31],B10[32],B10[33],!B10[34],B11[31]	buffer	lc_trk_g2_2	wire_bram/ram/MASK_2
 !B6[31],B6[32],B6[33],!B6[34],B7[31]	buffer	lc_trk_g2_2	wire_bram/ram/MASK_4
 !B2[31],B2[32],B2[33],!B2[34],B3[31]	buffer	lc_trk_g2_2	wire_bram/ram/MASK_6
@@ -6982,8 +7031,10 @@ B4[0],B4[1],!B5[0],B5[1]	buffer	lc_trk_g2_2	wire_bram/ram/WCLKE
 !B14[26],B15[26],!B15[27],B15[28],B15[29]	buffer	lc_trk_g2_3	input0_7
 !B10[35],B11[32],B11[33],!B11[34],B11[35]	buffer	lc_trk_g2_3	input2_5
 !B14[35],B15[32],B15[33],!B15[34],B15[35]	buffer	lc_trk_g2_3	input2_7
+!B12[31],B12[32],B12[33],!B12[34],B13[31]	buffer	lc_trk_g2_3	wire_bram/ram/MASK_1
 !B8[31],B8[32],B8[33],!B8[34],B9[31]	buffer	lc_trk_g2_3	wire_bram/ram/MASK_3
 !B4[31],B4[32],B4[33],!B4[34],B5[31]	buffer	lc_trk_g2_3	wire_bram/ram/MASK_5
+!B0[31],B0[32],B0[33],!B0[34],B1[31]	buffer	lc_trk_g2_3	wire_bram/ram/MASK_7
 !B12[27],B12[28],B12[29],!B12[30],B13[30]	buffer	lc_trk_g2_3	wire_bram/ram/WDATA_1
 !B8[27],B8[28],B8[29],!B8[30],B9[30]	buffer	lc_trk_g2_3	wire_bram/ram/WDATA_3
 !B4[27],B4[28],B4[29],!B4[30],B5[30]	buffer	lc_trk_g2_3	wire_bram/ram/WDATA_5
@@ -7065,6 +7116,7 @@ B0[27],B0[28],B0[29],!B0[30],!B1[30]	buffer	lc_trk_g3_0	wire_bram/ram/WDATA_7
 !B14[31],B14[32],B14[33],B14[34],!B15[31]	buffer	lc_trk_g3_1	wire_bram/ram/MASK_0
 !B10[31],B10[32],B10[33],B10[34],!B11[31]	buffer	lc_trk_g3_1	wire_bram/ram/MASK_2
 !B6[31],B6[32],B6[33],B6[34],!B7[31]	buffer	lc_trk_g3_1	wire_bram/ram/MASK_4
+!B2[31],B2[32],B2[33],B2[34],!B3[31]	buffer	lc_trk_g3_1	wire_bram/ram/MASK_6
 B2[0],!B2[1],B2[2],B3[0],B3[2]	buffer	lc_trk_g3_1	wire_bram/ram/WCLK
 B14[27],B14[28],B14[29],!B14[30],!B15[30]	buffer	lc_trk_g3_1	wire_bram/ram/WDATA_0
 B10[27],B10[28],B10[29],!B10[30],!B11[30]	buffer	lc_trk_g3_1	wire_bram/ram/WDATA_2
@@ -7169,6 +7221,7 @@ B6[25],B7[22],!B7[23],B7[24],!B7[25]	buffer	lft_op_6	lc_trk_g1_6
 B2[21],B2[22],!B2[23],B2[24],!B3[21]	buffer	lft_op_7	lc_trk_g0_7
 B6[21],B6[22],!B6[23],B6[24],!B7[21]	buffer	lft_op_7	lc_trk_g1_7
 B12[14],!B13[14],B13[15],!B13[16],B13[17]	buffer	rgt_op_0	lc_trk_g3_0
+B8[15],!B8[16],B8[17],B8[18],!B9[18]	buffer	rgt_op_1	lc_trk_g2_1
 B12[15],!B12[16],B12[17],B12[18],!B13[18]	buffer	rgt_op_1	lc_trk_g3_1
 B8[25],B9[22],!B9[23],B9[24],!B9[25]	buffer	rgt_op_2	lc_trk_g2_2
 B12[25],B13[22],!B13[23],B13[24],!B13[25]	buffer	rgt_op_2	lc_trk_g3_2
@@ -7182,11 +7235,15 @@ B10[25],B11[22],!B11[23],B11[24],!B11[25]	buffer	rgt_op_6	lc_trk_g2_6
 B14[25],B15[22],!B15[23],B15[24],!B15[25]	buffer	rgt_op_6	lc_trk_g3_6
 B10[21],B10[22],!B10[23],B10[24],!B11[21]	buffer	rgt_op_7	lc_trk_g2_7
 B14[21],B14[22],!B14[23],B14[24],!B15[21]	buffer	rgt_op_7	lc_trk_g3_7
+B0[21],B0[22],!B0[23],B0[24],B1[21]	buffer	sp12_h_l_0	lc_trk_g0_3
 B4[21],B4[22],!B4[23],B4[24],B5[21]	buffer	sp12_h_l_0	lc_trk_g1_3
+!B6[21],B6[22],B6[23],!B6[24],!B7[21]	buffer	sp12_h_l_12	lc_trk_g1_7
 !B2[25],B3[22],B3[23],!B3[24],!B3[25]	buffer	sp12_h_l_13	lc_trk_g0_6
 !B6[25],B7[22],B7[23],!B7[24],!B7[25]	buffer	sp12_h_l_13	lc_trk_g1_6
 B6[2]	buffer	sp12_h_l_13	sp4_h_r_19
 !B4[21],B4[22],B4[23],!B4[24],B5[21]	buffer	sp12_h_l_16	lc_trk_g1_3
+!B2[15],B2[16],B2[17],!B2[18],B3[18]	buffer	sp12_h_l_18	lc_trk_g0_5
+!B6[15],B6[16],B6[17],!B6[18],B7[18]	buffer	sp12_h_l_18	lc_trk_g1_5
 !B2[25],B3[22],B3[23],!B3[24],B3[25]	buffer	sp12_h_l_21	lc_trk_g0_6
 !B6[25],B7[22],B7[23],!B7[24],B7[25]	buffer	sp12_h_l_21	lc_trk_g1_6
 B14[2]	buffer	sp12_h_l_21	sp4_h_l_10
@@ -7196,6 +7253,7 @@ B15[19]	buffer	sp12_h_l_3	sp4_h_l_3
 B2[25],B3[22],!B3[23],B3[24],B3[25]	buffer	sp12_h_l_5	lc_trk_g0_6
 B6[25],B7[22],!B7[23],B7[24],B7[25]	buffer	sp12_h_l_5	lc_trk_g1_6
 B14[19]	buffer	sp12_h_l_5	sp4_h_l_2
+!B0[15],B0[16],B0[17],!B0[18],!B1[18]	buffer	sp12_h_l_6	lc_trk_g0_1
 !B4[15],B4[16],B4[17],!B4[18],!B5[18]	buffer	sp12_h_l_6	lc_trk_g1_1
 B0[14],B1[14],B1[15],!B1[16],B1[17]	buffer	sp12_h_r_0	lc_trk_g0_0
 B4[14],B5[14],B5[15],!B5[16],B5[17]	buffer	sp12_h_r_0	lc_trk_g1_0
@@ -7213,6 +7271,7 @@ B4[2]	buffer	sp12_h_r_12	sp4_h_l_7
 !B4[14],B5[14],!B5[15],B5[16],B5[17]	buffer	sp12_h_r_16	lc_trk_g1_0
 B8[2]	buffer	sp12_h_r_16	sp4_h_r_20
 !B0[15],B0[16],B0[17],!B0[18],B1[18]	buffer	sp12_h_r_17	lc_trk_g0_1
+!B4[15],B4[16],B4[17],!B4[18],B5[18]	buffer	sp12_h_r_17	lc_trk_g1_1
 !B0[25],B1[22],B1[23],!B1[24],B1[25]	buffer	sp12_h_r_18	lc_trk_g0_2
 !B4[25],B5[22],B5[23],!B5[24],B5[25]	buffer	sp12_h_r_18	lc_trk_g1_2
 B10[2]	buffer	sp12_h_r_18	sp4_h_l_8
@@ -7220,6 +7279,7 @@ B0[25],B1[22],!B1[23],B1[24],B1[25]	buffer	sp12_h_r_2	lc_trk_g0_2
 B4[25],B5[22],!B5[23],B5[24],B5[25]	buffer	sp12_h_r_2	lc_trk_g1_2
 B12[19]	buffer	sp12_h_r_2	sp4_h_r_13
 B12[2]	buffer	sp12_h_r_20	sp4_h_r_22
+!B6[21],B6[22],B6[23],!B6[24],B7[21]	buffer	sp12_h_r_23	lc_trk_g1_7
 B2[15],!B2[16],B2[17],B2[18],B3[18]	buffer	sp12_h_r_5	lc_trk_g0_5
 B6[15],!B6[16],B6[17],B6[18],B7[18]	buffer	sp12_h_r_5	lc_trk_g1_5
 !B0[14],!B1[14],!B1[15],B1[16],B1[17]	buffer	sp12_h_r_8	lc_trk_g0_0
@@ -7295,6 +7355,7 @@ B10[15],B10[16],B10[17],!B10[18],B11[18]	buffer	sp4_h_l_16	lc_trk_g2_5
 B14[15],B14[16],B14[17],!B14[18],B15[18]	buffer	sp4_h_l_16	lc_trk_g3_5
 !B10[14],B11[14],B11[15],B11[16],B11[17]	buffer	sp4_h_l_17	lc_trk_g2_4
 !B14[14],B15[14],B15[15],B15[16],B15[17]	buffer	sp4_h_l_17	lc_trk_g3_4
+!B10[21],B10[22],B10[23],B10[24],B11[21]	buffer	sp4_h_l_18	lc_trk_g2_7
 !B14[21],B14[22],B14[23],B14[24],B15[21]	buffer	sp4_h_l_18	lc_trk_g3_7
 B2[21],B2[22],B2[23],B2[24],!B3[21]	buffer	sp4_h_l_2	lc_trk_g0_7
 B6[21],B6[22],B6[23],B6[24],!B7[21]	buffer	sp4_h_l_2	lc_trk_g1_7
@@ -7342,6 +7403,7 @@ B2[25],B3[22],B3[23],B3[24],B3[25]	buffer	sp4_h_r_22	lc_trk_g0_6
 B6[25],B7[22],B7[23],B7[24],B7[25]	buffer	sp4_h_r_22	lc_trk_g1_6
 B8[15],B8[16],B8[17],!B8[18],B9[18]	buffer	sp4_h_r_25	lc_trk_g2_1
 B12[15],B12[16],B12[17],!B12[18],B13[18]	buffer	sp4_h_r_25	lc_trk_g3_1
+!B8[21],B8[22],B8[23],B8[24],B9[21]	buffer	sp4_h_r_27	lc_trk_g2_3
 !B12[21],B12[22],B12[23],B12[24],B13[21]	buffer	sp4_h_r_27	lc_trk_g3_3
 !B0[21],B0[22],B0[23],B0[24],B1[21]	buffer	sp4_h_r_3	lc_trk_g0_3
 !B4[21],B4[22],B4[23],B4[24],B5[21]	buffer	sp4_h_r_3	lc_trk_g1_3
@@ -7353,6 +7415,7 @@ B8[21],B8[22],B8[23],B8[24],!B9[21]	buffer	sp4_h_r_35	lc_trk_g2_3
 B12[21],B12[22],B12[23],B12[24],!B13[21]	buffer	sp4_h_r_35	lc_trk_g3_3
 B10[14],!B11[14],B11[15],B11[16],B11[17]	buffer	sp4_h_r_36	lc_trk_g2_4
 B14[14],!B15[14],B15[15],B15[16],B15[17]	buffer	sp4_h_r_36	lc_trk_g3_4
+B10[15],B10[16],B10[17],B10[18],!B11[18]	buffer	sp4_h_r_37	lc_trk_g2_5
 B14[15],B14[16],B14[17],B14[18],!B15[18]	buffer	sp4_h_r_37	lc_trk_g3_5
 !B2[14],B3[14],B3[15],B3[16],B3[17]	buffer	sp4_h_r_4	lc_trk_g0_4
 !B6[14],B7[14],B7[15],B7[16],B7[17]	buffer	sp4_h_r_4	lc_trk_g1_4
@@ -7537,6 +7600,7 @@ B6[15],B6[16],B6[17],!B6[18],!B7[18]	buffer	sp4_v_t_8	lc_trk_g1_5
 B8[15],!B8[16],B8[17],!B8[18],B9[18]	buffer	tnl_op_1	lc_trk_g2_1
 B12[15],!B12[16],B12[17],!B12[18],B13[18]	buffer	tnl_op_1	lc_trk_g3_1
 !B8[25],B9[22],!B9[23],B9[24],B9[25]	buffer	tnl_op_2	lc_trk_g2_2
+!B12[25],B13[22],!B13[23],B13[24],B13[25]	buffer	tnl_op_2	lc_trk_g3_2
 !B8[21],B8[22],!B8[23],B8[24],B9[21]	buffer	tnl_op_3	lc_trk_g2_3
 !B12[21],B12[22],!B12[23],B12[24],B13[21]	buffer	tnl_op_3	lc_trk_g3_3
 !B10[14],B11[14],B11[15],!B11[16],B11[17]	buffer	tnl_op_4	lc_trk_g2_4
@@ -7558,6 +7622,7 @@ B12[15],!B12[16],B12[17],!B12[18],!B13[18]	buffer	tnr_op_1	lc_trk_g3_1
 !B10[14],!B11[14],B11[15],!B11[16],B11[17]	buffer	tnr_op_4	lc_trk_g2_4
 !B14[14],!B15[14],B15[15],!B15[16],B15[17]	buffer	tnr_op_4	lc_trk_g3_4
 B10[15],!B10[16],B10[17],!B10[18],!B11[18]	buffer	tnr_op_5	lc_trk_g2_5
+B14[15],!B14[16],B14[17],!B14[18],!B15[18]	buffer	tnr_op_5	lc_trk_g3_5
 !B10[25],B11[22],!B11[23],B11[24],!B11[25]	buffer	tnr_op_6	lc_trk_g2_6
 !B14[25],B15[22],!B15[23],B15[24],!B15[25]	buffer	tnr_op_6	lc_trk_g3_6
 !B10[21],B10[22],!B10[23],B10[24],!B11[21]	buffer	tnr_op_7	lc_trk_g2_7
@@ -7569,6 +7634,7 @@ B14[37]	buffer	wire_bram/ram/RDATA_0	sp12_h_l_5
 B15[40]	buffer	wire_bram/ram/RDATA_0	sp12_v_b_14
 B15[36]	buffer	wire_bram/ram/RDATA_0	sp4_h_l_3
 B15[37]	buffer	wire_bram/ram/RDATA_0	sp4_h_r_30
+B14[36]	buffer	wire_bram/ram/RDATA_0	sp4_h_r_46
 B15[41]	buffer	wire_bram/ram/RDATA_0	sp4_r_v_b_15
 B14[40]	buffer	wire_bram/ram/RDATA_0	sp4_r_v_b_31
 B14[41]	buffer	wire_bram/ram/RDATA_0	sp4_r_v_b_47
@@ -7724,6 +7790,7 @@ B13[8],B13[9],B13[10]	routing	sp4_h_l_41	sp4_v_b_10
 B5[8],B5[9],!B5[10]	routing	sp4_h_l_41	sp4_v_b_4
 B7[8],!B7[9],!B7[10]	routing	sp4_h_l_41	sp4_v_t_41
 !B14[4],B14[6],!B15[5]	routing	sp4_h_l_41	sp4_v_t_44
+!B12[8],B12[9],B12[10]	routing	sp4_h_l_42	sp4_h_r_10
 !B4[5],B5[4],B5[6]	routing	sp4_h_l_42	sp4_h_r_3
 B8[8],!B8[9],!B8[10]	routing	sp4_h_l_42	sp4_h_r_7
 B1[8],B1[9],B1[10]	routing	sp4_h_l_42	sp4_v_b_1
@@ -7731,6 +7798,7 @@ B9[8],B9[9],!B9[10]	routing	sp4_h_l_42	sp4_v_b_7
 !B2[4],B2[6],!B3[5]	routing	sp4_h_l_42	sp4_v_t_37
 B11[8],!B11[9],!B11[10]	routing	sp4_h_l_42	sp4_v_t_42
 !B0[12],B1[11],B1[13]	routing	sp4_h_l_43	sp4_h_r_2
+!B8[5],!B9[4],B9[6]	routing	sp4_h_l_43	sp4_h_r_6
 B12[5],B13[4],!B13[6]	routing	sp4_h_l_43	sp4_h_r_9
 B0[4],B0[6],B1[5]	routing	sp4_h_l_43	sp4_v_b_0
 B8[4],!B8[6],B9[5]	routing	sp4_h_l_43	sp4_v_b_6
@@ -7872,11 +7940,13 @@ B10[4],B10[6],!B11[5]	routing	sp4_v_b_10	sp4_v_t_43
 !B6[8],!B6[9],B6[10]	routing	sp4_v_b_11	sp4_h_l_41
 B14[12],!B15[11],!B15[13]	routing	sp4_v_b_11	sp4_h_l_46
 B12[12],B13[11],!B13[13]	routing	sp4_v_b_11	sp4_h_r_11
+B4[12],B5[11],B5[13]	routing	sp4_v_b_11	sp4_h_r_5
 B2[11],!B2[13],B3[12]	routing	sp4_v_b_11	sp4_v_t_39
 !B11[8],B11[9],B11[10]	routing	sp4_v_b_11	sp4_v_t_42
 !B14[11],B14[13],!B15[12]	routing	sp4_v_b_11	sp4_v_t_46
 B2[12],!B3[11],!B3[13]	routing	sp4_v_b_2	sp4_h_l_39
 !B10[8],!B10[9],B10[10]	routing	sp4_v_b_2	sp4_h_l_42
+B0[12],B1[11],!B1[13]	routing	sp4_v_b_2	sp4_h_r_2
 B8[12],B9[11],B9[13]	routing	sp4_v_b_2	sp4_h_r_8
 !B2[11],B2[13],!B3[12]	routing	sp4_v_b_2	sp4_v_t_39
 B6[11],!B6[13],B7[12]	routing	sp4_v_b_2	sp4_v_t_40
@@ -7912,6 +7982,7 @@ B10[4],!B10[6],!B11[5]	routing	sp4_v_b_6	sp4_v_t_43
 !B2[5],B3[4],!B3[6]	routing	sp4_v_b_7	sp4_h_l_37
 !B10[8],B10[9],!B10[10]	routing	sp4_v_b_7	sp4_h_l_42
 B0[8],B0[9],B0[10]	routing	sp4_v_b_7	sp4_h_r_1
+B8[8],B8[9],!B8[10]	routing	sp4_v_b_7	sp4_h_r_7
 B6[4],B6[6],!B7[5]	routing	sp4_v_b_7	sp4_v_t_38
 !B11[8],B11[9],!B11[10]	routing	sp4_v_b_7	sp4_v_t_42
 B15[8],!B15[9],B15[10]	routing	sp4_v_b_7	sp4_v_t_47
