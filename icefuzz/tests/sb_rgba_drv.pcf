@@ -1,0 +1,3 @@
+set_io r_led 39
+set_io g_led 40
+set_io b_led 41

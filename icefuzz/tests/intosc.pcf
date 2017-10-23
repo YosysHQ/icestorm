@@ -1,0 +1,3 @@
+set_io clkhfpu 2
+set_io clkhfen 3
+set_io clkhf   4
