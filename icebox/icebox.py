@@ -4205,6 +4205,9 @@ for entry in iotile_full_db:
 logictile_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
 logictile_db.append([["B1[50]"], "CarryInSet"])
 
+logictile_5k_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
+logictile_5k_db.append([["B1[50]"], "CarryInSet"])
+
 logictile_8k_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
 logictile_8k_db.append([["B1[50]"], "CarryInSet"])
 
