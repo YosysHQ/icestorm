@@ -1187,15 +1187,15 @@ gbufin_db = {
         ( 6,  0,  5),
         ( 6, 17,  4),
     ],
-    "5k": [ # not sure how to get the third column, currently based on diagram in pdf.
-        ( 6,  0,  0),
-        (12,  0,  1),
-        (13,  0,  3),
-        (19,  0,  6),
-        ( 6, 31,  5),
-        (12, 31,  2),
-        (13, 31,  7),
-        (19, 31,  4),
+    "5k": [
+        ( 6,  0,  6), #checked
+        (12,  0,  5), #checked
+        (13,  0,  7), #unknown
+        (19,  0,  0), #checked
+        ( 6, 31,  3), #checked
+        (12, 31,  4), #checked
+        (13, 31,  1), #checked
+        (19, 31,  2), #checked
     ],
     "8k": [
         (33, 16,  7),
