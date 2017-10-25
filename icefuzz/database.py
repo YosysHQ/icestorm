@@ -60,6 +60,10 @@ def read_database(filename, tile_type):
                 elif m.group(1) in ["1", "2"]:
                     line[1] = re.sub(r"glb_netwk_", "1k_glb_netwk_", line[1])
                 raw_db.append((bit, (line[0], line[1])))
+                #Slightly hacky approach for the 5k devices, which are the same as the 8k
+                if m.group(1) == "7":
+                    line[1] = re.sub(r"8k_glb_netwk_", "5k_glb_netwk_", line[1])
+                raw_db.append((bit, (line[0], line[1])))
             elif line[0] == "Cascade":
                 match = re.match("LH_LC0(\d)_inmux02_5", line[1])
                 if match:
