@@ -194,15 +194,17 @@ class iceconfig:
                     entries.append((x, src_y, x, y))
             return entries
 
-        if self.device == "5k": #Assume same as 8k because same height, is this valid???
+        if self.device == "5k": #Interesting, seems the 5k has more colbufs?
             entries = list()
             for x in range(self.max_x+1):
                 for y in range(self.max_y+1):
                     src_y = None
-                    if  0 <= y <=  8: src_y =  8
-                    if  9 <= y <= 16: src_y =  9
-                    if 17 <= y <= 24: src_y = 24
-                    if 25 <= y <= 33: src_y = 25
+                    if  0 <= y <=  4: src_y =  4
+                    if  5 <= y <= 10: src_y =  5
+                    if 11 <= y <= 14: src_y = 14
+                    if 15 <= y <= 20: src_y = 15
+                    if 21 <= y <= 26: src_y = 26
+                    if 27 <= y <= 31: src_y = 27
                     entries.append((x, src_y, x, y))
             return entries
 
