@@ -1108,20 +1108,15 @@ def parse_db(text, device="1k"):
     for line in text.split("\n"):
         line_384 = line.replace("384_glb_netwk_", "glb_netwk_")
         line_1k = line.replace("1k_glb_netwk_", "glb_netwk_")
-        line_5k = line.replace("5k_glb_netwk_", "glb_netwk_")
         line_8k = line.replace("8k_glb_netwk_", "glb_netwk_")
         if line_1k != line:
             if device != "1k":
                 continue
             line = line_1k
         elif line_8k != line:
-            if device != "8k":
+            if device != "8k" and device != "5k": # global network is the same for 8k and 5k
                 continue
             line = line_8k
-        elif line_5k != line:
-            if device != "5k":
-                continue
-            line = line_5k
         elif line_384 != line:
             if device != "384":
                 continue
