@@ -227,8 +227,13 @@ class iceconfig:
         if self.device in ["384", "1k", "8k"]:
           if x == 0: return iotile_l_db
           if x == self.max_x: return iotile_r_db
-        if y == 0: return iotile_b_db
-        if y == self.max_y: return iotile_t_db
+        # The 5k needs an IO db including the extra bits
+        if self.device == "5k":
+            if y == 0: return iotile_b_5k_db
+            if y == self.max_y: return iotile_t_5k_db            
+        else:
+            if y == 0: return iotile_b_db
+            if y == self.max_y: return iotile_t_db
         if self.device == "1k":
             if (x, y) in self.logic_tiles: return logictile_db
             if (x, y) in self.ramb_tiles: return rambtile_db
@@ -4211,7 +4216,20 @@ logictile_8k_db.append([["B1[50]"], "CarryInSet"])
 logictile_384_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
 logictile_384_db.append([["B1[50]"], "CarryInSet"])
 
-for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, logictile_db, logictile_5k_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_5k_db, ramttile_5k_db, rambtile_8k_db, ramttile_8k_db]:
+# The 5k series has a couple of extra IO configuration bits. Add them in to a copy of the db here
+iotile_t_5k_db = list(iotile_t_db)
+iotile_t_5k_db.append([["B14[15]"], "IoCtrl", "padeb_test_1"])
+iotile_t_5k_db.append([["B15[14]"], "IoCtrl", "padeb_test_0"])
+iotile_t_5k_db.append([["B6[15]"], "IoCtrl", "cf_bit_35"])
+iotile_t_5k_db.append([["B12[15]"], "IoCtrl", "cf_bit_39"])
+
+iotile_b_5k_db = list(iotile_b_db)
+iotile_b_5k_db.append([["B14[15]"], "IoCtrl", "padeb_test_1"])
+iotile_b_5k_db.append([["B15[14]"], "IoCtrl", "padeb_test_0"])
+iotile_b_5k_db.append([["B6[15]"], "IoCtrl", "cf_bit_35"])
+iotile_b_5k_db.append([["B12[15]"], "IoCtrl", "cf_bit_39"])
+
+for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, iotile_t_5k_db, iotile_b_5k_db, logictile_db, logictile_5k_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_5k_db, ramttile_5k_db, rambtile_8k_db, ramttile_8k_db]:
     for entry in db:
         if entry[1] in ("buffer", "routing"):
             entry[2] = netname_normalize(entry[2],
