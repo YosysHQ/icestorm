@@ -661,7 +661,7 @@ class iceconfig:
                     expected_data_lines -= 1
                     continue
                 assert expected_data_lines <= 0
-                if line[0] in (".io_tile", ".logic_tile", ".ramb_tile", ".ramt_tile", ".ram_data"):
+                if line[0] in (".io_tile", ".logic_tile", ".ramb_tile", ".ramt_tile", ".ram_data", ".ipconn_tile", ".dsp1_tile", ".dsp2_tile", ".dsp3_tile", ".dsp4_tile"):
                     current_data = list()
                     expected_data_lines = 16
                     self.max_x = max(self.max_x, int(line[1]))
