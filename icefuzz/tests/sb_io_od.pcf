@@ -1,0 +1,12 @@
+# set_io pin 1
+set_io pin 39
+
+# set_io pin
+# set_io latch_in
+# set_io clk_in
+# set_io clk_out
+# set_io oen
+# set_io dout_0
+# set_io dout_1
+# set_io din_0
+# set_io din_1

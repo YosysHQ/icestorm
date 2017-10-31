@@ -801,7 +801,7 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 					error("cram_x %d (bit %d, %d) larger than bank size %lu\n", cram_x, bit_x, bit_y, this->cram[cram_bank].size());
 				}
 				if (cram_y > int(this->cram[cram_bank][cram_x].size())) {
-						error("cram_y %d larger than bank size %lu\n", cram_y, this->cram[cram_bank][cram_x].size());
+					error("cram_y %d (bit %d, %d) larger than bank %d size %lu\n", cram_y, bit_x, bit_y, cram_bank, this->cram[cram_bank][cram_x].size());
 				}
 				ofs << (this->cram[cram_bank][cram_x][cram_y] ? '1' : '0');
 			}
@@ -980,8 +980,18 @@ vector<int> FpgaConfig::chip_cols() const
 string FpgaConfig::tile_type(int x, int y) const
 {
 	if ((x == 0 || x == this->chip_width()+1) && (y == 0 || y == this->chip_height()+1)) return "corner";
-	// The sides on the 5k devices are unsupported tile types.
-	if (this->device == "5k" && (x == 0 || x == this->chip_width()+1)) return "unsupported";
+	// The sides on the 5k devices are IPConnect or DSP tiles
+	if (this->device == "5k" && (x == 0 || x == this->chip_width()+1)) {
+		if( (y == 5) || (y == 10) || (y == 15) || (y == 23)) //check ordering here, tile 23-26 might be reversed
+			return "dsp0";
+		if( (y == 6) || (y == 11) || (y == 16) || (y == 24))
+			return "dsp1";
+		if( (y == 7) || (y == 12) || (y == 17) || (y == 25))
+			return "dsp2";
+		if( (y == 8) || (y == 13) || (y == 18) || (y == 26))
+			return "dsp3";
+		return "ipconn";
+	}
 	if ((x == 0 || x == this->chip_width()+1) || (y == 0 || y == this->chip_height()+1)) return "io";
 
 	if (this->device == "384") return "logic";
@@ -1011,7 +1021,9 @@ int FpgaConfig::tile_width(const string &type) const
 	if (type == "ramb")          return 42;
 	if (type == "ramt")          return 42;
 	if (type == "io")            return 18;
-	if (type == "unsupported")   return 76;
+	if (type.substr(0, 3) == "dsp")   return 54;
+	if (type == "ipconn")   return 54;
+
 	panic("Unknown tile type '%s'.\n", type.c_str());
 }
 

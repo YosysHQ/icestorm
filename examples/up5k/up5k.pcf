@@ -1,0 +1,3 @@
+set_io LED0 12
+set_io LED1 21
+set_io btn 26

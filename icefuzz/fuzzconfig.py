@@ -63,8 +63,10 @@ elif device_class == "5k":
 
     #TODO(tannewt): Add 39, 40, 41 to this list. It causes placement failures for some reason.
     # Also add 14 15 16 17 which are constrained to SPI.
+    #TODO(daveshah1): Add back I3C IO 23 which cause placement failures when assigned to
+    #an SB_IO clk_in
     pins = """2 3 4 6 9 10 11 12
-    13 18 19 20 21 23
+    13 18 19 20 21
     25 26 27 28 31 32 34 35 36
     37 38 42 43 44 45 46 47 48
     """.split()

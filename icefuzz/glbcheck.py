@@ -30,13 +30,13 @@ with open(argv[1]) as f:
 with open(argv[2]) as f:
     current_tile = None
     for line in f:
-        if line.startswith(("Tile", "IO_Tile", "RAM_Tile", "LogicTile")):
-            f = line.replace("IO_", "").replace("RAM_", "").split("_")
+        if line.startswith(("Tile", "IO_Tile", "RAM_Tile", "LogicTile", "DSP_Tile", "IpCon_Tile")):
+            f = line.replace("IO_", "").replace("RAM_", "").replace("DSP_","").replace("IpCon_","").split("_")
             assert len(f) == 3
             current_tile = "%02d.%02d" % (int(f[1]), int(f[2]))
             continue
 
-        if line.find("GlobalNetwork") >= 0 or line.startswith(("IpCon", "DSP")):
+        if line.find("GlobalNetwork") >= 0:
             current_tile = None
             continue
 
@@ -65,4 +65,3 @@ for bit in sorted(only_in_glb):
   print(bit)
 
 exit(1)
-

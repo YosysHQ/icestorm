@@ -80,12 +80,12 @@ class iceconfig:
     def setup_empty_5k(self):
         self.clear()
         self.device = "5k"
-        self.max_x = 26
-        self.max_y = 33
+        self.max_x = 25
+        self.max_y = 31
 
         for x in range(1, self.max_x):
             for y in range(1, self.max_y):
-                if x in (7, 20):
+                if x in (6, 19):
                     if y % 2 == 1:
                         self.ramb_tiles[(x, y)] = ["0" * 42 for i in range(16)]
                     else:
@@ -194,6 +194,20 @@ class iceconfig:
                     entries.append((x, src_y, x, y))
             return entries
 
+        if self.device == "5k": #Interesting, seems the 5k has more colbufs?
+            entries = list()
+            for x in range(self.max_x+1):
+                for y in range(self.max_y+1):
+                    src_y = None
+                    if  0 <= y <=  4: src_y =  4
+                    if  5 <= y <= 10: src_y =  5
+                    if 11 <= y <= 14: src_y = 14
+                    if 15 <= y <= 20: src_y = 15
+                    if 21 <= y <= 26: src_y = 26
+                    if 27 <= y <= 31: src_y = 27
+                    entries.append((x, src_y, x, y))
+            return entries
+
         if self.device == "384":
             entries = list()
             for x in range(self.max_x+1):
@@ -213,8 +227,13 @@ class iceconfig:
         if self.device in ["384", "1k", "8k"]:
           if x == 0: return iotile_l_db
           if x == self.max_x: return iotile_r_db
-        if y == 0: return iotile_b_db
-        if y == self.max_y: return iotile_t_db
+        # The 5k needs an IO db including the extra bits
+        if self.device == "5k":
+            if y == 0: return iotile_b_5k_db
+            if y == self.max_y: return iotile_t_5k_db            
+        else:
+            if y == 0: return iotile_b_db
+            if y == self.max_y: return iotile_t_db
         if self.device == "1k":
             if (x, y) in self.logic_tiles: return logictile_db
             if (x, y) in self.ramb_tiles: return rambtile_db
@@ -642,7 +661,7 @@ class iceconfig:
                     expected_data_lines -= 1
                     continue
                 assert expected_data_lines <= 0
-                if line[0] in (".io_tile", ".logic_tile", ".ramb_tile", ".ramt_tile", ".ram_data"):
+                if line[0] in (".io_tile", ".logic_tile", ".ramb_tile", ".ramt_tile", ".ram_data", ".ipconn_tile", ".dsp1_tile", ".dsp2_tile", ".dsp3_tile", ".dsp4_tile"):
                     current_data = list()
                     expected_data_lines = 16
                     self.max_x = max(self.max_x, int(line[1]))
@@ -1094,20 +1113,15 @@ def parse_db(text, device="1k"):
     for line in text.split("\n"):
         line_384 = line.replace("384_glb_netwk_", "glb_netwk_")
         line_1k = line.replace("1k_glb_netwk_", "glb_netwk_")
-        line_5k = line.replace("5k_glb_netwk_", "glb_netwk_")
         line_8k = line.replace("8k_glb_netwk_", "glb_netwk_")
         if line_1k != line:
             if device != "1k":
                 continue
             line = line_1k
         elif line_8k != line:
-            if device != "8k":
+            if device != "8k" and device != "5k": # global network is the same for 8k and 5k
                 continue
             line = line_8k
-        elif line_5k != line:
-            if device != "5k":
-                continue
-            line = line_5k
         elif line_384 != line:
             if device != "384":
                 continue
@@ -1173,15 +1187,15 @@ gbufin_db = {
         ( 6,  0,  5),
         ( 6, 17,  4),
     ],
-    "5k": [ # not sure how to get the third column, currently based on diagram in pdf.
-        ( 6,  0,  0),
-        (12,  0,  1),
-        (13,  0,  3),
-        (19,  0,  6),
-        ( 6, 31,  5),
-        (12, 31,  2),
-        (13, 31,  7),
-        (19, 31,  4),
+    "5k": [
+        ( 6,  0,  6), #checked
+        (12,  0,  5), #checked
+        (13,  0,  7), #unknown
+        (19,  0,  0), #checked
+        ( 6, 31,  3), #checked
+        (12, 31,  4), #checked
+        (13, 31,  1), #checked
+        (19, 31,  2), #checked
     ],
     "8k": [
         (33, 16,  7),
@@ -1275,7 +1289,6 @@ noplls_db = {
     "1k-cb121": [ "1k" ],
     "1k-vq100": [ "1k" ],
     "384-qn32": [ "384" ],
-    "5k-sg48": [ "5k" ],
 }
 
 pllinfo_db = {
@@ -1381,89 +1394,88 @@ pllinfo_db = {
         # 3'b110 = "SB_PLL40_2F_PAD"
         # 3'b011 = "SB_PLL40_CORE"
         # 3'b111 = "SB_PLL40_2F_CORE"
-        "PLLTYPE_0":            ( 16, 0, "PLLCONFIG_5"),
-        "PLLTYPE_1":            ( 18, 0, "PLLCONFIG_1"),
-        "PLLTYPE_2":            ( 18, 0, "PLLCONFIG_3"),
+        "PLLTYPE_0":            (12, 31, "PLLCONFIG_5"),
+        "PLLTYPE_1":            (14, 31, "PLLCONFIG_1"),
+        "PLLTYPE_2":            (14, 31, "PLLCONFIG_3"),
 
         # 3'b000 = "DELAY"
         # 3'b001 = "SIMPLE"
         # 3'b010 = "PHASE_AND_DELAY"
         # 3'b110 = "EXTERNAL"
-        "FEEDBACK_PATH_0":      ( 18, 0, "PLLCONFIG_5"),
-        "FEEDBACK_PATH_1":      ( 15, 0, "PLLCONFIG_9"),
-        "FEEDBACK_PATH_2":      ( 16, 0, "PLLCONFIG_1"),
+        "FEEDBACK_PATH_0":      (14, 31, "PLLCONFIG_5"),
+        "FEEDBACK_PATH_1":      (11, 31, "PLLCONFIG_9"),
+        "FEEDBACK_PATH_2":      (12, 31, "PLLCONFIG_1"),
 
         # 1'b0 = "FIXED"
         # 1'b1 = "DYNAMIC" (also set FDA_FEEDBACK=4'b1111)
-        "DELAY_ADJMODE_FB":     ( 17, 0, "PLLCONFIG_4"),
+        "DELAY_ADJMODE_FB":     (13, 31, "PLLCONFIG_4"),
 
         # 1'b0 = "FIXED"
         # 1'b1 = "DYNAMIC" (also set FDA_RELATIVE=4'b1111)
-        "DELAY_ADJMODE_REL":    ( 17, 0, "PLLCONFIG_9"),
+        "DELAY_ADJMODE_REL":    (13, 31, "PLLCONFIG_9"),
 
         # 2'b00 = "GENCLK"
         # 2'b01 = "GENCLK_HALF"
         # 2'b10 = "SHIFTREG_90deg"
         # 2'b11 = "SHIFTREG_0deg"
-        "PLLOUT_SELECT_A_0":    ( 16, 0, "PLLCONFIG_6"),
-        "PLLOUT_SELECT_A_1":    ( 16, 0, "PLLCONFIG_7"),
-
+        "PLLOUT_SELECT_A_0":    (12, 31, "PLLCONFIG_6"),
+        "PLLOUT_SELECT_A_1":    (12, 31, "PLLCONFIG_7"),
         # 2'b00 = "GENCLK"
         # 2'b01 = "GENCLK_HALF"
         # 2'b10 = "SHIFTREG_90deg"
         # 2'b11 = "SHIFTREG_0deg"
-        "PLLOUT_SELECT_B_0":    ( 16, 0, "PLLCONFIG_2"),
-        "PLLOUT_SELECT_B_1":    ( 16, 0, "PLLCONFIG_3"),
+        "PLLOUT_SELECT_B_0":    (12, 31, "PLLCONFIG_2"),
+        "PLLOUT_SELECT_B_1":    (12, 31, "PLLCONFIG_3"),
 
         # Numeric Parameters
-        "SHIFTREG_DIV_MODE":    ( 16, 0, "PLLCONFIG_4"),
-        "FDA_FEEDBACK_0":       ( 16, 0, "PLLCONFIG_9"),
-        "FDA_FEEDBACK_1":       ( 17, 0, "PLLCONFIG_1"),
-        "FDA_FEEDBACK_2":       ( 17, 0, "PLLCONFIG_2"),
-        "FDA_FEEDBACK_3":       ( 17, 0, "PLLCONFIG_3"),
-        "FDA_RELATIVE_0":       ( 17, 0, "PLLCONFIG_5"),
-        "FDA_RELATIVE_1":       ( 17, 0, "PLLCONFIG_6"),
-        "FDA_RELATIVE_2":       ( 17, 0, "PLLCONFIG_7"),
-        "FDA_RELATIVE_3":       ( 17, 0, "PLLCONFIG_8"),
-        "DIVR_0":               ( 14, 0, "PLLCONFIG_1"),
-        "DIVR_1":               ( 14, 0, "PLLCONFIG_2"),
-        "DIVR_2":               ( 14, 0, "PLLCONFIG_3"),
-        "DIVR_3":               ( 14, 0, "PLLCONFIG_4"),
-        "DIVF_0":               ( 14, 0, "PLLCONFIG_5"),
-        "DIVF_1":               ( 14, 0, "PLLCONFIG_6"),
-        "DIVF_2":               ( 14, 0, "PLLCONFIG_7"),
-        "DIVF_3":               ( 14, 0, "PLLCONFIG_8"),
-        "DIVF_4":               ( 14, 0, "PLLCONFIG_9"),
-        "DIVF_5":               ( 15, 0, "PLLCONFIG_1"),
-        "DIVF_6":               ( 15, 0, "PLLCONFIG_2"),
-        "DIVQ_0":               ( 15, 0, "PLLCONFIG_3"),
-        "DIVQ_1":               ( 15, 0, "PLLCONFIG_4"),
-        "DIVQ_2":               ( 15, 0, "PLLCONFIG_5"),
-        "FILTER_RANGE_0":       ( 15, 0, "PLLCONFIG_6"),
-        "FILTER_RANGE_1":       ( 15, 0, "PLLCONFIG_7"),
-        "FILTER_RANGE_2":       ( 15, 0, "PLLCONFIG_8"),
-        "TEST_MODE":            ( 16, 0, "PLLCONFIG_8"),
+        "SHIFTREG_DIV_MODE":    (12, 31, "PLLCONFIG_4"),
+        "FDA_FEEDBACK_0":       (12, 31, "PLLCONFIG_9"),
+        "FDA_FEEDBACK_1":       (13, 31, "PLLCONFIG_1"),
+        "FDA_FEEDBACK_2":       (13, 31, "PLLCONFIG_2"),
+        "FDA_FEEDBACK_3":       (13, 31, "PLLCONFIG_3"),
+        "FDA_RELATIVE_0":       (13, 31, "PLLCONFIG_5"),
+        "FDA_RELATIVE_1":       (13, 31, "PLLCONFIG_6"),
+        "FDA_RELATIVE_2":       (13, 31, "PLLCONFIG_7"),
+        "FDA_RELATIVE_3":       (13, 31, "PLLCONFIG_8"),
+        "DIVR_0":               (10, 31, "PLLCONFIG_1"),
+        "DIVR_1":               (10, 31, "PLLCONFIG_2"),
+        "DIVR_2":               (10, 31, "PLLCONFIG_3"),
+        "DIVR_3":               (10, 31, "PLLCONFIG_4"),
+        "DIVF_0":               (10, 31, "PLLCONFIG_5"),
+        "DIVF_1":               (10, 31, "PLLCONFIG_6"),
+        "DIVF_2":               (10, 31, "PLLCONFIG_7"),
+        "DIVF_3":               (10, 31, "PLLCONFIG_8"),
+        "DIVF_4":               (10, 31, "PLLCONFIG_9"),
+        "DIVF_5":               (11, 31, "PLLCONFIG_1"),
+        "DIVF_6":               (11, 31, "PLLCONFIG_2"),
+        "DIVQ_0":               (11, 31, "PLLCONFIG_3"),
+        "DIVQ_1":               (11, 31, "PLLCONFIG_4"),
+        "DIVQ_2":               (11, 31, "PLLCONFIG_5"),
+        "FILTER_RANGE_0":       (11, 31, "PLLCONFIG_6"),
+        "FILTER_RANGE_1":       (11, 31, "PLLCONFIG_7"),
+        "FILTER_RANGE_2":       (11, 31, "PLLCONFIG_8"),
+        "TEST_MODE":            (12, 31, "PLLCONFIG_8"),
 
         # PLL Ports
-        "PLLOUT_A":             ( 16, 0, 1),
-        "PLLOUT_B":             ( 17, 0, 0),
-        "REFERENCECLK":         ( 13, 0, "fabout"),
-        "EXTFEEDBACK":          ( 14, 0, "fabout"),
-        "DYNAMICDELAY_0":       (  5, 0, "fabout"),
-        "DYNAMICDELAY_1":       (  6, 0, "fabout"),
-        "DYNAMICDELAY_2":       (  7, 0, "fabout"),
-        "DYNAMICDELAY_3":       (  8, 0, "fabout"),
-        "DYNAMICDELAY_4":       (  9, 0, "fabout"),
-        "DYNAMICDELAY_5":       ( 10, 0, "fabout"),
-        "DYNAMICDELAY_6":       ( 11, 0, "fabout"),
-        "DYNAMICDELAY_7":       ( 12, 0, "fabout"),
-        "LOCK":                 (  1, 1, "neigh_op_bnl_1"),
-        "BYPASS":               ( 19, 0, "fabout"),
-        "RESETB":               ( 20, 0, "fabout"),
-        "LATCHINPUTVALUE":      ( 15, 0, "fabout"),
-        "SDO":                  ( 32, 1, "neigh_op_bnr_3"),
-        "SDI":                  ( 22, 0, "fabout"),
-        "SCLK":                 ( 21, 0, "fabout"),
+        "PLLOUT_A":             ( 12, 31, 1), 
+        "PLLOUT_B":             ( 13, 31, 0), 
+        "REFERENCECLK":         ( 10, 31, "fabout"),
+        "EXTFEEDBACK":          ( 11, 31, "fabout"), 
+        "DYNAMICDELAY_0":       (  1, 31, "fabout"), 
+        "DYNAMICDELAY_1":       (  2, 31, "fabout"), 
+        "DYNAMICDELAY_2":       (  3, 31, "fabout"), 
+        "DYNAMICDELAY_3":       (  4, 31, "fabout"), 
+        "DYNAMICDELAY_4":       (  5, 31, "fabout"), 
+        "DYNAMICDELAY_5":       (  7, 31, "fabout"), 
+        "DYNAMICDELAY_6":       (  8, 31, "fabout"), 
+        "DYNAMICDELAY_7":       (  9, 31, "fabout"), 
+        "LOCK":                 (  1, 30, "neigh_op_tnl_1"), #check?
+        "BYPASS":               ( 15, 31, "fabout"),
+        "RESETB":               ( 16, 31, "fabout"),
+        "LATCHINPUTVALUE":      ( 14, 31, "fabout"),
+        "SDO":                  ( 24, 30, "neigh_op_tnr_1"), #check?
+        "SDI":                  ( 18, 31, "fabout"),
+        "SCLK":                 ( 17, 31, "fabout"),
     },
     "8k_0": {
         "LOC" : (16, 0),
@@ -2057,6 +2069,47 @@ ieren_db = {
         ( 7,  6, 0,  7,  6, 1),
         ( 7,  6, 1,  7,  6, 0),
     ],
+    "5k": [
+        ( 8,  0,  0,  8,  0,  1),
+        ( 9,  0,  1,  9,  0,  0),
+        ( 9,  0,  0,  9,  0,  1),
+        (13,  0,  1, 13,  0,  0),
+        (15,  0,  0, 15,  0,  1),
+        (16,  0,  0, 16,  0,  1),
+        (17,  0,  0, 17,  0,  1),
+        (18,  0,  0, 18,  0,  1),
+        (19,  0,  0, 19,  0,  1),
+        (23,  0,  0, 23,  0,  1),
+        (24,  0,  0, 24,  0,  1),
+        (24,  0,  1, 24,  0,  0),
+        (23,  0,  1, 23,  0,  0),
+        (22,  0,  1, 22,  0,  0),
+        (21,  0,  1, 21,  0,  0),
+        (19,  0,  1, 19,  0,  0),
+        (18,  0,  1, 18,  0,  0),
+        (19, 31,  0, 19, 31,  1),
+        (19, 31,  1, 19, 31,  0),
+        (18, 31,  0, 18, 31,  1),
+        (18, 31,  1, 18, 31,  0),
+        (17, 31,  0, 17, 31,  1),
+        (16, 31,  1, 16, 31,  0),
+        (16, 31,  0, 16, 31,  1),
+        (13, 31,  1, 13, 31,  0),
+        (12, 31,  1, 12, 31,  0),
+        ( 9, 31,  1,  9, 31,  0),
+        (13, 31,  0, 13, 31,  1),
+        ( 4, 31,  0,  4, 31,  1),
+        ( 5, 31,  0,  5, 31,  1),
+        ( 6, 31,  0,  6, 31,  1),
+        ( 8, 31,  1,  8, 31,  0),
+        ( 8, 31,  0,  8, 31,  1),
+        ( 9, 31,  0,  9, 31,  1),
+        ( 6,  0,  1,  6,  0,  0),
+        ( 7,  0,  1,  7,  0,  0),
+        ( 5,  0,  0,  5,  0,  1),
+        ( 6,  0,  0,  6,  0,  1),
+        ( 7,  0,  0,  7,  0,  1)
+    ]
 }
 
 # This dictionary maps package variants to a table of pin names and their
@@ -4152,13 +4205,29 @@ for entry in iotile_full_db:
 logictile_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
 logictile_db.append([["B1[50]"], "CarryInSet"])
 
+logictile_5k_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
+logictile_5k_db.append([["B1[50]"], "CarryInSet"])
+
 logictile_8k_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
 logictile_8k_db.append([["B1[50]"], "CarryInSet"])
 
 logictile_384_db.append([["B1[49]"], "buffer", "carry_in", "carry_in_mux"])
 logictile_384_db.append([["B1[50]"], "CarryInSet"])
 
-for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, logictile_db, logictile_5k_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_5k_db, ramttile_5k_db, rambtile_8k_db, ramttile_8k_db]:
+# The 5k series has a couple of extra IO configuration bits. Add them in to a copy of the db here
+iotile_t_5k_db = list(iotile_t_db)
+iotile_t_5k_db.append([["B14[15]"], "IoCtrl", "padeb_test_1"])
+iotile_t_5k_db.append([["B15[14]"], "IoCtrl", "padeb_test_0"])
+iotile_t_5k_db.append([["B6[15]"], "IoCtrl", "cf_bit_35"])
+iotile_t_5k_db.append([["B12[15]"], "IoCtrl", "cf_bit_39"])
+
+iotile_b_5k_db = list(iotile_b_db)
+iotile_b_5k_db.append([["B14[15]"], "IoCtrl", "padeb_test_1"])
+iotile_b_5k_db.append([["B15[14]"], "IoCtrl", "padeb_test_0"])
+iotile_b_5k_db.append([["B6[15]"], "IoCtrl", "cf_bit_35"])
+iotile_b_5k_db.append([["B12[15]"], "IoCtrl", "cf_bit_39"])
+
+for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, iotile_t_5k_db, iotile_b_5k_db, logictile_db, logictile_5k_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_5k_db, ramttile_5k_db, rambtile_8k_db, ramttile_8k_db]:
     for entry in db:
         if entry[1] in ("buffer", "routing"):
             entry[2] = netname_normalize(entry[2],
