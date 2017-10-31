@@ -1148,7 +1148,7 @@ extra_bits_db = {
         (0, 690, 334): ("padin_glb_netwk", "0"), # (0 1)  (690 334)  (690 334)  routing T_0_0.padin_0 <X> T_0_0.glb_netwk_0
         (1, 691, 334): ("padin_glb_netwk", "1"), # (1 1)  (691 334)  (691 334)  routing T_0_0.padin_1 <X> T_0_0.glb_netwk_1
         (0, 690, 336): ("padin_glb_netwk", "2"), # (0 3)  (690 336)  (690 336)  routing T_0_0.padin_2 <X> T_0_0.glb_netwk_2
-        (1, 871, 271): ("padin_glb_netwk", "3"),
+        (1, 871, 271): ("padin_glb_netwk", "3"), # TODO: 3-6 are not correct - but  may not better
         (1, 870, 270): ("padin_glb_netwk", "4"),
         (1, 871, 270): ("padin_glb_netwk", "5"),
         (0, 870, 271): ("padin_glb_netwk", "6"),
@@ -1678,10 +1678,13 @@ padin_pio_db = {
     ],
     "5k": [
         ( 6,  0, 1),
+        (12,  0, 1),
+        (13,  0, 0),
         (19,  0, 1),
         ( 6, 31, 0),
         (12, 31, 1),
         (13, 31, 0),
+        (19, 31, 0), #This is probably wrong, but the pin seems partially broken in icecube too, and it means we have the right number of GBs to keep arachne happy
     ],
     "8k": [
         (33, 16, 1),
