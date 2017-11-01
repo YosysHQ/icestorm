@@ -1146,8 +1146,8 @@ extra_bits_db = {
     },
     "5k": {
         (0, 690, 334): ("padin_glb_netwk", "0"), # (0 1)  (690 334)  (690 334)  routing T_0_0.padin_0 <X> T_0_0.glb_netwk_0
-        (1, 691, 334): ("padin_glb_netwk", "1"), # (1 1)  (691 334)  (691 334)  routing T_0_0.padin_1 <X> T_0_0.glb_netwk_1
-        (0, 690, 336): ("padin_glb_netwk", "2"), # (0 3)  (690 336)  (690 336)  routing T_0_0.padin_2 <X> T_0_0.glb_netwk_2
+        (0, 691, 334): ("padin_glb_netwk", "1"), # (1 1)  (691 334)  (691 334)  routing T_0_0.padin_1 <X> T_0_0.glb_netwk_1
+        (1, 690, 175): ("padin_glb_netwk", "2"), # (0 3)  (690 336)  (690 336)  routing T_0_0.padin_2 <X> T_0_0.glb_netwk_2
         (1, 871, 271): ("padin_glb_netwk", "3"), # TODO: 3-6 are not correct - but  may not better
         (1, 870, 270): ("padin_glb_netwk", "4"),
         (1, 871, 270): ("padin_glb_netwk", "5"),
