@@ -661,7 +661,7 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 			continue;
 		}
 
-		if (command == ".io_tile" || command == ".logic_tile" || command == ".ramb_tile" || command == ".ramt_tile")
+		if (command == ".io_tile" || command == ".logic_tile" || command == ".ramb_tile" || command == ".ramt_tile" || command.substr(0, 4) == ".dsp" || command == ".ipconn_tile")
 		{
 			if (!got_device)
 				error("Missing .device statement before %s.\n", command.c_str());
@@ -1165,16 +1165,17 @@ BramIndexConverter::BramIndexConverter(const FpgaConfig *fpga, int tile_x, int t
 	// used for SRAM instead of logic. Therefore the bitstream for the top two
 	// quadrants are half the height of the bottom.
 	if (this->fpga->device == "5k") {
-		top_half = this->tile_y > (chip_height / 3);
+		top_half = this->tile_y > (2 * chip_height / 3);
 	}
 
 	this->bank_num = 0;
 	int y_offset = this->tile_y - 1;
 	if (this->fpga->device == "5k") {
-		if (!top_half) {
+		if (top_half) {
 			this->bank_num |= 1;
+			y_offset = this->tile_y - (2 * chip_height / 3);
 		} else {
-			y_offset = this->tile_y - (chip_height / 3);
+			//y_offset = this->tile_y - (2 * chip_height / 3);
 		}
 	} else if (top_half) {
 		this->bank_num |= 1;
