@@ -1677,14 +1677,16 @@ padin_pio_db = {
         ( 6, 17, 1),  # glb_netwk_7
     ],
     "5k": [
-        ( 6,  0, 1),
-        (12,  0, 1),
-        (13,  0, 0),
-        (19,  0, 1),
-        ( 6, 31, 0),
-        (12, 31, 1),
-        (13, 31, 0),
-        (19, 31, 0), #This is probably wrong, but the pin seems partially broken in icecube too, and it means we have the right number of GBs to keep arachne happy
+        (19,  0, 1), #0 fixed
+        ( 6,  0, 1), #1 fixed
+        (13, 31, 0), #2 fixed
+        (13,  0, 0), #3 fixed
+        
+        (19, 31, 0), #These two are questionable, but keep the order correct
+        ( 6, 31, 0), #They may need to be fixed if other package options are added.
+
+        (12,  0, 1), #6 fixed
+        (12, 31, 1), #7 fixed
     ],
     "8k": [
         (33, 16, 1),
