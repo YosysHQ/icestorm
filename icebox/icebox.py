@@ -1145,14 +1145,14 @@ extra_bits_db = {
         (0, 331, 143): ("padin_glb_netwk", "7"),
     },
     "5k": {
-        (0, 690, 334): ("padin_glb_netwk", "0"), # (0 1)  (690 334)  (690 334)  routing T_0_0.padin_0 <X> T_0_0.glb_netwk_0
-        (0, 691, 334): ("padin_glb_netwk", "1"), # (1 1)  (691 334)  (691 334)  routing T_0_0.padin_1 <X> T_0_0.glb_netwk_1
-        (1, 690, 175): ("padin_glb_netwk", "2"), # (0 3)  (690 336)  (690 336)  routing T_0_0.padin_2 <X> T_0_0.glb_netwk_2
-        (1, 871, 271): ("padin_glb_netwk", "3"), # TODO: 3-6 are not correct - but  may not better
-        (1, 870, 270): ("padin_glb_netwk", "4"),
-        (1, 871, 270): ("padin_glb_netwk", "5"),
-        (0, 870, 271): ("padin_glb_netwk", "6"),
-        (1, 691, 335): ("padin_glb_netwk", "7"), # (1 0)  (691 335)  (691 335)  routing T_0_0.padin_7 <X> T_0_0.glb_netwk_7
+        (0, 690, 334): ("padin_glb_netwk", "0"), # check
+        (0, 691, 334): ("padin_glb_netwk", "1"), # good
+        (1, 690, 175): ("padin_glb_netwk", "2"), # good
+        (1, 691, 175): ("padin_glb_netwk", "3"), # check
+        (1, 690, 174): ("padin_glb_netwk", "4"), # good (INTOSC only)
+        (1, 691, 174): ("padin_glb_netwk", "5"), # good (INTOSC only)
+        (0, 690, 335): ("padin_glb_netwk", "6"), # check
+        (0, 691, 335): ("padin_glb_netwk", "7"), # good
     },
     "8k": {
         (0, 870, 270): ("padin_glb_netwk", "0"),
