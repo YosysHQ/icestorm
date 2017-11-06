@@ -1190,8 +1190,8 @@ gbufin_db = {
     "5k": [
         ( 6,  0,  6), #checked
         (12,  0,  5), #checked
-        (13,  0,  7), #unknown
-        (19,  0,  0), #checked
+        (13,  0,  0), #checked
+        (19,  0,  7), #checked
         ( 6, 31,  3), #checked
         (12, 31,  4), #checked
         (13, 31,  1), #checked
