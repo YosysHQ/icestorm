@@ -703,7 +703,7 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 			continue;
 		}
 
-		if (command == ".io_tile" || command == ".logic_tile" || command == ".ramb_tile" || command == ".ramt_tile" || command.substr(0, 4) == ".dsp" || command == ".ipconn_tile")
+		if (command == ".io_tile" || command == ".logic_tile" || command == ".ramb_tile" || command == ".ramt_tile" || command.substr(0, 4) == ".dsp" || command == ".ipcon_tile")
 		{
 			if (!got_device)
 				error("Missing .device statement before %s.\n", command.c_str());
@@ -1013,7 +1013,7 @@ vector<int> FpgaConfig::chip_cols() const
 {
 	if (this->device == "384") return vector<int>({18, 54, 54, 54, 54});
 	if (this->device == "1k") return vector<int>({18, 54, 54, 42, 54, 54, 54});
-	// Its IPConnect or Mutiplier block, five logic, ram, six logic.
+	// Its ipconect or Mutiplier block, five logic, ram, six logic.
 	if (this->device == "5k") return vector<int>({54, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54});
 	if (this->device == "8k") return vector<int>({18, 54, 54, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54, 54, 54});
 	panic("Unknown chip type '%s'.\n", this->device.c_str());
@@ -1022,7 +1022,7 @@ vector<int> FpgaConfig::chip_cols() const
 string FpgaConfig::tile_type(int x, int y) const
 {
 	if ((x == 0 || x == this->chip_width()+1) && (y == 0 || y == this->chip_height()+1)) return "corner";
-	// The sides on the 5k devices are IPConnect or DSP tiles
+	// The sides on the 5k devices are ipconect or DSP tiles
 	if (this->device == "5k" && (x == 0 || x == this->chip_width()+1)) {
 		if( (y == 5) || (y == 10) || (y == 15) || (y == 23)) //check ordering here, tile 23-26 might be reversed
 			return "dsp0";
@@ -1032,7 +1032,7 @@ string FpgaConfig::tile_type(int x, int y) const
 			return "dsp2";
 		if( (y == 8) || (y == 13) || (y == 18) || (y == 26))
 			return "dsp3";
-		return "ipconn";
+		return "ipcon";
 	}
 	if ((x == 0 || x == this->chip_width()+1) || (y == 0 || y == this->chip_height()+1)) return "io";
 
@@ -1064,7 +1064,7 @@ int FpgaConfig::tile_width(const string &type) const
 	if (type == "ramt")          return 42;
 	if (type == "io")            return 18;
 	if (type.substr(0, 3) == "dsp")   return 54;
-	if (type == "ipconn")   return 54;
+	if (type == "ipcon")   return 54;
 
 	panic("Unknown tile type '%s'.\n", type.c_str());
 }

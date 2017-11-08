@@ -43,7 +43,7 @@ ifneq ($(DEVICECLASS),384)
  TESTS += aig
 endif
 
-database: bitdata_io.txt bitdata_logic.txt bitdata_ramb$(RAM_SUFFIX).txt bitdata_ramt$(RAM_SUFFIX).txt
+database: bitdata_io.txt bitdata_logic.txt bitdata_ramb$(RAM_SUFFIX).txt bitdata_ramt$(RAM_SUFFIX).txt 
 ifneq ($(RAM_SUFFIX),)
 	cp cached_ramb.txt bitdata_ramb.txt
 	cp cached_ramt.txt bitdata_ramt.txt
@@ -55,6 +55,12 @@ endif
 ifneq ($(RAM_SUFFIX),_5k)
 	cp cached_ramb_5k.txt bitdata_ramb_5k.txt
 	cp cached_ramt_5k.txt bitdata_ramt_5k.txt
+	cp cached_dsp0_5k.txt bitdata_dsp0_5k.txt
+	cp cached_dsp1_5k.txt bitdata_dsp1_5k.txt
+	cp cached_dsp2_5k.txt bitdata_dsp2_5k.txt
+	cp cached_dsp3_5k.txt bitdata_dsp3_5k.txt
+	cp cached_ipcon_5k.txt bitdata_ipcon_5k.txt
+
 endif
 	ICEDEVICE=$(DEVICECLASS) python3 database.py
 	python3 export.py
@@ -62,6 +68,11 @@ endif
 	diff -U0 cached_logic.txt bitdata_logic.txt || cp -v bitdata_logic.txt cached_logic.txt
 	diff -U0 cached_ramb$(RAM_SUFFIX).txt bitdata_ramb$(RAM_SUFFIX).txt || cp -v bitdata_ramb$(RAM_SUFFIX).txt cached_ramb$(RAM_SUFFIX).txt
 	diff -U0 cached_ramt$(RAM_SUFFIX).txt bitdata_ramt$(RAM_SUFFIX).txt || cp -v bitdata_ramt$(RAM_SUFFIX).txt cached_ramt$(RAM_SUFFIX).txt
+	diff -U0 cached_dsp0_5k.txt bitdata_dsp0_5k.txt || cp -v bitdata_dsp0_5k.txt cached_dsp0_5k.txt
+	diff -U0 cached_dsp1_5k.txt bitdata_dsp1_5k.txt || cp -v bitdata_dsp1_5k.txt cached_dsp1_5k.txt
+	diff -U0 cached_dsp2_5k.txt bitdata_dsp2_5k.txt || cp -v bitdata_dsp2_5k.txt cached_dsp2_5k.txt
+	diff -U0 cached_dsp3_5k.txt bitdata_dsp3_5k.txt || cp -v bitdata_dsp3_5k.txt cached_dsp3_5k.txt
+	diff -U0 cached_ipcon_5k.txt bitdata_ipcon_5k.txt || cp -v bitdata_ipcon_5k.txt cached_ipcon_5k.txt
 
 timings:
 ifeq ($(DEVICECLASS),8k)
@@ -97,11 +108,18 @@ timings_html:
 	python3 timings.py -h tmedges.txt -t timings_lp8k.txt -l "LP8K with default temp/volt settings" > timings_lp8k.html
 	python3 timings.py -h tmedges.txt -t timings_lp384.txt -l "LP384 with default temp/volt settings" > timings_lp384.html
 
-data_cached.txt: cached_io.txt cached_logic.txt cached_ramb$(RAM_SUFFIX).txt cached_ramt$(RAM_SUFFIX).txt
+data_cached.txt: cached_io.txt cached_logic.txt cached_ramb$(RAM_SUFFIX).txt cached_ramt$(RAM_SUFFIX).txt cached_dsp0_5k.txt cached_dsp1_5k.txt cached_dsp2_5k.txt cached_dsp3_5k.txt cached_ipcon_5k.txt 
 	gawk '{ print "io", $$0; }' cached_io.txt > data_cached.new
 	gawk '{ print "logic", $$0; }' cached_logic.txt >> data_cached.new
 	gawk '{ print "ramb$(RAM_SUFFIX)", $$0; }' cached_ramb$(RAM_SUFFIX).txt >> data_cached.new
 	gawk '{ print "ramt$(RAM_SUFFIX)", $$0; }' cached_ramt$(RAM_SUFFIX).txt >> data_cached.new
+	
+	gawk '{ print "dsp0_5k", $$0; }' cached_dsp0_5k.txt >> data_cached.new
+	gawk '{ print "dsp1_5k", $$0; }' cached_dsp1_5k.txt >> data_cached.new
+	gawk '{ print "dsp2_5k", $$0; }' cached_dsp2_5k.txt >> data_cached.new
+	gawk '{ print "dsp3_5k", $$0; }' cached_dsp3_5k.txt >> data_cached.new
+	gawk '{ print "ipcon_5k", $$0; }' cached_ipcon_5k.txt >> data_cached.new
+
 	mv data_cached.new data_cached.txt
 
 bitdata_io.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
@@ -115,6 +133,21 @@ bitdata_ramb$(RAM_SUFFIX).txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,
 
 bitdata_ramt$(RAM_SUFFIX).txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
 	grep ^ramt$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@
+
+bitdata_dsp0_5k.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
+	grep ^dsp0_5k$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
+
+bitdata_dsp1_5k.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
+	grep ^dsp1_5k$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
+		
+bitdata_dsp2_5k.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
+	grep ^dsp2_5k$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
+			
+bitdata_dsp3_5k.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
+	grep ^dsp3_5k$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
+
+bitdata_ipcon_5k.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
+	grep ^ipcon_5k$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
 
 datafiles: $(addprefix data_,$(addsuffix .txt,$(TESTS)))
 

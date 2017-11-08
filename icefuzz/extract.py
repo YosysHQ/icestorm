@@ -37,8 +37,24 @@ for filename in sys.argv[1:]:
                 else:
                     cur_text_db = text_db.setdefault("ramt_" + device_class if device_class in ["5k", "8k"] else "ramt", set())
                 ignore = False
-            elif device_class == "5k" and line.startswith(("IpCon", "DSP")):
-                ignore = True
+            elif device_class == "5k" and line.startswith("IpCon"):
+                cur_text_db = text_db.setdefault("ipcon_5k", set())
+                ignore = False
+            elif device_class == "5k" and line.startswith("DSP"):
+                match = re.match(r"DSP_Tile_\d+_(\d+)", line)
+                ypos = int(match.group(1))
+                dsp_idx = None
+                if ypos in [5, 10, 15, 23]:
+                    dsp_idx = 0
+                if ypos in [6, 11, 16, 24]:
+                    dsp_idx = 1
+                if ypos in [7, 12, 17, 25]:
+                    dsp_idx = 2
+                if ypos in [8, 13, 18, 26]:
+                    dsp_idx = 3
+                assert dsp_idx != None
+                cur_text_db = text_db.setdefault("dsp%d_5k" % dsp_idx, set())
+                ignore = False
             elif not ignore:
                 print("'" + line + "'")
                 assert line.startswith(" ")
