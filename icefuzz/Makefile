@@ -42,8 +42,11 @@ ifneq ($(DEVICECLASS),384)
  TESTS += pll
  TESTS += aig
 endif
-
-database: bitdata_io.txt bitdata_logic.txt bitdata_ramb$(RAM_SUFFIX).txt bitdata_ramt$(RAM_SUFFIX).txt 
+ifeq ($(DEVICECLASS),5k)
+ TESTS += dsp
+ TESTS += upip
+endif
+database: bitdata_io.txt bitdata_logic.txt bitdata_ramb$(RAM_SUFFIX).txt bitdata_ramt$(RAM_SUFFIX).txt bitdata_dsp0_5k.txt bitdata_dsp1_5k.txt bitdata_dsp2_5k.txt bitdata_dsp3_5k.txt bitdata_ipcon_5k.txt
 ifneq ($(RAM_SUFFIX),)
 	cp cached_ramb.txt bitdata_ramb.txt
 	cp cached_ramt.txt bitdata_ramt.txt
@@ -135,19 +138,19 @@ bitdata_ramt$(RAM_SUFFIX).txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,
 	grep ^ramt$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@
 
 bitdata_dsp0_5k.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
-	grep ^dsp0_5k$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
+	grep ^dsp0_5k $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
 
 bitdata_dsp1_5k.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
-	grep ^dsp1_5k$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
+	grep ^dsp1_5k $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
 		
 bitdata_dsp2_5k.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
-	grep ^dsp2_5k$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
+	grep ^dsp2_5k $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
 			
 bitdata_dsp3_5k.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
-	grep ^dsp3_5k$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
+	grep ^dsp3_5k $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
 
 bitdata_ipcon_5k.txt: data_cached.txt $(addprefix data_$(DEVICECLASS)_,$(addsuffix .txt,$(TESTS)))
-	grep ^ipcon_5k$(RAM_SUFFIX) $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
+	grep ^ipcon_5k $^ | tr -s ' ' | tr -d '\r' | cut -f2- -d' ' | sort -u > $@	
 
 datafiles: $(addprefix data_,$(addsuffix .txt,$(TESTS)))
 

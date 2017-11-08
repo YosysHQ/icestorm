@@ -28,7 +28,7 @@ def read_database(filename, tile_type):
             line = re.sub(r"^Ram config bit:", "RamConfig", line)
             line = re.sub(r"^PLL config bit:", "PLL", line)
             line = re.sub(r"^Icegate Enable bit:", "Icegate", line)
-            line = re.sub(r"^MAC16 functional bit:", "DspConfig", line)
+            line = re.sub(r"^MAC16 functional bit:", "IpConfig", line)
             line = re.sub(r"^Hard IP config bit:", "IpConfig", line)
 
             line = line.split()
@@ -57,14 +57,14 @@ def read_database(filename, tile_type):
             elif line[0] == "ColBufCtrl":
                 line[1] = re.sub(r"B?IO(LEFT|RIGHT)_", "IO_", line[1])
                 line[1] = re.sub(r"IO_half_column_clock_enable_", "glb_netwk_", line[1])
-                line[1] = re.sub(r"(LH|MEM[BT])_colbuf_cntl_", "glb_netwk_", line[1])
+                line[1] = re.sub(r"(LH|MEM[BT]|MULT\d|IPCON)_colbuf_cntl_", "glb_netwk_", line[1])
                 if m.group(1) == "7":
                     line[1] = re.sub(r"glb_netwk_", "8k_glb_netwk_", line[1])
                 elif m.group(1) in ["1", "2"]:
                     line[1] = re.sub(r"glb_netwk_", "1k_glb_netwk_", line[1])
                 raw_db.append((bit, (line[0], line[1])))
             elif line[0] == "Cascade":
-                match = re.match("(MULT\d|LH)_LC0(\d)_inmux02_5", line[1])
+                match = re.match("LH_LC0(\d)_inmux02_5", line[1])
                 if match:
                     raw_db.append((bit, ("buffer", "wire_logic_cluster/lc_%d/lout" % (int(match.group(1))-1), "input_2_%s" % match.group(1))))
                 else:
@@ -90,11 +90,10 @@ def read_database(filename, tile_type):
                 raw_db.append((bit, (line[0],)))
             elif line[0] == "Carry_In_Mux":
                 continue
-            elif line[0] == "DspConfig":
-                line[1] = re.sub(r"MULT\d_bram_cbit_", "CBIT_", line[1])
             elif line[0] == "IpConfig":
                 line[1] = re.sub(r"MULT\d_bram_cbit_", "CBIT_", line[1]) #not a typo, sometimes IP config bits are in DSP tiles and use a MULT prefix...
-                line[1] = re.sub(r"IPCON_bram_cbit_", "CBIT_", line[1])           
+                line[1] = re.sub(r"IPCON_bram_cbit_", "CBIT_", line[1])    
+                raw_db.append((bit, (line[0], line[1])))       
             else:
                 print("unsupported statement: %s: %s" % (bit, line))
                 assert False
@@ -157,11 +156,11 @@ for device_class in ["5k", "8k"]:
   with open("database_ramt_%s.txt" % (device_class, ), "w") as f:
       for entry in read_database("bitdata_ramt_%s.txt" % (device_class, ), "ramt_" + device_class):
           print("\t".join(entry), file=f)
-if device_class == "5k":
-    for dsp_idx in range(4):
-      with open("database_dsp%d_5k.txt" % (dsp_idx, ), "w") as f:
-          for entry in read_database("bitdata_dsp%d_5k.txt" % (dsp_idx, ), "dsp%d_5" % (dsp_idx, )):
-              print("\t".join(entry), file=f)
-    with open("database_ipcon.txt", "w") as f:
-        for entry in read_database("bitdata_ipcon.txt", "ipcon"):
-            print("\t".join(entry), file=f)
+
+for dsp_idx in range(4):
+  with open("database_dsp%d_5k.txt" % (dsp_idx, ), "w") as f:
+      for entry in read_database("bitdata_dsp%d_5k.txt" % (dsp_idx, ), "dsp%d_5" % (dsp_idx, )):
+          print("\t".join(entry), file=f)
+with open("database_ipcon_5k.txt", "w") as f:
+    for entry in read_database("bitdata_ipcon_5k.txt", "ipcon"):
+        print("\t".join(entry), file=f)

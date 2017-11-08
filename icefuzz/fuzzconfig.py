@@ -7,6 +7,7 @@ device_class = os.getenv("ICEDEVICE")
 if device_class == "8k":
     num_ramb40 = 32
     num_iobanks = 4
+    num_dsp = 0
 
     pins="""
         A1  A2          A5  A6  A7      A9  A10 A11             A15 A16
@@ -32,6 +33,7 @@ if device_class == "8k":
 elif device_class == "384":
     num_ramb40 = 0
     num_iobanks = 3
+    num_dsp = 0
 
     pins = """
         A1 A2 A3 A4 A5 A6 A7
@@ -48,6 +50,7 @@ elif device_class == "384":
 elif device_class == "1k":
     num_ramb40 = 16
     num_iobanks = 4
+    num_dsp = 0
 
     pins = """
         1 2 3 4 7 8 9 10 11 12 19 22 23 24 25 26 28 29 31 32 33 34
@@ -60,7 +63,8 @@ elif device_class == "1k":
 elif device_class == "5k":
     num_ramb40 = 30
     num_iobanks = 2
-
+    num_dsp = 8
+    num_spram256ka = 4
     #TODO(tannewt): Add 39, 40, 41 to this list. It causes placement failures for some reason.
     # Also add 14 15 16 17 which are constrained to SPI.
     #TODO(daveshah1): Add back I3C IO 23 which cause placement failures when assigned to
@@ -73,7 +77,7 @@ elif device_class == "5k":
 
     #TODO(tannewt): Add 39, 40, 41 to this list. It causes placement failures for some reason.
     gpins = "20 35 37 44".split()
-
+    led_pins = "39 40 41".split()
 def output_makefile(working_dir, fuzzname):
   with open(working_dir + "/Makefile", "w") as f:
       print("all: %s" % " ".join(["%s_%02d.bin" % (fuzzname, i) for i in range(num)]), file=f)
