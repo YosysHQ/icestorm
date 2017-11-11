@@ -136,6 +136,7 @@ text_wires = list()
 text_ports = list()
 
 luts_queue = set()
+special_5k_queue = set()
 text_func = list()
 failed_drivers_check = list()
 
@@ -315,7 +316,11 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
 
         match =  re.match("lutff_(\d+)/", s[2])
         if match:
-            luts_queue.add((s[0], s[1], int(match.group(1))))
+            #IpCon and DSP tiles look like logic tiles, but aren't.
+            if ic.device == "5k" and (s[0] == 0 or s[0] == ic.max_x):
+                special_5k_queue.add((s[0], s[1]))
+            else:
+                luts_queue.add((s[0], s[1], int(match.group(1))))
 
     nets[n] = segs
 
@@ -751,6 +756,28 @@ for tile in ic.ramb_tiles:
         text_func.append("  .RCLK%s(%s)"  % ("N" if negclk_rd else "", get_ram_wire('RCLK', 0, 0)))
         text_func.append(");")
         text_func.append("")
+
+for i in range(4):
+    for tile in ic.dsp_tiles[i]:
+        if tile in special_5k_queue:
+            #TODO: print config
+            x = tile[0]
+            y = tile[1]
+            net_clk = seg_to_net((x, y, "lutff_global/clk"), "1'b0")
+            net_sr  = seg_to_net((x, y, "lutff_global/s_r"), "1'b0")
+            #TEMP: for tracing only
+            text_func.append("/* DSP%d   %2d %2d */ assign dsp%d_%d_%d_clk = %s;" % (i, x, y, i, x, y, net_clk))
+            text_func.append("/* DSP%d   %2d %2d */ assign dsp%d_%d_%d_sr = %s;" % (i, x, y, i, x, y, net_sr))
+            for j in range(7):
+                net_in0 = seg_to_net((x, y, "lutff_%d/in_0" % j), "1'b0")
+                net_in1 = seg_to_net((x, y, "lutff_%d/in_1" % j), "1'b0")
+                net_in2 = seg_to_net((x, y, "lutff_%d/in_2" % j), "1'b0")
+                net_in3 = seg_to_net((x, y, "lutff_%d/in_3" % j), "1'b0")
+                #TODO: cin, cout
+                text_func.append("/* DSP%d   %2d %2d %d*/ assign dsp%d_%d_%d_in_%d_0 = %s;" % (i, x, y, j, i, x, y, j, net_in0))
+                text_func.append("/* DSP%d   %2d %2d %d*/ assign dsp%d_%d_%d_in_%d_1 = %s;" % (i, x, y, j, i, x, y, j, net_in1))
+                text_func.append("/* DSP%d   %2d %2d %d*/ assign dsp%d_%d_%d_in_%d_2 = %s;" % (i, x, y, j, i, x, y, j, net_in2))
+                text_func.append("/* DSP%d   %2d %2d %d*/ assign dsp%d_%d_%d_in_%d_3 = %s;" % (i, x, y, j, i, x, y, j, net_in3))
 
 wire_to_reg = set()
 lut_assigns = list()

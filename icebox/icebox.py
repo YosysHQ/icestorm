@@ -31,6 +31,8 @@ class iceconfig:
         self.io_tiles = dict()
         self.ramb_tiles = dict()
         self.ramt_tiles = dict()
+        self.dsp_tiles = [dict() for i in range(4)]
+        self.ipcon_tiles = dict()
         self.ram_data = dict()
         self.extra_bits = set()
         self.symbols = dict()
@@ -96,7 +98,18 @@ class iceconfig:
         for x in range(1, self.max_x):
             self.io_tiles[(x, 0)] = ["0" * 18 for i in range(16)]
             self.io_tiles[(x, self.max_y)] = ["0" * 18 for i in range(16)]
-
+        for x in [0, self.max_x]:
+            for y in range(1, self.max_y):
+                if y in [5, 10, 15, 23]:
+                    self.dsp_tiles[0][(x, y)] = ["0" * 54 for i in range(16)]
+                elif y in [6, 11, 16, 24]:
+                    self.dsp_tiles[1][(x, y)] = ["0" * 54 for i in range(16)]
+                elif y in [7, 12, 17, 25]:
+                    self.dsp_tiles[2][(x, y)] = ["0" * 54 for i in range(16)]
+                elif y in [8, 13, 18, 26]:
+                    self.dsp_tiles[3][(x, y)] = ["0" * 54 for i in range(16)]
+                else:
+                    self.ipcon_tiles[(x, y)] = ["0" * 54 for i in range(16)]
     def setup_empty_8k(self):
         self.clear()
         self.device = "8k"
@@ -132,6 +145,9 @@ class iceconfig:
         if (x, y) in self.logic_tiles: return self.logic_tiles[(x, y)]
         if (x, y) in self.ramb_tiles: return self.ramb_tiles[(x, y)]
         if (x, y) in self.ramt_tiles: return self.ramt_tiles[(x, y)]
+        for i in range(4):
+            if (x, y) in self.dsp_tiles[i]: return self.dsp_tiles[i][(x, y)]
+        if (x, y) in self.ipcon_tiles: return self.ipcon_tiles[(x, y)]            
         return None
 
     def pinloc_db(self):
@@ -242,6 +258,12 @@ class iceconfig:
             if (x, y) in self.logic_tiles: return logictile_5k_db
             if (x, y) in self.ramb_tiles: return rambtile_5k_db
             if (x, y) in self.ramt_tiles: return ramttile_5k_db
+            if (x, y) in self.ipcon_tiles: return ipcon_5k_db
+            if (x, y) in self.dsp_tiles[0]: return dsp0_5k_db
+            if (x, y) in self.dsp_tiles[1]: return dsp1_5k_db
+            if (x, y) in self.dsp_tiles[2]: return dsp2_5k_db
+            if (x, y) in self.dsp_tiles[3]: return dsp3_5k_db
+
         elif self.device == "8k":
             if (x, y) in self.logic_tiles: return logictile_8k_db
             if (x, y) in self.ramb_tiles: return rambtile_8k_db
@@ -253,13 +275,24 @@ class iceconfig:
         assert False
 
     def tile_type(self, x, y):
-        if x == 0: return "IO"
+        if x == 0 and self.device != "5k": return "IO"
         if y == 0: return "IO"
-        if x == self.max_x: return "IO"
+        if x == self.max_x and self.device != "5k": return "IO"
         if y == self.max_y: return "IO"
         if (x, y) in self.ramb_tiles: return "RAMB"
         if (x, y) in self.ramt_tiles: return "RAMT"
         if (x, y) in self.logic_tiles: return "LOGIC"
+        if (x == 0 or x == self.max_x) and self.device == "5k":
+            if y in [5, 10, 15, 23]:
+                return "DSP0"
+            elif y in [6, 11, 16, 24]:
+                return "DSP1"
+            elif y in [7, 12, 17, 25]:
+                return "DSP2"
+            elif y in [8, 13, 18, 26]:
+                return "DSP3"
+            else:
+                return "IPCON"
         assert False
 
     def tile_pos(self, x, y):
@@ -307,11 +340,17 @@ class iceconfig:
         return pos_has_net(self.tile_pos(x, y), netname)
 
     def tile_follow_net(self, x, y, direction, netname):
-        if x == 1 and y not in (0, self.max_y) and direction == 'l': return pos_follow_net("x", "L", netname)
-        if y == 1 and x not in (0, self.max_x) and direction == 'b': return pos_follow_net("x", "B", netname)
-        if x == self.max_x-1 and y not in (0, self.max_y) and direction == 'r': return pos_follow_net("x", "R", netname)
-        if y == self.max_y-1 and x not in (0, self.max_x) and direction == 't': return pos_follow_net("x", "T", netname)
-        return pos_follow_net(self.tile_pos(x, y), direction, netname)
+        if x == 1 and y not in (0, self.max_y) and direction == 'l': return pos_follow_net("x", "L", netname, self.device)
+        if y == 1 and x not in (0, self.max_x) and direction == 'b': return pos_follow_net("x", "B", netname, self.device)
+        if x == self.max_x-1 and y not in (0, self.max_y) and direction == 'r': return pos_follow_net("x", "R", netname, self.device)
+        if y == self.max_y-1 and x not in (0, self.max_x) and direction == 't': return pos_follow_net("x", "T", netname, self.device)
+        if self.device == "5k":
+            if y == 1 and x in (0, self.max_x) and direction == 'b': return pos_follow_net(self.tile_pos(x, y), "B", netname, self.device)
+            if y == self.max_y-1 and x in (0, self.max_x) and direction == 't': return pos_follow_net(self.tile_pos(x, y), "T", netname, self.device)
+            if x == 1 and y in (0, self.max_y) and direction == 'l': return pos_follow_net(self.tile_pos(x, y), "L", netname, self.device)
+            if x == self.max_x-1 and y in (0, self.max_y) and direction == 'r': return pos_follow_net(self.tile_pos(x, y), "R", netname, self.device)
+
+        return pos_follow_net(self.tile_pos(x, y), direction, netname, self.device)
 
     def follow_funcnet(self, x, y, func):
         neighbours = set()
@@ -340,6 +379,9 @@ class iceconfig:
             if npos == "x":
                 if (nx, ny) in self.logic_tiles:
                     return (nx, ny, "lutff_%d/out" % func)
+                for i in range(4):
+                    if (nx, ny) in self.dsp_tiles[i]: #TODO: check this
+                        return (nx, ny, "mult/O_%d" % (i * 8 + func))
                 if (nx, ny) in self.ramb_tiles:
                     if self.device == "1k":
                         return (nx, ny, "ram/RDATA_%d" % func)
@@ -423,12 +465,12 @@ class iceconfig:
                         neighbours.add((nx, ny, netname))
 
         match = re.match(r"sp4_r_v_b_(\d+)", netname)
-        if match and 0 < x < self.max_x-1:
+        if match and ((0 < x < self.max_x-1) or (self.device == "5k")):
             neighbours.add((x+1, y, sp4v_normalize("sp4_v_b_" + match.group(1))))
         #print('\tafter r_v_b', neighbours)
 
         match = re.match(r"sp4_v_[bt]_(\d+)", netname)
-        if match and 1 < x < self.max_x:
+        if match and (1 < x < self.max_x or ((self.device == "5k") and (x > 0))):
             n = sp4v_normalize(netname, "b")
             if n is not None:
                 n = n.replace("sp4_", "sp4_r_")
@@ -459,9 +501,19 @@ class iceconfig:
 
                 if s[0] in (0, self.max_x) and s[1] in (0, self.max_y):
                     if re.match("span4_(vert|horz)_[lrtb]_\d+$", n):
+                        
                         vert_net = n.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_")
                         horz_net = n.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_")
+                        
+                        if self.device == "5k":
+                            m = re.match("span4_vert_([lrtb])_(\d+)$", vert_net)
+                            assert m
+                            vert_net = "sp4_v_%s_%d" % (m.group(1), int(m.group(2)) + 28)
 
+                            m = re.match("span4_horz_([lrtb])_(\d+)$", horz_net)
+                            assert m
+                            horz_net = "span4_horz_%s_%d" % (m.group(1), int(m.group(2)) - 28)
+                            
                         if s[0] == 0 and s[1] == 0:
                             if direction == "l": s = (0, 1, vert_net)
                             if direction == "b": s = (1, 0, horz_net)
@@ -470,9 +522,18 @@ class iceconfig:
                             if direction == "r": s = (self.max_x, self.max_y-1, vert_net)
                             if direction == "t": s = (self.max_x-1, self.max_y, horz_net)
 
-                        vert_net = netname.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_")
-                        horz_net = netname.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_")
+                        vert_net = netname.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_").replace("_h_", "_v_")
+                        horz_net = netname.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_").replace("_v_", "_h_")
 
+                        if self.device == "5k":
+                            m = re.match("(span4_vert|sp4_v)_([lrtb])_(\d+)$", vert_net)
+                            assert m
+                            vert_net = "sp4_v_%s_%d" % (m.group(2), int(m.group(3)) + 28)
+                            
+                            m = re.match("(span4_horz|sp4_h)_([lrtb])_(\d+)$", horz_net)
+                            assert m
+                            horz_net = "span4_horz_%s_%d" % (m.group(2), int(m.group(3)) - 28)
+                            
                         if s[0] == 0 and s[1] == self.max_y:
                             if direction == "l": s = (0, self.max_y-1, vert_net)
                             if direction == "t": s = (1, self.max_y, horz_net)
@@ -566,7 +627,22 @@ class iceconfig:
                 add_seed_segments(idx, tile, ramttile_8k_db)
             else:
                 assert False
-
+        
+        for idx, tile in self.dsp_tiles[0].items():
+            if self.device == "5k":
+                add_seed_segments(idx, tile, dsp0_5k_db)
+        for idx, tile in self.dsp_tiles[1].items():
+            if self.device == "5k":
+                add_seed_segments(idx, tile, dsp1_5k_db)        
+        for idx, tile in self.dsp_tiles[2].items():
+            if self.device == "5k":
+                add_seed_segments(idx, tile, dsp2_5k_db)    
+        for idx, tile in self.dsp_tiles[3].items():
+            if self.device == "5k":
+                add_seed_segments(idx, tile, dsp3_5k_db)    
+        for idx, tile in self.ipcon_tiles.items():
+            if self.device == "5k":
+                add_seed_segments(idx, tile, ipcon_5k_db)                            
         for padin, pio in enumerate(self.padin_pio_db()):
             s1 = (pio[0], pio[1], "padin_%d" % pio[2])
             s2 = (pio[0], pio[1], "glb_netwk_%d" % padin)
@@ -661,7 +737,7 @@ class iceconfig:
                     expected_data_lines -= 1
                     continue
                 assert expected_data_lines <= 0
-                if line[0] in (".io_tile", ".logic_tile", ".ramb_tile", ".ramt_tile", ".ram_data", ".ipconn_tile", ".dsp1_tile", ".dsp2_tile", ".dsp3_tile", ".dsp4_tile"):
+                if line[0] in (".io_tile", ".logic_tile", ".ramb_tile", ".ramt_tile", ".ram_data", ".ipcon_tile", ".dsp0_tile", ".dsp1_tile", ".dsp2_tile", ".dsp3_tile"):
                     current_data = list()
                     expected_data_lines = 16
                     self.max_x = max(self.max_x, int(line[1]))
@@ -677,6 +753,13 @@ class iceconfig:
                     continue
                 if line[0] == ".ramt_tile":
                     self.ramt_tiles[(int(line[1]), int(line[2]))] = current_data
+                    continue
+                if line[0] == ".ipcon_tile":
+                    self.ipcon_tiles[(int(line[1]), int(line[2]))] = current_data
+                    continue
+                match = re.match(r".dsp(\d)_tile", line[0])
+                if match:
+                    self.dsp_tiles[int(match.group(1))][(int(line[1]), int(line[2]))] = current_data
                     continue
                 if line[0] == ".ram_data":
                     self.ram_data[(int(line[1]), int(line[2]))] = current_data
@@ -862,6 +945,8 @@ def netname_normalize(netname, edge="", ramb=False, ramt=False, ramb_8k=False, r
     netname = netname.replace("lc_", "lutff_")
     netname = netname.replace("wire_logic_cluster/", "")
     netname = netname.replace("wire_io_cluster/", "")
+    netname = netname.replace("wire_mult/", "")
+    netname = netname.replace("wire_con_box/", "")
     netname = netname.replace("wire_bram/", "")
     if (ramb or ramt or ramb_8k or ramt_8k) and netname.startswith("input"):
         match = re.match(r"input(\d)_(\d)", netname)
@@ -890,13 +975,13 @@ def pos_has_net(pos, netname):
         if re.search(r"_vert_[bt]_\d+$", netname): return False
     return True
 
-def pos_follow_net(pos, direction, netname):
-    if pos == "x":
+def pos_follow_net(pos, direction, netname, device):
+    if pos == "x" or ((pos in ("l", "r")) and (device == "5k")):
             m = re.match("sp4_h_[lr]_(\d+)$", netname)
             if m and direction in ("l", "L"):
                 n = sp4h_normalize(netname, "l")
                 if n is not None:
-                    if direction == "l":
+                    if direction == "l" or device == "5k":
                         n = re.sub("_l_", "_r_", n)
                         n = sp4h_normalize(n)
                     else:
@@ -906,7 +991,7 @@ def pos_follow_net(pos, direction, netname):
             if m and direction in ("r", "R"):
                 n = sp4h_normalize(netname, "r")
                 if n is not None:
-                    if direction == "r":
+                    if direction == "r" or device == "5k":
                         n = re.sub("_r_", "_l_", n)
                         n = sp4h_normalize(n)
                     else:
@@ -916,6 +1001,8 @@ def pos_follow_net(pos, direction, netname):
 
             m = re.match("sp4_v_[tb]_(\d+)$", netname)
             if m and direction in ("t", "T"):
+                if device == "5k" and direction == "T" and pos in ("l", "r"):
+                    return re.sub("sp4_v_", "span4_vert_", netname)
                 n = sp4v_normalize(netname, "t")
                 if n is not None:
                     if direction == "t":
@@ -926,6 +1013,8 @@ def pos_follow_net(pos, direction, netname):
                         n = re.sub("sp4_v_", "span4_vert_", n)
                     return n
             if m and direction in ("b", "B"):
+                if device == "5k" and direction == "B" and pos in ("l", "r"):
+                    return re.sub("sp4_v_", "span4_vert_", netname)
                 n = sp4v_normalize(netname, "b")
                 if n is not None:
                     if direction == "b":
@@ -940,7 +1029,7 @@ def pos_follow_net(pos, direction, netname):
             if m and direction in ("l", "L"):
                 n = sp12h_normalize(netname, "l")
                 if n is not None:
-                    if direction == "l":
+                    if direction == "l" or device == "5k":
                         n = re.sub("_l_", "_r_", n)
                         n = sp12h_normalize(n)
                     else:
@@ -950,7 +1039,7 @@ def pos_follow_net(pos, direction, netname):
             if m and direction in ("r", "R"):
                 n = sp12h_normalize(netname, "r")
                 if n is not None:
-                    if direction == "r":
+                    if direction == "r" or device == "5k":
                         n = re.sub("_r_", "_l_", n)
                         n = sp12h_normalize(n)
                     else:
@@ -980,7 +1069,7 @@ def pos_follow_net(pos, direction, netname):
                         n = re.sub("sp12_v_", "span12_vert_", n)
                     return n
 
-    if pos in ("l", "r" ):
+    if (pos in ("l", "r" )) and (device != "5k"):
         m = re.match("span4_vert_([bt])_(\d+)$", netname)
         if m:
             case, idx = direction + m.group(1), int(m.group(2))
@@ -997,6 +1086,8 @@ def pos_follow_net(pos, direction, netname):
         m = re.match("span4_horz_([rl])_(\d+)$", netname)
         if m:
             case, idx = direction + m.group(1), int(m.group(2))
+            if direction == "L" or direction == "R":
+                return netname
             if case == "ll":
                 return "span4_horz_r_%d" % idx
             if case == "lr" and idx >= 4:
@@ -4179,6 +4270,13 @@ ramttile_5k_db = parse_db(iceboxdb.database_ramt_5k_txt, "5k")
 rambtile_8k_db = parse_db(iceboxdb.database_ramb_8k_txt, "8k")
 ramttile_8k_db = parse_db(iceboxdb.database_ramt_8k_txt, "8k")
 
+ipcon_5k_db = parse_db(iceboxdb.database_ipcon_5k_txt, "5k")
+dsp0_5k_db = parse_db(iceboxdb.database_dsp0_5k_txt, "5k")
+dsp1_5k_db = parse_db(iceboxdb.database_dsp1_5k_txt, "5k")
+dsp2_5k_db = parse_db(iceboxdb.database_dsp2_5k_txt, "5k")
+dsp3_5k_db = parse_db(iceboxdb.database_dsp3_5k_txt, "5k")
+
+
 iotile_l_db = list()
 iotile_r_db = list()
 iotile_t_db = list()
@@ -4232,7 +4330,7 @@ iotile_b_5k_db.append([["B15[14]"], "IoCtrl", "padeb_test_0"])
 iotile_b_5k_db.append([["B6[15]"], "IoCtrl", "cf_bit_35"])
 iotile_b_5k_db.append([["B12[15]"], "IoCtrl", "cf_bit_39"])
 
-for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, iotile_t_5k_db, iotile_b_5k_db, logictile_db, logictile_5k_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_5k_db, ramttile_5k_db, rambtile_8k_db, ramttile_8k_db]:
+for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, iotile_t_5k_db, iotile_b_5k_db, logictile_db, logictile_5k_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_5k_db, ramttile_5k_db, rambtile_8k_db, ramttile_8k_db, dsp0_5k_db, dsp1_5k_db, dsp2_5k_db, dsp3_5k_db, ipcon_5k_db]:
     for entry in db:
         if entry[1] in ("buffer", "routing"):
             entry[2] = netname_normalize(entry[2],
