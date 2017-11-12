@@ -161,6 +161,7 @@ def is_interconn(netname):
     if netname.startswith("span12_"): return True
     if netname.startswith("logic_op_"): return True
     if netname.startswith("neigh_op_"): return True
+    if netname.startswith("slf_op_"): return True
     if netname.startswith("local_"): return True
     return False
 
@@ -768,7 +769,7 @@ for i in range(4):
             #TEMP: for tracing only
             text_func.append("/* DSP%d   %2d %2d */ assign dsp%d_%d_%d_clk = %s;" % (i, x, y, i, x, y, net_clk))
             text_func.append("/* DSP%d   %2d %2d */ assign dsp%d_%d_%d_sr = %s;" % (i, x, y, i, x, y, net_sr))
-            for j in range(7):
+            for j in range(8):
                 net_in0 = seg_to_net((x, y, "lutff_%d/in_0" % j), "1'b0")
                 net_in1 = seg_to_net((x, y, "lutff_%d/in_1" % j), "1'b0")
                 net_in2 = seg_to_net((x, y, "lutff_%d/in_2" % j), "1'b0")

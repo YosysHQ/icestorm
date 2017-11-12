@@ -956,7 +956,7 @@ def netname_normalize(netname, edge="", ramb=False, ramt=False, ramb_8k=False, r
         if ramb_8k: netname="ram/RADDR_%d" % ([7, 6, 5, 4, 3, 2, 1, 0, -1, -1, -1, -1, -1, 10, 9, 8][idx1*4 + idx2])
         if ramt_8k: netname="ram/WADDR_%d" % ([7, 6, 5, 4, 3, 2, 1, 0, -1, -1, -1, -1, -1, 10, 9, 8][idx1*4 + idx2])
     match = re.match(r"(...)_op_(.*)", netname)
-    if match:
+    if match and (match.group(1) != "slf"):
         netname = "neigh_op_%s_%s" % (match.group(1), match.group(2))
     if re.match(r"lutff_7/(cen|clk|s_r)", netname):
         netname = netname.replace("lutff_7/", "lutff_global/")

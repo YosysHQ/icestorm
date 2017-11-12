@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+.ctab {
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid gray;
+}
+.ctab td, .ctab th {
+	padding: 3px;
+	border: 1px solid gray;
+}
+
+.ctab td {
+  font-family:monospace;
+}
+</style>
+<title>Project IceStorm &ndash; UltraPlus Features Documentation</title>
+</head><body>
+<h1>Project IceStorm &ndash; UltraPlus Features Documentation</h1>
+
+<p>
+<i><a href=".">Project IceStorm</a> aims at documenting the bitstream format of Lattice iCE40
+FPGAs and providing simple tools for analyzing and creating bitstream files.
+This is work in progress.</i>
+</p>
+
+<p>The ice40 UltraPlus devices have a number of new features compared to the older LP/HX series
+  devices, in particular:
+  <ul>
+    <li>Internal DSP units, capable of 16-bit multiply and 32-bit accumulate.</li>
+    <li>1Mbit of extra single-ported RAM, in addition to the usual BRAM</li>
+    <li>Internal hard IP cores for I2C and SPI</li>
+    <li>2 internal oscillators, 48MHz (with divider) and 10kHz</li>
+    <li>24mA constant current LED ouputs and PWM hard IP</li>
+  </ul>
+  In order to implement these new features, a significant architecural change has been made: the
+  left and right sides of the device are no longer IO, but instead DSP and IPConnect tiles. 
+</p>
+
+<h2>DSP Tiles</h2>
+<p>Each MAC16 DSP comprises of 4 DSP tiles, all of which perform part of the DSP function and have
+different routing bit configurations. Structually they are similar to logic tiles, but with the DSP
+function wired into where the LUTs and DFFs would be. The four types of DSP tiles will be referred to
+as DSP0 through DSP3, with DSP0 at the lowest y-position. One signal CO, is also routed through the
+IPConnect tile above the DSP tile, referred to as IPCON4 in this context.
+
+A work-in-progress effort to determine where signals and configuration bits are located is below:</p>
+<p>
+<strong>Signal Assignments</strong><br/>
+<table class="ctab">
+<tr><th>SB_MAC16 port</th><th>DSP0</th><th>DSP1</th><th>DSP2</th><th>DSP3</th><th>IPCON4</th></tr>
+
+<tr><td>CLK</td><td>-</td><td>-</td><td>lutff_global/clk</td><td>-</td><td>-</td></tr>
+
+<tr><td>CE</td><td>-</td><td>-</td><td>lutff_global/cen</td><td>-</td><td>-</td></tr>
+
+
+<tr><td>C[7:0]</td><td>-</td><td>-</td><td>-</td><td>lutff_[7:0]/in_3</td><td>-</td></tr>
+<tr><td>C[15:8]</td><td>-</td><td>-</td><td>-</td><td>lutff_[7:0]/in_1</td><td>-</td></tr>
+
+<tr><td>A[7:0]</td><td>-</td><td>-</td><td>lutff_[7:0]/in_3</td><td>-</td><td>-</td></tr>
+<tr><td>A[15:8]</td><td>-</td><td>-</td><td>lutff_[7:0]/in_1</td><td>-</td><td>-</td></tr>
+
+<tr><td>B[7:0]</td><td>-</td><td>lutff_[7:0]/in_3</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>B[15:8]</td><td>-</td><td>lutff_[7:0]/in_1</td><td>-</td><td>-</td><td>-</td></tr>
+
+<tr><td>D[7:0]</td><td>lutff_[7:0]/in_3</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>D[15:8]</td><td>lutff_[7:0]/in_1</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+
+<tr><td>IRSTTOP</td><td>-</td><td>lutff_global/s_r</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>IRSTBOT</td><td>lutff_global/s_r</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>ORSTTOP</td><td>-</td><td>-</td><td>-</td><td>lutff_global/s_r</td><td>-</td></tr>
+<tr><td>ORSTBOT</td><td>-</td><td>-</td><td>lutff_global/s_r</td><td>-</td><td>-</td></tr>
+
+
+
+<tr><td>AHOLD</td><td>-</td><td>-</td><td>lutff_0/in_0</td><td>-</td><td>-</td></tr>
+<tr><td>BHOLD</td><td>-</td><td>lutff_0/in_0</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>CHOLD</td><td>-</td><td>-</td><td>-</td><td>lutff_0/in_0</td><td>-</td></tr>
+<tr><td>DHOLD</td><td>lutff_0/in_0</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+
+<tr><td>OHOLDTOP</td><td>-</td><td>-</td><td>-</td><td>lutff_1/in_0</td><td>-</td></tr>
+<tr><td>OHOLDBOT</td><td>lutff_1/in_0</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+
+
+<tr><td>ADDSUBTOP</td><td>-</td><td>-</td><td>-</td><td>lutff_3/in_0</td><td>-</td></tr>
+<tr><td>ADDSUBBOT</td><td>lutff_3/in_0</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+
+
+<tr><td>OLOADTOP</td><td>-</td><td>-</td><td>-</td><td>lutff_2/in_0</td><td>-</td></tr>
+<tr><td>OLOADBOT</td><td>lutff_2/in_0</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+
+<tr><td>CI</td><td>lutff_4/in_0</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+
+
+<tr><td>O[31:0]</td><td>mult/O_[7:0]</td><td>mult/O_[15:8]</td><td>mult/O_[23:16]</td><td>mult/O_[31:24]</td><td>-</td></tr>
+<tr><td>CO</td><td>-</td><td>-</td><td>-</td><td>-</td><td>slf_op_0</td></tr>
+
+</table>
+
+
+</p>
+  
+<p>
+<strong>Configuration Bits</strong><br/>
+<p>The DSP configuration bits mostly follow the order stated in the ICE Technology Library document, where they are described as<span style="font-family:monospace">CBIT[24:0]</span>. For most DSP tiles,
+	these follow a logical order where <span style="font-family:monospace">CBIT[7:0]</span> maps to DSP0 <span style="font-family:monospace">CBIT[7:0]</span>; <span style="font-family:monospace">CBIT[15:8]</span>
+	 to DSP1 <span style="font-family:monospace">CBIT[7:0]</span>, <span style="font-family:monospace">CBIT[23:16]</span> to DSP2 <span style="font-family:monospace">CBIT[7:0]</span>
+	  and <span style="font-family:monospace">CBIT[24]</span> to DSP3 <span style="font-family:monospace">CBIT0</span>.
+		</p>
+<p>However, there are some locations where configuration bits are swapped between DSP tiles and IPConnect tiles. For example, DSP1 (0, 16) <span style="font-family:monospace">CBIT[4:3]</span> is used
+	for the internal oscillator, and the DSP configuration bits are then located in IPConnect tile (0, 19) <span style="font-family:monospace">CBIT[6:5]</span>.</p>
+<p>The exact permutations are not yet known, but a script will be developed to find them.</p>
+<p>
+<strong>Other Implementation Notes</strong><br/>
+<p>
+  All active DSP tiles, and all IPConnect tiles whether used or not, have some bits set which reflect their logic tile heritage. The <span style="font-family:monospace">LC_<em>x</em></span>
+  bits which would be used to configure the logic cell, are set to the below pattern for each "logic cell" (interpreting them like a logic tile):<br/>
+  <br><span style="font-family:monospace">0000111100001111 0000</span><br/><br/>
+  Coincidentally or not, this corresponds to a buffer passing through input 2 to the output. For each "cell" the cascade bit <span style="font-family:monospace">LC0<em>x</em>_inmux02_5</span> is
+  also set, effectively creating one large chain, as this connects input 2 to the output of the previous LUT. It is not yet known if this serves any purpose, or is merely a remainder of Lattice's
+  internal testing.
+</p>
+</p>
+<h2>IPConnect Tiles</h2>
+<p>IPConnect tiles are used for connections to all of the other UltraPlus features, such as I2C/SPI, SPRAM, RGB and oscillators. Like DSP tiles,
+they are structually similar to logic tiles. The outputs of IP functions are connected to nets named  <span style="font-family:monospace">slf_op_0</span> through <span style="font-family:monospace">slf_op_7</span>,
+and the inputs use the LUT/FF inputs in the same way as DSP tiles.</p>
+
+
+
+<h2>Internal Oscillators</h2>
+
+Both of the internal oscillators are connected through IPConnect tiles, with their outputs optionally connected to the global networks, 
+by setting the "padin" extra bit (the used global networks 4 and 5 don't have physical pins on UltraPlus devices).
+
+<h3>SB_HFOSC</h3>
+<p>The <span style="font-family:monospace">CLKHFPU</span> input connects through IPConnect tile (0, 29) input <span style="font-family:monospace">lutff_0/in_1</span>;
+and the <span style="font-family:monospace">CLKHFEN</span> input connects through input <span style="font-family:monospace">lutff_7/in_3</span> of the same tile.<br/>
+
+The <span style="font-family:monospace">CLKHF</span> output of SB_HFOSC is connected to both IPConnect tile (0, 28) output <span style="font-family:monospace">slf_op_7</span> and to the <span style="font-family:monospace">padin</span>
+ of <span style="font-family:monospace">glb_netwk_4</span>.</p>
+
+<p>Configuration bit <span style="font-family:monospace">CLKHF_DIV[1]</span> maps to DSP1 tile (0, 16) config bit <span style="font-family:monospace">CBIT_4</span>, and 
+<span style="font-family:monospace">CLKHF_DIV[0]</span> maps to DSP1 tile (0, 16) config bit <span style="font-family:monospace">CBIT_3</span>.</p>
+
+<h3>SB_LFOSC</h3>
+<p>The <span style="font-family:monospace">CLKLFPU</span> input connects through IPConnect tile (25, 29) input <span style="font-family:monospace">lutff_0/in_1</span>;
+and the <span style="font-family:monospace">CLKLFEN</span> input connects through input <span style="font-family:monospace">lutff_7/in_3</span> of the same tile.<br/>
+
+The <span style="font-family:monospace">CLKLF</span> output of SB_LFOSC is connected to both IPConnect tile (25, 29) output <span style="font-family:monospace">slf_op_0</span> and to the <span style="font-family:monospace">padin</span>
+ of <span style="font-family:monospace">glb_netwk_5</span>.</p>
+
+<p>SB_LFOSC has no configuration bits.</p>
+
+</body></html>
