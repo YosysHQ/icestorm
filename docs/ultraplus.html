@@ -193,4 +193,28 @@ The <span style="font-family:monospace">CLKLF</span> output of SB_LFOSC is conne
 
 <p>SB_LFOSC has no configuration bits.</p>
 
+<h2>SPRAM</h2>
+<p>The UltraPlus devices have 1Mbit of extra single-ported RAM, split into 4 256kbit blocks. The full list of connections for each SPRAM block in the 5k device is shown below,
+	as well as the location of the 1 configuration bit which is set to enable use of that SPRAM block.</p>
+	
+	<table class="ctab">
+	<tr><th>Signal</th><th>SPRAM (0, 0, 1)</th><th>SPRAM (0, 0, 2)</th><th>SPRAM (25, 0, 3)</th><th>SPRAM (25, 0, 4)</th></tr>
+	<tr><td>ADDRESS[1:0]</td><td>(0, 2, lutff_[1:0]/in_1)</td><td>(0, 2, lutff_[7:6]/in_0)</td><td>(25, 2, lutff_[1:0]/in_1)</td><td>(25, 2, lutff_[7:6]/in_0)</td></tr>
+	<tr><td>ADDRESS[7:2]</td><td>(0, 2, lutff_[7:2]/in_1)</td><td>(0, 3, lutff_[5:0]/in_3)</td><td>(25, 2, lutff_[7:2]/in_1)</td><td>(25, 3, lutff_[5:0]/in_3)</td></tr>
+	<tr><td>ADDRESS[9:8]</td><td>(0, 2, lutff_[1:0]/in_0)</td><td>(0, 3, lutff_[7:6]/in_3)</td><td>(25, 2, lutff_[1:0]/in_0)</td><td>(25, 3, lutff_[7:6]/in_3)</td></tr>
+	<tr><td>ADDRESS[13:10]</td><td>(0, 2, lutff_[5:2]/in_0)</td><td>(0, 3, lutff_[3:0]/in_1)</td><td>(25, 2, lutff_[5:2]/in_0)</td><td>(25, 3, lutff_[3:0]/in_1)</td></tr>
+	<tr><td>DATAIN[7:0]</td><td>(0, 1, lutff_[7:0]/in_3)</td><td>(0, 1, lutff_[7:0]/in_0)</td><td>(25, 1, lutff_[7:0]/in_3)</td><td>(25, 1, lutff_[7:0]/in_0)</td></tr>
+	<tr><td>DATAIN[15:8]</td><td>(0, 1, lutff_[7:0]/in_1)</td><td>(0, 2, lutff_[7:0]/in_3)</td><td>(25, 1, lutff_[7:0]/in_1)</td><td>(25, 2, lutff_[7:0]/in_3)</td></tr>
+	<tr><td>MASKWREN[3:0]</td><td>(0, 3, lutff_[3:0]/in_0)</td><td>(0, 3, lutff_[7:4]/in_0)</td><td>(25, 3, lutff_[3:0]/in_0)</td><td>(25, 3, lutff_[7:4]/in_0)</td></tr>
+	<tr><td>WREN</td><td>(0, 3, lutff_4/in_1)</td><td>(0, 3, lutff_5/in_1)</td><td>(25, 3, lutff_4/in_1)</td><td>(25, 3, lutff_5/in_1)</td></tr>
+	<tr><td>CHIPSELECT</td><td>(0, 3, lutff_6/in_1)</td><td>(0, 3, lutff_7/in_1)</td><td>(25, 3, lutff_6/in_1)</td><td>(25, 3, lutff_7/in_1)</td></tr>
+	<tr><td>CLOCK</td><td>(0, 1, clk)</td><td>(0, 2, clk)</td><td>(25, 1, clk)</td><td>(25, 2, clk)</td></tr>
+	<tr><td>STANDBY</td><td>(0, 4, lutff_0/in_3)</td><td>(0, 4, lutff_1/in_3)</td><td>(25, 4, lutff_0/in_3)</td><td>(25, 4, lutff_1/in_3)</td></tr>
+	<tr><td>SLEEP</td><td>(0, 4, lutff_2/in_3)</td><td>(0, 4, lutff_3/in_3)</td><td>(25, 4, lutff_2/in_3)</td><td>(25, 4, lutff_3/in_3)</td></tr>
+	<tr><td>POWEROFF</td><td>(0, 4, lutff_4/in_3)</td><td>(0, 4, lutff_5/in_3)</td><td>(25, 4, lutff_4/in_3)</td><td>(25, 4, lutff_5/in_3)</td></tr>
+	<tr><td>DATAOUT[7:0]</td><td>(0, 1, slf_op_[7:0])</td><td>(0, 3, slf_op_[7:0])</td><td>(25, 1, slf_op_[7:0])</td><td>(25, 3, slf_op_[7:0])</td></tr>
+	<tr><td>DATAOUT[15:8]</td><td>(0, 2, slf_op_[7:0])</td><td>(0, 4, slf_op_[7:0])</td><td>(25, 2, slf_op_[7:0])</td><td>(25, 4, slf_op_[7:0])</td></tr>
+	<tr><td><em>SPRAM_ENABLE</em></td><td><em>(0, 1, CBIT_0)</em></td><td><em>(0, 1, CBIT_1)</em></td><td><em>(25, 1, CBIT_0)</em></td><td><em>(25, 1, CBIT_1)</em></td></tr>
+	</table>
+
 </body></html>

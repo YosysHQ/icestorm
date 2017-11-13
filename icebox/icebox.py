@@ -313,25 +313,25 @@ class iceconfig:
             if netname.startswith("logic_op_bot_"):
                 if y == self.max_y and 0 < x < self.max_x: return True
             if netname.startswith("logic_op_bnl_"):
-                if x == self.max_x and 1 < y < self.max_y: return True
+                if x == self.max_x and 1 < y < self.max_y and (self.device != "5k"): return True
                 if y == self.max_y and 1 < x < self.max_x: return True
             if netname.startswith("logic_op_bnr_"):
-                if x == 0 and 1 < y < self.max_y: return True
+                if x == 0 and 1 < y < self.max_y and (self.device != "5k"): return True
                 if y == self.max_y and 0 < x < self.max_x-1: return True
 
             if netname.startswith("logic_op_top_"):
                 if y == 0 and 0 < x < self.max_x: return True
             if netname.startswith("logic_op_tnl_"):
-                if x == self.max_x and 0 < y < self.max_y-1: return True
+                if x == self.max_x and 0 < y < self.max_y-1 and (self.device != "5k"): return True
                 if y == 0 and 1 < x < self.max_x: return True
             if netname.startswith("logic_op_tnr_"):
-                if x == 0 and 0 < y < self.max_y-1: return True
+                if x == 0 and 0 < y < self.max_y-1 and (self.device != "5k"): return True
                 if y == 0 and 0 < x < self.max_x-1: return True
 
             if netname.startswith("logic_op_lft_"):
-                if x == self.max_x: return True
+                if x == self.max_x and (self.device != "5k"): return True
             if netname.startswith("logic_op_rgt_"):
-                if x == 0: return True
+                if x == 0 and (self.device != "5k"): return True
 
             return False
 
@@ -355,7 +355,7 @@ class iceconfig:
     def follow_funcnet(self, x, y, func):
         neighbours = set()
         def do_direction(name, nx, ny):
-            if 0 < nx < self.max_x and 0 < ny < self.max_y:
+            if (0 < nx < self.max_x or self.device == "5k") and 0 < ny < self.max_y:
                 neighbours.add((nx, ny, "neigh_op_%s_%d" % (name, func)))
             if nx in (0, self.max_x) and 0 < ny < self.max_y and nx != x:
                 neighbours.add((nx, ny, "logic_op_%s_%d" % (name, func)))
@@ -444,7 +444,52 @@ class iceconfig:
                 assert False
 
         return funcnets
-
+    
+    #UltraPlus corner routing: given the corner name and net index,
+    #return a tuple containing H and V indexes, or none if NA
+    def ultraplus_trace_corner(self, corner, idx):
+        h_idx = None
+        v_idx = None
+        if corner == "bl":
+            if idx >= 4:
+                v_idx = idx + 28
+            if idx >= 32 and idx < 48:
+                h_idx = idx - 28
+        elif corner == "tl":
+            #TODO: bounds check for v_idx case?
+            v_idx = (idx + 8) ^ 1
+            if idx >= 8 and idx < 32:
+                h_idx = (idx ^ 1) - 8
+        elif corner == "tr":
+            #TODO: bounds check for v_idx case?
+            if idx <= 24:
+                v_idx = (idx + 12) ^ 1
+            if idx >= 12 and idx < 36:
+                h_idx = (idx ^ 1) - 12            
+        elif corner == "br":
+            #TODO: bounds check for v_idx case?
+            if idx <= 16:
+                v_idx = idx + 32
+            if idx >= 32 and idx < 48: #check
+                h_idx = idx - 32
+        return (h_idx, v_idx)
+    
+    def get_corner(self, x, y):
+        corner = ""
+        if y == 0:
+            corner += "b"
+        elif y == self.max_y:
+            corner += "t"
+        else:
+            corner += "x"
+        if x == 0:
+            corner += "l"
+        elif x == self.max_x:
+            corner += "r"
+        else:
+            corner += "x"
+        return corner    
+    
     def follow_net(self, netspec):
         x, y, netname = netspec
         neighbours = self.rlookup_funcnet(x, y, netname)
@@ -465,7 +510,7 @@ class iceconfig:
                         neighbours.add((nx, ny, netname))
 
         match = re.match(r"sp4_r_v_b_(\d+)", netname)
-        if match and ((0 < x < self.max_x-1) or (self.device == "5k")):
+        if match and ((0 < x < self.max_x-1) or (self.device == "5k" and (x < self.max_x))):
             neighbours.add((x+1, y, sp4v_normalize("sp4_v_b_" + match.group(1))))
         #print('\tafter r_v_b', neighbours)
 
@@ -501,23 +546,39 @@ class iceconfig:
 
                 if s[0] in (0, self.max_x) and s[1] in (0, self.max_y):
                     if re.match("span4_(vert|horz)_[lrtb]_\d+$", n):
-                        
+                        m = re.match("span4_(vert|horz)_([lrtb])_\d+$", n)
+                        if self.device == "5k" and (m.group(2) == "l" or m.group(2) == "t"):
+                            continue
                         vert_net = n.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_")
                         horz_net = n.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_")
                         
                         if self.device == "5k":
                             m = re.match("span4_vert_([lrtb])_(\d+)$", vert_net)
                             assert m
-                            vert_net = "sp4_v_%s_%d" % (m.group(1), int(m.group(2)) + 28)
+                            idx = int(m.group(2))
+                            h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
+                            if v_idx is None:
+                                if (s[0] == 0 and s[1] == 0 and direction == "l") or (s[0] == self.max_x and s[1] == self.max_y and direction == "r"):
+                                    continue
+                            else:    
+                                vert_net = "sp4_v_%s_%d" % (m.group(1), v_idx)
 
                             m = re.match("span4_horz_([lrtb])_(\d+)$", horz_net)
                             assert m
-                            horz_net = "span4_horz_%s_%d" % (m.group(1), int(m.group(2)) - 28)
+                            idx = int(m.group(2))
+                            h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
+                            if h_idx is None:
+                                if (s[0] == 0 and s[1] == 0 and direction == "b") or (s[0] == self.max_x and s[1] == self.max_y and direction == "t"):
+                                    continue
+                            else:
+                                horz_net = "span4_horz_%s_%d" % (m.group(1), h_idx)
+                            
+                            
                             
                         if s[0] == 0 and s[1] == 0:
                             if direction == "l": s = (0, 1, vert_net)
                             if direction == "b": s = (1, 0, horz_net)
-
+                            
                         if s[0] == self.max_x and s[1] == self.max_y:
                             if direction == "r": s = (self.max_x, self.max_y-1, vert_net)
                             if direction == "t": s = (self.max_x-1, self.max_y, horz_net)
@@ -525,23 +586,35 @@ class iceconfig:
                         vert_net = netname.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_").replace("_h_", "_v_")
                         horz_net = netname.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_").replace("_v_", "_h_")
 
-                        if self.device == "5k":
+                        if self.device == "5k":    
                             m = re.match("(span4_vert|sp4_v)_([lrtb])_(\d+)$", vert_net)
                             assert m
-                            vert_net = "sp4_v_%s_%d" % (m.group(2), int(m.group(3)) + 28)
+                            idx = int(m.group(3))
+                            h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
+                            if v_idx is None:
+                                if (s[0] == 0 and s[1] == self.max_y and direction == "l") or (s[0] == self.max_x and s[1] == 0 and direction == "r"):
+                                    continue
+                            else:
+                                vert_net = "sp4_v_%s_%d" % (m.group(2), v_idx)
                             
                             m = re.match("(span4_horz|sp4_h)_([lrtb])_(\d+)$", horz_net)
                             assert m
-                            horz_net = "span4_horz_%s_%d" % (m.group(2), int(m.group(3)) - 28)
+                            idx = int(m.group(3))
+                            h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
+                            if h_idx is None:
+                                if (s[0] == 0 and s[1] == self.max_y and direction == "t") or (s[0] == self.max_x and s[1] == 0 and direction == "b"):
+                                    continue
+                            else:
+                                horz_net = "span4_horz_%s_%d" % (m.group(2), h_idx)
                             
                         if s[0] == 0 and s[1] == self.max_y:
                             if direction == "l": s = (0, self.max_y-1, vert_net)
                             if direction == "t": s = (1, self.max_y, horz_net)
-
+                            
                         if s[0] == self.max_x and s[1] == 0:
                             if direction == "r": s = (self.max_x, 1, vert_net)
                             if direction == "b": s = (self.max_x-1, 0, horz_net)
-
+                            
                 if self.tile_has_net(s[0], s[1], s[2]):
                     neighbours.add((s[0], s[1], s[2]))
 
@@ -1097,13 +1170,13 @@ def pos_follow_net(pos, direction, netname, device):
             if case == "rr" and idx >= 12:
                 return "span4_horz_l_%d" % idx
 
-    if pos == "l" and direction == "r":
+    if pos == "l" and direction == "r" and (device != "5k"):
             m = re.match("span4_horz_(\d+)$", netname)
             if m: return sp4h_normalize("sp4_h_l_%s" % m.group(1))
             m = re.match("span12_horz_(\d+)$", netname)
             if m: return sp12h_normalize("sp12_h_l_%s" % m.group(1))
 
-    if pos == "r" and direction == "l":
+    if pos == "r" and direction == "l" and (device != "5k"):
             m = re.match("span4_horz_(\d+)$", netname)
             if m: return sp4h_normalize("sp4_h_r_%s" % m.group(1))
             m = re.match("span12_horz_(\d+)$", netname)
