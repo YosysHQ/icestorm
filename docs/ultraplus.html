@@ -109,9 +109,48 @@ A work-in-progress effort to determine where signals and configuration bits are 
 	 to DSP1 <span style="font-family:monospace">CBIT[7:0]</span>, <span style="font-family:monospace">CBIT[23:16]</span> to DSP2 <span style="font-family:monospace">CBIT[7:0]</span>
 	  and <span style="font-family:monospace">CBIT[24]</span> to DSP3 <span style="font-family:monospace">CBIT0</span>.
 		</p>
-<p>However, there are some locations where configuration bits are swapped between DSP tiles and IPConnect tiles. For example, DSP1 (0, 16) <span style="font-family:monospace">CBIT[4:3]</span> is used
-	for the internal oscillator, and the DSP configuration bits are then located in IPConnect tile (0, 19) <span style="font-family:monospace">CBIT[6:5]</span>.</p>
-<p>The exact permutations are not yet known, but a script will be developed to find them.</p>
+<p>However, there is one location where configuration bits are swapped between DSP tiles and IPConnect tiles. In DSP1 (0, 16) <span style="font-family:monospace">CBIT[4:1]</span> are used
+	for IP such as the internal oscillator, and the DSP configuration bits are then located in IPConnect tile (0, 19) <span style="font-family:monospace">CBIT[6:3]</span>.</p>
+<p>The full list of configuration bits, including the changes for the DSP at (0, 15) are described in the table below.</p>
+
+<table class="ctab">
+<tr><th>Parameter</th><th>Normal Position</th><th>DSP (0, 15)<br/>Changes</th></tr>
+<tr><td>C_REG</td><td>DSP0.CBIT_0</td><td></td></tr>
+<tr><td>A_REG</td><td>DSP0.CBIT_1</td><td></td></tr>
+<tr><td>B_REG</td><td>DSP0.CBIT_2</td><td></td></tr>
+<tr><td>D_REG</td><td>DSP0.CBIT_3</td><td></td></tr>
+
+<tr><td>TOP_8x8_MULT_REG</td><td>DSP0.CBIT_4</td><td></td></tr>
+<tr><td>BOT_8x8_MULT_REG</td><td>DSP0.CBIT_5</td><td></td></tr>
+
+<tr><td>PIPELINE_16x16_MULT_REG1</td><td>DSP0.CBIT_6</td><td></td></tr>
+<tr><td>PIPELINE_16x16_MULT_REG2</td><td>DSP0.CBIT_7</td><td></td></tr>
+
+<tr><td>TOPOUTPUT_SELECT[0]</td><td>DSP1.CBIT_0</td><td></td></tr>
+<tr><td>TOPOUTPUT_SELECT[1]</td><td>DSP1.CBIT_1</td><td>(0, 19).CBIT_3</td></tr>
+
+<tr><td>TOPADDSUB_LOWERINPUT[1:0]</td><td>DSP1.CBIT_[3:2]</td><td>(0, 19).CBIT_[5:4]</td></tr>
+<tr><td>TOPADDSUB_UPPERINUT</td><td>DSP1.CBIT_4</td><td>(0, 19).CBIT_6</td></tr>
+<tr><td>TOPADDSUB_CARRYSELECT[1:0]</td><td>DSP1.CBIT_[6:5]</td><td></td></tr>
+
+<tr><td>BOTOUTPUT_SELECT[0]</td><td>DSP1.CBIT_7</td><td></td></tr>
+<tr><td>BOTOUTPUT_SELECT[1]</td><td>DSP2.CBIT_0</td><td></td></tr>
+
+<tr><td>BOTADDSUB_LOWERINPUT[1:0]</td><td>DSP2.CBIT_[2:1]</td><td></td></tr>
+<tr><td>BOTADDSUB_UPPERINPUT</td><td>DSP2.CBIT_3</td><td></td></tr>
+<tr><td>BOTADDSUB_CARRYSELECT</td><td>DSP2.CBIT_[5:4]</td><td></td></tr>
+
+<tr><td>MODE_8x8</td><td>DSP2.CBIT_6</td><td></td></tr>
+
+<tr><td>A_SIGNED</td><td>DSP2.CBIT_7</td><td></td></tr>
+<tr><td>B_SIGNED</td><td>DSP3.CBIT_0</td><td></td></tr>
+
+</table>
+
+<p>Lattice document a limited number of supported configurations in the ICE Technology Library document, and Lattice's EDIF parser will
+	reject designs not following a supported configuration. It is not yet known whether unsupported configurations (such as mixed
+	signed and unsigned) function correctly or not.
+
 <p>
 <strong>Other Implementation Notes</strong><br/>
 <p>
