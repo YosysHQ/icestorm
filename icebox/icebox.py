@@ -1145,14 +1145,14 @@ extra_bits_db = {
         (0, 331, 143): ("padin_glb_netwk", "7"),
     },
     "5k": {
-        (0, 690, 334): ("padin_glb_netwk", "0"), # (0 1)  (690 334)  (690 334)  routing T_0_0.padin_0 <X> T_0_0.glb_netwk_0
-        (1, 691, 334): ("padin_glb_netwk", "1"), # (1 1)  (691 334)  (691 334)  routing T_0_0.padin_1 <X> T_0_0.glb_netwk_1
-        (0, 690, 336): ("padin_glb_netwk", "2"), # (0 3)  (690 336)  (690 336)  routing T_0_0.padin_2 <X> T_0_0.glb_netwk_2
-        (1, 871, 271): ("padin_glb_netwk", "3"),
-        (1, 870, 270): ("padin_glb_netwk", "4"),
-        (1, 871, 270): ("padin_glb_netwk", "5"),
-        (0, 870, 271): ("padin_glb_netwk", "6"),
-        (1, 691, 335): ("padin_glb_netwk", "7"), # (1 0)  (691 335)  (691 335)  routing T_0_0.padin_7 <X> T_0_0.glb_netwk_7
+        (0, 690, 334): ("padin_glb_netwk", "0"), # check
+        (0, 691, 334): ("padin_glb_netwk", "1"), # good
+        (1, 690, 175): ("padin_glb_netwk", "2"), # good
+        (1, 691, 175): ("padin_glb_netwk", "3"), # check
+        (1, 690, 174): ("padin_glb_netwk", "4"), # good (INTOSC only)
+        (1, 691, 174): ("padin_glb_netwk", "5"), # good (INTOSC only)
+        (0, 690, 335): ("padin_glb_netwk", "6"), # check
+        (0, 691, 335): ("padin_glb_netwk", "7"), # good
     },
     "8k": {
         (0, 870, 270): ("padin_glb_netwk", "0"),
@@ -1190,8 +1190,8 @@ gbufin_db = {
     "5k": [
         ( 6,  0,  6), #checked
         (12,  0,  5), #checked
-        (13,  0,  7), #unknown
-        (19,  0,  0), #checked
+        (13,  0,  0), #checked
+        (19,  0,  7), #checked
         ( 6, 31,  3), #checked
         (12, 31,  4), #checked
         (13, 31,  1), #checked
@@ -1677,11 +1677,16 @@ padin_pio_db = {
         ( 6, 17, 1),  # glb_netwk_7
     ],
     "5k": [
-        ( 6,  0, 1),
-        (19,  0, 1),
-        ( 6, 31, 0),
-        (12, 31, 1),
-        (13, 31, 0),
+        (19,  0, 1), #0 fixed
+        ( 6,  0, 1), #1 fixed
+        (13, 31, 0), #2 fixed
+        (13,  0, 0), #3 fixed
+        
+        (19, 31, 0), #These two are questionable, but keep the order correct
+        ( 6, 31, 0), #They may need to be fixed if other package options are added.
+
+        (12,  0, 1), #6 fixed
+        (12, 31, 1), #7 fixed
     ],
     "8k": [
         (33, 16, 1),

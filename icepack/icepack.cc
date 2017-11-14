@@ -451,11 +451,12 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 	write_byte(ofs, crc_value, file_offset, 0x62);
 	write_byte(ofs, crc_value, file_offset, (this->cram_width-1) >> 8);
 	write_byte(ofs, crc_value, file_offset, (this->cram_width-1));
-
-	debug("CRAM: Setting bank height to %d.\n", this->cram_height);
-	write_byte(ofs, crc_value, file_offset, 0x72);
-	write_byte(ofs, crc_value, file_offset, this->cram_height >> 8);
-	write_byte(ofs, crc_value, file_offset, this->cram_height);
+	if(this->device != "5k") {
+		debug("CRAM: Setting bank height to %d.\n", this->cram_height);
+		write_byte(ofs, crc_value, file_offset, 0x72);
+		write_byte(ofs, crc_value, file_offset, this->cram_height >> 8);
+		write_byte(ofs, crc_value, file_offset, this->cram_height);
+	}
 
 	debug("CRAM: Setting bank offset to 0.\n");
 	write_byte(ofs, crc_value, file_offset, 0x82);
@@ -465,10 +466,20 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 	for (int cram_bank = 0; cram_bank < 4; cram_bank++)
 	{
 		vector<bool> cram_bits;
-		for (int cram_y = 0; cram_y < this->cram_height; cram_y++)
+		int height = this->cram_height;
+		if(this->device == "5k" && ((cram_bank % 2) == 1))
+			height = height / 2 + 8;
+		for (int cram_y = 0; cram_y < height; cram_y++)
 		for (int cram_x = 0; cram_x < this->cram_width; cram_x++)
 			cram_bits.push_back(this->cram[cram_bank][cram_x][cram_y]);
-
+		
+		if(this->device == "5k") {
+			debug("CRAM: Setting bank height to %d.\n", height);
+			write_byte(ofs, crc_value, file_offset, 0x72);
+			write_byte(ofs, crc_value, file_offset, height >> 8);
+			write_byte(ofs, crc_value, file_offset, height);
+		}
+		
 		debug("CRAM: Setting bank %d.\n", cram_bank);
 		write_byte(ofs, crc_value, file_offset, 0x11);
 		write_byte(ofs, crc_value, file_offset, cram_bank);
@@ -491,10 +502,13 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 
 	if (this->bram_width && this->bram_height)
 	{
-		debug("BRAM: Setting bank width to %d.\n", this->bram_width);
-		write_byte(ofs, crc_value, file_offset, 0x62);
-		write_byte(ofs, crc_value, file_offset, (this->bram_width-1) >> 8);
-		write_byte(ofs, crc_value, file_offset, (this->bram_width-1));
+		if(this->device != "5k") {
+			debug("BRAM: Setting bank width to %d.\n", this->bram_width);
+			write_byte(ofs, crc_value, file_offset, 0x62);
+			write_byte(ofs, crc_value, file_offset, (this->bram_width-1) >> 8);
+			write_byte(ofs, crc_value, file_offset, (this->bram_width-1));
+		}
+
 
 		debug("BRAM: Setting bank height to %d.\n", this->bram_height);
 		write_byte(ofs, crc_value, file_offset, 0x72);
@@ -510,14 +524,25 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 			for (int offset = 0; offset < this->bram_height; offset += bram_chunk_size)
 			{
 				vector<bool> bram_bits;
+				int width = this->bram_width;
+				if(this->device == "5k" && ((bram_bank % 2) == 1))
+					width = width / 2;
 				for (int bram_y = 0; bram_y < bram_chunk_size; bram_y++)
-				for (int bram_x = 0; bram_x < this->bram_width; bram_x++)
+				for (int bram_x = 0; bram_x < width; bram_x++)
 					bram_bits.push_back(this->bram[bram_bank][bram_x][bram_y+offset]);
 
 				debug("BRAM: Setting bank offset to %d.\n", offset);
 				write_byte(ofs, crc_value, file_offset, 0x82);
 				write_byte(ofs, crc_value, file_offset, offset >> 8);
 				write_byte(ofs, crc_value, file_offset, offset);
+
+				if(this->device == "5k") {
+					debug("BRAM: Setting bank width to %d.\n", width);
+					write_byte(ofs, crc_value, file_offset, 0x62);
+					write_byte(ofs, crc_value, file_offset, (width-1) >> 8);
+					write_byte(ofs, crc_value, file_offset, (width-1));
+				}
+
 
 				debug("BRAM: Writing bank %d data.\n", bram_bank);
 				write_byte(ofs, crc_value, file_offset, 0x01);
@@ -632,18 +657,35 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 				error("Unsupported chip type '%s'.\n", this->device.c_str());
 
 			this->cram.resize(4);
-			for (int i = 0; i < 4; i++) {
-				this->cram[i].resize(this->cram_width);
-				for (int x = 0; x < this->cram_width; x++)
-					this->cram[i][x].resize(this->cram_height);
+			if(this->device == "5k") {
+				for (int i = 0; i < 4; i++) {
+					this->cram[i].resize(this->cram_width);
+					for (int x = 0; x < this->cram_width; x++)
+						this->cram[i][x].resize(((i % 2) == 1) ? (this->cram_height / 2 + 8) : this->cram_height);
+				}
+
+				this->bram.resize(4);
+				for (int i = 0; i < 4; i++) {
+					int width = ((i % 2) == 1) ? (this->bram_width / 2) : this->bram_width;
+					this->bram[i].resize(width);
+					for (int x = 0; x < width; x++)
+						this->bram[i][x].resize(this->bram_height);
+				}
+			} else {
+				for (int i = 0; i < 4; i++) {
+					this->cram[i].resize(this->cram_width);
+					for (int x = 0; x < this->cram_width; x++)
+						this->cram[i][x].resize(this->cram_height);
+				}
+
+				this->bram.resize(4);
+				for (int i = 0; i < 4; i++) {
+					this->bram[i].resize(this->bram_width);
+					for (int x = 0; x < this->bram_width; x++)
+						this->bram[i][x].resize(this->bram_height);
+				}
 			}
 
-			this->bram.resize(4);
-			for (int i = 0; i < 4; i++) {
-				this->bram[i].resize(this->bram_width);
-				for (int x = 0; x < this->bram_width; x++)
-					this->bram[i][x].resize(this->bram_height);
-			}
 
 			got_device = true;
 			continue;
@@ -661,7 +703,7 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 			continue;
 		}
 
-		if (command == ".io_tile" || command == ".logic_tile" || command == ".ramb_tile" || command == ".ramt_tile")
+		if (command == ".io_tile" || command == ".logic_tile" || command == ".ramb_tile" || command == ".ramt_tile" || command.substr(0, 4) == ".dsp" || command == ".ipconn_tile")
 		{
 			if (!got_device)
 				error("Missing .device statement before %s.\n", command.c_str());
@@ -1165,16 +1207,17 @@ BramIndexConverter::BramIndexConverter(const FpgaConfig *fpga, int tile_x, int t
 	// used for SRAM instead of logic. Therefore the bitstream for the top two
 	// quadrants are half the height of the bottom.
 	if (this->fpga->device == "5k") {
-		top_half = this->tile_y > (chip_height / 3);
+		top_half = this->tile_y > (2 * chip_height / 3);
 	}
 
 	this->bank_num = 0;
 	int y_offset = this->tile_y - 1;
 	if (this->fpga->device == "5k") {
-		if (!top_half) {
+		if (top_half) {
 			this->bank_num |= 1;
+			y_offset = this->tile_y - (2 * chip_height / 3);
 		} else {
-			y_offset = this->tile_y - (chip_height / 3);
+			//y_offset = this->tile_y - (2 * chip_height / 3);
 		}
 	} else if (top_half) {
 		this->bank_num |= 1;
