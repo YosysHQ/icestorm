@@ -217,4 +217,32 @@ The <span style="font-family:monospace">CLKLF</span> output of SB_LFOSC is conne
 	<tr><td><em>SPRAM_ENABLE</em></td><td><em>(0, 1, CBIT_0)</em></td><td><em>(0, 1, CBIT_1)</em></td><td><em>(25, 1, CBIT_0)</em></td><td><em>(25, 1, CBIT_1)</em></td></tr>
 	</table>
 
+<h2>RGB LED Driver</h2>
+<p>The UltraPlus devices contain an internal 3-channel 2-24mA constant-current driver intended for RGB led driving (SB_RGBA_DRV). It is broken out onto 3 pins: 39, 40 and 41 on the QFN48 package. 
+The LED driver is implemented using the IPConnect tiles and is entirely seperate to the IO cells, if the LED driver is ignored or disabled on a pin then the pin
+can be used as an open-drain IO using the standard IO cell.</p>
+<p>Note that the UltraPlus devices also have a seperate PWM generator IP core, which would often be connected to this one to create LED effects such as "breathing" without
+	involving FPGA resources.</p>
+<p>The LED driver connections are shown in the label below.</p>
+<table class="ctab">
+<tr><th>Signal</th><th>Net</th></tr>
+<tr><td>CURREN</td><td>(25, 29, lutff_6/in_3)</td></tr>
+<tr><td>RGBLEDEN</td><td>(0, 30, lutff_1/in_1)</td></tr>
+<tr><td>RGB0PWM</td><td>(0, 30, lutff_2/in_1)</td></tr>
+<tr><td>RGB1PWM</td><td>(0, 30, lutff_3/in_1)</td></tr>
+<tr><td>RGB2PWM</td><td>(0, 30, lutff_4/in_1)</td></tr>
+</table>
+<p>The configuration bits are as follows. As well as the documented bits, another bit "RGBA_DRV_EN" is set if any of the channels are enabled.</p>
+<table class="ctab">
+
+<tr><th>Parameter</th><th>Bit</th></tr>
+<tr><td>RGBA_DRV_EN</td><td>(0, 28, CBIT_5)</td></tr>
+<tr><td>RGB0_CURRENT[1:0]</td><td>(0, 28, CBIT_[7:6])</td></tr>
+<tr><td>RGB0_CURRENT[5:2]</td><td>(0, 29, CBIT_[3:0])</td></tr>
+<tr><td>RGB1_CURRENT[3:0]</td><td>(0, 29, CBIT_[7:4])</td></tr>
+<tr><td>RGB1_CURRENT[5:4]</td><td>(0, 30, CBIT_[1:0])</td></tr>
+<tr><td>RGB2_CURRENT[5:0]</td><td>(0, 30, CBIT_[7:2])</td></tr>
+<tr><td>CURRENT_MODE</td><td>(0, 28, CBIT_4)</td></tr>
+
+</table>
 </body></html>
