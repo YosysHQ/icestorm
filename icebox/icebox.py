@@ -182,7 +182,12 @@ class iceconfig:
         if self.device == "384":
             return [ ]
         assert False
-
+    
+    # Return true if device is Ultra/UltraPlus series, i.e. has
+    # IpConnect/DSP at the sides instead of IO
+    def is_ultra(self):
+        return self.device in ["5k"]
+    
     def colbuf_db(self):
         if self.device == "1k":
             entries = list()
@@ -275,14 +280,14 @@ class iceconfig:
         assert False
 
     def tile_type(self, x, y):
-        if x == 0 and self.device != "5k": return "IO"
+        if x == 0 and (not self.is_ultra()): return "IO"
         if y == 0: return "IO"
-        if x == self.max_x and self.device != "5k": return "IO"
+        if x == self.max_x and (not self.is_ultra()): return "IO"
         if y == self.max_y: return "IO"
         if (x, y) in self.ramb_tiles: return "RAMB"
         if (x, y) in self.ramt_tiles: return "RAMT"
         if (x, y) in self.logic_tiles: return "LOGIC"
-        if (x == 0 or x == self.max_x) and self.device == "5k":
+        if (x == 0 or x == self.max_x) and self.is_ultra():
             if y in [5, 10, 15, 23]:
                 return "DSP0"
             elif y in [6, 11, 16, 24]:
@@ -313,25 +318,25 @@ class iceconfig:
             if netname.startswith("logic_op_bot_"):
                 if y == self.max_y and 0 < x < self.max_x: return True
             if netname.startswith("logic_op_bnl_"):
-                if x == self.max_x and 1 < y < self.max_y and (self.device != "5k"): return True
+                if x == self.max_x and 1 < y < self.max_y and (not self.is_ultra()): return True
                 if y == self.max_y and 1 < x < self.max_x: return True
             if netname.startswith("logic_op_bnr_"):
-                if x == 0 and 1 < y < self.max_y and (self.device != "5k"): return True
+                if x == 0 and 1 < y < self.max_y and (not self.is_ultra()): return True
                 if y == self.max_y and 0 < x < self.max_x-1: return True
 
             if netname.startswith("logic_op_top_"):
                 if y == 0 and 0 < x < self.max_x: return True
             if netname.startswith("logic_op_tnl_"):
-                if x == self.max_x and 0 < y < self.max_y-1 and (self.device != "5k"): return True
+                if x == self.max_x and 0 < y < self.max_y-1 and (not self.is_ultra()): return True
                 if y == 0 and 1 < x < self.max_x: return True
             if netname.startswith("logic_op_tnr_"):
-                if x == 0 and 0 < y < self.max_y-1 and (self.device != "5k"): return True
+                if x == 0 and 0 < y < self.max_y-1 and (not self.is_ultra()): return True
                 if y == 0 and 0 < x < self.max_x-1: return True
 
             if netname.startswith("logic_op_lft_"):
-                if x == self.max_x and (self.device != "5k"): return True
+                if x == self.max_x and (not self.is_ultra()): return True
             if netname.startswith("logic_op_rgt_"):
-                if x == 0 and (self.device != "5k"): return True
+                if x == 0 and (not self.is_ultra()): return True
 
             return False
 
@@ -340,22 +345,22 @@ class iceconfig:
         return pos_has_net(self.tile_pos(x, y), netname)
 
     def tile_follow_net(self, x, y, direction, netname):
-        if x == 1 and y not in (0, self.max_y) and direction == 'l': return pos_follow_net("x", "L", netname, self.device)
-        if y == 1 and x not in (0, self.max_x) and direction == 'b': return pos_follow_net("x", "B", netname, self.device)
-        if x == self.max_x-1 and y not in (0, self.max_y) and direction == 'r': return pos_follow_net("x", "R", netname, self.device)
-        if y == self.max_y-1 and x not in (0, self.max_x) and direction == 't': return pos_follow_net("x", "T", netname, self.device)
-        if self.device == "5k":
-            if y == 1 and x in (0, self.max_x) and direction == 'b': return pos_follow_net(self.tile_pos(x, y), "B", netname, self.device)
-            if y == self.max_y-1 and x in (0, self.max_x) and direction == 't': return pos_follow_net(self.tile_pos(x, y), "T", netname, self.device)
-            if x == 1 and y in (0, self.max_y) and direction == 'l': return pos_follow_net(self.tile_pos(x, y), "L", netname, self.device)
-            if x == self.max_x-1 and y in (0, self.max_y) and direction == 'r': return pos_follow_net(self.tile_pos(x, y), "R", netname, self.device)
+        if x == 1 and y not in (0, self.max_y) and direction == 'l': return pos_follow_net("x", "L", netname, self.is_ultra())
+        if y == 1 and x not in (0, self.max_x) and direction == 'b': return pos_follow_net("x", "B", netname, self.is_ultra())
+        if x == self.max_x-1 and y not in (0, self.max_y) and direction == 'r': return pos_follow_net("x", "R", netname, self.is_ultra())
+        if y == self.max_y-1 and x not in (0, self.max_x) and direction == 't': return pos_follow_net("x", "T", netname, self.is_ultra())
+        if self.is_ultra(): # Pass through corner positions as they must be handled differently
+            if y == 1 and x in (0, self.max_x) and direction == 'b': return pos_follow_net(self.tile_pos(x, y), "B", netname, self.is_ultra())
+            if y == self.max_y-1 and x in (0, self.max_x) and direction == 't': return pos_follow_net(self.tile_pos(x, y), "T", netname, self.is_ultra())
+            if x == 1 and y in (0, self.max_y) and direction == 'l': return pos_follow_net(self.tile_pos(x, y), "L", netname, self.is_ultra())
+            if x == self.max_x-1 and y in (0, self.max_y) and direction == 'r': return pos_follow_net(self.tile_pos(x, y), "R", netname, self.is_ultra())
 
-        return pos_follow_net(self.tile_pos(x, y), direction, netname, self.device)
+        return pos_follow_net(self.tile_pos(x, y), direction, netname, self.is_ultra())
 
     def follow_funcnet(self, x, y, func):
         neighbours = set()
         def do_direction(name, nx, ny):
-            if (0 < nx < self.max_x or self.device == "5k") and 0 < ny < self.max_y:
+            if (0 < nx < self.max_x or self.is_ultra()) and 0 < ny < self.max_y:
                 neighbours.add((nx, ny, "neigh_op_%s_%d" % (name, func)))
             if nx in (0, self.max_x) and 0 < ny < self.max_y and nx != x:
                 neighbours.add((nx, ny, "logic_op_%s_%d" % (name, func)))
@@ -510,12 +515,12 @@ class iceconfig:
                         neighbours.add((nx, ny, netname))
 
         match = re.match(r"sp4_r_v_b_(\d+)", netname)
-        if match and ((0 < x < self.max_x-1) or (self.device == "5k" and (x < self.max_x))):
+        if match and ((0 < x < self.max_x-1) or (self.is_ultra() and (x < self.max_x))):
             neighbours.add((x+1, y, sp4v_normalize("sp4_v_b_" + match.group(1))))
         #print('\tafter r_v_b', neighbours)
 
         match = re.match(r"sp4_v_[bt]_(\d+)", netname)
-        if match and (1 < x < self.max_x or ((self.device == "5k") and (x > 0))):
+        if match and (1 < x < self.max_x or (self.is_ultra() and (x > 0))):
             n = sp4v_normalize(netname, "b")
             if n is not None:
                 n = n.replace("sp4_", "sp4_r_")
@@ -547,19 +552,20 @@ class iceconfig:
                 if s[0] in (0, self.max_x) and s[1] in (0, self.max_y):
                     if re.match("span4_(vert|horz)_[lrtb]_\d+$", n):
                         m = re.match("span4_(vert|horz)_([lrtb])_\d+$", n)
-                        if self.device == "5k" and (m.group(2) == "l" or m.group(2) == "t"):
+                        #We ignore L and T edges when performing the Ultra/UltraPlus corner algorithm
+                        if self.is_ultra() and (m.group(2) == "l" or m.group(2) == "t"): 
                             continue
                         vert_net = n.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_")
                         horz_net = n.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_")
                         
-                        if self.device == "5k":
+                        if self.is_ultra(): #Convert between span4 and sp4, and perform U/UP corner tracing
                             m = re.match("span4_vert_([lrtb])_(\d+)$", vert_net)
                             assert m
                             idx = int(m.group(2))
                             h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
                             if v_idx is None:
                                 if (s[0] == 0 and s[1] == 0 and direction == "l") or (s[0] == self.max_x and s[1] == self.max_y and direction == "r"):
-                                    continue
+                                    continue #Not routed, skip
                             else:    
                                 vert_net = "sp4_v_%s_%d" % (m.group(1), v_idx)
 
@@ -569,7 +575,7 @@ class iceconfig:
                             h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
                             if h_idx is None:
                                 if (s[0] == 0 and s[1] == 0 and direction == "b") or (s[0] == self.max_x and s[1] == self.max_y and direction == "t"):
-                                    continue
+                                    continue #Not routed, skip
                             else:
                                 horz_net = "span4_horz_%s_%d" % (m.group(1), h_idx)
                             
@@ -583,11 +589,14 @@ class iceconfig:
                             if direction == "r": s = (self.max_x, self.max_y-1, vert_net)
                             if direction == "t": s = (self.max_x-1, self.max_y, horz_net)
 
-                        vert_net = netname.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_").replace("_h_", "_v_")
-                        horz_net = netname.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_").replace("_v_", "_h_")
+                        vert_net = netname.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_")
+                        horz_net = netname.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_")
 
-                        if self.device == "5k":    
-                            m = re.match("(span4_vert|sp4_v)_([lrtb])_(\d+)$", vert_net)
+                        if self.is_ultra():   
+                            # Might have sp4 not span4 here
+                            vert_net = vert_net.replace("_h_", "_v_")
+                            horz_net = horz_net.replace("_v_", "_h_")
+                            m = re.match("(span4_vert|sp4_v)_([lrtb])_(\d+)$", vert_net) 
                             assert m
                             idx = int(m.group(3))
                             h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
@@ -1048,13 +1057,13 @@ def pos_has_net(pos, netname):
         if re.search(r"_vert_[bt]_\d+$", netname): return False
     return True
 
-def pos_follow_net(pos, direction, netname, device):
-    if pos == "x" or ((pos in ("l", "r")) and (device == "5k")):
+def pos_follow_net(pos, direction, netname, is_ultra):
+    if pos == "x" or ((pos in ("l", "r")) and is_ultra):
             m = re.match("sp4_h_[lr]_(\d+)$", netname)
             if m and direction in ("l", "L"):
                 n = sp4h_normalize(netname, "l")
                 if n is not None:
-                    if direction == "l" or device == "5k":
+                    if direction == "l" or is_ultra:
                         n = re.sub("_l_", "_r_", n)
                         n = sp4h_normalize(n)
                     else:
@@ -1064,7 +1073,7 @@ def pos_follow_net(pos, direction, netname, device):
             if m and direction in ("r", "R"):
                 n = sp4h_normalize(netname, "r")
                 if n is not None:
-                    if direction == "r" or device == "5k":
+                    if direction == "r" or is_ultra:
                         n = re.sub("_r_", "_l_", n)
                         n = sp4h_normalize(n)
                     else:
@@ -1074,7 +1083,7 @@ def pos_follow_net(pos, direction, netname, device):
 
             m = re.match("sp4_v_[tb]_(\d+)$", netname)
             if m and direction in ("t", "T"):
-                if device == "5k" and direction == "T" and pos in ("l", "r"):
+                if is_ultra and direction == "T" and pos in ("l", "r"):
                     return re.sub("sp4_v_", "span4_vert_", netname)
                 n = sp4v_normalize(netname, "t")
                 if n is not None:
@@ -1086,7 +1095,7 @@ def pos_follow_net(pos, direction, netname, device):
                         n = re.sub("sp4_v_", "span4_vert_", n)
                     return n
             if m and direction in ("b", "B"):
-                if device == "5k" and direction == "B" and pos in ("l", "r"):
+                if is_ultra and direction == "B" and pos in ("l", "r"):
                     return re.sub("sp4_v_", "span4_vert_", netname)
                 n = sp4v_normalize(netname, "b")
                 if n is not None:
@@ -1102,7 +1111,7 @@ def pos_follow_net(pos, direction, netname, device):
             if m and direction in ("l", "L"):
                 n = sp12h_normalize(netname, "l")
                 if n is not None:
-                    if direction == "l" or device == "5k":
+                    if direction == "l" or is_ultra:
                         n = re.sub("_l_", "_r_", n)
                         n = sp12h_normalize(n)
                     else:
@@ -1112,7 +1121,7 @@ def pos_follow_net(pos, direction, netname, device):
             if m and direction in ("r", "R"):
                 n = sp12h_normalize(netname, "r")
                 if n is not None:
-                    if direction == "r" or device == "5k":
+                    if direction == "r" or is_ultra:
                         n = re.sub("_r_", "_l_", n)
                         n = sp12h_normalize(n)
                     else:
@@ -1142,7 +1151,7 @@ def pos_follow_net(pos, direction, netname, device):
                         n = re.sub("sp12_v_", "span12_vert_", n)
                     return n
 
-    if (pos in ("l", "r" )) and (device != "5k"):
+    if (pos in ("l", "r" )) and (not is_ultra):
         m = re.match("span4_vert_([bt])_(\d+)$", netname)
         if m:
             case, idx = direction + m.group(1), int(m.group(2))
@@ -1170,13 +1179,13 @@ def pos_follow_net(pos, direction, netname, device):
             if case == "rr" and idx >= 12:
                 return "span4_horz_l_%d" % idx
 
-    if pos == "l" and direction == "r" and (device != "5k"):
+    if pos == "l" and direction == "r" and (not is_ultra):
             m = re.match("span4_horz_(\d+)$", netname)
             if m: return sp4h_normalize("sp4_h_l_%s" % m.group(1))
             m = re.match("span12_horz_(\d+)$", netname)
             if m: return sp12h_normalize("sp12_h_l_%s" % m.group(1))
 
-    if pos == "r" and direction == "l" and (device != "5k"):
+    if pos == "r" and direction == "l" and (not is_ultra):
             m = re.match("span4_horz_(\d+)$", netname)
             if m: return sp4h_normalize("sp4_h_r_%s" % m.group(1))
             m = re.match("span12_horz_(\d+)$", netname)
@@ -1250,7 +1259,7 @@ def run_checks_neigh():
             if x in (0, ic.max_x) and y in (0, ic.max_y):
                 continue
             # Skip the sides of a 5k device.
-            if ic.device == "5k" and x in (0, ic.max_x):
+            if self.is_ultra() and x in (0, ic.max_x):
                 continue
             add_segments((x, y), ic.tile_db(x, y))
             if (x, y) in ic.logic_tiles:
