@@ -24,6 +24,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #define log(...) fprintf(stderr, __VA_ARGS__);
 #define error(...) do { fprintf(stderr, "%s: ", program_short_name); fprintf(stderr, __VA_ARGS__); exit(EXIT_FAILURE); } while (0)
 
@@ -178,6 +182,18 @@ void usage()
 
 int main(int argc, char **argv)
 {
+#ifdef __EMSCRIPTEN__
+    EM_ASM(
+        if (ENVIRONMENT_IS_NODE)
+        {
+            FS.mkdir('/hostcwd');
+            FS.mount(NODEFS, { root: '.' }, '/hostcwd');
+            FS.mkdir('/hostfs');
+            FS.mount(NODEFS, { root: '/' }, '/hostfs');
+        }
+    );
+#endif
+
     int c;
     char *endptr = NULL;
     bool coldboot = false;

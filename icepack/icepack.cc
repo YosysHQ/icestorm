@@ -34,6 +34,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #ifdef _WIN32
 #define __PRETTY_FUNCTION__ __FUNCTION__
 #endif
@@ -1338,6 +1342,18 @@ void usage()
 
 int main(int argc, char **argv)
 {
+#ifdef __EMSCRIPTEN__
+	EM_ASM(
+		if (ENVIRONMENT_IS_NODE)
+		{
+			FS.mkdir('/hostcwd');
+			FS.mount(NODEFS, { root: '.' }, '/hostcwd');
+			FS.mkdir('/hostfs');
+			FS.mount(NODEFS, { root: '/' }, '/hostfs');
+		}
+	);
+#endif
+
 	vector<string> parameters;
 	bool unpack_mode = false;
 	bool nosleep_mode = false;

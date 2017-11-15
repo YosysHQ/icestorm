@@ -28,6 +28,10 @@
 #include <fstream>
 #include <iostream>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 using std::map;
 using std::pair;
 using std::vector;
@@ -109,6 +113,18 @@ void help(const char *cmd)
 
 int main(int argc, char **argv)
 {
+#ifdef __EMSCRIPTEN__
+	EM_ASM(
+		if (ENVIRONMENT_IS_NODE)
+		{
+			FS.mkdir('/hostcwd');
+			FS.mount(NODEFS, { root: '.' }, '/hostcwd');
+			FS.mkdir('/hostfs');
+			FS.mount(NODEFS, { root: '/' }, '/hostfs');
+		}
+	);
+#endif
+
 	bool verbose = false;
 	bool generate = false;
 
