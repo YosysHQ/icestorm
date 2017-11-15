@@ -129,7 +129,8 @@ print("""#
 # .logic_tile X Y
 # .ramb_tile X Y
 # .ramt_tile X Y
-#
+# .dsp[0..3]_tile X Y
+# .ipcon_tile X Y
 #    declares the existence of a IO/LOGIC/RAM tile with the given coordinates
 #
 #
@@ -137,6 +138,8 @@ print("""#
 # .logic_tile_bits COLUMNS ROWS
 # .ramb_tile_bits COLUMNS ROWS
 # .ramt_tile_bits COLUMNS ROWS
+# .dsp[0..3]_tile_bits X Y
+# .ipcon_tile_bits X Y
 # FUNCTION_1 CONFIG_BITS_NAMES_1
 # FUNCTION_2 CONFIG_BITS_NAMES_2
 # ...
@@ -145,6 +148,7 @@ print("""#
 #
 #
 # .extra_cell X Y <cell-type>
+# .extra_cell X Y Z <cell-type>
 # KEY MULTI-FIELD-VALUE
 # ....
 #
@@ -238,6 +242,16 @@ for idx in sorted(ic.ramt_tiles):
     print(".ramt_tile %d %d" % idx)
 print()
 
+for dsp_idx in range(4):
+    for idx in sorted(ic.dsp_tiles[dsp_idx]):
+        x, y = idx
+        print(".dsp%d_tile %d %d" % (dsp_idx, x, y))
+    print()    
+
+for idx in sorted(ic.ipcon_tiles):
+    print(".ipcon_tile %d %d" % idx)
+print()
+
 def print_tile_nonrouting_bits(tile_type, idx):
     tx = idx[0]
     ty = idx[1]
@@ -266,6 +280,11 @@ if not mode_384:
     print_tile_nonrouting_bits("ramb", list(ic.ramb_tiles.keys())[0])
     print_tile_nonrouting_bits("ramt", list(ic.ramt_tiles.keys())[0])
 
+if ic.is_ultra():
+    for dsp_idx in range(4):
+        print_tile_nonrouting_bits("dsp%d" % dsp_idx, list(ic.dsp_tiles[dsp_idx].keys())[0])
+    print_tile_nonrouting_bits("ipcon", list(ic.ipcon_tiles.keys())[0])
+
 print(".extra_cell 0 0 WARMBOOT")
 for key in sorted(icebox.warmbootinfo_db[ic.device]):
     print("%s %s" % (key, " ".join([str(k) for k in icebox.warmbootinfo_db[ic.device][key]])))
@@ -285,6 +304,17 @@ for pllid in ic.pll_list():
             print("%s %s" % (key, " ".join([str(k) for k in pllinfo[key]])))
     print()
 
+for dsploc in ic.dsp_tiles[0]:
+    x, y = dsploc
+    print(".extra_cell %d %d 0 MAC16" % dsploc)
+    nets = ic.get_dsp_nets_db(x, y)
+    for key in sorted(nets):
+        print("%s %s" % (key, " ".join([str(k) for k in nets[key]])))
+    
+    cfg = ic.get_dsp_config_db(x, y)
+    for key in sorted(cfg):
+        print("%s %s" % (key, " ".join([str(k) for k in cfg[key]])))
+           
 print(".extra_bits")
 extra_bits = dict()
 for idx in sorted(ic.extra_bits_db()):

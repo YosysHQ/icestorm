@@ -242,7 +242,64 @@ class iceconfig:
             return entries
 
         assert False
+        
+    # Return a map between HDL name and routing net and location for a given DSP cell    
+    def get_dsp_nets_db(self, x, y):
+        assert ((x, y) in self.dsp_tiles[0])
+        # Control signals
+        nets = {
+            "CLK":          (x, y+2, "lutff_global/clk"),
+            "CE":           (x, y+2, "lutff_global/cen"),
+            "IRSTTOP":      (x, y+1, "lutff_global/s_r"),
+            "IRSTBOT":      (x, y+0, "lutff_global/s_r"),
+            "ORSTTOP":      (x, y+3, "lutff_global/s_r"),
+            "ORSTBOT":      (x, y+2, "lutff_global/s_r"),
+            "AHOLD":        (x, y+2, "lutff_0/in_0"),
+            "BHOLD":        (x, y+1, "lutff_0/in_0"),
+            "CHOLD":        (x, y+3, "lutff_0/in_0"),
+            "DHOLD":        (x, y+0, "lutff_0/in_0"),
+            "OHOLDTOP":     (x, y+3, "lutff_1/in_0"),
+            "OHOLDBOT":     (x, y+0, "lutff_1/in_0"),
+            "ADDSUBTOP":    (x, y+3, "lutff_3/in_0"),
+            "ADDSUBBOT":    (x, y+0, "lutff_3/in_0"),
+            "OLOADTOP":     (x, y+3, "lutff_2/in_0"),
+            "OLOADBOT":    (x, y+0, "lutff_2/in_0"),
+            "CI":           (x, y+0, "lutff_4/in_0"),
+            "CO":           (x, y+4, "slf_op_0")
+        }
+        #Data ports
+        for i in range(8):
+            nets["C_%d" % i]        = (x, y+3, "lutff_%d/in_3" % i)
+            nets["C_%d" % (i+8)]    = (x, y+3, "lutff_%d/in_1" % i)
+            
+            nets["A_%d" % i]        = (x, y+2, "lutff_%d/in_3" % i)
+            nets["A_%d" % (i+8)]    = (x, y+2, "lutff_%d/in_1" % i)
 
+            nets["B_%d" % i]        = (x, y+1, "lutff_%d/in_3" % i)
+            nets["B_%d" % (i+8)]    = (x, y+1, "lutff_%d/in_1" % i)
+
+            nets["D_%d" % i]        = (x, y+0, "lutff_%d/in_3" % i)
+            nets["D_%d" % (i+8)]    = (x, y+0, "lutff_%d/in_1" % i)
+        for i in range(32):
+            nets["O_%d" % i]        = (x, y+(i//8), "mult/O_%d" % i)
+        return nets
+    
+    # Return the location of configuration bits for a given DSP cell
+    def get_dsp_config_db(self, x, y):
+        assert ((x, y) in self.dsp_tiles[0])
+         
+        override = { }
+        if (("%s_%d_%d" % (self.device, x, y)) in dsp_config_db):
+             override = dsp_config_db["%s_%d_%d" % (self.device, x, y)]
+        default_db = dsp_config_db["default"]
+        merged = { }
+        for cfgkey in default_db:
+            cx, cy, cbit = default_db[cfgkey]
+            if cfgkey in override:
+                cx, cy, cbit = override[cfgkey]
+            merged[cfgkey] = (x + cx, y + cy, cbit)
+        return merged
+    
     def tile_db(self, x, y):
         # Only these devices have IO on the left and right sides.
         if self.device in ["384", "1k", "8k"]:
@@ -467,9 +524,9 @@ class iceconfig:
                 h_idx = (idx ^ 1) - 8
         elif corner == "tr":
             #TODO: bounds check for v_idx case?
-            if idx <= 24:
+            if idx <= 16:
                 v_idx = (idx + 12) ^ 1
-            if idx >= 12 and idx < 36:
+            if idx >= 12 and idx < 28:
                 h_idx = (idx ^ 1) - 12            
         elif corner == "br":
             #TODO: bounds check for v_idx case?
@@ -4340,6 +4397,47 @@ pinloc_db = {
     ],
 }
 
+# This database contains the locations of configuration bits of the DSP tiles
+# The standard configuration is stored under the key  "default". If it is necessary to
+# override it for a certain DSP on a certain device use the key "{device}_{x}_{y}" where
+# {x} and {y} are the location of the DSP0 tile of the DSP (NOT the tile the cbit is in).
+# x and y are relative to the DSP0 tile.
+dsp_config_db = {
+    "default" : {
+            "C_REG":                        (0, 0, "CBIT_0"),
+            "A_REG":                        (0, 0, "CBIT_1"),
+            "B_REG":                        (0, 0, "CBIT_2"),
+            "D_REG":                        (0, 0, "CBIT_3"),
+            "TOP_8x8_MULT_REG":             (0, 0, "CBIT_4"),
+            "BOT_8x8_MULT_REG":             (0, 0, "CBIT_5"),
+            "PIPELINE_16x16_MULT_REG1":     (0, 0, "CBIT_6"),
+            "PIPELINE_16x16_MULT_REG2":     (0, 0, "CBIT_7"),
+            "TOPOUTPUT_SELECT_0":           (0, 1, "CBIT_0"),
+            "TOPOUTPUT_SELECT_1":           (0, 1, "CBIT_1"),
+            "TOPADDSUB_LOWERINPUT_0":       (0, 1, "CBIT_2"),
+            "TOPADDSUB_LOWERINPUT_1":       (0, 1, "CBIT_3"),
+            "TOPADDSUB_UPPERINPUT":         (0, 1, "CBIT_4"),
+            "TOPADDSUB_CARRYSELECT_0":      (0, 1, "CBIT_5"),
+            "TOPADDSUB_CARRYSELECT_1":      (0, 1, "CBIT_6"),
+            "BOTOUTPUT_SELECT_0":           (0, 1, "CBIT_7"),
+            "BOTOUTPUT_SELECT_1":           (0, 2, "CBIT_0"),
+            "BOTADDSUB_LOWERINPUT_0":       (0, 2, "CBIT_1"),
+            "BOTADDSUB_LOWERINPUT_1":       (0, 2, "CBIT_2"),
+            "BOTADDSUB_UPPERINPUT":         (0, 2, "CBIT_3"),
+            "BOTADDSUB_CARRYSELECT_0":      (0, 2, "CBIT_4"),
+            "BOTADDSUB_CARRYSELECT_1":      (0, 2, "CBIT_5"),
+            "MODE_8x8":                     (0, 2, "CBIT_6"),
+            "A_SIGNED":                     (0, 2, "CBIT_7"),
+            "B_SIGNED":                     (0, 3, "CBIT_0")
+        },
+    "5k_0_15": {
+            "TOPOUTPUT_SELECT_1":           (0, 4, "CBIT_3"),
+            "TOPADDSUB_LOWERINPUT_0":       (0, 4, "CBIT_4"),
+            "TOPADDSUB_LOWERINPUT_1":       (0, 4, "CBIT_5"),
+            "TOPADDSUB_UPPERINPUT":         (0, 4, "CBIT_6")
+        }
+}
+
 iotile_full_db = parse_db(iceboxdb.database_io_txt)
 logictile_db = parse_db(iceboxdb.database_logic_txt, "1k")
 logictile_5k_db = parse_db(iceboxdb.database_logic_txt, "5k")
@@ -4355,6 +4453,12 @@ ramttile_8k_db = parse_db(iceboxdb.database_ramt_8k_txt, "8k")
 ipcon_5k_db = parse_db(iceboxdb.database_ipcon_5k_txt, "5k")
 dsp0_5k_db = parse_db(iceboxdb.database_dsp0_5k_txt, "5k")
 dsp1_5k_db = parse_db(iceboxdb.database_dsp1_5k_txt, "5k")
+
+#This bit doesn't exist in DB because icecube won't ever set it,
+#but it exists
+dsp1_5k_db.append([["B4[7]"], "IpConfig", "CBIT_5"])
+
+
 dsp2_5k_db = parse_db(iceboxdb.database_dsp2_5k_txt, "5k")
 dsp3_5k_db = parse_db(iceboxdb.database_dsp3_5k_txt, "5k")
 
