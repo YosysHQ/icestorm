@@ -4462,6 +4462,13 @@ dsp1_5k_db.append([["B4[7]"], "IpConfig", "CBIT_5"])
 dsp2_5k_db = parse_db(iceboxdb.database_dsp2_5k_txt, "5k")
 dsp3_5k_db = parse_db(iceboxdb.database_dsp3_5k_txt, "5k")
 
+#Add missing LC_ bits to DSP and IPCon databases
+for db_to_fix in [ipcon_5k_db, dsp0_5k_db, dsp1_5k_db, dsp2_5k_db, dsp3_5k_db]:
+    for entry in db_to_fix:
+        if len(entry) >= 2 and entry[1].startswith("LC_"):
+            for lentry in logictile_5k_db:
+                if len(lentry) >= 2 and lentry[1] == entry[1]:
+                    entry[0] = lentry[0]
 
 iotile_l_db = list()
 iotile_r_db = list()
