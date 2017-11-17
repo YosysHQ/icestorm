@@ -1,6 +1,6 @@
 include ../config.mk
 
-all: chipdb-384.txt chipdb-1k.txt chipdb-8k.txt
+all: chipdb-384.txt chipdb-1k.txt chipdb-8k.txt chipdb-5k.txt
 
 chipdb-384.txt: icebox.py iceboxdb.py icebox_chipdb.py
 	python3 icebox_chipdb.py -3 > chipdb-384.new
@@ -33,6 +33,7 @@ install: all
 	cp chipdb-384.txt    $(DESTDIR)$(PREFIX)/share/icebox/
 	cp chipdb-1k.txt     $(DESTDIR)$(PREFIX)/share/icebox/
 	cp chipdb-8k.txt     $(DESTDIR)$(PREFIX)/share/icebox/
+	cp chipdb-5k.txt     $(DESTDIR)$(PREFIX)/share/icebox/
 	cp icebox.py         $(DESTDIR)$(PREFIX)/bin/icebox.py
 	cp iceboxdb.py       $(DESTDIR)$(PREFIX)/bin/iceboxdb.py
 	cp icebox_chipdb.py  $(DESTDIR)$(PREFIX)/bin/icebox_chipdb$(PY_EXE)
