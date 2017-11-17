@@ -314,7 +314,18 @@ for dsploc in ic.dsp_tiles[0]:
     cfg = ic.get_dsp_config_db(x, y)
     for key in sorted(cfg):
         print("%s %s" % (key, " ".join([str(k) for k in cfg[key]])))
-           
+    print()
+    
+if ic.device in icebox.extra_cells_db:
+    for cell in icebox.extra_cells_db[ic.device]:
+        name, loc = cell
+        x, y, z = loc
+        print(".extra_cell %d %d %d %s" % (x, y, z, name))
+        cellinfo = icebox.extra_cells_db[ic.device][cell]
+        for key in sorted(cellinfo):
+            print("%s %s" % (key, " ".join([str(k) for k in cellinfo[key]])))
+    print()
+      
 print(".extra_bits")
 extra_bits = dict()
 for idx in sorted(ic.extra_bits_db()):

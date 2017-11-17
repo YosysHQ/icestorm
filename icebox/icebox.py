@@ -4438,6 +4438,28 @@ dsp_config_db = {
         }
 }
 
+# This contains the data for extra cells not included
+# in any previous databases
+
+extra_cells_db = {
+    "5k" : {
+        ("HFOSC", (0, 31, 1)) : {
+            "CLKHFPU":                     (0, 29, "lutff_0/in_1"),
+            "CLKHFEN":                     (0, 29, "lutff_7/in_3"),
+            "CLKHF":                       (0, 29, "glb_netwk_4"),
+            "CLKHF_FABRIC":                (0, 28, "slf_op_7"),
+            "CLKHF_DIV_1":                 (0, 16, "CBIT_4"),
+            "CLKHF_DIV_0":                 (0, 16, "CBIT_3") 
+        },
+        ("LFOSC", (25, 31, 1)) : {
+            "CLKLFPU":                     (25, 29, "lutff_0/in_1"),
+            "CLKLFEN":                     (25, 29, "lutff_7/in_3"),
+            "CLKLF":                       (25, 29, "glb_netwk_5"),
+            "CLKLF_FABRIC":                (25, 29, "slf_op_0")
+        }
+    }
+}
+
 iotile_full_db = parse_db(iceboxdb.database_io_txt)
 logictile_db = parse_db(iceboxdb.database_logic_txt, "1k")
 logictile_5k_db = parse_db(iceboxdb.database_logic_txt, "5k")
