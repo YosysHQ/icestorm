@@ -4444,18 +4444,46 @@ dsp_config_db = {
 extra_cells_db = {
     "5k" : {
         ("HFOSC", (0, 31, 1)) : {
-            "CLKHFPU":                     (0, 29, "lutff_0/in_1"),
-            "CLKHFEN":                     (0, 29, "lutff_7/in_3"),
-            "CLKHF":                       (0, 29, "glb_netwk_4"),
-            "CLKHF_FABRIC":                (0, 28, "slf_op_7"),
-            "CLKHF_DIV_1":                 (0, 16, "CBIT_4"),
-            "CLKHF_DIV_0":                 (0, 16, "CBIT_3") 
+            "CLKHFPU":                      (0, 29, "lutff_0/in_1"),
+            "CLKHFEN":                      (0, 29, "lutff_7/in_3"),
+            "CLKHF":                        (0, 29, "glb_netwk_4"),
+            "CLKHF_FABRIC":                 (0, 28, "slf_op_7"),
+            "CLKHF_DIV_1":                  (0, 16, "CBIT_4"),
+            "CLKHF_DIV_0":                  (0, 16, "CBIT_3") 
         },
         ("LFOSC", (25, 31, 1)) : {
-            "CLKLFPU":                     (25, 29, "lutff_0/in_1"),
-            "CLKLFEN":                     (25, 29, "lutff_7/in_3"),
-            "CLKLF":                       (25, 29, "glb_netwk_5"),
-            "CLKLF_FABRIC":                (25, 29, "slf_op_0")
+            "CLKLFPU":                      (25, 29, "lutff_0/in_1"),
+            "CLKLFEN":                      (25, 29, "lutff_7/in_3"),
+            "CLKLF":                        (25, 29, "glb_netwk_5"),
+            "CLKLF_FABRIC":                 (25, 29, "slf_op_0")
+        },
+        ("RGBA_DRV", (0, 30, 0)) : {
+            "CURREN":                       (25, 29, "lutff_6/in_3"),
+            "RGBLEDEN":                     (0, 30, "lutff_1/in_1"),
+            "RGB0PWM":                      (0, 30, "lutff_2/in_1"),
+            "RGB1PWM":                      (0, 30, "lutff_3/in_1"),
+            "RGB2PWM":                      (0, 30, "lutff_4/in_1"),
+            "RGBA_DRV_EN":                  (0, 28, "CBIT_5"),
+            "RGB0_CURRENT_0":               (0, 28, "CBIT_6"),
+            "RGB0_CURRENT_1":               (0, 28, "CBIT_7"),
+            "RGB0_CURRENT_2":               (0, 29, "CBIT_0"),
+            "RGB0_CURRENT_3":               (0, 29, "CBIT_1"),
+            "RGB0_CURRENT_4":               (0, 29, "CBIT_2"),
+            "RGB0_CURRENT_5":               (0, 29, "CBIT_3"),
+            "RGB1_CURRENT_0":               (0, 29, "CBIT_4"),
+            "RGB1_CURRENT_1":               (0, 29, "CBIT_5"),
+            "RGB1_CURRENT_2":               (0, 29, "CBIT_6"),
+            "RGB1_CURRENT_3":               (0, 29, "CBIT_7"),
+            "RGB1_CURRENT_4":               (0, 30, "CBIT_0"),
+            "RGB1_CURRENT_5":               (0, 30, "CBIT_1"),
+            "RGB2_CURRENT_0":               (0, 30, "CBIT_2"),
+            "RGB2_CURRENT_1":               (0, 30, "CBIT_3"),
+            "RGB2_CURRENT_2":               (0, 30, "CBIT_4"),
+            "RGB2_CURRENT_3":               (0, 30, "CBIT_5"),
+            "RGB2_CURRENT_4":               (0, 30, "CBIT_6"),
+            "RGB2_CURRENT_5":               (0, 30, "CBIT_7"),
+            "CURRENT_MODE":                 (0, 28, "CBIT_4"),
+            
         }
     }
 }

@@ -324,7 +324,7 @@ if ic.device in icebox.extra_cells_db:
         cellinfo = icebox.extra_cells_db[ic.device][cell]
         for key in sorted(cellinfo):
             print("%s %s" % (key, " ".join([str(k) for k in cellinfo[key]])))
-    print()
+        print()
       
 print(".extra_bits")
 extra_bits = dict()

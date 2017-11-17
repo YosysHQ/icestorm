@@ -1,0 +1,3 @@
+set_io RGB0 39
+set_io RGB1 40
+set_io RGB2 41
