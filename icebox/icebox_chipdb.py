@@ -325,7 +325,17 @@ if ic.device in icebox.extra_cells_db:
         for key in sorted(cellinfo):
             print("%s %s" % (key, " ".join([str(k) for k in cellinfo[key]])))
         print()
-      
+     
+if ic.device in icebox.spram_db:
+    for cell in icebox.spram_db[ic.device]:
+        loc = cell
+        x, y, z = loc
+        print(".extra_cell %d %d %d SPRAM" % (x, y, z))
+        cellinfo = icebox.spram_db[ic.device][cell]
+        for key in sorted(cellinfo):
+            print("%s %s" % (key, " ".join([str(k) for k in cellinfo[key]])))
+        print()
+     
 print(".extra_bits")
 extra_bits = dict()
 for idx in sorted(ic.extra_bits_db()):

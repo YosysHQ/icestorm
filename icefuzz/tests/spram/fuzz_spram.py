@@ -77,7 +77,7 @@ for loc in spram_locs:
     net_map = {}
     for sig in spram_signals:
         net_map[sig] = set()
-    net_map["C_SPRAM_EN"] = set() # actually a CBIT not a net
+    net_map["SPRAM_EN"] = set() # actually a CBIT not a net
     
     for n in fuzz_options:
         with open("./work_spram/spram.v","w") as f:
@@ -159,15 +159,16 @@ for loc in spram_locs:
         bits = []
         with open("./work_spram/spram.exp", "r") as f:
             bits = parse_exp(f)
-        net_map["C_SPRAM_EN"].update(bits)
+        net_map["SPRAM_EN"].update(bits)
     spram_data[loc] = net_map         
 
 with open(device + "_spram_data.txt", "w") as f:
     for loc in spram_data:
-        print("SPRAM %d %d %d" % loc, file=f)
+        print("\t(%d, %d, %d): {" % loc, file=f)
         data = spram_data[loc]
         for net in sorted(data):
             cnets = []
             for cnet in data[net]:
-                cnets.append("(%d, %d, %s)" % cnet)
-            print("\t%s: %s" % (net, " ".join(cnets)), file=f)
+                cnets.append("(%d, %d, \"%s\")" % cnet)
+            print("\t\t%s %s, " % (("\"" + net.replace("[","_").replace("]","") + "\":").ljust(24), " ".join(cnets)), file=f)
+        print("\t},", file=f)
