@@ -20,7 +20,7 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/icebram$(EXE)
 
 clean:
-	rm -f icebram
+	rm -f icebram$(EXE)
 	rm -f icebram.exe
 	rm -f demo.* demo_*.*
 	rm -f *.o *.d

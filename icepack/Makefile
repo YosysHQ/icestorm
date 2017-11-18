@@ -10,8 +10,8 @@ all: icepack$(EXE) iceunpack$(EXE)
 icepack$(EXE): icepack.o
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
-iceunpack: icepack
-	ln -sf icepack iceunpack
+iceunpack$(EXE): icepack$(EXE)
+	ln -sf icepack$(EXE) iceunpack$(EXE)
 
 iceunpack.exe:
 	# no iceunpack.exe, use icepack -u
@@ -26,8 +26,8 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/iceunpack$(EXE)
 
 clean:
-	rm -f icepack
-	rm -f iceunpack
+	rm -f icepack$(EXE)
+	rm -f iceunpack$(EXE)
 	rm -f icepack.exe
 	rm -f *.o *.d
 
