@@ -8,6 +8,22 @@ endif
 
 all: icetime$(EXE)
 
+ifeq ($(EXE),.js)
+icetime$(EXE): | share/$(CHIPDB_SUBDIR)/chipdb-384.txt share/$(CHIPDB_SUBDIR)/chipdb-1k.txt share/$(CHIPDB_SUBDIR)/chipdb-8k.txt
+
+share/$(CHIPDB_SUBDIR)/chipdb-384.txt: ../icebox/chipdb-384.txt
+	mkdir -p share/$(CHIPDB_SUBDIR)
+	cp $< $@
+share/$(CHIPDB_SUBDIR)/chipdb-1k.txt: ../icebox/chipdb-1k.txt
+	mkdir -p share/$(CHIPDB_SUBDIR)
+	cp $< $@
+share/$(CHIPDB_SUBDIR)/chipdb-8k.txt: ../icebox/chipdb-8k.txt
+	mkdir -p share/$(CHIPDB_SUBDIR)
+	cp $< $@
+
+override LDFLAGS += --embed-file share
+endif
+
 icetime$(EXE): icetime.o
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
@@ -46,7 +62,7 @@ test: test0 test1 test2 test3 test4 test5 test6 test7 test8 test9
 show: show0 show1 show2 show3 show4 show5 show6 show7 show8 show9
 
 clean:
-	rm -f icetime icetime.exe timings.inc *.o *.d
+	rm -f icetime$(EXE) icetime.exe timings.inc *.o *.d
 	rm -rf test[0-9]*
 
 -include *.d

@@ -184,7 +184,7 @@ after updating your IceStorm installation.
 bit-streams to a Lattice iCEstick and/or a Lattice iCE40-HX8K Breakout Board as unprivileged user:
 </p>
 
-<pre style="padding-left: 3em">ACTION=="add", ATTR{idVendor}=="0403", ATTR{idProduct}=="6010", MODE:="666"</pre>
+<pre style="padding-left: 3em">ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6010", MODE="0660", GROUP="plugdev", TAG+="uaccess"</pre>
 
 <p>
 <b>Notes for Archlinux:</b> just install <a href="https://aur.archlinux.org/packages/icestorm-git/">icestorm-git</a>, <a href="https://aur.archlinux.org/packages/arachne-pnr-git/">arachne-pnr-git</a> and <a href="https://aur.archlinux.org/packages/yosys-git/">yosys-git</a> from the Arch User Repository (no need to follow the install instructions above).

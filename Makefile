@@ -1,6 +1,6 @@
-include config.mk
-
 SUBDIRS = icebox icepack iceprog icemulti icepll icetime icebram
+
+include config.mk
 
 all clean install uninstall:
 	for dir in $(SUBDIRS); do \

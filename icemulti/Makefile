@@ -17,7 +17,7 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/icemulti$(EXE)
 
 clean:
-	rm -f icemulti
+	rm -f icemulti$(EXE)
 	rm -f icemulti.exe
 	rm -f *.o *.d
 

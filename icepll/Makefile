@@ -17,7 +17,7 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/icepll$(EXE)
 
 clean:
-	rm -f icepll
+	rm -f icepll$(EXE)
 	rm -f icepll.exe
 	rm -f *.o *.d
 
