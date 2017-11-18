@@ -249,4 +249,19 @@ can be used as an open-drain IO using the standard IO cell.</p>
 <tr><td>CURRENT_MODE</td><td>(0, 28, CBIT_4)</td></tr>
 
 </table>
+
+<h2>IO Changes</h2>
+<p>The IO tiles contain a few new bits compared to earlier ice40 devices.
+	The bits <span style="font-family:monospace">padeb_test_0</span> and
+	<span style="font-family:monospace">padeb_test_1</span> are set for all pins,
+	even unused ones, unless set as an output.</p>
+<p>There are also some new bits used to control the pullup strength:</p>
+<table class="ctab">
+<tr><th>Strength</th><th>Cell 0</th><th>Cell 1</th></tr>
+<tr><td>3.3k&Omega;</td><td>cf_bit_32<br/>B7[10]</td><td>cf_bit_36<br/>B13[10]</td></tr>
+<tr><td>6.8k&Omega;</td><td>cf_bit_33<br/>B6[10]</td><td>cf_bit_37<br/>B12[10]</td></tr>
+<tr><td>10k&Omega;</td><td>cf_bit_34<br/>B7[15]</td><td>cf_bit_38<br/>B13[15]</td></tr>
+<tr><td>100k&Omega;<br/>(default)</td><td>!cf_bit_35<br/>!B6[15]</td><td>!cf_bit_39<br/>!B12[15]</td></tr>
+
+</table>
 </body></html>
