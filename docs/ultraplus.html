@@ -35,8 +35,12 @@ This is work in progress.</i>
     <li>24mA constant current LED ouputs and PWM hard IP</li>
   </ul>
   In order to implement these new features, a significant architecural change has been made: the
-  left and right sides of the device are no longer IO, but instead DSP and IPConnect tiles. 
+  left and right sides of the device are no longer IO, but instead DSP and IPConnect tiles.
+
 </p>
+
+<p>Currently icestorm and arachne-pnr support the DSPs (except for cascading), SPRAM , internal oscillators and constant current
+	LED drivers. Work to support the remaining features is underway.</p>
 
 <h2>DSP Tiles</h2>
 <p>Each MAC16 DSP comprises of 4 DSP tiles, all of which perform part of the DSP function and have
@@ -45,7 +49,7 @@ function wired into where the LUTs and DFFs would be. The four types of DSP tile
 as DSP0 through DSP3, with DSP0 at the lowest y-position. One signal CO, is also routed through the
 IPConnect tile above the DSP tile, referred to as IPCON4 in this context.
 
-A work-in-progress effort to determine where signals and configuration bits are located is below:</p>
+The location of signals and configuration bits is documented below.</p>
 <p>
 <strong>Signal Assignments</strong><br/>
 <table class="ctab">
@@ -101,10 +105,10 @@ A work-in-progress effort to determine where signals and configuration bits are 
 
 
 </p>
-  
+
 <p>
 <strong>Configuration Bits</strong><br/>
-<p>The DSP configuration bits mostly follow the order stated in the ICE Technology Library document, where they are described as<span style="font-family:monospace">CBIT[24:0]</span>. For most DSP tiles,
+<p>The DSP configuration bits mostly follow the order stated in the ICE Technology Library document, where they are described as <span style="font-family:monospace">CBIT[24:0]</span>. For most DSP tiles,
 	these follow a logical order where <span style="font-family:monospace">CBIT[7:0]</span> maps to DSP0 <span style="font-family:monospace">CBIT[7:0]</span>; <span style="font-family:monospace">CBIT[15:8]</span>
 	 to DSP1 <span style="font-family:monospace">CBIT[7:0]</span>, <span style="font-family:monospace">CBIT[23:16]</span> to DSP2 <span style="font-family:monospace">CBIT[7:0]</span>
 	  and <span style="font-family:monospace">CBIT[24]</span> to DSP3 <span style="font-family:monospace">CBIT0</span>.
@@ -138,7 +142,7 @@ A work-in-progress effort to determine where signals and configuration bits are 
 
 <tr><td>BOTADDSUB_LOWERINPUT[1:0]</td><td>DSP2.CBIT_[2:1]</td><td></td></tr>
 <tr><td>BOTADDSUB_UPPERINPUT</td><td>DSP2.CBIT_3</td><td></td></tr>
-<tr><td>BOTADDSUB_CARRYSELECT</td><td>DSP2.CBIT_[5:4]</td><td></td></tr>
+<tr><td>BOTADDSUB_CARRYSELECT[1:0]</td><td>DSP2.CBIT_[5:4]</td><td></td></tr>
 
 <tr><td>MODE_8x8</td><td>DSP2.CBIT_6</td><td></td></tr>
 
@@ -158,8 +162,8 @@ A work-in-progress effort to determine where signals and configuration bits are 
   bits which would be used to configure the logic cell, are set to the below pattern for each "logic cell" (interpreting them like a logic tile):<br/>
   <br><span style="font-family:monospace">0000111100001111 0000</span><br/><br/>
   Coincidentally or not, this corresponds to a buffer passing through input 2 to the output. For each "cell" the cascade bit <span style="font-family:monospace">LC0<em>x</em>_inmux02_5</span> is
-  also set, effectively creating one large chain, as this connects input 2 to the output of the previous LUT. It is not yet known if this serves any purpose, or is merely a remainder of Lattice's
-  internal testing.
+  also set, effectively creating one large chain, as this connects input 2 to the output of the previous LUT. The DSPs at least will not function unless these bits are set correctly, so they <!DOCTYPE html>
+  have some purpose and presumably indicate that the remains of a LUT are still present. There does not seem to be any case under which iCEcube generates a pattern other than this though.
 </p>
 </p>
 <h2>IPConnect Tiles</h2>
@@ -171,7 +175,7 @@ and the inputs use the LUT/FF inputs in the same way as DSP tiles.</p>
 
 <h2>Internal Oscillators</h2>
 
-Both of the internal oscillators are connected through IPConnect tiles, with their outputs optionally connected to the global networks, 
+Both of the internal oscillators are connected through IPConnect tiles, with their outputs optionally connected to the global networks,
 by setting the "padin" extra bit (the used global networks 4 and 5 don't have physical pins on UltraPlus devices).
 
 <h3>SB_HFOSC</h3>
@@ -181,7 +185,7 @@ and the <span style="font-family:monospace">CLKHFEN</span> input connects throug
 The <span style="font-family:monospace">CLKHF</span> output of SB_HFOSC is connected to both IPConnect tile (0, 28) output <span style="font-family:monospace">slf_op_7</span> and to the <span style="font-family:monospace">padin</span>
  of <span style="font-family:monospace">glb_netwk_4</span>.</p>
 
-<p>Configuration bit <span style="font-family:monospace">CLKHF_DIV[1]</span> maps to DSP1 tile (0, 16) config bit <span style="font-family:monospace">CBIT_4</span>, and 
+<p>Configuration bit <span style="font-family:monospace">CLKHF_DIV[1]</span> maps to DSP1 tile (0, 16) config bit <span style="font-family:monospace">CBIT_4</span>, and
 <span style="font-family:monospace">CLKHF_DIV[0]</span> maps to DSP1 tile (0, 16) config bit <span style="font-family:monospace">CBIT_3</span>.</p>
 
 <h3>SB_LFOSC</h3>
@@ -196,7 +200,7 @@ The <span style="font-family:monospace">CLKLF</span> output of SB_LFOSC is conne
 <h2>SPRAM</h2>
 <p>The UltraPlus devices have 1Mbit of extra single-ported RAM, split into 4 256kbit blocks. The full list of connections for each SPRAM block in the 5k device is shown below,
 	as well as the location of the 1 configuration bit which is set to enable use of that SPRAM block.</p>
-	
+
 	<table class="ctab">
 	<tr><th>Signal</th><th>SPRAM (0, 0, 1)</th><th>SPRAM (0, 0, 2)</th><th>SPRAM (25, 0, 3)</th><th>SPRAM (25, 0, 4)</th></tr>
 	<tr><td>ADDRESS[1:0]</td><td>(0, 2, lutff_[1:0]/in_1)</td><td>(0, 2, lutff_[7:6]/in_0)</td><td>(25, 2, lutff_[1:0]/in_1)</td><td>(25, 2, lutff_[7:6]/in_0)</td></tr>
@@ -218,7 +222,7 @@ The <span style="font-family:monospace">CLKLF</span> output of SB_LFOSC is conne
 	</table>
 
 <h2>RGB LED Driver</h2>
-<p>The UltraPlus devices contain an internal 3-channel 2-24mA constant-current driver intended for RGB led driving (SB_RGBA_DRV). It is broken out onto 3 pins: 39, 40 and 41 on the QFN48 package. 
+<p>The UltraPlus devices contain an internal 3-channel 2-24mA constant-current driver intended for RGB led driving (<span style="font-family:monospace">SB_RGBA_DRV</span>). It is broken out onto 3 pins: 39, 40 and 41 on the QFN48 package.
 The LED driver is implemented using the IPConnect tiles and is entirely seperate to the IO cells, if the LED driver is ignored or disabled on a pin then the pin
 can be used as an open-drain IO using the standard IO cell.</p>
 <p>Note that the UltraPlus devices also have a seperate PWM generator IP core, which would often be connected to this one to create LED effects such as "breathing" without
@@ -232,7 +236,7 @@ can be used as an open-drain IO using the standard IO cell.</p>
 <tr><td>RGB1PWM</td><td>(0, 30, lutff_3/in_1)</td></tr>
 <tr><td>RGB2PWM</td><td>(0, 30, lutff_4/in_1)</td></tr>
 </table>
-<p>The configuration bits are as follows. As well as the documented bits, another bit "RGBA_DRV_EN" is set if any of the channels are enabled.</p>
+<p>The configuration bits are as follows. As well as the documented bits, another bit <span style="font-family:monospace">RGBA_DRV_EN</span> is set if any of the channels are enabled.</p>
 <table class="ctab">
 
 <tr><th>Parameter</th><th>Bit</th></tr>
