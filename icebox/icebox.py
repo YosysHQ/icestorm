@@ -642,7 +642,7 @@ class iceconfig:
                         if s[0] == 0 and s[1] == 0:
                             if direction == "l": s = (0, 1, vert_net)
                             if direction == "b": s = (1, 0, horz_net)
-                            
+
                         if s[0] == self.max_x and s[1] == self.max_y:
                             if direction == "r": s = (self.max_x, self.max_y-1, vert_net)
                             if direction == "t": s = (self.max_x-1, self.max_y, horz_net)
@@ -677,11 +677,11 @@ class iceconfig:
                         if s[0] == 0 and s[1] == self.max_y:
                             if direction == "l": s = (0, self.max_y-1, vert_net)
                             if direction == "t": s = (1, self.max_y, horz_net)
-                            
+
                         if s[0] == self.max_x and s[1] == 0:
                             if direction == "r": s = (self.max_x, 1, vert_net)
                             if direction == "b": s = (self.max_x-1, 0, horz_net)
-                            
+
                 if self.tile_has_net(s[0], s[1], s[2]):
                     neighbours.add((s[0], s[1], s[2]))
 
