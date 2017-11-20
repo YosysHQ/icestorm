@@ -1,12 +1,12 @@
 PROJ = rgb
 PIN_DEF = rgb.pcf
 DEVICE = up5k
-# Relative paths for easier development without messing with installed version
-ARACHNE = ../../../arachne-pnr/bin/arachne-pnr 
-ARACHNE_ARGS = -c ../../icebox/chipdb-5k.txt 
-ICEPACK = ../../icepack/icepack
-ICETIME = ../../icetime/icetime
-ICEPROG = ../../iceprog/iceprog
+
+ARACHNE = arachne-pnr 
+ARACHNE_ARGS = 
+ICEPACK = icepack
+ICETIME = icetime
+ICEPROG = iceprog
 
 all: $(PROJ).bin
 

@@ -10,7 +10,7 @@ SB_HFOSC inthosc (
   .CLKHF(clk)
 );
 
-localparam  counter_width = 30;
+localparam  counter_width = 32;
 
 reg [counter_width-1:0] ctr;
 
@@ -73,9 +73,9 @@ SB_RGBA_DRV RGBA_DRIVER (
 
 
 defparam RGBA_DRIVER.CURRENT_MODE = "0b1";
-defparam RGBA_DRIVER.RGB0_CURRENT = "0b000001";
-defparam RGBA_DRIVER.RGB1_CURRENT = "0b000011";
-defparam RGBA_DRIVER.RGB2_CURRENT = "0b000011";
+defparam RGBA_DRIVER.RGB0_CURRENT = "0b000111";
+defparam RGBA_DRIVER.RGB1_CURRENT = "0b000111";
+defparam RGBA_DRIVER.RGB2_CURRENT = "0b000111";
 
 
 endmodule
