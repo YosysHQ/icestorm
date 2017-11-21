@@ -6,26 +6,32 @@ asc_bits = set()
 glb_bits = set()
 
 # parsing .asc file
-with open(argv[1]) as f:
-    current_tile = None
-    current_line = None
-    for line in f:
-        if line.startswith("."):
-            if line.find("_tile ") >= 0:
-                f = line.split()
-                current_tile = "%02d.%02d" % (int(f[1]), int(f[2]))
-                current_line = 0
-            else:
-                current_tile = None
-                current_line = None
-            continue
+try:
+    with open(argv[1]) as f:
+        current_tile = None
+        current_line = None
+        for line in f:
+            if line.startswith("."):
+                if line.find("_tile ") >= 0:
+                    f = line.split()
+                    current_tile = "%02d.%02d" % (int(f[1]), int(f[2]))
+                    current_line = 0
+                else:
+                    current_tile = None
+                    current_line = None
+                continue
 
-        if current_tile is not None:
-            for i in range(len(line)):
-                if line[i] == '1':
-                    asc_bits.add("%s.%02d.%02d" % (current_tile, current_line, i))
-            current_line += 1
-
+            if current_tile is not None:
+                for i in range(len(line)):
+                    if line[i] == '1':
+                        asc_bits.add("%s.%02d.%02d" % (current_tile, current_line, i))
+                current_line += 1
+except FileNotFoundError:
+    print("ASC file doesn't exist, skipping glbcheck!.")
+    # The asc file may not exist for innocent reasons, such as 
+    # the icecube router failing. So exit with code 0 to keep
+    # the fuzz Makefile happy
+    exit(0)
 # parsing .glb file
 with open(argv[2]) as f:
     current_tile = None

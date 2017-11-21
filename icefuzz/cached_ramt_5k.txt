@@ -17,6 +17,7 @@
 (0 14) routing glb_netwk_6 <X> wire_bram/ram/WE
 (0 14) routing lc_trk_g2_4 <X> wire_bram/ram/WE
 (0 14) routing lc_trk_g3_5 <X> wire_bram/ram/WE
+(0 15) routing glb_netwk_2 <X> wire_bram/ram/WE
 (0 15) routing glb_netwk_6 <X> wire_bram/ram/WE
 (0 15) routing lc_trk_g1_5 <X> wire_bram/ram/WE
 (0 15) routing lc_trk_g3_5 <X> wire_bram/ram/WE
@@ -32,10 +33,8 @@
 (0 3) routing glb_netwk_7 <X> wire_bram/ram/WCLK
 (0 3) routing lc_trk_g1_1 <X> wire_bram/ram/WCLK
 (0 3) routing lc_trk_g3_1 <X> wire_bram/ram/WCLK
-(0 4) routing glb_netwk_5 <X> wire_bram/ram/WCLKE
 (0 4) routing lc_trk_g2_2 <X> wire_bram/ram/WCLKE
 (0 4) routing lc_trk_g3_3 <X> wire_bram/ram/WCLKE
-(0 5) routing glb_netwk_3 <X> wire_bram/ram/WCLKE
 (0 5) routing lc_trk_g1_3 <X> wire_bram/ram/WCLKE
 (0 5) routing lc_trk_g3_3 <X> wire_bram/ram/WCLKE
 (0 6) routing glb_netwk_3 <X> glb2local_0
@@ -70,6 +69,7 @@
 (1 13) routing glb_netwk_5 <X> glb2local_3
 (1 13) routing glb_netwk_6 <X> glb2local_3
 (1 13) routing glb_netwk_7 <X> glb2local_3
+(1 14) Enable bit of Mux _global_links/set_rst_mux => glb_netwk_2 wire_bram/ram/WE
 (1 14) Enable bit of Mux _global_links/set_rst_mux => glb_netwk_4 wire_bram/ram/WE
 (1 14) Enable bit of Mux _global_links/set_rst_mux => glb_netwk_6 wire_bram/ram/WE
 (1 14) Enable bit of Mux _global_links/set_rst_mux => lc_trk_g0_4 wire_bram/ram/WE
@@ -85,8 +85,6 @@
 (1 2) routing glb_netwk_6 <X> wire_bram/ram/WCLK
 (1 2) routing glb_netwk_7 <X> wire_bram/ram/WCLK
 (1 3) Enable bit of Mux _span_links/cross_mux_horz_5 => sp12_h_r_10 sp4_h_r_17
-(1 4) Enable bit of Mux _global_links/ce_mux => glb_netwk_3 wire_bram/ram/WCLKE
-(1 4) Enable bit of Mux _global_links/ce_mux => glb_netwk_5 wire_bram/ram/WCLKE
 (1 4) Enable bit of Mux _global_links/ce_mux => lc_trk_g0_2 wire_bram/ram/WCLKE
 (1 4) Enable bit of Mux _global_links/ce_mux => lc_trk_g1_3 wire_bram/ram/WCLKE
 (1 4) Enable bit of Mux _global_links/ce_mux => lc_trk_g2_2 wire_bram/ram/WCLKE
@@ -181,6 +179,7 @@
 (11 0) routing sp4_h_r_9 <X> sp4_v_b_2
 (11 0) routing sp4_v_t_43 <X> sp4_v_b_2
 (11 0) routing sp4_v_t_46 <X> sp4_v_b_2
+(11 1) routing sp4_h_l_39 <X> sp4_h_r_2
 (11 1) routing sp4_h_l_43 <X> sp4_h_r_2
 (11 1) routing sp4_v_b_2 <X> sp4_h_r_2
 (11 1) routing sp4_v_b_8 <X> sp4_h_r_2
@@ -221,6 +220,7 @@
 (11 4) routing sp4_v_t_39 <X> sp4_v_b_5
 (11 4) routing sp4_v_t_44 <X> sp4_v_b_5
 (11 5) routing sp4_h_l_40 <X> sp4_h_r_5
+(11 5) routing sp4_h_l_44 <X> sp4_h_r_5
 (11 5) routing sp4_v_b_11 <X> sp4_h_r_5
 (11 5) routing sp4_v_b_5 <X> sp4_h_r_5
 (11 6) routing sp4_h_l_37 <X> sp4_v_t_40
@@ -348,6 +348,7 @@
 (13 4) routing sp4_v_t_40 <X> sp4_v_b_5
 (13 4) routing sp4_v_t_44 <X> sp4_v_b_5
 (13 5) routing sp4_h_l_39 <X> sp4_h_r_5
+(13 5) routing sp4_h_l_44 <X> sp4_h_r_5
 (13 5) routing sp4_v_b_11 <X> sp4_h_r_5
 (13 5) routing sp4_v_t_37 <X> sp4_h_r_5
 (13 6) routing sp4_h_r_11 <X> sp4_v_t_40
@@ -439,7 +440,6 @@
 (14 3) routing sp4_h_r_4 <X> lc_trk_g0_4
 (14 3) routing sp4_r_v_b_28 <X> lc_trk_g0_4
 (14 3) routing sp4_v_t_1 <X> lc_trk_g0_4
-(14 3) routing top_op_4 <X> lc_trk_g0_4
 (14 4) routing bnr_op_0 <X> lc_trk_g1_0
 (14 4) routing lft_op_0 <X> lc_trk_g1_0
 (14 4) routing sp12_h_r_0 <X> lc_trk_g1_0
@@ -555,7 +555,6 @@
 (15 3) routing sp4_h_r_20 <X> lc_trk_g0_4
 (15 3) routing sp4_h_r_4 <X> lc_trk_g0_4
 (15 3) routing sp4_v_b_20 <X> lc_trk_g0_4
-(15 3) routing top_op_4 <X> lc_trk_g0_4
 (15 4) routing lft_op_1 <X> lc_trk_g1_1
 (15 4) routing sp12_h_r_1 <X> lc_trk_g1_1
 (15 4) routing sp4_h_r_1 <X> lc_trk_g1_1
@@ -866,7 +865,6 @@
 (17 3) Enable bit of Mux _local_links/g0_mux_4 => sp4_v_b_20 lc_trk_g0_4
 (17 3) Enable bit of Mux _local_links/g0_mux_4 => sp4_v_b_4 lc_trk_g0_4
 (17 3) Enable bit of Mux _local_links/g0_mux_4 => sp4_v_t_1 lc_trk_g0_4
-(17 3) Enable bit of Mux _local_links/g0_mux_4 => top_op_4 lc_trk_g0_4
 (17 4) Enable bit of Mux _local_links/g1_mux_1 => bnr_op_1 lc_trk_g1_1
 (17 4) Enable bit of Mux _local_links/g1_mux_1 => lft_op_1 lc_trk_g1_1
 (17 4) Enable bit of Mux _local_links/g1_mux_1 => sp12_h_l_6 lc_trk_g1_1
@@ -1085,7 +1083,6 @@
 (2 10) Enable bit of Mux _span_links/cross_mux_horz_9 => sp12_h_r_18 sp4_h_l_8
 (2 12) Enable bit of Mux _span_links/cross_mux_horz_10 => sp12_h_r_20 sp4_h_r_22
 (2 14) Enable bit of Mux _span_links/cross_mux_horz_11 => sp12_h_l_21 sp4_h_l_10
-(2 2) Enable bit of Mux _global_links/clk_mux => glb_netwk_0 wire_bram/ram/WCLK
 (2 2) Enable bit of Mux _global_links/clk_mux => glb_netwk_1 wire_bram/ram/WCLK
 (2 2) Enable bit of Mux _global_links/clk_mux => glb_netwk_2 wire_bram/ram/WCLK
 (2 2) Enable bit of Mux _global_links/clk_mux => glb_netwk_3 wire_bram/ram/WCLK
@@ -3433,7 +3430,6 @@
 (7 4) Cascade buffer Enable bit: MEMT_LC00_inmux00_bram_cbit_5
 (7 4) Cascade buffer Enable bit: MEMT_LC01_inmux00_bram_cbit_5
 (7 4) Cascade buffer Enable bit: MEMT_LC02_inmux00_bram_cbit_5
-(7 4) Cascade buffer Enable bit: MEMT_LC03_inmux00_bram_cbit_5
 (7 4) Cascade buffer Enable bit: MEMT_LC04_inmux00_bram_cbit_5
 (7 4) Cascade buffer Enable bit: MEMT_LC05_inmux00_bram_cbit_5
 (7 4) Cascade buffer Enable bit: MEMT_LC06_inmux00_bram_cbit_5
@@ -3443,7 +3439,6 @@
 (7 5) Cascade bit: MEMT_LC00_inmux00_bram_cbit_4
 (7 5) Cascade bit: MEMT_LC01_inmux00_bram_cbit_4
 (7 5) Cascade bit: MEMT_LC02_inmux00_bram_cbit_4
-(7 5) Cascade bit: MEMT_LC03_inmux00_bram_cbit_4
 (7 5) Cascade bit: MEMT_LC04_inmux00_bram_cbit_4
 (7 5) Cascade bit: MEMT_LC05_inmux00_bram_cbit_4
 (7 5) Cascade bit: MEMT_LC06_inmux00_bram_cbit_4

@@ -703,7 +703,7 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 			continue;
 		}
 
-		if (command == ".io_tile" || command == ".logic_tile" || command == ".ramb_tile" || command == ".ramt_tile" || command.substr(0, 4) == ".dsp" || command == ".ipconn_tile")
+		if (command == ".io_tile" || command == ".logic_tile" || command == ".ramb_tile" || command == ".ramt_tile" || command.substr(0, 4) == ".dsp" || command == ".ipcon_tile")
 		{
 			if (!got_device)
 				error("Missing .device statement before %s.\n", command.c_str());
@@ -1032,7 +1032,7 @@ string FpgaConfig::tile_type(int x, int y) const
 			return "dsp2";
 		if( (y == 8) || (y == 13) || (y == 18) || (y == 26))
 			return "dsp3";
-		return "ipconn";
+		return "ipcon";
 	}
 	if ((x == 0 || x == this->chip_width()+1) || (y == 0 || y == this->chip_height()+1)) return "io";
 
@@ -1064,7 +1064,7 @@ int FpgaConfig::tile_width(const string &type) const
 	if (type == "ramt")          return 42;
 	if (type == "io")            return 18;
 	if (type.substr(0, 3) == "dsp")   return 54;
-	if (type == "ipconn")   return 54;
+	if (type == "ipcon")   return 54;
 
 	panic("Unknown tile type '%s'.\n", type.c_str());
 }

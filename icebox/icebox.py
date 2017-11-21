@@ -31,6 +31,8 @@ class iceconfig:
         self.io_tiles = dict()
         self.ramb_tiles = dict()
         self.ramt_tiles = dict()
+        self.dsp_tiles = [dict() for i in range(4)]
+        self.ipcon_tiles = dict()
         self.ram_data = dict()
         self.extra_bits = set()
         self.symbols = dict()
@@ -96,7 +98,18 @@ class iceconfig:
         for x in range(1, self.max_x):
             self.io_tiles[(x, 0)] = ["0" * 18 for i in range(16)]
             self.io_tiles[(x, self.max_y)] = ["0" * 18 for i in range(16)]
-
+        for x in [0, self.max_x]:
+            for y in range(1, self.max_y):
+                if y in [5, 10, 15, 23]:
+                    self.dsp_tiles[0][(x, y)] = ["0" * 54 for i in range(16)]
+                elif y in [6, 11, 16, 24]:
+                    self.dsp_tiles[1][(x, y)] = ["0" * 54 for i in range(16)]
+                elif y in [7, 12, 17, 25]:
+                    self.dsp_tiles[2][(x, y)] = ["0" * 54 for i in range(16)]
+                elif y in [8, 13, 18, 26]:
+                    self.dsp_tiles[3][(x, y)] = ["0" * 54 for i in range(16)]
+                else:
+                    self.ipcon_tiles[(x, y)] = ["0" * 54 for i in range(16)]
     def setup_empty_8k(self):
         self.clear()
         self.device = "8k"
@@ -132,6 +145,9 @@ class iceconfig:
         if (x, y) in self.logic_tiles: return self.logic_tiles[(x, y)]
         if (x, y) in self.ramb_tiles: return self.ramb_tiles[(x, y)]
         if (x, y) in self.ramt_tiles: return self.ramt_tiles[(x, y)]
+        for i in range(4):
+            if (x, y) in self.dsp_tiles[i]: return self.dsp_tiles[i][(x, y)]
+        if (x, y) in self.ipcon_tiles: return self.ipcon_tiles[(x, y)]            
         return None
 
     def pinloc_db(self):
@@ -166,7 +182,12 @@ class iceconfig:
         if self.device == "384":
             return [ ]
         assert False
-
+    
+    # Return true if device is Ultra/UltraPlus series, i.e. has
+    # IpConnect/DSP at the sides instead of IO
+    def is_ultra(self):
+        return self.device in ["5k"]
+    
     def colbuf_db(self):
         if self.device == "1k":
             entries = list()
@@ -221,7 +242,64 @@ class iceconfig:
             return entries
 
         assert False
+        
+    # Return a map between HDL name and routing net and location for a given DSP cell    
+    def get_dsp_nets_db(self, x, y):
+        assert ((x, y) in self.dsp_tiles[0])
+        # Control signals
+        nets = {
+            "CLK":          (x, y+2, "lutff_global/clk"),
+            "CE":           (x, y+2, "lutff_global/cen"),
+            "IRSTTOP":      (x, y+1, "lutff_global/s_r"),
+            "IRSTBOT":      (x, y+0, "lutff_global/s_r"),
+            "ORSTTOP":      (x, y+3, "lutff_global/s_r"),
+            "ORSTBOT":      (x, y+2, "lutff_global/s_r"),
+            "AHOLD":        (x, y+2, "lutff_0/in_0"),
+            "BHOLD":        (x, y+1, "lutff_0/in_0"),
+            "CHOLD":        (x, y+3, "lutff_0/in_0"),
+            "DHOLD":        (x, y+0, "lutff_0/in_0"),
+            "OHOLDTOP":     (x, y+3, "lutff_1/in_0"),
+            "OHOLDBOT":     (x, y+0, "lutff_1/in_0"),
+            "ADDSUBTOP":    (x, y+3, "lutff_3/in_0"),
+            "ADDSUBBOT":    (x, y+0, "lutff_3/in_0"),
+            "OLOADTOP":     (x, y+3, "lutff_2/in_0"),
+            "OLOADBOT":    (x, y+0, "lutff_2/in_0"),
+            "CI":           (x, y+0, "lutff_4/in_0"),
+            "CO":           (x, y+4, "slf_op_0")
+        }
+        #Data ports
+        for i in range(8):
+            nets["C_%d" % i]        = (x, y+3, "lutff_%d/in_3" % i)
+            nets["C_%d" % (i+8)]    = (x, y+3, "lutff_%d/in_1" % i)
+            
+            nets["A_%d" % i]        = (x, y+2, "lutff_%d/in_3" % i)
+            nets["A_%d" % (i+8)]    = (x, y+2, "lutff_%d/in_1" % i)
 
+            nets["B_%d" % i]        = (x, y+1, "lutff_%d/in_3" % i)
+            nets["B_%d" % (i+8)]    = (x, y+1, "lutff_%d/in_1" % i)
+
+            nets["D_%d" % i]        = (x, y+0, "lutff_%d/in_3" % i)
+            nets["D_%d" % (i+8)]    = (x, y+0, "lutff_%d/in_1" % i)
+        for i in range(32):
+            nets["O_%d" % i]        = (x, y+(i//8), "mult/O_%d" % i)
+        return nets
+    
+    # Return the location of configuration bits for a given DSP cell
+    def get_dsp_config_db(self, x, y):
+        assert ((x, y) in self.dsp_tiles[0])
+         
+        override = { }
+        if (("%s_%d_%d" % (self.device, x, y)) in dsp_config_db):
+             override = dsp_config_db["%s_%d_%d" % (self.device, x, y)]
+        default_db = dsp_config_db["default"]
+        merged = { }
+        for cfgkey in default_db:
+            cx, cy, cbit = default_db[cfgkey]
+            if cfgkey in override:
+                cx, cy, cbit = override[cfgkey]
+            merged[cfgkey] = (x + cx, y + cy, cbit)
+        return merged
+    
     def tile_db(self, x, y):
         # Only these devices have IO on the left and right sides.
         if self.device in ["384", "1k", "8k"]:
@@ -242,6 +320,12 @@ class iceconfig:
             if (x, y) in self.logic_tiles: return logictile_5k_db
             if (x, y) in self.ramb_tiles: return rambtile_5k_db
             if (x, y) in self.ramt_tiles: return ramttile_5k_db
+            if (x, y) in self.ipcon_tiles: return ipcon_5k_db
+            if (x, y) in self.dsp_tiles[0]: return dsp0_5k_db
+            if (x, y) in self.dsp_tiles[1]: return dsp1_5k_db
+            if (x, y) in self.dsp_tiles[2]: return dsp2_5k_db
+            if (x, y) in self.dsp_tiles[3]: return dsp3_5k_db
+
         elif self.device == "8k":
             if (x, y) in self.logic_tiles: return logictile_8k_db
             if (x, y) in self.ramb_tiles: return rambtile_8k_db
@@ -253,13 +337,24 @@ class iceconfig:
         assert False
 
     def tile_type(self, x, y):
-        if x == 0: return "IO"
+        if x == 0 and (not self.is_ultra()): return "IO"
         if y == 0: return "IO"
-        if x == self.max_x: return "IO"
+        if x == self.max_x and (not self.is_ultra()): return "IO"
         if y == self.max_y: return "IO"
         if (x, y) in self.ramb_tiles: return "RAMB"
         if (x, y) in self.ramt_tiles: return "RAMT"
         if (x, y) in self.logic_tiles: return "LOGIC"
+        if (x == 0 or x == self.max_x) and self.is_ultra():
+            if y in [5, 10, 15, 23]:
+                return "DSP0"
+            elif y in [6, 11, 16, 24]:
+                return "DSP1"
+            elif y in [7, 12, 17, 25]:
+                return "DSP2"
+            elif y in [8, 13, 18, 26]:
+                return "DSP3"
+            else:
+                return "IPCON"
         assert False
 
     def tile_pos(self, x, y):
@@ -280,25 +375,25 @@ class iceconfig:
             if netname.startswith("logic_op_bot_"):
                 if y == self.max_y and 0 < x < self.max_x: return True
             if netname.startswith("logic_op_bnl_"):
-                if x == self.max_x and 1 < y < self.max_y: return True
+                if x == self.max_x and 1 < y < self.max_y and (not self.is_ultra()): return True
                 if y == self.max_y and 1 < x < self.max_x: return True
             if netname.startswith("logic_op_bnr_"):
-                if x == 0 and 1 < y < self.max_y: return True
+                if x == 0 and 1 < y < self.max_y and (not self.is_ultra()): return True
                 if y == self.max_y and 0 < x < self.max_x-1: return True
 
             if netname.startswith("logic_op_top_"):
                 if y == 0 and 0 < x < self.max_x: return True
             if netname.startswith("logic_op_tnl_"):
-                if x == self.max_x and 0 < y < self.max_y-1: return True
+                if x == self.max_x and 0 < y < self.max_y-1 and (not self.is_ultra()): return True
                 if y == 0 and 1 < x < self.max_x: return True
             if netname.startswith("logic_op_tnr_"):
-                if x == 0 and 0 < y < self.max_y-1: return True
+                if x == 0 and 0 < y < self.max_y-1 and (not self.is_ultra()): return True
                 if y == 0 and 0 < x < self.max_x-1: return True
 
             if netname.startswith("logic_op_lft_"):
-                if x == self.max_x: return True
+                if x == self.max_x and (not self.is_ultra()): return True
             if netname.startswith("logic_op_rgt_"):
-                if x == 0: return True
+                if x == 0 and (not self.is_ultra()): return True
 
             return False
 
@@ -307,16 +402,22 @@ class iceconfig:
         return pos_has_net(self.tile_pos(x, y), netname)
 
     def tile_follow_net(self, x, y, direction, netname):
-        if x == 1 and y not in (0, self.max_y) and direction == 'l': return pos_follow_net("x", "L", netname)
-        if y == 1 and x not in (0, self.max_x) and direction == 'b': return pos_follow_net("x", "B", netname)
-        if x == self.max_x-1 and y not in (0, self.max_y) and direction == 'r': return pos_follow_net("x", "R", netname)
-        if y == self.max_y-1 and x not in (0, self.max_x) and direction == 't': return pos_follow_net("x", "T", netname)
-        return pos_follow_net(self.tile_pos(x, y), direction, netname)
+        if x == 1 and y not in (0, self.max_y) and direction == 'l': return pos_follow_net("x", "L", netname, self.is_ultra())
+        if y == 1 and x not in (0, self.max_x) and direction == 'b': return pos_follow_net("x", "B", netname, self.is_ultra())
+        if x == self.max_x-1 and y not in (0, self.max_y) and direction == 'r': return pos_follow_net("x", "R", netname, self.is_ultra())
+        if y == self.max_y-1 and x not in (0, self.max_x) and direction == 't': return pos_follow_net("x", "T", netname, self.is_ultra())
+        if self.is_ultra(): # Pass through corner positions as they must be handled differently
+            if y == 1 and x in (0, self.max_x) and direction == 'b': return pos_follow_net(self.tile_pos(x, y), "B", netname, self.is_ultra())
+            if y == self.max_y-1 and x in (0, self.max_x) and direction == 't': return pos_follow_net(self.tile_pos(x, y), "T", netname, self.is_ultra())
+            if x == 1 and y in (0, self.max_y) and direction == 'l': return pos_follow_net(self.tile_pos(x, y), "L", netname, self.is_ultra())
+            if x == self.max_x-1 and y in (0, self.max_y) and direction == 'r': return pos_follow_net(self.tile_pos(x, y), "R", netname, self.is_ultra())
+
+        return pos_follow_net(self.tile_pos(x, y), direction, netname, self.is_ultra())
 
     def follow_funcnet(self, x, y, func):
         neighbours = set()
         def do_direction(name, nx, ny):
-            if 0 < nx < self.max_x and 0 < ny < self.max_y:
+            if (0 < nx < self.max_x or self.is_ultra()) and 0 < ny < self.max_y:
                 neighbours.add((nx, ny, "neigh_op_%s_%d" % (name, func)))
             if nx in (0, self.max_x) and 0 < ny < self.max_y and nx != x:
                 neighbours.add((nx, ny, "logic_op_%s_%d" % (name, func)))
@@ -340,6 +441,9 @@ class iceconfig:
             if npos == "x":
                 if (nx, ny) in self.logic_tiles:
                     return (nx, ny, "lutff_%d/out" % func)
+                for i in range(4):
+                    if (nx, ny) in self.dsp_tiles[i]: #TODO: check this
+                        return (nx, ny, "mult/O_%d" % (i * 8 + func))
                 if (nx, ny) in self.ramb_tiles:
                     if self.device == "1k":
                         return (nx, ny, "ram/RDATA_%d" % func)
@@ -402,7 +506,53 @@ class iceconfig:
                 assert False
 
         return funcnets
-
+    
+    #UltraPlus corner routing: given the corner name and net index,
+    #return a tuple containing H and V indexes, or none if NA
+    def ultraplus_trace_corner(self, corner, idx):
+        h_idx = None
+        v_idx = None
+        if corner == "bl":
+            if idx >= 4:
+                v_idx = idx + 28
+            if idx >= 32 and idx < 48:
+                h_idx = idx - 28
+        elif corner == "tl":
+            #TODO: bounds check for v_idx case?
+            if idx >= 4:
+                v_idx = (idx + 8) ^ 1
+            if idx >= 12 and idx < 28:
+                h_idx = (idx ^ 1) - 8
+        elif corner == "tr":
+            #TODO: bounds check for v_idx case?
+            if idx <= 16:
+                v_idx = (idx + 12) ^ 1
+            if idx >= 12 and idx < 28:
+                h_idx = (idx ^ 1) - 12            
+        elif corner == "br":
+            #TODO: bounds check for v_idx case?
+            if idx <= 16:
+                v_idx = idx + 32
+            if idx >= 32 and idx < 48: #check
+                h_idx = idx - 32
+        return (h_idx, v_idx)
+    
+    def get_corner(self, x, y):
+        corner = ""
+        if y == 0:
+            corner += "b"
+        elif y == self.max_y:
+            corner += "t"
+        else:
+            corner += "x"
+        if x == 0:
+            corner += "l"
+        elif x == self.max_x:
+            corner += "r"
+        else:
+            corner += "x"
+        return corner    
+    
     def follow_net(self, netspec):
         x, y, netname = netspec
         neighbours = self.rlookup_funcnet(x, y, netname)
@@ -423,12 +573,12 @@ class iceconfig:
                         neighbours.add((nx, ny, netname))
 
         match = re.match(r"sp4_r_v_b_(\d+)", netname)
-        if match and 0 < x < self.max_x-1:
+        if match and ((0 < x < self.max_x-1) or (self.is_ultra() and (x < self.max_x))):
             neighbours.add((x+1, y, sp4v_normalize("sp4_v_b_" + match.group(1))))
         #print('\tafter r_v_b', neighbours)
 
         match = re.match(r"sp4_v_[bt]_(\d+)", netname)
-        if match and 1 < x < self.max_x:
+        if match and (1 < x < self.max_x or (self.is_ultra() and (x > 0))):
             n = sp4v_normalize(netname, "b")
             if n is not None:
                 n = n.replace("sp4_", "sp4_r_")
@@ -459,9 +609,36 @@ class iceconfig:
 
                 if s[0] in (0, self.max_x) and s[1] in (0, self.max_y):
                     if re.match("span4_(vert|horz)_[lrtb]_\d+$", n):
+                        m = re.match("span4_(vert|horz)_([lrtb])_\d+$", n)
+                        #We ignore L and T edges when performing the Ultra/UltraPlus corner algorithm
+                        if self.is_ultra() and (m.group(2) == "l" or m.group(2) == "t"): 
+                            continue
                         vert_net = n.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_")
                         horz_net = n.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_")
+                        
+                        if self.is_ultra(): #Convert between span4 and sp4, and perform U/UP corner tracing
+                            m = re.match("span4_vert_([lrtb])_(\d+)$", vert_net)
+                            assert m
+                            idx = int(m.group(2))
+                            h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
+                            if v_idx is None:
+                                if (s[0] == 0 and s[1] == 0 and direction == "l") or (s[0] == self.max_x and s[1] == self.max_y and direction == "r"):
+                                    continue #Not routed, skip
+                            else:    
+                                vert_net = "sp4_v_%s_%d" % (m.group(1), v_idx)
 
+                            m = re.match("span4_horz_([lrtb])_(\d+)$", horz_net)
+                            assert m
+                            idx = int(m.group(2))
+                            h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
+                            if h_idx is None:
+                                if (s[0] == 0 and s[1] == 0 and direction == "b") or (s[0] == self.max_x and s[1] == self.max_y and direction == "t"):
+                                    continue #Not routed, skip
+                            else:
+                                horz_net = "span4_horz_%s_%d" % (m.group(1), h_idx)
+                            
+                            
+                            
                         if s[0] == 0 and s[1] == 0:
                             if direction == "l": s = (0, 1, vert_net)
                             if direction == "b": s = (1, 0, horz_net)
@@ -473,6 +650,30 @@ class iceconfig:
                         vert_net = netname.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_")
                         horz_net = netname.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_")
 
+                        if self.is_ultra():   
+                            # Might have sp4 not span4 here
+                            vert_net = vert_net.replace("_h_", "_v_")
+                            horz_net = horz_net.replace("_v_", "_h_")
+                            m = re.match("(span4_vert|sp4_v)_([lrtb])_(\d+)$", vert_net) 
+                            assert m
+                            idx = int(m.group(3))
+                            h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
+                            if v_idx is None:
+                                if (s[0] == 0 and s[1] == self.max_y and direction == "l") or (s[0] == self.max_x and s[1] == 0 and direction == "r"):
+                                    continue
+                            else:
+                                vert_net = "sp4_v_%s_%d" % (m.group(2), v_idx)
+                            
+                            m = re.match("(span4_horz|sp4_h)_([lrtb])_(\d+)$", horz_net)
+                            assert m
+                            idx = int(m.group(3))
+                            h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
+                            if h_idx is None:
+                                if (s[0] == 0 and s[1] == self.max_y and direction == "t") or (s[0] == self.max_x and s[1] == 0 and direction == "b"):
+                                    continue
+                            else:
+                                horz_net = "span4_horz_%s_%d" % (m.group(2), h_idx)
+                            
                         if s[0] == 0 and s[1] == self.max_y:
                             if direction == "l": s = (0, self.max_y-1, vert_net)
                             if direction == "t": s = (1, self.max_y, horz_net)
@@ -566,7 +767,22 @@ class iceconfig:
                 add_seed_segments(idx, tile, ramttile_8k_db)
             else:
                 assert False
-
+        
+        for idx, tile in self.dsp_tiles[0].items():
+            if self.device == "5k":
+                add_seed_segments(idx, tile, dsp0_5k_db)
+        for idx, tile in self.dsp_tiles[1].items():
+            if self.device == "5k":
+                add_seed_segments(idx, tile, dsp1_5k_db)        
+        for idx, tile in self.dsp_tiles[2].items():
+            if self.device == "5k":
+                add_seed_segments(idx, tile, dsp2_5k_db)    
+        for idx, tile in self.dsp_tiles[3].items():
+            if self.device == "5k":
+                add_seed_segments(idx, tile, dsp3_5k_db)    
+        for idx, tile in self.ipcon_tiles.items():
+            if self.device == "5k":
+                add_seed_segments(idx, tile, ipcon_5k_db)                            
         for padin, pio in enumerate(self.padin_pio_db()):
             s1 = (pio[0], pio[1], "padin_%d" % pio[2])
             s2 = (pio[0], pio[1], "glb_netwk_%d" % padin)
@@ -661,7 +877,7 @@ class iceconfig:
                     expected_data_lines -= 1
                     continue
                 assert expected_data_lines <= 0
-                if line[0] in (".io_tile", ".logic_tile", ".ramb_tile", ".ramt_tile", ".ram_data", ".ipconn_tile", ".dsp1_tile", ".dsp2_tile", ".dsp3_tile", ".dsp4_tile"):
+                if line[0] in (".io_tile", ".logic_tile", ".ramb_tile", ".ramt_tile", ".ram_data", ".ipcon_tile", ".dsp0_tile", ".dsp1_tile", ".dsp2_tile", ".dsp3_tile"):
                     current_data = list()
                     expected_data_lines = 16
                     self.max_x = max(self.max_x, int(line[1]))
@@ -677,6 +893,13 @@ class iceconfig:
                     continue
                 if line[0] == ".ramt_tile":
                     self.ramt_tiles[(int(line[1]), int(line[2]))] = current_data
+                    continue
+                if line[0] == ".ipcon_tile":
+                    self.ipcon_tiles[(int(line[1]), int(line[2]))] = current_data
+                    continue
+                match = re.match(r".dsp(\d)_tile", line[0])
+                if match:
+                    self.dsp_tiles[int(match.group(1))][(int(line[1]), int(line[2]))] = current_data
                     continue
                 if line[0] == ".ram_data":
                     self.ram_data[(int(line[1]), int(line[2]))] = current_data
@@ -862,6 +1085,8 @@ def netname_normalize(netname, edge="", ramb=False, ramt=False, ramb_8k=False, r
     netname = netname.replace("lc_", "lutff_")
     netname = netname.replace("wire_logic_cluster/", "")
     netname = netname.replace("wire_io_cluster/", "")
+    netname = netname.replace("wire_mult/", "")
+    netname = netname.replace("wire_con_box/", "")
     netname = netname.replace("wire_bram/", "")
     if (ramb or ramt or ramb_8k or ramt_8k) and netname.startswith("input"):
         match = re.match(r"input(\d)_(\d)", netname)
@@ -871,7 +1096,7 @@ def netname_normalize(netname, edge="", ramb=False, ramt=False, ramb_8k=False, r
         if ramb_8k: netname="ram/RADDR_%d" % ([7, 6, 5, 4, 3, 2, 1, 0, -1, -1, -1, -1, -1, 10, 9, 8][idx1*4 + idx2])
         if ramt_8k: netname="ram/WADDR_%d" % ([7, 6, 5, 4, 3, 2, 1, 0, -1, -1, -1, -1, -1, 10, 9, 8][idx1*4 + idx2])
     match = re.match(r"(...)_op_(.*)", netname)
-    if match:
+    if match and (match.group(1) != "slf"):
         netname = "neigh_op_%s_%s" % (match.group(1), match.group(2))
     if re.match(r"lutff_7/(cen|clk|s_r)", netname):
         netname = netname.replace("lutff_7/", "lutff_global/")
@@ -890,13 +1115,13 @@ def pos_has_net(pos, netname):
         if re.search(r"_vert_[bt]_\d+$", netname): return False
     return True
 
-def pos_follow_net(pos, direction, netname):
-    if pos == "x":
+def pos_follow_net(pos, direction, netname, is_ultra):
+    if pos == "x" or ((pos in ("l", "r")) and is_ultra):
             m = re.match("sp4_h_[lr]_(\d+)$", netname)
             if m and direction in ("l", "L"):
                 n = sp4h_normalize(netname, "l")
                 if n is not None:
-                    if direction == "l":
+                    if direction == "l" or is_ultra:
                         n = re.sub("_l_", "_r_", n)
                         n = sp4h_normalize(n)
                     else:
@@ -906,7 +1131,7 @@ def pos_follow_net(pos, direction, netname):
             if m and direction in ("r", "R"):
                 n = sp4h_normalize(netname, "r")
                 if n is not None:
-                    if direction == "r":
+                    if direction == "r" or is_ultra:
                         n = re.sub("_r_", "_l_", n)
                         n = sp4h_normalize(n)
                     else:
@@ -916,6 +1141,8 @@ def pos_follow_net(pos, direction, netname):
 
             m = re.match("sp4_v_[tb]_(\d+)$", netname)
             if m and direction in ("t", "T"):
+                if is_ultra and direction == "T" and pos in ("l", "r"):
+                    return re.sub("sp4_v_", "span4_vert_", netname)
                 n = sp4v_normalize(netname, "t")
                 if n is not None:
                     if direction == "t":
@@ -926,6 +1153,8 @@ def pos_follow_net(pos, direction, netname):
                         n = re.sub("sp4_v_", "span4_vert_", n)
                     return n
             if m and direction in ("b", "B"):
+                if is_ultra and direction == "B" and pos in ("l", "r"):
+                    return re.sub("sp4_v_", "span4_vert_", netname)
                 n = sp4v_normalize(netname, "b")
                 if n is not None:
                     if direction == "b":
@@ -940,7 +1169,7 @@ def pos_follow_net(pos, direction, netname):
             if m and direction in ("l", "L"):
                 n = sp12h_normalize(netname, "l")
                 if n is not None:
-                    if direction == "l":
+                    if direction == "l" or is_ultra:
                         n = re.sub("_l_", "_r_", n)
                         n = sp12h_normalize(n)
                     else:
@@ -950,7 +1179,7 @@ def pos_follow_net(pos, direction, netname):
             if m and direction in ("r", "R"):
                 n = sp12h_normalize(netname, "r")
                 if n is not None:
-                    if direction == "r":
+                    if direction == "r" or is_ultra:
                         n = re.sub("_r_", "_l_", n)
                         n = sp12h_normalize(n)
                     else:
@@ -980,7 +1209,7 @@ def pos_follow_net(pos, direction, netname):
                         n = re.sub("sp12_v_", "span12_vert_", n)
                     return n
 
-    if pos in ("l", "r" ):
+    if (pos in ("l", "r" )) and (not is_ultra):
         m = re.match("span4_vert_([bt])_(\d+)$", netname)
         if m:
             case, idx = direction + m.group(1), int(m.group(2))
@@ -997,6 +1226,8 @@ def pos_follow_net(pos, direction, netname):
         m = re.match("span4_horz_([rl])_(\d+)$", netname)
         if m:
             case, idx = direction + m.group(1), int(m.group(2))
+            if direction == "L" or direction == "R":
+                return netname
             if case == "ll":
                 return "span4_horz_r_%d" % idx
             if case == "lr" and idx >= 4:
@@ -1006,13 +1237,13 @@ def pos_follow_net(pos, direction, netname):
             if case == "rr" and idx >= 12:
                 return "span4_horz_l_%d" % idx
 
-    if pos == "l" and direction == "r":
+    if pos == "l" and direction == "r" and (not is_ultra):
             m = re.match("span4_horz_(\d+)$", netname)
             if m: return sp4h_normalize("sp4_h_l_%s" % m.group(1))
             m = re.match("span12_horz_(\d+)$", netname)
             if m: return sp12h_normalize("sp12_h_l_%s" % m.group(1))
 
-    if pos == "r" and direction == "l":
+    if pos == "r" and direction == "l" and (not is_ultra):
             m = re.match("span4_horz_(\d+)$", netname)
             if m: return sp4h_normalize("sp4_h_r_%s" % m.group(1))
             m = re.match("span12_horz_(\d+)$", netname)
@@ -1086,7 +1317,7 @@ def run_checks_neigh():
             if x in (0, ic.max_x) and y in (0, ic.max_y):
                 continue
             # Skip the sides of a 5k device.
-            if ic.device == "5k" and x in (0, ic.max_x):
+            if self.is_ultra() and x in (0, ic.max_x):
                 continue
             add_segments((x, y), ic.tile_db(x, y))
             if (x, y) in ic.logic_tiles:
@@ -4167,6 +4398,340 @@ pinloc_db = {
     ],
 }
 
+# This database contains the locations of configuration bits of the DSP tiles
+# The standard configuration is stored under the key  "default". If it is necessary to
+# override it for a certain DSP on a certain device use the key "{device}_{x}_{y}" where
+# {x} and {y} are the location of the DSP0 tile of the DSP (NOT the tile the cbit is in).
+# x and y are relative to the DSP0 tile.
+dsp_config_db = {
+    "default" : {
+            "C_REG":                        (0, 0, "CBIT_0"),
+            "A_REG":                        (0, 0, "CBIT_1"),
+            "B_REG":                        (0, 0, "CBIT_2"),
+            "D_REG":                        (0, 0, "CBIT_3"),
+            "TOP_8x8_MULT_REG":             (0, 0, "CBIT_4"),
+            "BOT_8x8_MULT_REG":             (0, 0, "CBIT_5"),
+            "PIPELINE_16x16_MULT_REG1":     (0, 0, "CBIT_6"),
+            "PIPELINE_16x16_MULT_REG2":     (0, 0, "CBIT_7"),
+            "TOPOUTPUT_SELECT_0":           (0, 1, "CBIT_0"),
+            "TOPOUTPUT_SELECT_1":           (0, 1, "CBIT_1"),
+            "TOPADDSUB_LOWERINPUT_0":       (0, 1, "CBIT_2"),
+            "TOPADDSUB_LOWERINPUT_1":       (0, 1, "CBIT_3"),
+            "TOPADDSUB_UPPERINPUT":         (0, 1, "CBIT_4"),
+            "TOPADDSUB_CARRYSELECT_0":      (0, 1, "CBIT_5"),
+            "TOPADDSUB_CARRYSELECT_1":      (0, 1, "CBIT_6"),
+            "BOTOUTPUT_SELECT_0":           (0, 1, "CBIT_7"),
+            "BOTOUTPUT_SELECT_1":           (0, 2, "CBIT_0"),
+            "BOTADDSUB_LOWERINPUT_0":       (0, 2, "CBIT_1"),
+            "BOTADDSUB_LOWERINPUT_1":       (0, 2, "CBIT_2"),
+            "BOTADDSUB_UPPERINPUT":         (0, 2, "CBIT_3"),
+            "BOTADDSUB_CARRYSELECT_0":      (0, 2, "CBIT_4"),
+            "BOTADDSUB_CARRYSELECT_1":      (0, 2, "CBIT_5"),
+            "MODE_8x8":                     (0, 2, "CBIT_6"),
+            "A_SIGNED":                     (0, 2, "CBIT_7"),
+            "B_SIGNED":                     (0, 3, "CBIT_0")
+        },
+    "5k_0_15": {
+            "TOPOUTPUT_SELECT_1":           (0, 4, "CBIT_3"),
+            "TOPADDSUB_LOWERINPUT_0":       (0, 4, "CBIT_4"),
+            "TOPADDSUB_LOWERINPUT_1":       (0, 4, "CBIT_5"),
+            "TOPADDSUB_UPPERINPUT":         (0, 4, "CBIT_6")
+        }
+}
+
+# SPRAM data for UltraPlus devices, use icefuzz/tests/fuzz_spram.py
+# to generate this
+spram_db = { 
+    "5k" : {
+        (0, 0, 1): {
+    		"ADDRESS_0":             (0, 2, "lutff_0/in_1"), 
+    		"ADDRESS_10":            (0, 2, "lutff_2/in_0"), 
+    		"ADDRESS_11":            (0, 2, "lutff_3/in_0"), 
+    		"ADDRESS_12":            (0, 2, "lutff_4/in_0"), 
+    		"ADDRESS_13":            (0, 2, "lutff_5/in_0"), 
+    		"ADDRESS_1":             (0, 2, "lutff_1/in_1"), 
+    		"ADDRESS_2":             (0, 2, "lutff_2/in_1"), 
+    		"ADDRESS_3":             (0, 2, "lutff_3/in_1"), 
+    		"ADDRESS_4":             (0, 2, "lutff_4/in_1"), 
+    		"ADDRESS_5":             (0, 2, "lutff_5/in_1"), 
+    		"ADDRESS_6":             (0, 2, "lutff_6/in_1"), 
+    		"ADDRESS_7":             (0, 2, "lutff_7/in_1"), 
+    		"ADDRESS_8":             (0, 2, "lutff_0/in_0"), 
+    		"ADDRESS_9":             (0, 2, "lutff_1/in_0"), 
+    		"CHIPSELECT":            (0, 3, "lutff_6/in_1"), 
+    		"CLOCK":                 (0, 1, "clk"), 
+    		"DATAIN_0":              (0, 1, "lutff_0/in_3"), 
+    		"DATAIN_10":             (0, 1, "lutff_2/in_1"), 
+    		"DATAIN_11":             (0, 1, "lutff_3/in_1"), 
+    		"DATAIN_12":             (0, 1, "lutff_4/in_1"), 
+    		"DATAIN_13":             (0, 1, "lutff_5/in_1"), 
+    		"DATAIN_14":             (0, 1, "lutff_6/in_1"), 
+    		"DATAIN_15":             (0, 1, "lutff_7/in_1"), 
+    		"DATAIN_1":              (0, 1, "lutff_1/in_3"), 
+    		"DATAIN_2":              (0, 1, "lutff_2/in_3"), 
+    		"DATAIN_3":              (0, 1, "lutff_3/in_3"), 
+    		"DATAIN_4":              (0, 1, "lutff_4/in_3"), 
+    		"DATAIN_5":              (0, 1, "lutff_5/in_3"), 
+    		"DATAIN_6":              (0, 1, "lutff_6/in_3"), 
+    		"DATAIN_7":              (0, 1, "lutff_7/in_3"), 
+    		"DATAIN_8":              (0, 1, "lutff_0/in_1"), 
+    		"DATAIN_9":              (0, 1, "lutff_1/in_1"), 
+    		"DATAOUT_0":             (0, 1, "slf_op_0"), 
+    		"DATAOUT_10":            (0, 2, "slf_op_2"), 
+    		"DATAOUT_11":            (0, 2, "slf_op_3"), 
+    		"DATAOUT_12":            (0, 2, "slf_op_4"), 
+    		"DATAOUT_13":            (0, 2, "slf_op_5"), 
+    		"DATAOUT_14":            (0, 2, "slf_op_6"), 
+    		"DATAOUT_15":            (0, 2, "slf_op_7"), 
+    		"DATAOUT_1":             (0, 1, "slf_op_1"), 
+    		"DATAOUT_2":             (0, 1, "slf_op_2"), 
+    		"DATAOUT_3":             (0, 1, "slf_op_3"), 
+    		"DATAOUT_4":             (0, 1, "slf_op_4"), 
+    		"DATAOUT_5":             (0, 1, "slf_op_5"), 
+    		"DATAOUT_6":             (0, 1, "slf_op_6"), 
+    		"DATAOUT_7":             (0, 1, "slf_op_7"), 
+    		"DATAOUT_8":             (0, 2, "slf_op_0"), 
+    		"DATAOUT_9":             (0, 2, "slf_op_1"), 
+    		"MASKWREN_0":            (0, 3, "lutff_0/in_0"), 
+    		"MASKWREN_1":            (0, 3, "lutff_1/in_0"), 
+    		"MASKWREN_2":            (0, 3, "lutff_2/in_0"), 
+    		"MASKWREN_3":            (0, 3, "lutff_3/in_0"), 
+    		"POWEROFF":              (0, 4, "lutff_4/in_3"), 
+    		"SLEEP":                 (0, 4, "lutff_2/in_3"), 
+    		"SPRAM_EN":              (0, 1, "CBIT_0"), 
+    		"STANDBY":               (0, 4, "lutff_0/in_3"), 
+    		"WREN":                  (0, 3, "lutff_4/in_1"), 
+    	},
+    	(0, 0, 2): {
+    		"ADDRESS_0":             (0, 2, "lutff_6/in_0"), 
+    		"ADDRESS_10":            (0, 3, "lutff_0/in_1"), 
+    		"ADDRESS_11":            (0, 3, "lutff_1/in_1"), 
+    		"ADDRESS_12":            (0, 3, "lutff_2/in_1"), 
+    		"ADDRESS_13":            (0, 3, "lutff_3/in_1"), 
+    		"ADDRESS_1":             (0, 2, "lutff_7/in_0"), 
+    		"ADDRESS_2":             (0, 3, "lutff_0/in_3"), 
+    		"ADDRESS_3":             (0, 3, "lutff_1/in_3"), 
+    		"ADDRESS_4":             (0, 3, "lutff_2/in_3"), 
+    		"ADDRESS_5":             (0, 3, "lutff_3/in_3"), 
+    		"ADDRESS_6":             (0, 3, "lutff_4/in_3"), 
+    		"ADDRESS_7":             (0, 3, "lutff_5/in_3"), 
+    		"ADDRESS_8":             (0, 3, "lutff_6/in_3"), 
+    		"ADDRESS_9":             (0, 3, "lutff_7/in_3"), 
+    		"CHIPSELECT":            (0, 3, "lutff_7/in_1"), 
+    		"CLOCK":                 (0, 2, "clk"), 
+    		"DATAIN_0":              (0, 1, "lutff_0/in_0"), 
+    		"DATAIN_10":             (0, 2, "lutff_2/in_3"), 
+    		"DATAIN_11":             (0, 2, "lutff_3/in_3"), 
+    		"DATAIN_12":             (0, 2, "lutff_4/in_3"), 
+    		"DATAIN_13":             (0, 2, "lutff_5/in_3"), 
+    		"DATAIN_14":             (0, 2, "lutff_6/in_3"), 
+    		"DATAIN_15":             (0, 2, "lutff_7/in_3"), 
+    		"DATAIN_1":              (0, 1, "lutff_1/in_0"), 
+    		"DATAIN_2":              (0, 1, "lutff_2/in_0"), 
+    		"DATAIN_3":              (0, 1, "lutff_3/in_0"), 
+    		"DATAIN_4":              (0, 1, "lutff_4/in_0"), 
+    		"DATAIN_5":              (0, 1, "lutff_5/in_0"), 
+    		"DATAIN_6":              (0, 1, "lutff_6/in_0"), 
+    		"DATAIN_7":              (0, 1, "lutff_7/in_0"), 
+    		"DATAIN_8":              (0, 2, "lutff_0/in_3"), 
+    		"DATAIN_9":              (0, 2, "lutff_1/in_3"), 
+    		"DATAOUT_0":             (0, 3, "slf_op_0"), 
+    		"DATAOUT_10":            (0, 4, "slf_op_2"), 
+    		"DATAOUT_11":            (0, 4, "slf_op_3"), 
+    		"DATAOUT_12":            (0, 4, "slf_op_4"), 
+    		"DATAOUT_13":            (0, 4, "slf_op_5"), 
+    		"DATAOUT_14":            (0, 4, "slf_op_6"), 
+    		"DATAOUT_15":            (0, 4, "slf_op_7"), 
+    		"DATAOUT_1":             (0, 3, "slf_op_1"), 
+    		"DATAOUT_2":             (0, 3, "slf_op_2"), 
+    		"DATAOUT_3":             (0, 3, "slf_op_3"), 
+    		"DATAOUT_4":             (0, 3, "slf_op_4"), 
+    		"DATAOUT_5":             (0, 3, "slf_op_5"), 
+    		"DATAOUT_6":             (0, 3, "slf_op_6"), 
+    		"DATAOUT_7":             (0, 3, "slf_op_7"), 
+    		"DATAOUT_8":             (0, 4, "slf_op_0"), 
+    		"DATAOUT_9":             (0, 4, "slf_op_1"), 
+    		"MASKWREN_0":            (0, 3, "lutff_4/in_0"), 
+    		"MASKWREN_1":            (0, 3, "lutff_5/in_0"), 
+    		"MASKWREN_2":            (0, 3, "lutff_6/in_0"), 
+    		"MASKWREN_3":            (0, 3, "lutff_7/in_0"), 
+    		"POWEROFF":              (0, 4, "lutff_5/in_3"), 
+    		"SLEEP":                 (0, 4, "lutff_3/in_3"), 
+    		"SPRAM_EN":              (0, 1, "CBIT_1"), 
+    		"STANDBY":               (0, 4, "lutff_1/in_3"), 
+    		"WREN":                  (0, 3, "lutff_5/in_1"), 
+    	},
+    	(25, 0, 3): {
+    		"ADDRESS_0":             (25, 2, "lutff_0/in_1"), 
+    		"ADDRESS_10":            (25, 2, "lutff_2/in_0"), 
+    		"ADDRESS_11":            (25, 2, "lutff_3/in_0"), 
+    		"ADDRESS_12":            (25, 2, "lutff_4/in_0"), 
+    		"ADDRESS_13":            (25, 2, "lutff_5/in_0"), 
+    		"ADDRESS_1":             (25, 2, "lutff_1/in_1"), 
+    		"ADDRESS_2":             (25, 2, "lutff_2/in_1"), 
+    		"ADDRESS_3":             (25, 2, "lutff_3/in_1"), 
+    		"ADDRESS_4":             (25, 2, "lutff_4/in_1"), 
+    		"ADDRESS_5":             (25, 2, "lutff_5/in_1"), 
+    		"ADDRESS_6":             (25, 2, "lutff_6/in_1"), 
+    		"ADDRESS_7":             (25, 2, "lutff_7/in_1"), 
+    		"ADDRESS_8":             (25, 2, "lutff_0/in_0"), 
+    		"ADDRESS_9":             (25, 2, "lutff_1/in_0"), 
+    		"CHIPSELECT":            (25, 3, "lutff_6/in_1"), 
+    		"CLOCK":                 (25, 1, "clk"), 
+    		"DATAIN_0":              (25, 1, "lutff_0/in_3"), 
+    		"DATAIN_10":             (25, 1, "lutff_2/in_1"), 
+    		"DATAIN_11":             (25, 1, "lutff_3/in_1"), 
+    		"DATAIN_12":             (25, 1, "lutff_4/in_1"), 
+    		"DATAIN_13":             (25, 1, "lutff_5/in_1"), 
+    		"DATAIN_14":             (25, 1, "lutff_6/in_1"), 
+    		"DATAIN_15":             (25, 1, "lutff_7/in_1"), 
+    		"DATAIN_1":              (25, 1, "lutff_1/in_3"), 
+    		"DATAIN_2":              (25, 1, "lutff_2/in_3"), 
+    		"DATAIN_3":              (25, 1, "lutff_3/in_3"), 
+    		"DATAIN_4":              (25, 1, "lutff_4/in_3"), 
+    		"DATAIN_5":              (25, 1, "lutff_5/in_3"), 
+    		"DATAIN_6":              (25, 1, "lutff_6/in_3"), 
+    		"DATAIN_7":              (25, 1, "lutff_7/in_3"), 
+    		"DATAIN_8":              (25, 1, "lutff_0/in_1"), 
+    		"DATAIN_9":              (25, 1, "lutff_1/in_1"), 
+    		"DATAOUT_0":             (25, 1, "slf_op_0"), 
+    		"DATAOUT_10":            (25, 2, "slf_op_2"), 
+    		"DATAOUT_11":            (25, 2, "slf_op_3"), 
+    		"DATAOUT_12":            (25, 2, "slf_op_4"), 
+    		"DATAOUT_13":            (25, 2, "slf_op_5"), 
+    		"DATAOUT_14":            (25, 2, "slf_op_6"), 
+    		"DATAOUT_15":            (25, 2, "slf_op_7"), 
+    		"DATAOUT_1":             (25, 1, "slf_op_1"), 
+    		"DATAOUT_2":             (25, 1, "slf_op_2"), 
+    		"DATAOUT_3":             (25, 1, "slf_op_3"), 
+    		"DATAOUT_4":             (25, 1, "slf_op_4"), 
+    		"DATAOUT_5":             (25, 1, "slf_op_5"), 
+    		"DATAOUT_6":             (25, 1, "slf_op_6"), 
+    		"DATAOUT_7":             (25, 1, "slf_op_7"), 
+    		"DATAOUT_8":             (25, 2, "slf_op_0"), 
+    		"DATAOUT_9":             (25, 2, "slf_op_1"), 
+    		"MASKWREN_0":            (25, 3, "lutff_0/in_0"), 
+    		"MASKWREN_1":            (25, 3, "lutff_1/in_0"), 
+    		"MASKWREN_2":            (25, 3, "lutff_2/in_0"), 
+    		"MASKWREN_3":            (25, 3, "lutff_3/in_0"), 
+    		"POWEROFF":              (25, 4, "lutff_4/in_3"), 
+    		"SLEEP":                 (25, 4, "lutff_2/in_3"), 
+    		"SPRAM_EN":              (25, 1, "CBIT_0"), 
+    		"STANDBY":               (25, 4, "lutff_0/in_3"), 
+    		"WREN":                  (25, 3, "lutff_4/in_1"), 
+    	},
+    	(25, 0, 4): {
+    		"ADDRESS_0":             (25, 2, "lutff_6/in_0"), 
+    		"ADDRESS_10":            (25, 3, "lutff_0/in_1"), 
+    		"ADDRESS_11":            (25, 3, "lutff_1/in_1"), 
+    		"ADDRESS_12":            (25, 3, "lutff_2/in_1"), 
+    		"ADDRESS_13":            (25, 3, "lutff_3/in_1"), 
+    		"ADDRESS_1":             (25, 2, "lutff_7/in_0"), 
+    		"ADDRESS_2":             (25, 3, "lutff_0/in_3"), 
+    		"ADDRESS_3":             (25, 3, "lutff_1/in_3"), 
+    		"ADDRESS_4":             (25, 3, "lutff_2/in_3"), 
+    		"ADDRESS_5":             (25, 3, "lutff_3/in_3"), 
+    		"ADDRESS_6":             (25, 3, "lutff_4/in_3"), 
+    		"ADDRESS_7":             (25, 3, "lutff_5/in_3"), 
+    		"ADDRESS_8":             (25, 3, "lutff_6/in_3"), 
+    		"ADDRESS_9":             (25, 3, "lutff_7/in_3"), 
+    		"CHIPSELECT":            (25, 3, "lutff_7/in_1"), 
+    		"CLOCK":                 (25, 2, "clk"), 
+    		"DATAIN_0":              (25, 1, "lutff_0/in_0"), 
+    		"DATAIN_10":             (25, 2, "lutff_2/in_3"), 
+    		"DATAIN_11":             (25, 2, "lutff_3/in_3"), 
+    		"DATAIN_12":             (25, 2, "lutff_4/in_3"), 
+    		"DATAIN_13":             (25, 2, "lutff_5/in_3"), 
+    		"DATAIN_14":             (25, 2, "lutff_6/in_3"), 
+    		"DATAIN_15":             (25, 2, "lutff_7/in_3"), 
+    		"DATAIN_1":              (25, 1, "lutff_1/in_0"), 
+    		"DATAIN_2":              (25, 1, "lutff_2/in_0"), 
+    		"DATAIN_3":              (25, 1, "lutff_3/in_0"), 
+    		"DATAIN_4":              (25, 1, "lutff_4/in_0"), 
+    		"DATAIN_5":              (25, 1, "lutff_5/in_0"), 
+    		"DATAIN_6":              (25, 1, "lutff_6/in_0"), 
+    		"DATAIN_7":              (25, 1, "lutff_7/in_0"), 
+    		"DATAIN_8":              (25, 2, "lutff_0/in_3"), 
+    		"DATAIN_9":              (25, 2, "lutff_1/in_3"), 
+    		"DATAOUT_0":             (25, 3, "slf_op_0"), 
+    		"DATAOUT_10":            (25, 4, "slf_op_2"), 
+    		"DATAOUT_11":            (25, 4, "slf_op_3"), 
+    		"DATAOUT_12":            (25, 4, "slf_op_4"), 
+    		"DATAOUT_13":            (25, 4, "slf_op_5"), 
+    		"DATAOUT_14":            (25, 4, "slf_op_6"), 
+    		"DATAOUT_15":            (25, 4, "slf_op_7"), 
+    		"DATAOUT_1":             (25, 3, "slf_op_1"), 
+    		"DATAOUT_2":             (25, 3, "slf_op_2"), 
+    		"DATAOUT_3":             (25, 3, "slf_op_3"), 
+    		"DATAOUT_4":             (25, 3, "slf_op_4"), 
+    		"DATAOUT_5":             (25, 3, "slf_op_5"), 
+    		"DATAOUT_6":             (25, 3, "slf_op_6"), 
+    		"DATAOUT_7":             (25, 3, "slf_op_7"), 
+    		"DATAOUT_8":             (25, 4, "slf_op_0"), 
+    		"DATAOUT_9":             (25, 4, "slf_op_1"), 
+    		"MASKWREN_0":            (25, 3, "lutff_4/in_0"), 
+    		"MASKWREN_1":            (25, 3, "lutff_5/in_0"), 
+    		"MASKWREN_2":            (25, 3, "lutff_6/in_0"), 
+    		"MASKWREN_3":            (25, 3, "lutff_7/in_0"), 
+    		"POWEROFF":              (25, 4, "lutff_5/in_3"), 
+    		"SLEEP":                 (25, 4, "lutff_3/in_3"), 
+    		"SPRAM_EN":              (25, 1, "CBIT_1"), 
+    		"STANDBY":               (25, 4, "lutff_1/in_3"), 
+    		"WREN":                  (25, 3, "lutff_5/in_1"), 
+    	}
+    }
+}
+
+# This contains the data for extra cells not included
+# in any previous databases
+
+extra_cells_db = {
+    "5k" : {
+        ("HFOSC", (0, 31, 1)) : {
+            "CLKHFPU":                      (0, 29, "lutff_0/in_1"),
+            "CLKHFEN":                      (0, 29, "lutff_7/in_3"),
+            "CLKHF":                        (0, 29, "glb_netwk_4"),
+            "CLKHF_FABRIC":                 (0, 28, "slf_op_7"),
+            "CLKHF_DIV_1":                  (0, 16, "CBIT_4"),
+            "CLKHF_DIV_0":                  (0, 16, "CBIT_3") 
+        },
+        ("LFOSC", (25, 31, 1)) : {
+            "CLKLFPU":                      (25, 29, "lutff_0/in_1"),
+            "CLKLFEN":                      (25, 29, "lutff_7/in_3"),
+            "CLKLF":                        (25, 29, "glb_netwk_5"),
+            "CLKLF_FABRIC":                 (25, 29, "slf_op_0")
+        },
+        ("RGBA_DRV", (0, 30, 0)) : {
+            "CURREN":                       (25, 29, "lutff_6/in_3"),
+            "RGBLEDEN":                     (0, 30, "lutff_1/in_1"),
+            "RGB0PWM":                      (0, 30, "lutff_2/in_1"),
+            "RGB1PWM":                      (0, 30, "lutff_3/in_1"),
+            "RGB2PWM":                      (0, 30, "lutff_4/in_1"),
+            "RGBA_DRV_EN":                  (0, 28, "CBIT_5"),
+            "RGB0_CURRENT_0":               (0, 28, "CBIT_6"),
+            "RGB0_CURRENT_1":               (0, 28, "CBIT_7"),
+            "RGB0_CURRENT_2":               (0, 29, "CBIT_0"),
+            "RGB0_CURRENT_3":               (0, 29, "CBIT_1"),
+            "RGB0_CURRENT_4":               (0, 29, "CBIT_2"),
+            "RGB0_CURRENT_5":               (0, 29, "CBIT_3"),
+            "RGB1_CURRENT_0":               (0, 29, "CBIT_4"),
+            "RGB1_CURRENT_1":               (0, 29, "CBIT_5"),
+            "RGB1_CURRENT_2":               (0, 29, "CBIT_6"),
+            "RGB1_CURRENT_3":               (0, 29, "CBIT_7"),
+            "RGB1_CURRENT_4":               (0, 30, "CBIT_0"),
+            "RGB1_CURRENT_5":               (0, 30, "CBIT_1"),
+            "RGB2_CURRENT_0":               (0, 30, "CBIT_2"),
+            "RGB2_CURRENT_1":               (0, 30, "CBIT_3"),
+            "RGB2_CURRENT_2":               (0, 30, "CBIT_4"),
+            "RGB2_CURRENT_3":               (0, 30, "CBIT_5"),
+            "RGB2_CURRENT_4":               (0, 30, "CBIT_6"),
+            "RGB2_CURRENT_5":               (0, 30, "CBIT_7"),
+            "CURRENT_MODE":                 (0, 28, "CBIT_4"),
+            
+        }
+    }
+}
+
 iotile_full_db = parse_db(iceboxdb.database_io_txt)
 logictile_db = parse_db(iceboxdb.database_logic_txt, "1k")
 logictile_5k_db = parse_db(iceboxdb.database_logic_txt, "5k")
@@ -4178,6 +4743,26 @@ rambtile_5k_db = parse_db(iceboxdb.database_ramb_5k_txt, "5k")
 ramttile_5k_db = parse_db(iceboxdb.database_ramt_5k_txt, "5k")
 rambtile_8k_db = parse_db(iceboxdb.database_ramb_8k_txt, "8k")
 ramttile_8k_db = parse_db(iceboxdb.database_ramt_8k_txt, "8k")
+
+ipcon_5k_db = parse_db(iceboxdb.database_ipcon_5k_txt, "5k")
+dsp0_5k_db = parse_db(iceboxdb.database_dsp0_5k_txt, "5k")
+dsp1_5k_db = parse_db(iceboxdb.database_dsp1_5k_txt, "5k")
+
+#This bit doesn't exist in DB because icecube won't ever set it,
+#but it exists
+dsp1_5k_db.append([["B4[7]"], "IpConfig", "CBIT_5"])
+
+
+dsp2_5k_db = parse_db(iceboxdb.database_dsp2_5k_txt, "5k")
+dsp3_5k_db = parse_db(iceboxdb.database_dsp3_5k_txt, "5k")
+
+#Add missing LC_ bits to DSP and IPCon databases
+for db_to_fix in [ipcon_5k_db, dsp0_5k_db, dsp1_5k_db, dsp2_5k_db, dsp3_5k_db]:
+    for entry in db_to_fix:
+        if len(entry) >= 2 and entry[1].startswith("LC_"):
+            for lentry in logictile_5k_db:
+                if len(lentry) >= 2 and lentry[1] == entry[1]:
+                    entry[0] = lentry[0]
 
 iotile_l_db = list()
 iotile_r_db = list()
@@ -4223,16 +4808,28 @@ logictile_384_db.append([["B1[50]"], "CarryInSet"])
 iotile_t_5k_db = list(iotile_t_db)
 iotile_t_5k_db.append([["B14[15]"], "IoCtrl", "padeb_test_1"])
 iotile_t_5k_db.append([["B15[14]"], "IoCtrl", "padeb_test_0"])
+iotile_t_5k_db.append([["B7[10]"], "IoCtrl", "cf_bit_32"])
+iotile_t_5k_db.append([["B6[10]"], "IoCtrl", "cf_bit_33"])
+iotile_t_5k_db.append([["B7[15]"], "IoCtrl", "cf_bit_34"])
 iotile_t_5k_db.append([["B6[15]"], "IoCtrl", "cf_bit_35"])
+iotile_t_5k_db.append([["B13[10]"], "IoCtrl", "cf_bit_36"])
+iotile_t_5k_db.append([["B12[10]"], "IoCtrl", "cf_bit_37"])
+iotile_t_5k_db.append([["B13[15]"], "IoCtrl", "cf_bit_38"])
 iotile_t_5k_db.append([["B12[15]"], "IoCtrl", "cf_bit_39"])
 
 iotile_b_5k_db = list(iotile_b_db)
 iotile_b_5k_db.append([["B14[15]"], "IoCtrl", "padeb_test_1"])
 iotile_b_5k_db.append([["B15[14]"], "IoCtrl", "padeb_test_0"])
+iotile_b_5k_db.append([["B7[10]"], "IoCtrl", "cf_bit_32"])
+iotile_b_5k_db.append([["B6[10]"], "IoCtrl", "cf_bit_33"])
+iotile_b_5k_db.append([["B7[15]"], "IoCtrl", "cf_bit_34"])
 iotile_b_5k_db.append([["B6[15]"], "IoCtrl", "cf_bit_35"])
+iotile_b_5k_db.append([["B13[10]"], "IoCtrl", "cf_bit_36"])
+iotile_b_5k_db.append([["B12[10]"], "IoCtrl", "cf_bit_37"])
+iotile_b_5k_db.append([["B13[15]"], "IoCtrl", "cf_bit_38"])
 iotile_b_5k_db.append([["B12[15]"], "IoCtrl", "cf_bit_39"])
 
-for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, iotile_t_5k_db, iotile_b_5k_db, logictile_db, logictile_5k_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_5k_db, ramttile_5k_db, rambtile_8k_db, ramttile_8k_db]:
+for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, iotile_t_5k_db, iotile_b_5k_db, logictile_db, logictile_5k_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_5k_db, ramttile_5k_db, rambtile_8k_db, ramttile_8k_db, dsp0_5k_db, dsp1_5k_db, dsp2_5k_db, dsp3_5k_db, ipcon_5k_db]:
     for entry in db:
         if entry[1] in ("buffer", "routing"):
             entry[2] = netname_normalize(entry[2],

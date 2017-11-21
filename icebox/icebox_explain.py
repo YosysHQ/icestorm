@@ -117,7 +117,7 @@ def print_tile(stmt, ic, x, y, tile, db):
         bitinfo.append("")
         extra_text = ""
         for i in range(len(line)):
-            if 36 <= i <= 45 and re.search(r"logic_tile", stmt):
+            if 36 <= i <= 45 and re.search(r"(logic_tile|dsp\d_tile|ipcon_tile)", stmt):
                 lutff_idx = k // 2
                 lutff_bitnum = (i-36) + 10*(k%2)
                 if line[i] == "1":
@@ -165,6 +165,13 @@ for idx in ic.ramb_tiles:
 
 for idx in ic.ramt_tiles:
     print_tile(".ramt_tile %d %d" % idx, ic, idx[0], idx[1], ic.ramt_tiles[idx], ic.tile_db(idx[0], idx[1]))
+
+for i in range(4):
+    for idx in ic.dsp_tiles[i]:
+        print_tile(".dsp%d_tile %d %d" % (i, idx[0], idx[1]), ic, idx[0], idx[1], ic.dsp_tiles[i][idx], ic.tile_db(idx[0], idx[1]))
+
+for idx in ic.ipcon_tiles:
+    print_tile(".ipcon_tile %d %d" % idx, ic, idx[0], idx[1], ic.ipcon_tiles[idx], ic.tile_db(idx[0], idx[1]))
 
 for bit in ic.extra_bits:
     print()

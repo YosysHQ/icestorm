@@ -1,0 +1,12 @@
+*.bin
+*.blif
+*.asc
+*.rpt
+*.glb
+*.psb
+*.sdf
+*.vsb
+*.bin
+*.tmp/
+*.exp
+*.vlog

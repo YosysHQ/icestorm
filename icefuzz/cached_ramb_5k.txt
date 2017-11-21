@@ -1,4 +1,5 @@
 (0 0) Negative Clock bit
+(0 10) routing glb_netwk_2 <X> glb2local_2
 (0 10) routing glb_netwk_3 <X> glb2local_2
 (0 10) routing glb_netwk_6 <X> glb2local_2
 (0 10) routing glb_netwk_7 <X> glb2local_2
@@ -6,11 +7,14 @@
 (0 11) routing glb_netwk_3 <X> glb2local_2
 (0 11) routing glb_netwk_5 <X> glb2local_2
 (0 11) routing glb_netwk_7 <X> glb2local_2
+(0 12) routing glb_netwk_2 <X> glb2local_3
 (0 12) routing glb_netwk_3 <X> glb2local_3
 (0 12) routing glb_netwk_6 <X> glb2local_3
+(0 12) routing glb_netwk_7 <X> glb2local_3
 (0 13) routing glb_netwk_1 <X> glb2local_3
 (0 13) routing glb_netwk_3 <X> glb2local_3
 (0 13) routing glb_netwk_5 <X> glb2local_3
+(0 13) routing glb_netwk_7 <X> glb2local_3
 (0 14) routing glb_netwk_4 <X> wire_bram/ram/RE
 (0 14) routing glb_netwk_6 <X> wire_bram/ram/RE
 (0 14) routing lc_trk_g2_4 <X> wire_bram/ram/RE
@@ -31,7 +35,6 @@
 (0 3) routing glb_netwk_7 <X> wire_bram/ram/RCLK
 (0 3) routing lc_trk_g1_1 <X> wire_bram/ram/RCLK
 (0 3) routing lc_trk_g3_1 <X> wire_bram/ram/RCLK
-(0 4) routing glb_netwk_5 <X> wire_bram/ram/RCLKE
 (0 4) routing lc_trk_g2_2 <X> wire_bram/ram/RCLKE
 (0 4) routing lc_trk_g3_3 <X> wire_bram/ram/RCLKE
 (0 5) routing lc_trk_g1_3 <X> wire_bram/ram/RCLKE
@@ -45,12 +48,11 @@
 (0 7) routing glb_netwk_7 <X> glb2local_0
 (0 8) routing glb_netwk_3 <X> glb2local_1
 (0 8) routing glb_netwk_6 <X> glb2local_1
-(0 8) routing glb_netwk_7 <X> glb2local_1
 (0 9) routing glb_netwk_1 <X> glb2local_1
 (0 9) routing glb_netwk_3 <X> glb2local_1
 (0 9) routing glb_netwk_5 <X> glb2local_1
-(0 9) routing glb_netwk_7 <X> glb2local_1
 (1 10) Enable bit of Mux _local_links/global_mux_2 => glb_netwk_1 glb2local_2
+(1 10) Enable bit of Mux _local_links/global_mux_2 => glb_netwk_2 glb2local_2
 (1 10) Enable bit of Mux _local_links/global_mux_2 => glb_netwk_3 glb2local_2
 (1 10) Enable bit of Mux _local_links/global_mux_2 => glb_netwk_4 glb2local_2
 (1 10) Enable bit of Mux _local_links/global_mux_2 => glb_netwk_5 glb2local_2
@@ -61,13 +63,16 @@
 (1 11) routing glb_netwk_6 <X> glb2local_2
 (1 11) routing glb_netwk_7 <X> glb2local_2
 (1 12) Enable bit of Mux _local_links/global_mux_3 => glb_netwk_1 glb2local_3
+(1 12) Enable bit of Mux _local_links/global_mux_3 => glb_netwk_2 glb2local_3
 (1 12) Enable bit of Mux _local_links/global_mux_3 => glb_netwk_3 glb2local_3
 (1 12) Enable bit of Mux _local_links/global_mux_3 => glb_netwk_4 glb2local_3
 (1 12) Enable bit of Mux _local_links/global_mux_3 => glb_netwk_5 glb2local_3
 (1 12) Enable bit of Mux _local_links/global_mux_3 => glb_netwk_6 glb2local_3
+(1 12) Enable bit of Mux _local_links/global_mux_3 => glb_netwk_7 glb2local_3
 (1 13) routing glb_netwk_4 <X> glb2local_3
 (1 13) routing glb_netwk_5 <X> glb2local_3
 (1 13) routing glb_netwk_6 <X> glb2local_3
+(1 13) routing glb_netwk_7 <X> glb2local_3
 (1 14) Enable bit of Mux _global_links/set_rst_mux => glb_netwk_2 wire_bram/ram/RE
 (1 14) Enable bit of Mux _global_links/set_rst_mux => glb_netwk_4 wire_bram/ram/RE
 (1 14) Enable bit of Mux _global_links/set_rst_mux => glb_netwk_6 wire_bram/ram/RE
@@ -84,7 +89,6 @@
 (1 2) routing glb_netwk_6 <X> wire_bram/ram/RCLK
 (1 2) routing glb_netwk_7 <X> wire_bram/ram/RCLK
 (1 3) Enable bit of Mux _span_links/cross_mux_horz_5 => sp12_h_l_9 sp4_h_r_17
-(1 4) Enable bit of Mux _global_links/ce_mux => glb_netwk_5 wire_bram/ram/RCLKE
 (1 4) Enable bit of Mux _global_links/ce_mux => lc_trk_g0_2 wire_bram/ram/RCLKE
 (1 4) Enable bit of Mux _global_links/ce_mux => lc_trk_g1_3 wire_bram/ram/RCLKE
 (1 4) Enable bit of Mux _global_links/ce_mux => lc_trk_g2_2 wire_bram/ram/RCLKE
@@ -108,11 +112,9 @@
 (1 8) Enable bit of Mux _local_links/global_mux_1 => glb_netwk_4 glb2local_1
 (1 8) Enable bit of Mux _local_links/global_mux_1 => glb_netwk_5 glb2local_1
 (1 8) Enable bit of Mux _local_links/global_mux_1 => glb_netwk_6 glb2local_1
-(1 8) Enable bit of Mux _local_links/global_mux_1 => glb_netwk_7 glb2local_1
 (1 9) routing glb_netwk_4 <X> glb2local_1
 (1 9) routing glb_netwk_5 <X> glb2local_1
 (1 9) routing glb_netwk_6 <X> glb2local_1
-(1 9) routing glb_netwk_7 <X> glb2local_1
 (10 0) routing sp4_h_l_40 <X> sp4_h_r_1
 (10 0) routing sp4_h_l_47 <X> sp4_h_r_1
 (10 0) routing sp4_v_b_7 <X> sp4_h_r_1
@@ -214,6 +216,7 @@
 (11 2) routing sp4_v_b_11 <X> sp4_v_t_39
 (11 2) routing sp4_v_b_6 <X> sp4_v_t_39
 (11 3) routing sp4_h_r_2 <X> sp4_h_l_39
+(11 3) routing sp4_h_r_6 <X> sp4_h_l_39
 (11 3) routing sp4_v_t_39 <X> sp4_h_l_39
 (11 3) routing sp4_v_t_45 <X> sp4_h_l_39
 (11 4) routing sp4_h_l_46 <X> sp4_v_b_5
@@ -264,6 +267,7 @@
 (12 13) routing sp4_h_l_46 <X> sp4_v_b_11
 (12 13) routing sp4_h_r_11 <X> sp4_v_b_11
 (12 13) routing sp4_v_t_45 <X> sp4_v_b_11
+(12 14) routing sp4_h_r_8 <X> sp4_h_l_46
 (12 14) routing sp4_v_b_11 <X> sp4_h_l_46
 (12 14) routing sp4_v_t_40 <X> sp4_h_l_46
 (12 14) routing sp4_v_t_46 <X> sp4_h_l_46
@@ -332,6 +336,7 @@
 (13 14) routing sp4_v_b_11 <X> sp4_v_t_46
 (13 14) routing sp4_v_b_3 <X> sp4_v_t_46
 (13 15) routing sp4_h_r_3 <X> sp4_h_l_46
+(13 15) routing sp4_h_r_8 <X> sp4_h_l_46
 (13 15) routing sp4_v_b_6 <X> sp4_h_l_46
 (13 15) routing sp4_v_t_40 <X> sp4_h_l_46
 (13 2) routing sp4_h_r_2 <X> sp4_v_t_39
@@ -339,6 +344,7 @@
 (13 2) routing sp4_v_b_2 <X> sp4_v_t_39
 (13 2) routing sp4_v_b_6 <X> sp4_v_t_39
 (13 3) routing sp4_h_r_11 <X> sp4_h_l_39
+(13 3) routing sp4_h_r_6 <X> sp4_h_l_39
 (13 3) routing sp4_v_b_9 <X> sp4_h_l_39
 (13 3) routing sp4_v_t_45 <X> sp4_h_l_39
 (13 4) routing sp4_h_l_40 <X> sp4_v_b_5
@@ -1089,7 +1095,6 @@
 (2 10) Enable bit of Mux _span_links/cross_mux_horz_9 => sp12_h_l_17 sp4_h_r_21
 (2 12) Enable bit of Mux _span_links/cross_mux_horz_10 => sp12_h_r_20 sp4_h_l_11
 (2 14) Enable bit of Mux _span_links/cross_mux_horz_11 => sp12_h_r_22 sp4_h_r_23
-(2 2) Enable bit of Mux _global_links/clk_mux => glb_netwk_0 wire_bram/ram/RCLK
 (2 2) Enable bit of Mux _global_links/clk_mux => glb_netwk_1 wire_bram/ram/RCLK
 (2 2) Enable bit of Mux _global_links/clk_mux => glb_netwk_2 wire_bram/ram/RCLK
 (2 2) Enable bit of Mux _global_links/clk_mux => glb_netwk_3 wire_bram/ram/RCLK
@@ -3428,7 +3433,6 @@
 (7 14) Column buffer control bit: MEMB_colbuf_cntl_7
 (7 15) Column buffer control bit: MEMB_colbuf_cntl_6
 (7 8) Column buffer control bit: MEMB_colbuf_cntl_1
-(7 9) Column buffer control bit: MEMB_colbuf_cntl_0
 (8 0) routing sp4_h_l_36 <X> sp4_h_r_1
 (8 0) routing sp4_h_l_40 <X> sp4_h_r_1
 (8 0) routing sp4_v_b_1 <X> sp4_h_r_1
