@@ -4816,6 +4816,10 @@ iotile_t_5k_db.append([["B13[10]"], "IoCtrl", "cf_bit_36"])
 iotile_t_5k_db.append([["B12[10]"], "IoCtrl", "cf_bit_37"])
 iotile_t_5k_db.append([["B13[15]"], "IoCtrl", "cf_bit_38"])
 iotile_t_5k_db.append([["B12[15]"], "IoCtrl", "cf_bit_39"])
+iotile_t_5k_db.append([["B10[3]"], "IpConfig", "cbit2usealt_in_0"])
+iotile_t_5k_db.append([["B12[2]"], "IpConfig", "cbit2usealt_in_1"])
+iotile_t_5k_db.append([["B12[3]"], "IpConfig", "SDA_input_delay"])
+iotile_t_5k_db.append([["B15[3]"], "IpConfig", "SDA_output_delay"])
 
 iotile_b_5k_db = list(iotile_b_db)
 iotile_b_5k_db.append([["B14[15]"], "IoCtrl", "padeb_test_1"])
@@ -4828,6 +4832,10 @@ iotile_b_5k_db.append([["B13[10]"], "IoCtrl", "cf_bit_36"])
 iotile_b_5k_db.append([["B12[10]"], "IoCtrl", "cf_bit_37"])
 iotile_b_5k_db.append([["B13[15]"], "IoCtrl", "cf_bit_38"])
 iotile_b_5k_db.append([["B12[15]"], "IoCtrl", "cf_bit_39"])
+iotile_t_5k_db.append([["B10[3]"], "IpConfig", "cbit2usealt_in_0"])
+iotile_t_5k_db.append([["B12[2]"], "IpConfig", "cbit2usealt_in_1"])
+iotile_t_5k_db.append([["B12[3]"], "IpConfig", "SDA_input_delay"])
+iotile_t_5k_db.append([["B15[3]"], "IpConfig", "SDA_output_delay"])
 
 for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, iotile_t_5k_db, iotile_b_5k_db, logictile_db, logictile_5k_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_5k_db, ramttile_5k_db, rambtile_8k_db, ramttile_8k_db, dsp0_5k_db, dsp1_5k_db, dsp2_5k_db, dsp3_5k_db, ipcon_5k_db]:
     for entry in db:
