@@ -231,7 +231,10 @@ void read_config()
 				config_device = strtok(nullptr, " \t\r\n");
 			} else
 			if (!strcmp(tok, ".io_tile") || !strcmp(tok, ".logic_tile") ||
-					!strcmp(tok, ".ramb_tile") || !strcmp(tok, ".ramt_tile"))
+					!strcmp(tok, ".ramb_tile") || !strcmp(tok, ".ramt_tile") ||
+				  !strcmp(tok, ".ipcon_tile") || !strcmp(tok, ".dsp0_tile") ||
+				  !strcmp(tok, ".dsp1_tile") || !strcmp(tok, ".dsp2_tile") ||
+				  !strcmp(tok, ".dsp3_tile"))
 			{
 				line_nr = 0;
 				tile_x = atoi(strtok(nullptr, " \t\r\n"));
@@ -255,6 +258,16 @@ void read_config()
 					config_tile_type.at(tile_x).at(tile_y) = "ramb";
 				if (!strcmp(tok, ".ramt_tile"))
 					config_tile_type.at(tile_x).at(tile_y) = "ramt";
+				if (!strcmp(tok, ".dsp0_tile"))
+					config_tile_type.at(tile_x).at(tile_y) = "dsp0";
+				if (!strcmp(tok, ".dsp1_tile"))
+					config_tile_type.at(tile_x).at(tile_y) = "dsp1";
+				if (!strcmp(tok, ".dsp2_tile"))
+					config_tile_type.at(tile_x).at(tile_y) = "dsp2";
+				if (!strcmp(tok, ".dsp3_tile"))
+					config_tile_type.at(tile_x).at(tile_y) = "dsp3";
+				if (!strcmp(tok, ".ipcon_tile"))
+					config_tile_type.at(tile_x).at(tile_y) = "ipcon";
 			} else
 			if (!strcmp(tok, ".extra_bit")) {
 				int b = atoi(strtok(nullptr, " \t\r\n"));
@@ -666,7 +679,9 @@ double get_delay(std::string cell_type, std::string in_port, std::string out_por
 
 	if (device_type == "hx8k")
 		return get_delay_hx8k(cell_type, in_port, out_port);
-
+		
+	if (device_type == "up5k")
+		return get_delay_up5k(cell_type, in_port, out_port);
 	fprintf(stderr, "No built-in timing database for '%s' devices!\n", device_type.c_str());
 	exit(1);
 }
@@ -1077,7 +1092,7 @@ std::string make_seg_pre_io(int x, int y, int z)
 
 std::string make_lc40(int x, int y, int z)
 {
-	assert(0 < x && 0 < y && 0 <= z && z < 8);
+	assert(0 <= x && 0 < y && 0 <= z && z < 8);
 
 	auto cell = stringf("lc40_%d_%d_%d", x, y, z);
 
@@ -1884,7 +1899,7 @@ void help(const char *cmd)
 	printf("    -j <output_file>\n");
 	printf("        write timing report in json format to the file\n");
 	printf("\n");
-	printf("    -d lp384|lp1k|hx1k|lp8k|hx8k\n");
+	printf("    -d lp384|lp1k|hx1k|lp8k|hx8k|up5k\n");
 	printf("        select the device type (default = lp variant)\n");
 	printf("\n");
 	printf("    -C <chipdb-file>\n");
@@ -2024,6 +2039,10 @@ int main(int argc, char **argv)
 	} else
 	if (device_type == "lp8k" || device_type == "hx8k") {
 		if (config_device != "8k")
+			goto device_chip_mismatch;
+	} else
+	if (device_type == "up5k") {
+		if (config_device != "5k")
 			goto device_chip_mismatch;
 	} else {
 		fprintf(stderr, "Error: Invalid device type '%s'.\n", device_type.c_str());
