@@ -22,7 +22,8 @@ ip_signals["I2C"] = [["SBCLKI", "SBRWI", "SBSTBI", "SCLI", "SDAI"],
 ip_signals["SPI"] = [["SBCLKI", "SBRWI", "SBSTBI", "MI", "SI", "SCKI", "SCSNI"],
                      ["SBACKO", "SPIIRQ", "SPIWKUP", "SO", "SOE", "MO", "MOE", "SCKO", "SCKOE"]]
 
-ip_signals["LEDDA_IP"] = [["LEDDCS", "LEDDCLK", "LEDDDEN", "LEDDEXE", "LEDDRST"], ["PWMOUT0", "PWMOUT1", "PWMOUT2", "LEDDON"]]
+# LEDDRST is missing because it doesn't really exist...
+ip_signals["LEDDA_IP"] = [["LEDDCS", "LEDDCLK", "LEDDDEN", "LEDDEXE"], ["PWMOUT0", "PWMOUT1", "PWMOUT2", "LEDDON"]]
 
 fixed_cbits = {}
 
@@ -274,6 +275,7 @@ for ip in ip_types:
     with open(device + "_" + ip + "_data.txt", "w") as f:
         for loc in ip_data[ip]:
             x, y, z = loc
+            print("\t(\"%s\", (%d, %d, %d)): {" % (ip, x, y, z), file=f)
             data = ip_data[ip][loc]
             for net in sorted(data):
                 cnets = []
