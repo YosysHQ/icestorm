@@ -285,7 +285,8 @@ can be used as an open-drain IO using the standard IO cell.</p>
 <h2>Hard IP</h2>
 
 <p>The UltraPlus devices contain three types of Hard IP: I<sup>2</sup>C (<span style="font-family:monospace">SB_I2C</span>), SPI (<span style="font-family:monospace">SB_SPI</span>), and LED PWM generation
-(<span style="font-family:monospace">SB_LEDDA_IP</span>). The connections and configurations for each of these blocks are documented below.</p>
+(<span style="font-family:monospace">SB_LEDDA_IP</span>). The connections and configurations for each of these blocks are documented below. Names in italics are parameters rather than actual bits,
+where multiple bits are used to enable an IP they are labeled as <span style="font-family:monospace"><em>_ENABLE_0</em></span>, <span style="font-family:monospace"><em>_ENABLE_1</em></span>, etc. </p>
 <table class="multitab"><tr><td>
 	<table class="cstab">
 	<tr><th>Signal</th><th>I2C<br/>(0, 31, 0)</th><th>I2C<br/>(25, 31, 0)</th></tr>
@@ -410,6 +411,15 @@ can be used as an open-drain IO using the standard IO cell.</p>
 </td></tr></table>
 </p>
 
-<p>The I<sup>2</sup>C "glitch filter" is a seperate module from the I<sup>2</sup>C interface IP and needs to be reverse engineered seperately.
+<p>The I<sup>2</sup>C "glitch filter" (referred to as <span style="font-family:monospace">SB_FILTER_50NS</span>) is a seperate module from the I<sup>2</sup>C interface IP, with connections as shown below:
+	<table class="ctab">
+	<tr><th>Signal</th><th>SB_FILTER_50NS<br/>(25, 31, 2)</th><th>SB_FILTER_50NS<br/>(25, 31, 3)</th></tr>
+	<tr><td>FILTERIN</td><td>(25, 27, lutff_1/in_0)</td><td>(25, 27, lutff_0/in_0)</td></tr>
+	<tr><td>FILTEROUT</td><td>(25, 27, slf_op_2)</td><td>(25, 27, slf_op_1)</td></tr>
+	<tr><td>ENABLE_0</td><td>(25, 30, CBIT_2)</td><td>(25, 30, CBIT_5)</td></tr>
+	<tr><td>ENABLE_1</td><td>(25, 30, CBIT_3)</td><td>(25, 30, CBIT_6)</td></tr>
+	<tr><td>ENABLE_2</td><td>(25, 30, CBIT_4)</td><td>(25, 30, CBIT_7)</td></tr>
+
+	</table>
 
 </body></html>
