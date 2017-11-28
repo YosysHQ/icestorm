@@ -1,0 +1,18 @@
+set_io sbclki 2
+set_io sbrwi 3
+set_io sbstbi 4
+set_io sbadri0 6
+set_io sbadri1 9
+set_io sbadri7 10
+set_io sbdati0 11
+set_io sbdati1 12
+set_io sbdati7 13
+set_io sbdato0 14
+set_io sbdato1 15
+set_io sbdato7 16
+set_io sbacko 17
+set_io i2cirq 18
+set_io i2cwkup 19
+set_io scl 20
+set_io sda 21
+

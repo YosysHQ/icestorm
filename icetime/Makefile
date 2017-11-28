@@ -9,7 +9,7 @@ endif
 all: icetime$(EXE)
 
 ifeq ($(EXE),.js)
-icetime$(EXE): | share/$(CHIPDB_SUBDIR)/chipdb-384.txt share/$(CHIPDB_SUBDIR)/chipdb-1k.txt share/$(CHIPDB_SUBDIR)/chipdb-8k.txt
+icetime$(EXE): | share/$(CHIPDB_SUBDIR)/chipdb-384.txt share/$(CHIPDB_SUBDIR)/chipdb-1k.txt share/$(CHIPDB_SUBDIR)/chipdb-8k.txt share/$(CHIPDB_SUBDIR)/chipdb-5k.txt
 
 share/$(CHIPDB_SUBDIR)/chipdb-384.txt: ../icebox/chipdb-384.txt
 	mkdir -p share/$(CHIPDB_SUBDIR)
@@ -20,7 +20,9 @@ share/$(CHIPDB_SUBDIR)/chipdb-1k.txt: ../icebox/chipdb-1k.txt
 share/$(CHIPDB_SUBDIR)/chipdb-8k.txt: ../icebox/chipdb-8k.txt
 	mkdir -p share/$(CHIPDB_SUBDIR)
 	cp $< $@
-
+share/$(CHIPDB_SUBDIR)/chipdb-5k.txt: ../icebox/chipdb-5k.txt
+	mkdir -p share/$(CHIPDB_SUBDIR)
+	cp $< $@
 override LDFLAGS += --embed-file share
 endif
 

@@ -284,8 +284,10 @@ if ic.is_ultra():
     for dsp_idx in range(4):
         print_tile_nonrouting_bits("dsp%d" % dsp_idx, list(ic.dsp_tiles[dsp_idx].keys())[0])
     print_tile_nonrouting_bits("ipcon", list(ic.ipcon_tiles.keys())[0])
-
-print(".extra_cell 0 0 WARMBOOT")
+if ic.is_ultra():
+    print(".extra_cell %d 0 WARMBOOT" % ic.max_x)
+else:
+    print(".extra_cell 0 0 WARMBOOT")
 for key in sorted(icebox.warmbootinfo_db[ic.device]):
     print("%s %s" % (key, " ".join([str(k) for k in icebox.warmbootinfo_db[ic.device][key]])))
 print()

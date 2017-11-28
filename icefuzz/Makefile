@@ -78,6 +78,13 @@ endif
 	diff -U0 cached_ipcon_5k.txt bitdata_ipcon_5k.txt || cp -v bitdata_ipcon_5k.txt cached_ipcon_5k.txt
 
 timings:
+ifeq ($(DEVICECLASS),5k)
+	cp tmedges.txt tmedges.tmp
+	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; sed '/defparam/d' < $$f > $$f.fixed;  yosys -q -f verilog -s tmedges.ys $$f.fixed; done
+	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
+	python3 timings.py -t timings_up5k.txt work_*/*.sdf > timings_up5k.new
+	mv timings_up5k.new timings_up5k.txt
+else
 ifeq ($(DEVICECLASS),8k)
 	cp tmedges.txt tmedges.tmp
 	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
@@ -103,14 +110,14 @@ else
 	mv timings_lp1k.new timings_lp1k.txt
  endif
 endif
-
+endif
 timings_html:
 	python3 timings.py -h tmedges.txt -t timings_hx1k.txt -l "HX1K with default temp/volt settings" > timings_hx1k.html
 	python3 timings.py -h tmedges.txt -t timings_hx8k.txt -l "HX8K with default temp/volt settings" > timings_hx8k.html
 	python3 timings.py -h tmedges.txt -t timings_lp1k.txt -l "LP1K with default temp/volt settings" > timings_lp1k.html
 	python3 timings.py -h tmedges.txt -t timings_lp8k.txt -l "LP8K with default temp/volt settings" > timings_lp8k.html
 	python3 timings.py -h tmedges.txt -t timings_lp384.txt -l "LP384 with default temp/volt settings" > timings_lp384.html
-
+	python3 timings.py -h tmedges.txt -t timings_up5k.txt -l "UP5K with default temp/volt settings" > timings_up5k.html
 data_cached.txt: cached_io.txt cached_logic.txt cached_ramb$(RAM_SUFFIX).txt cached_ramt$(RAM_SUFFIX).txt cached_dsp0_5k.txt cached_dsp1_5k.txt cached_dsp2_5k.txt cached_dsp3_5k.txt cached_ipcon_5k.txt 
 	gawk '{ print "io", $$0; }' cached_io.txt > data_cached.new
 	gawk '{ print "logic", $$0; }' cached_logic.txt >> data_cached.new

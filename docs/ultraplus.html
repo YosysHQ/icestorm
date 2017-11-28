@@ -1,19 +1,36 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8">
 <style>
+.multitab {
+	margin-left: auto;
+	margin-right: auto;
+	border: 0px;
+	
+}
+.multitab td {
+	padding-left: 10px;
+	padding-right: 10px;
+
+	vertical-align: top;
+}
 .ctab {
 	margin-left: auto;
 	margin-right: auto;
 	border: 1px solid gray;
 }
-.ctab td, .ctab th {
+.cstab {
+	border: 1px solid gray;
+}
+.ctab td, .ctab th, .cstab th, .cstab td  {
 	padding: 3px;
 	border: 1px solid gray;
 }
 
-.ctab td {
+.ctab td, .cstab td {
   font-family:monospace;
 }
+
+
 </style>
 <title>Project IceStorm &ndash; UltraPlus Features Documentation</title>
 </head><body>
@@ -264,4 +281,145 @@ can be used as an open-drain IO using the standard IO cell.</p>
 <tr><td>100k&Omega;<br/>(default)</td><td>!cf_bit_35<br/>!B6[15]</td><td>!cf_bit_39<br/>!B12[15]</td></tr>
 
 </table>
+
+<h2>Hard IP</h2>
+
+<p>The UltraPlus devices contain three types of Hard IP: I<sup>2</sup>C (<span style="font-family:monospace">SB_I2C</span>), SPI (<span style="font-family:monospace">SB_SPI</span>), and LED PWM generation
+(<span style="font-family:monospace">SB_LEDDA_IP</span>). The connections and configurations for each of these blocks are documented below. Names in italics are parameters rather than actual bits,
+where multiple bits are used to enable an IP they are labeled as <span style="font-family:monospace"><em>_ENABLE_0</em></span>, <span style="font-family:monospace"><em>_ENABLE_1</em></span>, etc. </p>
+<table class="multitab"><tr><td>
+	<table class="cstab">
+	<tr><th>Signal</th><th>I2C<br/>(0, 31, 0)</th><th>I2C<br/>(25, 31, 0)</th></tr>
+	<tr><td>SBACKO</td><td>(0, 30, slf_op_6)</td><td>(25, 30, slf_op_6)</td></tr>
+	<tr><td>SBADRI0</td><td>(0, 30, lutff_1/in_0)</td><td>(25, 30, lutff_1/in_0)</td></tr>
+	<tr><td>SBADRI1</td><td>(0, 30, lutff_2/in_0)</td><td>(25, 30, lutff_2/in_0)</td></tr>
+	<tr><td>SBADRI2</td><td>(0, 30, lutff_3/in_0)</td><td>(25, 30, lutff_3/in_0)</td></tr>
+	<tr><td>SBADRI3</td><td>(0, 30, lutff_4/in_0)</td><td>(25, 30, lutff_4/in_0)</td></tr>
+	<tr><td>SBADRI4</td><td>(0, 30, lutff_5/in_0)</td><td>(25, 30, lutff_5/in_0)</td></tr>
+	<tr><td>SBADRI5</td><td>(0, 30, lutff_6/in_0)</td><td>(25, 30, lutff_6/in_0)</td></tr>
+	<tr><td>SBADRI6</td><td>(0, 30, lutff_7/in_0)</td><td>(25, 30, lutff_7/in_0)</td></tr>
+	<tr><td>SBADRI7</td><td>(0, 29, lutff_2/in_0)</td><td>(25, 29, lutff_2/in_0)</td></tr>
+	<tr><td>SBCLKI</td><td>(0, 30, clk)</td><td>(25, 30, clk)</td></tr>
+	<tr><td>SBDATI0</td><td>(0, 29, lutff_5/in_0)</td><td>(25, 29, lutff_5/in_0)</td></tr>
+	<tr><td>SBDATI1</td><td>(0, 29, lutff_6/in_0)</td><td>(25, 29, lutff_6/in_0)</td></tr>
+	<tr><td>SBDATI2</td><td>(0, 29, lutff_7/in_0)</td><td>(25, 29, lutff_7/in_0)</td></tr>
+	<tr><td>SBDATI3</td><td>(0, 30, lutff_0/in_3)</td><td>(25, 30, lutff_0/in_3)</td></tr>
+	<tr><td>SBDATI4</td><td>(0, 30, lutff_5/in_1)</td><td>(25, 30, lutff_5/in_1)</td></tr>
+	<tr><td>SBDATI5</td><td>(0, 30, lutff_6/in_1)</td><td>(25, 30, lutff_6/in_1)</td></tr>
+	<tr><td>SBDATI6</td><td>(0, 30, lutff_7/in_1)</td><td>(25, 30, lutff_7/in_1)</td></tr>
+	<tr><td>SBDATI7</td><td>(0, 30, lutff_0/in_0)</td><td>(25, 30, lutff_0/in_0)</td></tr>
+	<tr><td>SBDATO0</td><td>(0, 29, slf_op_6)</td><td>(25, 29, slf_op_6)</td></tr>
+	<tr><td>SBDATO1</td><td>(0, 29, slf_op_7)</td><td>(25, 29, slf_op_7)</td></tr>
+	<tr><td>SBDATO2</td><td>(0, 30, slf_op_0)</td><td>(25, 30, slf_op_0)</td></tr>
+	<tr><td>SBDATO3</td><td>(0, 30, slf_op_1)</td><td>(25, 30, slf_op_1)</td></tr>
+	<tr><td>SBDATO4</td><td>(0, 30, slf_op_2)</td><td>(25, 30, slf_op_2)</td></tr>
+	<tr><td>SBDATO5</td><td>(0, 30, slf_op_3)</td><td>(25, 30, slf_op_3)</td></tr>
+	<tr><td>SBDATO6</td><td>(0, 30, slf_op_4)</td><td>(25, 30, slf_op_4)</td></tr>
+	<tr><td>SBDATO7</td><td>(0, 30, slf_op_5)</td><td>(25, 30, slf_op_5)</td></tr>
+	<tr><td>SBRWI</td><td>(0, 29, lutff_4/in_0)</td><td>(25, 29, lutff_4/in_0)</td></tr>
+	<tr><td>SBSTBI</td><td>(0, 29, lutff_3/in_0)</td><td>(25, 29, lutff_3/in_0)</td></tr>
+	<tr><td>I2CIRQ</td><td>(0, 30, slf_op_7)</td><td>(25, 30, slf_op_7)</td></tr>
+	<tr><td>I2CWKUP</td><td>(0, 29, slf_op_5)</td><td>(25, 29, slf_op_5)</td></tr>
+	<tr><td>SCLI</td><td>(0, 29, lutff_2/in_1)</td><td>(25, 29, lutff_2/in_1)</td></tr>
+	<tr><td>SCLO</td><td>(0, 29, slf_op_3)</td><td>(25, 29, slf_op_3)</td></tr>
+	<tr><td>SCLOE</td><td>(0, 29, slf_op_4)</td><td>(25, 29, slf_op_4)</td></tr>
+	<tr><td>SDAI</td><td>(0, 29, lutff_1/in_1)</td><td>(25, 29, lutff_1/in_1)</td></tr>
+	<tr><td>SDAO</td><td>(0, 29, slf_op_1)</td><td>(25, 29, slf_op_1)</td></tr>
+	<tr><td>SDAOE</td><td>(0, 29, slf_op_2)</td><td>(25, 29, slf_op_2)</td></tr>
+	<tr><td><em>I2C_ENABLE_0</em></td><td><em>(13, 31, cbit2usealt_in_0)</em></td><td><em>(19, 31, cbit2usealt_in_0)</em></td></tr>
+	<tr><td><em>I2C_ENABLE_1</em></td><td><em>(12, 31, cbit2usealt_in_1)</em></td><td><em>(19, 31, cbit2usealt_in_1)</em></td></tr>
+	<tr><td><em>SDA_INPUT_DELAYED</em></td><td><em>(12, 31, SDA_input_delay)</em></td><td><em>(19, 31, SDA_input_delay)</em></td></tr>
+	<tr><td><em>SDA_OUTPUT_DELAYED</em></td><td><em>(12, 31, SDA_output_delay)</em></td><td><em>(19, 31, SDA_output_delay)</em></td></tr>
+	</table>
+
+</td><td>
+	<table class="cstab">
+	<tr><th>Signal</th><th>SPI<br/>(0, 0, 0)</th><th>SPI<br/>(25, 0, 1)</th></tr>
+	<tr><td>SBACKO</td><td>(0, 20, slf_op_1)</td><td>(25, 20, slf_op_1)</td></tr>
+	<tr><td>SBADRI0</td><td>(0, 19, lutff_1/in_1)</td><td>(25, 19, lutff_1/in_1)</td></tr>
+	<tr><td>SBADRI1</td><td>(0, 19, lutff_2/in_1)</td><td>(25, 19, lutff_2/in_1)</td></tr>
+	<tr><td>SBADRI2</td><td>(0, 20, lutff_0/in_3)</td><td>(25, 20, lutff_0/in_3)</td></tr>
+	<tr><td>SBADRI3</td><td>(0, 20, lutff_1/in_3)</td><td>(25, 20, lutff_1/in_3)</td></tr>
+	<tr><td>SBADRI4</td><td>(0, 20, lutff_2/in_3)</td><td>(25, 20, lutff_2/in_3)</td></tr>
+	<tr><td>SBADRI5</td><td>(0, 20, lutff_3/in_3)</td><td>(25, 20, lutff_3/in_3)</td></tr>
+	<tr><td>SBADRI6</td><td>(0, 20, lutff_4/in_3)</td><td>(25, 20, lutff_4/in_3)</td></tr>
+	<tr><td>SBADRI7</td><td>(0, 20, lutff_5/in_3)</td><td>(25, 20, lutff_5/in_3)</td></tr>
+	<tr><td>SBCLKI</td><td>(0, 20, clk)</td><td>(25, 20, clk)</td></tr>
+	<tr><td>SBDATI0</td><td>(0, 19, lutff_1/in_3)</td><td>(25, 19, lutff_1/in_3)</td></tr>
+	<tr><td>SBDATI1</td><td>(0, 19, lutff_2/in_3)</td><td>(25, 19, lutff_2/in_3)</td></tr>
+	<tr><td>SBDATI2</td><td>(0, 19, lutff_3/in_3)</td><td>(25, 19, lutff_3/in_3)</td></tr>
+	<tr><td>SBDATI3</td><td>(0, 19, lutff_4/in_3)</td><td>(25, 19, lutff_4/in_3)</td></tr>
+	<tr><td>SBDATI4</td><td>(0, 19, lutff_5/in_3)</td><td>(25, 19, lutff_5/in_3)</td></tr>
+	<tr><td>SBDATI5</td><td>(0, 19, lutff_6/in_3)</td><td>(25, 19, lutff_6/in_3)</td></tr>
+	<tr><td>SBDATI6</td><td>(0, 19, lutff_7/in_3)</td><td>(25, 19, lutff_7/in_3)</td></tr>
+	<tr><td>SBDATI7</td><td>(0, 19, lutff_0/in_1)</td><td>(25, 19, lutff_0/in_1)</td></tr>
+	<tr><td>SBDATO0</td><td>(0, 19, slf_op_1)</td><td>(25, 19, slf_op_1)</td></tr>
+	<tr><td>SBDATO1</td><td>(0, 19, slf_op_2)</td><td>(25, 19, slf_op_2)</td></tr>
+	<tr><td>SBDATO2</td><td>(0, 19, slf_op_3)</td><td>(25, 19, slf_op_3)</td></tr>
+	<tr><td>SBDATO3</td><td>(0, 19, slf_op_4)</td><td>(25, 19, slf_op_4)</td></tr>
+	<tr><td>SBDATO4</td><td>(0, 19, slf_op_5)</td><td>(25, 19, slf_op_5)</td></tr>
+	<tr><td>SBDATO5</td><td>(0, 19, slf_op_6)</td><td>(25, 19, slf_op_6)</td></tr>
+	<tr><td>SBDATO6</td><td>(0, 19, slf_op_7)</td><td>(25, 19, slf_op_7)</td></tr>
+	<tr><td>SBDATO7</td><td>(0, 20, slf_op_0)</td><td>(25, 20, slf_op_0)</td></tr>
+	<tr><td>SBRWI</td><td>(0, 19, lutff_0/in_3)</td><td>(25, 19, lutff_0/in_3)</td></tr>
+	<tr><td>SBSTBI</td><td>(0, 20, lutff_6/in_3)</td><td>(25, 20, lutff_6/in_3)</td></tr>
+	<tr><td>MCSNO0</td><td>(0, 21, slf_op_2)</td><td>(25, 21, slf_op_2)</td></tr>
+	<tr><td>MCSNO1</td><td>(0, 21, slf_op_4)</td><td>(25, 21, slf_op_4)</td></tr>
+	<tr><td>MCSNO2</td><td>(0, 21, slf_op_7)</td><td>(25, 21, slf_op_7)</td></tr>
+	<tr><td>MCSNO3</td><td>(0, 22, slf_op_1)</td><td>(25, 22, slf_op_1)</td></tr>
+	<tr><td>MCSNOE0</td><td>(0, 21, slf_op_3)</td><td>(25, 21, slf_op_3)</td></tr>
+	<tr><td>MCSNOE1</td><td>(0, 21, slf_op_5)</td><td>(25, 21, slf_op_5)</td></tr>
+	<tr><td>MCSNOE2</td><td>(0, 22, slf_op_0)</td><td>(25, 22, slf_op_0)</td></tr>
+	<tr><td>MCSNOE3</td><td>(0, 22, slf_op_2)</td><td>(25, 22, slf_op_2)</td></tr>
+	<tr><td>MI</td><td>(0, 22, lutff_0/in_1)</td><td>(25, 22, lutff_0/in_1)</td></tr>
+	<tr><td>MO</td><td>(0, 20, slf_op_6)</td><td>(25, 20, slf_op_6)</td></tr>
+	<tr><td>MOE</td><td>(0, 20, slf_op_7)</td><td>(25, 20, slf_op_7)</td></tr>
+	<tr><td>SCKI</td><td>(0, 22, lutff_1/in_1)</td><td>(25, 22, lutff_1/in_1)</td></tr>
+	<tr><td>SCKO</td><td>(0, 21, slf_op_0)</td><td>(25, 21, slf_op_0)</td></tr>
+	<tr><td>SCKOE</td><td>(0, 21, slf_op_1)</td><td>(25, 21, slf_op_1)</td></tr>
+	<tr><td>SCSNI</td><td>(0, 22, lutff_2/in_1)</td><td>(25, 22, lutff_2/in_1)</td></tr>
+	<tr><td>SI</td><td>(0, 22, lutff_7/in_3)</td><td>(25, 22, lutff_7/in_3)</td></tr>
+	<tr><td>SO</td><td>(0, 20, slf_op_4)</td><td>(25, 20, slf_op_4)</td></tr>
+	<tr><td>SOE</td><td>(0, 20, slf_op_5)</td><td>(25, 20, slf_op_5)</td></tr>
+	<tr><td>SPIIRQ</td><td>(0, 20, slf_op_2)</td><td>(25, 20, slf_op_2)</td></tr>
+	<tr><td>SPIWKUP</td><td>(0, 20, slf_op_3)</td><td>(25, 20, slf_op_3)</td></tr>
+	</table>
+</td><td>
+	<table class="cstab">
+	<tr><th>Signal</th><th>LEDDA_IP<br/>(0, 31, 2)</th></tr>
+	<tr><td>LEDDADDR0</td><td>(0, 28, lutff_4/in_0)</td></tr>
+	<tr><td>LEDDADDR1</td><td>(0, 28, lutff_5/in_0)</td></tr>
+	<tr><td>LEDDADDR2</td><td>(0, 28, lutff_6/in_0)</td></tr>
+	<tr><td>LEDDADDR3</td><td>(0, 28, lutff_7/in_0)</td></tr>
+	<tr><td>LEDDCLK</td><td>(0, 29, clk)</td></tr>
+	<tr><td>LEDDCS</td><td>(0, 28, lutff_2/in_0)</td></tr>
+	<tr><td>LEDDDAT0</td><td>(0, 28, lutff_2/in_1)</td></tr>
+	<tr><td>LEDDDAT1</td><td>(0, 28, lutff_3/in_1)</td></tr>
+	<tr><td>LEDDDAT2</td><td>(0, 28, lutff_4/in_1)</td></tr>
+	<tr><td>LEDDDAT3</td><td>(0, 28, lutff_5/in_1)</td></tr>
+	<tr><td>LEDDDAT4</td><td>(0, 28, lutff_6/in_1)</td></tr>
+	<tr><td>LEDDDAT5</td><td>(0, 28, lutff_7/in_1)</td></tr>
+	<tr><td>LEDDDAT6</td><td>(0, 28, lutff_0/in_0)</td></tr>
+	<tr><td>LEDDDAT7</td><td>(0, 28, lutff_1/in_0)</td></tr>
+	<tr><td>LEDDDEN</td><td>(0, 28, lutff_1/in_1)</td></tr>
+	<tr><td>LEDDEXE</td><td>(0, 28, lutff_0/in_1)</td></tr>
+	<tr><td>LEDDON</td><td>(0, 29, slf_op_0)</td></tr>
+	<tr><td>PWMOUT0</td><td>(0, 28, slf_op_4)</td></tr>
+	<tr><td>PWMOUT1</td><td>(0, 28, slf_op_5)</td></tr>
+	<tr><td>PWMOUT2</td><td>(0, 28, slf_op_6)</td></tr>
+	</table>
+</td></tr></table>
+</p>
+
+<p>The I<sup>2</sup>C "glitch filter" (referred to as <span style="font-family:monospace">SB_FILTER_50NS</span>) is a seperate module from the I<sup>2</sup>C interface IP, with connections as shown below:
+	<table class="ctab">
+	<tr><th>Signal</th><th>SB_FILTER_50NS<br/>(25, 31, 2)</th><th>SB_FILTER_50NS<br/>(25, 31, 3)</th></tr>
+	<tr><td>FILTERIN</td><td>(25, 27, lutff_1/in_0)</td><td>(25, 27, lutff_0/in_0)</td></tr>
+	<tr><td>FILTEROUT</td><td>(25, 27, slf_op_2)</td><td>(25, 27, slf_op_1)</td></tr>
+	<tr><td>ENABLE_0</td><td>(25, 30, CBIT_2)</td><td>(25, 30, CBIT_5)</td></tr>
+	<tr><td>ENABLE_1</td><td>(25, 30, CBIT_3)</td><td>(25, 30, CBIT_6)</td></tr>
+	<tr><td>ENABLE_2</td><td>(25, 30, CBIT_4)</td><td>(25, 30, CBIT_7)</td></tr>
+
+	</table>
+
 </body></html>
