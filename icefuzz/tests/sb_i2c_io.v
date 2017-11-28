@@ -40,7 +40,7 @@ SB_I2C #(
   .SDAI(sdai),
   .SDAO(sdao),
   .SDAOE(sdaoe)
-);
+) /* synthesis SCL_INPUT_FILTERED=1 */;
 
 SB_IO #(
   .PIN_TYPE(6'b101001),

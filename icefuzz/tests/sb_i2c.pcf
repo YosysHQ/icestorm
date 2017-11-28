@@ -19,3 +19,4 @@ set_io sclo 23
 set_io scloe 25
 set_io sdao 26
 set_io sdaoe 27
+set_io scli2 28
