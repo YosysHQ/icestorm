@@ -4862,6 +4862,10 @@ extra_cells_db = {
     		"SOE":                   (0, 20, "slf_op_5"), 
     		"SPIIRQ":                (0, 20, "slf_op_2"), 
     		"SPIWKUP":               (0, 20, "slf_op_3"), 
+    		"SPI_ENABLE_0":          (7, 0, "cbit2usealt_in_0"), 
+    		"SPI_ENABLE_1":          (7, 0, "cbit2usealt_in_1"), 
+    		"SPI_ENABLE_2":          (6, 0, "cbit2usealt_in_0"), 
+    		"SPI_ENABLE_3":          (6, 0, "cbit2usealt_in_1"), 
     	},
     	("SPI", (25, 0, 1)): {
     		"MCSNO0":                (25, 21, "slf_op_2"), 
@@ -4912,6 +4916,10 @@ extra_cells_db = {
     		"SOE":                   (25, 20, "slf_op_5"), 
     		"SPIIRQ":                (25, 20, "slf_op_2"), 
     		"SPIWKUP":               (25, 20, "slf_op_3"), 
+    		"SPI_ENABLE_0":          (23, 0, "cbit2usealt_in_0"), 
+    		"SPI_ENABLE_1":          (24, 0, "cbit2usealt_in_0"), 
+    		"SPI_ENABLE_2":          (23, 0, "cbit2usealt_in_1"), 
+    		"SPI_ENABLE_3":          (24, 0, "cbit2usealt_in_1"), 
     	},
     	("LEDDA_IP", (0, 31, 2)): {
     		"LEDDADDR0":             (0, 28, "lutff_4/in_0"), 
