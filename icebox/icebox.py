@@ -507,34 +507,52 @@ class iceconfig:
 
         return funcnets
     
+    def ultraplus_follow_corner(self, corner, direction, netname):
+        m = re.match("span4_(horz|vert)_([lrtb])_(\d+)$", netname)
+        if not m:
+            return None
+        cur_edge = m.group(2)
+        cur_index = int(m.group(3))
+        if direction not in corner:
+            return None
+        if direction != cur_edge:
+            return None
+        h_idx, v_idx = self.ultraplus_trace_corner_idx(corner, cur_index)
+        if h_idx is None and (direction == "b" or direction == "t"):
+            return None
+        if v_idx is None and (direction == "l" or direction == "r"):
+            return None
+        if corner == "bl" and direction == "l":
+            return (0, 1, sp4v_normalize("sp4_v_b_%d" % v_idx))
+        if corner == "bl" and direction == "b":
+            return (1, 0, ultra_span4_horz_normalize("span4_horz_l_%d" % h_idx))
+        if corner == "br" and direction == "r":
+            return (self.max_x, 1, sp4v_normalize("sp4_v_b_%d" % v_idx))
+        if corner == "br" and direction == "b":
+            return (self.max_x-1, 0, ultra_span4_horz_normalize("span4_horz_r_%d" % h_idx))
+        if corner == "tl" and direction == "l":
+            return (0, self.max_y-1, sp4v_normalize("sp4_v_t_%d" % v_idx))
+        if corner == "tl" and direction == "t":
+            return (1, self.max_y, ultra_span4_horz_normalize("span4_horz_l_%d" % h_idx))
+        if corner == "tr" and direction == "r":
+            return (self.max_x, self.max_y-1, sp4v_normalize("sp4_v_t_%d" % v_idx))
+        if corner == "tr" and direction == "t":
+            return (self.max_x-1, self.max_y, ultra_span4_horz_normalize("span4_horz_r_%d" % h_idx))
+        assert False
     #UltraPlus corner routing: given the corner name and net index,
     #return a tuple containing H and V indexes, or none if NA
-    def ultraplus_trace_corner(self, corner, idx):
+    def ultraplus_trace_corner_idx(self, corner, idx):
         h_idx = None
         v_idx = None
-        if corner == "bl":
-            if idx >= 4:
-                v_idx = idx + 28
-            if idx >= 32 and idx < 48:
-                h_idx = idx - 28
-        elif corner == "tl":
-            #TODO: bounds check for v_idx case?
-            if idx >= 4:
-                v_idx = (idx + 8) ^ 1
-            if idx >= 12 and idx < 28:
-                h_idx = (idx ^ 1) - 8
-        elif corner == "tr":
-            #TODO: bounds check for v_idx case?
-            if idx <= 16:
-                v_idx = (idx + 12) ^ 1
-            if idx >= 12 and idx < 28:
-                h_idx = (idx ^ 1) - 12            
-        elif corner == "br":
-            #TODO: bounds check for v_idx case?
-            if idx <= 16:
+        if corner == "bl" or corner == "br":
+            if idx < 16:
                 v_idx = idx + 32
-            if idx >= 32 and idx < 48: #check
+            if idx >= 32 and idx < 48:
                 h_idx = idx - 32
+        elif corner == "tl" or corner == "tr":
+            if idx >= 0 and idx < 16:
+                v_idx = idx
+                h_idx = idx
         return (h_idx, v_idx)
     
     def get_corner(self, x, y):
@@ -551,7 +569,7 @@ class iceconfig:
             corner += "r"
         else:
             corner += "x"
-        return corner    
+        return corner
     
     def follow_net(self, netspec):
         x, y, netname = netspec
@@ -608,37 +626,16 @@ class iceconfig:
                 if direction == "b": s = (x, y-1, n)
 
                 if s[0] in (0, self.max_x) and s[1] in (0, self.max_y):
-                    if re.match("span4_(vert|horz)_[lrtb]_\d+$", n):
-                        m = re.match("span4_(vert|horz)_([lrtb])_\d+$", n)
-                        #We ignore L and T edges when performing the Ultra/UltraPlus corner algorithm
-                        if self.is_ultra() and (m.group(2) == "l" or m.group(2) == "t"): 
+                    if self.is_ultra():
+                        s = self.ultraplus_follow_corner(self.get_corner(s[0], s[1]), direction, n)
+                        if s is None:
                             continue
+                    elif re.match("span4_(vert|horz)_[lrtb]_\d+$", n) and not self.is_ultra():
+                        m = re.match("span4_(vert|horz)_([lrtb])_\d+$", n)
+
                         vert_net = n.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_")
                         horz_net = n.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_")
-                        
-                        if self.is_ultra(): #Convert between span4 and sp4, and perform U/UP corner tracing
-                            m = re.match("span4_vert_([lrtb])_(\d+)$", vert_net)
-                            assert m
-                            idx = int(m.group(2))
-                            h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
-                            if v_idx is None:
-                                if (s[0] == 0 and s[1] == 0 and direction == "l") or (s[0] == self.max_x and s[1] == self.max_y and direction == "r"):
-                                    continue #Not routed, skip
-                            else:    
-                                vert_net = "sp4_v_%s_%d" % (m.group(1), v_idx)
-
-                            m = re.match("span4_horz_([lrtb])_(\d+)$", horz_net)
-                            assert m
-                            idx = int(m.group(2))
-                            h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
-                            if h_idx is None:
-                                if (s[0] == 0 and s[1] == 0 and direction == "b") or (s[0] == self.max_x and s[1] == self.max_y and direction == "t"):
-                                    continue #Not routed, skip
-                            else:
-                                horz_net = "span4_horz_%s_%d" % (m.group(1), h_idx)
-                            
-                            
-                            
+                                    
                         if s[0] == 0 and s[1] == 0:
                             if direction == "l": s = (0, 1, vert_net)
                             if direction == "b": s = (1, 0, horz_net)
@@ -649,30 +646,6 @@ class iceconfig:
 
                         vert_net = netname.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_")
                         horz_net = netname.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_")
-
-                        if self.is_ultra():
-                            # Might have sp4 not span4 here
-                            vert_net = vert_net.replace("_h_", "_v_")
-                            horz_net = horz_net.replace("_v_", "_h_")
-                            m = re.match("(span4_vert|sp4_v)_([lrtb])_(\d+)$", vert_net) 
-                            assert m
-                            idx = int(m.group(3))
-                            h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
-                            if v_idx is None:
-                                if (s[0] == 0 and s[1] == self.max_y and direction == "l") or (s[0] == self.max_x and s[1] == 0 and direction == "r"):
-                                    continue
-                            else:
-                                vert_net = "sp4_v_%s_%d" % (m.group(2), v_idx)
-                            
-                            m = re.match("(span4_horz|sp4_h)_([lrtb])_(\d+)$", horz_net)
-                            assert m
-                            idx = int(m.group(3))
-                            h_idx, v_idx = self.ultraplus_trace_corner(self.get_corner(s[0], s[1]), idx)
-                            if h_idx is None:
-                                if (s[0] == 0 and s[1] == self.max_y and direction == "t") or (s[0] == self.max_x and s[1] == 0 and direction == "b"):
-                                    continue
-                            else:
-                                horz_net = "span4_horz_%s_%d" % (m.group(2), h_idx)
                             
                         if s[0] == 0 and s[1] == self.max_y:
                             if direction == "l": s = (0, self.max_y-1, vert_net)
@@ -1008,7 +981,34 @@ def sp4h_normalize(netname, edge=""):
         return "sp4_h_r_%d" % ((cur_index+12)^1)
 
     return netname
-
+# "Normalization" of span4 (not just sp4) is needed during Ultra/UltraPlus
+# corner tracing
+def ultra_span4_horz_normalize(netname, edge=""):
+    m = re.match("span4_horz_([rl])_(\d+)$", netname)
+    assert m
+    if not m: return None
+    cur_edge = m.group(1)
+    cur_index = int(m.group(2))
+    if cur_edge == edge:
+        return netname
+    if edge == "":
+        if cur_edge == "l" and cur_index < 12:
+            return "span4_horz_r_%d" % (cur_index + 4)
+        else:
+            return netname
+    elif edge == "l" and cur_edge == "r":
+        if cur_index < 4:
+            return None
+        else:
+            cur_index -= 4
+        return "span4_horz_l_%d" % cur_index
+    elif edge == "r" and cur_edge == "l":
+        if cur_index < 12:
+            return "span4_horz_r_%d" % (cur_index + 4)
+        else:
+            return None
+    assert False
+    
 def sp4v_normalize(netname, edge=""):
     m = re.match("sp4_v_([bt])_(\d+)$", netname)
     assert m
@@ -1141,11 +1141,11 @@ def pos_follow_net(pos, direction, netname, is_ultra):
 
             m = re.match("sp4_v_[tb]_(\d+)$", netname)
             if m and direction in ("t", "T"):
-                if is_ultra and direction == "T" and pos in ("l", "r"):
-                    return re.sub("sp4_v_", "span4_vert_", netname)
                 n = sp4v_normalize(netname, "t")
                 if n is not None:
-                    if direction == "t":
+                    if is_ultra and direction == "T" and pos in ("l", "r"):
+                        return re.sub("sp4_v_", "span4_vert_", n)
+                    elif direction == "t":
                         n = re.sub("_t_", "_b_", n)
                         n = sp4v_normalize(n)
                     else:
@@ -1153,11 +1153,11 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                         n = re.sub("sp4_v_", "span4_vert_", n)
                     return n
             if m and direction in ("b", "B"):
-                if is_ultra and direction == "B" and pos in ("l", "r"):
-                    return re.sub("sp4_v_", "span4_vert_", netname)
                 n = sp4v_normalize(netname, "b")
                 if n is not None:
-                    if direction == "b":
+                    if is_ultra and direction == "B" and pos in ("l", "r"):
+                        return re.sub("sp4_v_", "span4_vert_", n)
+                    elif direction == "b":
                         n = re.sub("_b_", "_t_", n)
                         n = sp4v_normalize(n)
                     else:
@@ -1230,8 +1230,10 @@ def pos_follow_net(pos, direction, netname, is_ultra):
         m = re.match("span4_horz_([rl])_(\d+)$", netname)
         if m:
             case, idx = direction + m.group(1), int(m.group(2))
-            if direction == "L" or direction == "R":
-                return netname
+            if direction == "L":
+                return ultra_span4_horz_normalize(netname, "l")
+            elif direction == "R":
+                return ultra_span4_horz_normalize(netname, "r")            
             if case == "ll":
                 return "span4_horz_r_%d" % idx
             if case == "lr" and idx >= 4:
@@ -1319,9 +1321,6 @@ def run_checks_neigh():
         for y in range(ic.max_x+1):
             # Skip the corners.
             if x in (0, ic.max_x) and y in (0, ic.max_y):
-                continue
-            # Skip the sides of a 5k device.
-            if self.is_ultra() and x in (0, ic.max_x):
                 continue
             add_segments((x, y), ic.tile_db(x, y))
             if (x, y) in ic.logic_tiles:
