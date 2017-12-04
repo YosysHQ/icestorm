@@ -419,7 +419,7 @@ class iceconfig:
         def do_direction(name, nx, ny):
             if (0 < nx < self.max_x or self.is_ultra()) and 0 < ny < self.max_y:
                 neighbours.add((nx, ny, "neigh_op_%s_%d" % (name, func)))
-            if nx in (0, self.max_x) and 0 < ny < self.max_y and nx != x:
+            if nx in (0, self.max_x) and 0 < ny < self.max_y and nx != x and (not self.is_ultra()):
                 neighbours.add((nx, ny, "logic_op_%s_%d" % (name, func)))
             if ny in (0, self.max_y) and 0 < nx < self.max_x and ny != y:
                 neighbours.add((nx, ny, "logic_op_%s_%d" % (name, func)))
@@ -463,7 +463,7 @@ class iceconfig:
                     else:
                         assert False
 
-            elif pos == "x" and npos in ("l", "r", "t", "b"):
+            elif pos == "x" and ((npos in ("t", "b")) or ((not self.is_ultra()) and (npos in ("l", "r")))):
                 if func in (0, 4): return (nx, ny, "io_0/D_IN_0")
                 if func in (1, 5): return (nx, ny, "io_0/D_IN_1")
                 if func in (2, 6): return (nx, ny, "io_1/D_IN_0")
@@ -650,7 +650,7 @@ class iceconfig:
                         vert_net = netname.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_")
                         horz_net = netname.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_")
 
-                        if self.is_ultra():   
+                        if self.is_ultra():
                             # Might have sp4 not span4 here
                             vert_net = vert_net.replace("_h_", "_v_")
                             horz_net = horz_net.replace("_v_", "_h_")
@@ -1194,6 +1194,8 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                     if direction == "t":
                         n = re.sub("_t_", "_b_", n)
                         n = sp12v_normalize(n)
+                    elif direction == "T" and pos in ("l", "r"):
+                        pass
                     else:
                         n = re.sub("_t_", "_", n)
                         n = re.sub("sp12_v_", "span12_vert_", n)
@@ -1204,6 +1206,8 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                     if direction == "b":
                         n = re.sub("_b_", "_t_", n)
                         n = sp12v_normalize(n)
+                    elif direction == "B" and pos in ("l", "r"):
+                        pass
                     else:
                         n = re.sub("_b_", "_", n)
                         n = re.sub("sp12_v_", "span12_vert_", n)
