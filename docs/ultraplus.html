@@ -205,6 +205,14 @@ The <span style="font-family:monospace">CLKHF</span> output of SB_HFOSC is conne
 <p>Configuration bit <span style="font-family:monospace">CLKHF_DIV[1]</span> maps to DSP1 tile (0, 16) config bit <span style="font-family:monospace">CBIT_4</span>, and
 <span style="font-family:monospace">CLKHF_DIV[0]</span> maps to DSP1 tile (0, 16) config bit <span style="font-family:monospace">CBIT_3</span>.</p>
 
+<p>There is also an undocumented trimming function of the HFOSC, using the ports <span style="font-family:monospace">TRIM0</span> through <span style="font-family:monospace">TRIM9</span>. This can only be accessed directly in iCECUBE if you modify the standard cell library. However
+	if you set the attribute <span style="font-family:monospace">VPP_2V5_TO_1P8V</span> (which itself is not that well documented either) to 1 on the top level module, then the configuration bit 
+	<span style="font-family:monospace">CBIT_5</span> of (0, 16) is set; and <span style="font-family:monospace">TRIM8</span> and <span style="font-family:monospace">TRIM4</span> are connected to
+	the same net as <span style="font-family:monospace">CLKHFPU</span>.</p>
+<p><span style="font-family:monospace">TRIM[3:0]</span> connect to <span style="font-family:monospace">(25, 28, lutff_[7:4]/in_0)</span> and <span style="font-family:monospace">TRIM[9:4]</span>
+	connect to <span style="font-family:monospace">(25, 29, lutff_[5:0]/in_3)</span>. <span style="font-family:monospace">CBIT_5</span> of (0, 16) must be set to enable trimming. The trim range
+on the device used for testing was from 30.1 to 75.9 MHz. TRIM9 seemed to have no effect, the other inputs could broadly be considered to form a binary word, however it appeared neither linear
+nor even monotonic.</p>
 <h3>SB_LFOSC</h3>
 <p>The <span style="font-family:monospace">CLKLFPU</span> input connects through IPConnect tile (25, 29) input <span style="font-family:monospace">lutff_0/in_1</span>;
 and the <span style="font-family:monospace">CLKLFEN</span> input connects through input <span style="font-family:monospace">lutff_7/in_3</span> of the same tile.<br/>

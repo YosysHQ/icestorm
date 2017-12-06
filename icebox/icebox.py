@@ -4695,8 +4695,19 @@ extra_cells_db = {
             "CLKHFEN":                      (0, 29, "lutff_7/in_3"),
             "CLKHF":                        (0, 29, "glb_netwk_4"),
             "CLKHF_FABRIC":                 (0, 28, "slf_op_7"),
+            "TRIM0":                        (25, 28, "lutff_4/in_0"),
+            "TRIM1":                        (25, 28, "lutff_5/in_0"),
+            "TRIM2":                        (25, 28, "lutff_6/in_0"),
+            "TRIM3":                        (25, 28, "lutff_7/in_0"),
+            "TRIM4":                        (25, 29, "lutff_0/in_3"),
+            "TRIM5":                        (25, 29, "lutff_1/in_3"),
+            "TRIM6":                        (25, 29, "lutff_2/in_3"),
+            "TRIM7":                        (25, 29, "lutff_3/in_3"),
+            "TRIM8":                        (25, 29, "lutff_4/in_3"),
+            "TRIM9":                        (25, 29, "lutff_5/in_3"),
             "CLKHF_DIV_1":                  (0, 16, "CBIT_4"),
-            "CLKHF_DIV_0":                  (0, 16, "CBIT_3") 
+            "CLKHF_DIV_0":                  (0, 16, "CBIT_3"),
+            "TRIM_EN":                      (0, 16, "CBIT_5")
         },
         ("LFOSC", (25, 31, 1)) : {
             "CLKLFPU":                      (25, 29, "lutff_0/in_1"),
