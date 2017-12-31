@@ -117,7 +117,7 @@ struct FpgaConfig
 	void write_bits(std::ostream &ofs) const;
 
 	// icebox i/o
-	void read_ascii(std::istream &ifs);
+	void read_ascii(std::istream &ifs, bool nosleep);
 	void write_ascii(std::ostream &ofs) const;
 
 	// netpbm i/o
@@ -453,15 +453,26 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 	write_byte(ofs, crc_value, file_offset, 0x05);
 	crc_value = 0xffff;
 
-	debug("Setting warmboot to '%s'.\n", this->warmboot.c_str());
-	write_byte(ofs, crc_value, file_offset, 0x92);
-	write_byte(ofs, crc_value, file_offset, 0x00);
-	if (this->warmboot == "disabled")
+	{
+		uint8_t nosleep_flag;
+		debug("Setting warmboot to '%s', nosleep to '%s'.\n", this->warmboot.c_str(), this->nosleep.c_str());
+		write_byte(ofs, crc_value, file_offset, 0x92);
 		write_byte(ofs, crc_value, file_offset, 0x00);
-	else if (this->warmboot == "enabled")
-		write_byte(ofs, crc_value, file_offset, 0x20);
-	else
-		error("Unknown warmboot setting '%s'.\n", this->warmboot.c_str());
+
+		if (this->nosleep == "disabled")
+			nosleep_flag = 0;
+		else if (this->nosleep == "enabled")
+			nosleep_flag = 1;
+		else
+			error("Unknown nosleep setting '%s'.\n", this->nosleep.c_str());
+
+		if (this->warmboot == "disabled")
+			write_byte(ofs, crc_value, file_offset, 0x00 | nosleep_flag);
+		else if (this->warmboot == "enabled")
+			write_byte(ofs, crc_value, file_offset, 0x20 | nosleep_flag);
+		else
+			error("Unknown warmboot setting '%s'.\n", this->warmboot.c_str());
+	}
 
 	debug("CRAM: Setting bank width to %d.\n", this->cram_width);
 	write_byte(ofs, crc_value, file_offset, 0x62);
@@ -590,7 +601,7 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 	write_byte(ofs, crc_value, file_offset, 0x00);
 }
 
-void FpgaConfig::read_ascii(std::istream &ifs)
+void FpgaConfig::read_ascii(std::istream &ifs, bool nosleep)
 {
 	debug("## %s\n", __PRETTY_FUNCTION__);
 	info("Parsing ascii file..\n");
@@ -718,6 +729,14 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 
 			continue;
 		}
+
+		// No ".nosleep" section despite sharing the same byte as .warmboot.
+		// ".nosleep" is specified when icepack is invoked, which is too late.
+		// So we inject the section based on command line argument.
+		if (nosleep)
+			this->nosleep = "enabled";
+		else
+			this->nosleep = "disabled";
 
 		if (command == ".io_tile" || command == ".logic_tile" || command == ".ramb_tile" || command == ".ramt_tile" || command.substr(0, 4) == ".dsp" || command == ".ipcon_tile")
 		{
@@ -1378,7 +1397,7 @@ int main(int argc, char **argv)
 		if (!netpbm_mode)
 			fpga_config.write_ascii(*osp);
 	} else {
-		fpga_config.read_ascii(*isp);
+		fpga_config.read_ascii(*isp, nosleep_mode);
 		if (!netpbm_mode)
 			fpga_config.write_bits(*osp);
 	}
