@@ -98,6 +98,7 @@ struct FpgaConfig
 {
 	string device;
 	string freqrange;
+	string nosleep;
 	string warmboot;
 
 	// cram[BANK][X][Y]
@@ -116,7 +117,7 @@ struct FpgaConfig
 	void write_bits(std::ostream &ofs) const;
 
 	// icebox i/o
-	void read_ascii(std::istream &ifs);
+	void read_ascii(std::istream &ifs, bool nosleep);
 	void write_ascii(std::ostream &ofs) const;
 
 	// netpbm i/o
@@ -376,13 +377,28 @@ void FpgaConfig::read_bits(std::istream &ifs)
 			break;
 
 		case 0x90:
-			if (payload == 0)
-				this->warmboot = "disabled";
-			else if (payload == 32)
-				this->warmboot = "enabled";
-			else
-				error("Unknown warmboot payload 0x%02x\n", payload);
-			info("Setting warmboot to '%s'.\n", this->warmboot.c_str());
+			switch(payload)
+			{
+				case 0:
+					this->warmboot = "disabled";
+					this->nosleep = "disabled";
+					break;
+				case 1:
+					this->warmboot = "disabled";
+					this->nosleep = "enabled";
+					break;
+				case 32:
+					this->warmboot = "enabled";
+					this->nosleep = "disabled";
+					break;
+				case 33:
+					this->warmboot = "enabled";
+					this->nosleep = "enabled";
+					break;
+				default:
+					error("Unknown warmboot/nosleep payload 0x%02x\n", payload);
+			}
+			info("Setting warmboot to '%s', nosleep to '%s'.\n", this->warmboot.c_str(), this->nosleep.c_str());
 			break;
 
 		default:
@@ -437,15 +453,26 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 	write_byte(ofs, crc_value, file_offset, 0x05);
 	crc_value = 0xffff;
 
-	debug("Setting warmboot to '%s'.\n", this->warmboot.c_str());
-	write_byte(ofs, crc_value, file_offset, 0x92);
-	write_byte(ofs, crc_value, file_offset, 0x00);
-	if (this->warmboot == "disabled")
+	{
+		uint8_t nosleep_flag;
+		debug("Setting warmboot to '%s', nosleep to '%s'.\n", this->warmboot.c_str(), this->nosleep.c_str());
+		write_byte(ofs, crc_value, file_offset, 0x92);
 		write_byte(ofs, crc_value, file_offset, 0x00);
-	else if (this->warmboot == "enabled")
-		write_byte(ofs, crc_value, file_offset, 0x20);
-	else
-		error("Unknown warmboot setting '%s'.\n", this->warmboot.c_str());
+
+		if (this->nosleep == "disabled")
+			nosleep_flag = 0;
+		else if (this->nosleep == "enabled")
+			nosleep_flag = 1;
+		else
+			error("Unknown nosleep setting '%s'.\n", this->nosleep.c_str());
+
+		if (this->warmboot == "disabled")
+			write_byte(ofs, crc_value, file_offset, 0x00 | nosleep_flag);
+		else if (this->warmboot == "enabled")
+			write_byte(ofs, crc_value, file_offset, 0x20 | nosleep_flag);
+		else
+			error("Unknown warmboot setting '%s'.\n", this->warmboot.c_str());
+	}
 
 	debug("CRAM: Setting bank width to %d.\n", this->cram_width);
 	write_byte(ofs, crc_value, file_offset, 0x62);
@@ -472,14 +499,14 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 		for (int cram_y = 0; cram_y < height; cram_y++)
 		for (int cram_x = 0; cram_x < this->cram_width; cram_x++)
 			cram_bits.push_back(this->cram[cram_bank][cram_x][cram_y]);
-		
+
 		if(this->device == "5k") {
 			debug("CRAM: Setting bank height to %d.\n", height);
 			write_byte(ofs, crc_value, file_offset, 0x72);
 			write_byte(ofs, crc_value, file_offset, height >> 8);
 			write_byte(ofs, crc_value, file_offset, height);
 		}
-		
+
 		debug("CRAM: Setting bank %d.\n", cram_bank);
 		write_byte(ofs, crc_value, file_offset, 0x11);
 		write_byte(ofs, crc_value, file_offset, cram_bank);
@@ -574,7 +601,7 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 	write_byte(ofs, crc_value, file_offset, 0x00);
 }
 
-void FpgaConfig::read_ascii(std::istream &ifs)
+void FpgaConfig::read_ascii(std::istream &ifs, bool nosleep)
 {
 	debug("## %s\n", __PRETTY_FUNCTION__);
 	info("Parsing ascii file..\n");
@@ -703,6 +730,14 @@ void FpgaConfig::read_ascii(std::istream &ifs)
 			continue;
 		}
 
+		// No ".nosleep" section despite sharing the same byte as .warmboot.
+		// ".nosleep" is specified when icepack is invoked, which is too late.
+		// So we inject the section based on command line argument.
+		if (nosleep)
+			this->nosleep = "enabled";
+		else
+			this->nosleep = "disabled";
+
 		if (command == ".io_tile" || command == ".logic_tile" || command == ".ramb_tile" || command == ".ramt_tile" || command.substr(0, 4) == ".dsp" || command == ".ipcon_tile")
 		{
 			if (!got_device)
@@ -820,6 +855,10 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 	ofs << stringf("\n.device %s\n", this->device.c_str());
 	if (this->warmboot != "enabled")
 		ofs << stringf(".warmboot %s\n", this->warmboot.c_str());
+
+	// As "nosleep" is an icepack command, we do not write out a ".nosleep"
+	// section. However, we parse it in read_bits() and notify the user in
+	// info.
 
 	typedef std::tuple<int, int, int> tile_bit_t;
 	std::set<tile_bit_t> tile_bits;
@@ -1251,6 +1290,9 @@ void usage()
 	log("    -v\n");
 	log("        verbose (repeat to increase verbosity)\n");
 	log("\n");
+	log("    -s\n");
+	log("        disable final deep-sleep SPI flash command after bitstream is loaded\n");
+	log("\n");
 	log("    -b\n");
 	log("        write cram bitmap as netpbm file\n");
 	log("\n");
@@ -1274,6 +1316,7 @@ int main(int argc, char **argv)
 {
 	vector<string> parameters;
 	bool unpack_mode = false;
+	bool nosleep_mode = false;
 	bool netpbm_mode = false;
 	bool netpbm_bram = false;
 	bool netpbm_fill_tiles = false;
@@ -1308,6 +1351,8 @@ int main(int argc, char **argv)
 				} else if (arg[i] == 'B') {
 					netpbm_mode = true;
 					netpbm_banknum = arg[++i] - '0';
+				} else if (arg[i] == 's') {
+					nosleep_mode = true;
 				} else if (arg[i] == 'v') {
 					log_level++;
 				} else
@@ -1352,7 +1397,7 @@ int main(int argc, char **argv)
 		if (!netpbm_mode)
 			fpga_config.write_ascii(*osp);
 	} else {
-		fpga_config.read_ascii(*isp);
+		fpga_config.read_ascii(*isp, nosleep_mode);
 		if (!netpbm_mode)
 			fpga_config.write_bits(*osp);
 	}
