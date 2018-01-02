@@ -315,6 +315,7 @@ static void help(const char *progname)
 	fprintf(stderr, "                          This means that some data after the written data (or\n");
 	fprintf(stderr, "                          even before when -o is used) may be erased as well.\n");
 	fprintf(stderr, "  -b                    bulk erase entire flash before writing\n");
+	fprintf(stderr, "  -e <size in bytes>    erase flash as if we were writing that number of bytes\n");
 	fprintf(stderr, "  -n                    do not erase flash before writing\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "Miscellaneous options:\n");
@@ -354,10 +355,12 @@ int main(int argc, char **argv)
 			my_name = argv[0] + i + 1;
 
 	int read_size = 256 * 1024;
+	int erase_size = 0;
 	int rw_offset = 0;
 
 	bool read_mode = false;
 	bool check_mode = false;
+	bool erase_mode = false;
 	bool bulk_erase = false;
 	bool dont_erase = false;
 	bool prog_sram = false;
@@ -373,7 +376,7 @@ int main(int argc, char **argv)
 
 	int opt;
 	char *endptr;
-	while ((opt = getopt_long(argc, argv, "d:I:rR:o:cbnStv", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "d:I:rR:e:o:cbnStv", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'd':
 			devstr = optarg;
@@ -404,6 +407,20 @@ int main(int argc, char **argv)
 				read_size *= 1024;
 			else if (!strcmp(endptr, "M"))
 				read_size *= 1024 * 1024;
+			else {
+				fprintf(stderr, "%s: `%s' is not a valid size\n", my_name, optarg);
+				return EXIT_FAILURE;
+			}
+			break;
+		case 'e':
+			erase_mode = true;
+			erase_size = strtol(optarg, &endptr, 0);
+			if (*endptr == '\0')
+				/* ok */;
+			else if (!strcmp(endptr, "k"))
+				erase_size *= 1024;
+			else if (!strcmp(endptr, "M"))
+				erase_size *= 1024 * 1024;
 			else {
 				fprintf(stderr, "%s: `%s' is not a valid size\n", my_name, optarg);
 				return EXIT_FAILURE;
@@ -450,8 +467,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (read_mode + check_mode + prog_sram + test_mode > 1) {
-		fprintf(stderr, "%s: options `-r'/`-R', `-c', `-S', and `-t' are mutually exclusive\n", my_name);
+	if (read_mode + erase_mode + check_mode + prog_sram + test_mode > 1) {
+		fprintf(stderr, "%s: options `-r'/`-R', `-e`, `-c', `-S', and `-t' are mutually exclusive\n", my_name);
 		return EXIT_FAILURE;
 	}
 
@@ -493,7 +510,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	} else if (bulk_erase) {
 		filename = "/dev/null";
-	} else if (!test_mode) {
+	} else if (!test_mode && !erase_mode) {
 		fprintf(stderr, "%s: missing argument\n", my_name);
 		fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
 		return EXIT_FAILURE;
@@ -505,9 +522,11 @@ int main(int argc, char **argv)
 	FILE *f = NULL;
 	long file_size = -1;
 
-	if (test_mode)
+	if (test_mode) {
 		/* nop */;
-	else if (read_mode) {
+	} else if (erase_mode) {
+		file_size = erase_size;
+	} else if (read_mode) {
 		f = (strcmp(filename, "-") == 0) ? stdout : fopen(filename, "wb");
 		if (f == NULL) {
 			fprintf(stderr, "%s: can't open '%s' for writing: ", my_name, filename);
@@ -751,21 +770,24 @@ int main(int argc, char **argv)
 				}
 			}
 
-			fprintf(stderr, "programming..\n");
+			if (!erase_mode)
+			{
+				fprintf(stderr, "programming..\n");
 
-			for (int rc, addr = 0; true; addr += rc) {
-				uint8_t buffer[256];
-				int page_size = 256 - (rw_offset + addr) % 256;
-				rc = fread(buffer, 1, page_size, f);
-				if (rc <= 0)
-					break;
-				flash_write_enable();
-				flash_prog(rw_offset + addr, buffer, rc);
-				flash_wait();
+				for (int rc, addr = 0; true; addr += rc) {
+					uint8_t buffer[256];
+					int page_size = 256 - (rw_offset + addr) % 256;
+					rc = fread(buffer, 1, page_size, f);
+					if (rc <= 0)
+						break;
+					flash_write_enable();
+					flash_prog(rw_offset + addr, buffer, rc);
+					flash_wait();
+				}
+
+				/* seek to the beginning for second pass */
+				fseek(f, 0, SEEK_SET);
 			}
-
-			/* seek to the beginning for second pass */
-			fseek(f, 0, SEEK_SET);
 		}
 
 		// ---------------------------------------------------------
@@ -779,7 +801,7 @@ int main(int argc, char **argv)
 				flash_read(rw_offset + addr, buffer, 256);
 				fwrite(buffer, read_size - addr > 256 ? 256 : read_size - addr, 1, f);
 			}
-		} else {
+		} else if (!erase_mode) {
 			fprintf(stderr, "reading..\n");
 			for (int addr = 0; true; addr += 256) {
 				uint8_t buffer_flash[256], buffer_file[256];
