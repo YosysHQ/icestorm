@@ -290,6 +290,19 @@ can be used as an open-drain IO using the standard IO cell.</p>
 
 </table>
 
+<h3>I<sup>3</sup>C capable IO</h3>
+<p>The UltraPlus devices have two IO pins designed for the new MIPI I<sup>3</sup>C standard (pins 23 and 25 in the SG48 package),
+compared to normal IO pins they have two switchable pullups each. One of these pullups, the weak pullup, is fixed at 100k and the
+other can be set to 3.3k, 6.8k or 10k using the mechanism above. The pullup control signals do not
+connect directly to the IO tile, but instead connect through an IPConnect tile.</p>
+
+<p>The connections are listed below:</p>
+<table class="ctab">
+<tr><th>Signal</th><th>Pin 23<br/>(19, 31, 0)</th><th>Pin 25<br/>(19, 31, 1)</th></tr>
+<tr><td>PU_ENB</td><td>(25, 27, lutff_6/in_0)</td><td>(25, 27, lutff_7/in_0)</td></tr>
+<tr><td>WEAK_PU_ENB</td><td>(25, 27, lutff_4/in_0)</td><td>(25, 27, lutff_5/in_0)</td></tr>
+</table>
+
 <h2>Hard IP</h2>
 
 <p>The UltraPlus devices contain three types of Hard IP: I<sup>2</sup>C (<span style="font-family:monospace">SB_I2C</span>), SPI (<span style="font-family:monospace">SB_SPI</span>), and LED PWM generation
