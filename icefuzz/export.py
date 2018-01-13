@@ -5,7 +5,7 @@ device_class = os.getenv("ICEDEVICE")
 
 with open("../icebox/iceboxdb.py", "w") as f:
     files = [ "database_io", "database_logic", "database_ramb", "database_ramt", "database_ipcon_5k"]
-    for device_class in ["5k", "8k"]:
+    for device_class in ["8k"]:
       files.append("database_ramb_" + device_class)
       files.append("database_ramt_" + device_class)
     for i in range(4):

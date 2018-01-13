@@ -318,8 +318,8 @@ class iceconfig:
             if (x, y) in self.ramt_tiles: return ramttile_db
         elif self.device == "5k":
             if (x, y) in self.logic_tiles: return logictile_5k_db
-            if (x, y) in self.ramb_tiles: return rambtile_5k_db
-            if (x, y) in self.ramt_tiles: return ramttile_5k_db
+            if (x, y) in self.ramb_tiles: return rambtile_8k_db
+            if (x, y) in self.ramt_tiles: return ramttile_8k_db
             if (x, y) in self.ipcon_tiles: return ipcon_5k_db
             if (x, y) in self.dsp_tiles[0]: return dsp0_5k_db
             if (x, y) in self.dsp_tiles[1]: return dsp1_5k_db
@@ -725,7 +725,7 @@ class iceconfig:
             if self.device == "1k":
                 add_seed_segments(idx, tile, rambtile_db)
             elif self.device == "5k":
-                add_seed_segments(idx, tile, rambtile_5k_db)
+                add_seed_segments(idx, tile, rambtile_8k_db)
             elif self.device == "8k":
                 add_seed_segments(idx, tile, rambtile_8k_db)
             else:
@@ -735,7 +735,7 @@ class iceconfig:
             if self.device == "1k":
                 add_seed_segments(idx, tile, ramttile_db)
             elif self.device == "5k":
-                add_seed_segments(idx, tile, ramttile_5k_db)
+                add_seed_segments(idx, tile, ramttile_8k_db)
             elif self.device == "8k":
                 add_seed_segments(idx, tile, ramttile_8k_db)
             else:
@@ -4991,8 +4991,6 @@ logictile_8k_db = parse_db(iceboxdb.database_logic_txt, "8k")
 logictile_384_db = parse_db(iceboxdb.database_logic_txt, "384")
 rambtile_db = parse_db(iceboxdb.database_ramb_txt, "1k")
 ramttile_db = parse_db(iceboxdb.database_ramt_txt, "1k")
-rambtile_5k_db = parse_db(iceboxdb.database_ramb_5k_txt, "5k")
-ramttile_5k_db = parse_db(iceboxdb.database_ramt_5k_txt, "5k")
 rambtile_8k_db = parse_db(iceboxdb.database_ramb_8k_txt, "8k")
 ramttile_8k_db = parse_db(iceboxdb.database_ramt_8k_txt, "8k")
 
@@ -5089,19 +5087,19 @@ iotile_b_5k_db.append([["B12[2]"], "IpConfig", "cbit2usealt_in_1"])
 iotile_b_5k_db.append([["B12[3]"], "IpConfig", "SDA_input_delay"])
 iotile_b_5k_db.append([["B15[3]"], "IpConfig", "SDA_output_delay"])
 
-for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, iotile_t_5k_db, iotile_b_5k_db, logictile_db, logictile_5k_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_5k_db, ramttile_5k_db, rambtile_8k_db, ramttile_8k_db, dsp0_5k_db, dsp1_5k_db, dsp2_5k_db, dsp3_5k_db, ipcon_5k_db]:
+for db in [iotile_l_db, iotile_r_db, iotile_t_db, iotile_b_db, iotile_t_5k_db, iotile_b_5k_db, logictile_db, logictile_5k_db, logictile_8k_db, logictile_384_db, rambtile_db, ramttile_db, rambtile_8k_db, ramttile_8k_db, dsp0_5k_db, dsp1_5k_db, dsp2_5k_db, dsp3_5k_db, ipcon_5k_db]:
     for entry in db:
         if entry[1] in ("buffer", "routing"):
             entry[2] = netname_normalize(entry[2],
                                          ramb=(db == rambtile_db),
                                          ramt=(db == ramttile_db),
-                                         ramb_8k=(db in (rambtile_8k_db, rambtile_5k_db)),
-                                         ramt_8k=(db in (ramttile_8k_db, ramttile_5k_db)))
+                                         ramb_8k=(db == rambtile_8k_db),
+                                         ramt_8k=(db == ramttile_8k_db))
             entry[3] = netname_normalize(entry[3],
                                          ramb=(db == rambtile_db),
                                          ramt=(db == ramttile_db),
-                                         ramb_8k=(db in (rambtile_8k_db, rambtile_5k_db)),
-                                         ramt_8k=(db in (ramttile_8k_db, ramttile_5k_db)))
+                                         ramb_8k=(db == rambtile_8k_db),
+                                         ramt_8k=(db == ramttile_8k_db))
     unique_entries = dict()
     while db:
         entry = db.pop()

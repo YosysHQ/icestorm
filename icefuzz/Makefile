@@ -15,7 +15,7 @@ endif
 
 ifeq ($(DEVICECLASS), 5k)
 	DEVICE := up5k-sg48
-	RAM_SUFFIX := _5k
+	RAM_SUFFIX := _8k
 endif
 
 ifeq ($(DEVICECLASS), 8k)
@@ -56,14 +56,11 @@ ifneq ($(RAM_SUFFIX),_8k)
 	cp cached_ramt_8k.txt bitdata_ramt_8k.txt
 endif
 ifneq ($(RAM_SUFFIX),_5k)
-	cp cached_ramb_5k.txt bitdata_ramb_5k.txt
-	cp cached_ramt_5k.txt bitdata_ramt_5k.txt
 	cp cached_dsp0_5k.txt bitdata_dsp0_5k.txt
 	cp cached_dsp1_5k.txt bitdata_dsp1_5k.txt
 	cp cached_dsp2_5k.txt bitdata_dsp2_5k.txt
 	cp cached_dsp3_5k.txt bitdata_dsp3_5k.txt
 	cp cached_ipcon_5k.txt bitdata_ipcon_5k.txt
-
 endif
 	ICEDEVICE=$(DEVICECLASS) python3 database.py
 	python3 export.py
