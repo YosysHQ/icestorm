@@ -1,0 +1,8 @@
+set_io pin_23 23
+set_io pin_25 25
+
+set_io pin_23_puen 2
+set_io pin_23_wkpuen 3
+
+set_io pin_25_puen 4
+set_io pin_25_wkpuen 6
