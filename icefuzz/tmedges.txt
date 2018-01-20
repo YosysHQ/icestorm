@@ -54,6 +54,7 @@ DummyBuf.O SB_LEDDA_IP.LEDDDAT6
 DummyBuf.O SB_LEDDA_IP.LEDDDAT7
 DummyBuf.O SB_LEDDA_IP.LEDDDEN
 DummyBuf.O SB_LEDDA_IP.LEDDEXE
+GND.Y INV.I
 GND.Y LogicCell40.carryin
 GND.Y LogicCell40.clk
 GND.Y LogicCell40.in0
@@ -63,6 +64,7 @@ GND.Y LogicCell40.in3
 GND.Y LogicCell40.sr
 GND.Y PRE_IO.DOUT0
 GND.Y SB_MAC16.CLK
+GND.Y SB_RAM40_4K.RCLK
 GND.Y SB_RAM40_4K.WCLK
 Glb2LocalMux.O LocalMux.I
 GlobalMux.O CEMux.I
@@ -426,6 +428,7 @@ SB_LEDDA_IP.PWMOUT2 DummyBuf.I
 SB_LFOSC.CLKLF GlobalMux.I
 SB_LFOSC.CLKLF Odrv12.I
 SB_MAC16.ACCUMCO SB_MAC16.ACCUMCI
+SB_MAC16.CO LocalMux.I
 SB_MAC16.CO Odrv12.I
 SB_MAC16.CO Odrv4.I
 SB_MAC16.O[0] LocalMux.I
@@ -455,6 +458,7 @@ SB_MAC16.O[16] Odrv4.I
 SB_MAC16.O[17] LocalMux.I
 SB_MAC16.O[17] Odrv12.I
 SB_MAC16.O[17] Odrv4.I
+SB_MAC16.O[18] LocalMux.I
 SB_MAC16.O[18] Odrv12.I
 SB_MAC16.O[18] Odrv4.I
 SB_MAC16.O[19] Odrv12.I
@@ -462,6 +466,7 @@ SB_MAC16.O[19] Odrv4.I
 SB_MAC16.O[1] LocalMux.I
 SB_MAC16.O[1] Odrv12.I
 SB_MAC16.O[1] Odrv4.I
+SB_MAC16.O[20] LocalMux.I
 SB_MAC16.O[20] Odrv12.I
 SB_MAC16.O[20] Odrv4.I
 SB_MAC16.O[21] LocalMux.I
@@ -480,6 +485,7 @@ SB_MAC16.O[25] Odrv12.I
 SB_MAC16.O[25] Odrv4.I
 SB_MAC16.O[26] Odrv12.I
 SB_MAC16.O[26] Odrv4.I
+SB_MAC16.O[27] LocalMux.I
 SB_MAC16.O[27] Odrv12.I
 SB_MAC16.O[27] Odrv4.I
 SB_MAC16.O[28] Odrv12.I
@@ -489,6 +495,7 @@ SB_MAC16.O[29] Odrv4.I
 SB_MAC16.O[2] LocalMux.I
 SB_MAC16.O[2] Odrv12.I
 SB_MAC16.O[2] Odrv4.I
+SB_MAC16.O[30] LocalMux.I
 SB_MAC16.O[30] Odrv12.I
 SB_MAC16.O[30] Odrv4.I
 SB_MAC16.O[31] LocalMux.I
@@ -703,8 +710,11 @@ Span12Mux_s2_h.O Span12Mux_v.I
 Span12Mux_s2_v.O LocalMux.I
 Span12Mux_s2_v.O Sp12to4.I
 Span12Mux_s2_v.O Span12Mux_h.I
+Span12Mux_s2_v.O Span12Mux_s11_h.I
 Span12Mux_s2_v.O Span12Mux_s2_h.I
 Span12Mux_s2_v.O Span12Mux_s5_h.I
+Span12Mux_s2_v.O Span12Mux_s7_h.I
+Span12Mux_s2_v.O Span12Mux_s8_h.I
 Span12Mux_s2_v.O Span12Mux_s9_h.I
 Span12Mux_s2_v.O Span12Mux_v.I
 Span12Mux_s3_h.O LocalMux.I
@@ -724,7 +734,9 @@ Span12Mux_s3_h.O Span12Mux_v.I
 Span12Mux_s3_v.O LocalMux.I
 Span12Mux_s3_v.O Sp12to4.I
 Span12Mux_s3_v.O Span12Mux_h.I
+Span12Mux_s3_v.O Span12Mux_s7_h.I
 Span12Mux_s3_v.O Span12Mux_s8_h.I
+Span12Mux_s3_v.O Span12Mux_s9_h.I
 Span12Mux_s3_v.O Span12Mux_v.I
 Span12Mux_s4_h.O LocalMux.I
 Span12Mux_s4_h.O Sp12to4.I
@@ -783,6 +795,7 @@ Span12Mux_s6_v.O Sp12to4.I
 Span12Mux_s6_v.O Span12Mux_h.I
 Span12Mux_s6_v.O Span12Mux_s10_h.I
 Span12Mux_s6_v.O Span12Mux_s5_h.I
+Span12Mux_s6_v.O Span12Mux_s6_h.I
 Span12Mux_s6_v.O Span12Mux_s7_h.I
 Span12Mux_s6_v.O Span12Mux_s8_h.I
 Span12Mux_s6_v.O Span12Mux_s9_h.I
@@ -855,6 +868,7 @@ Span12Mux_s9_h.O Span12Mux_v.I
 Span12Mux_s9_v.O LocalMux.I
 Span12Mux_s9_v.O Sp12to4.I
 Span12Mux_s9_v.O Span12Mux_h.I
+Span12Mux_s9_v.O Span12Mux_s10_h.I
 Span12Mux_s9_v.O Span12Mux_s11_h.I
 Span12Mux_s9_v.O Span12Mux_s5_h.I
 Span12Mux_s9_v.O Span12Mux_s6_v.I
