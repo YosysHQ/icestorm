@@ -227,6 +227,12 @@ for filename in sdf_inputs:
         for stmt in cell:
             if stmt[0] == "CELLTYPE":
                 celltype = rewrite_celltype(stmt[1][1:-1])
+                if celltype == "SB_MAC16":
+                    try:
+                        with open(filename.replace(".sdf", ".dsp"), "r") as dspf:
+                            celltype = dspf.readline().strip()
+                    except:
+                        break
                 database.setdefault(celltype, set())
 
             if stmt[0] == "DELAY":

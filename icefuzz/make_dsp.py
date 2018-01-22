@@ -19,14 +19,41 @@ def randbin(n):
 #Only certain combinations are allowed in icecube, list them here
 #This is not a complete set, but enough to cover all bits except cbit13, which
 #is not set in any allowed config (?)
-allowed_configs = ["0010000010000001001110110", "1110000010000001001110110", "0010000010000001000000000", "1110000010000001000000000",
-                   "0000000011000001111110110", "1100000011000001111110110", "0000000011000001110000110", "0010000101000010111111111",
-                   "0000001001100100111111111", "0001001001100100111111111", "0001101001100100111111111", "0001111000101100000000000"]
+allowed_configs = [("0010000010000001001110110", "SB_MAC16_MUL_U_8X8_ALL_PIPELINE"),
+                   ("1110000010000001001110110", "SB_MAC16_MUL_S_8X8_ALL_PIPELINE"),
+                   ("0010000010000001000000000", "SB_MAC16_MUL_U_8X8_BYPASS"),
+                   ("1110000010000001000000000", "SB_MAC16_MUL_S_8X8_BYPASS"),
+                   ("0000000011000001111110110", "SB_MAC16_MUL_U_16X16_ALL_PIPELINE"),
+                   ("1100000011000001111110110", "SB_MAC16_MUL_S_16X16_ALL_PIPELINE"),
+                   ("0000000011000001110000110", "SB_MAC16_MUL_U_16X16_IM_BYPASS"),
+                   ("1100000011000001110000110", "SB_MAC16_MUL_S_16X16_IM_BYPASS"),
+                   ("0000000011000001100000000", "SB_MAC16_MUL_U_16X16_BYPASS"),
+                   ("1100000011000001100000000", "SB_MAC16_MUL_S_16X16_BYPASS"),
+                   ("0010000101000010111111111", "SB_MAC16_MAC_U_8X8_ALL_PIPELINE"),
+                   ("0010000101000010100001111", "SB_MAC16_MAC_U_8X8_IM_BYPASS"),
+                   ("0010000101000010100000000", "SB_MAC16_MAC_U_8X8_BYPASS"),
+                   ("0000001001100100111111111", "SB_MAC16_MAC_U_16X16_ALL_PIPELINE"),
+                   ("0001001001100100111111111", "SB_MAC16_MAC_U_16X16_CASC_ALL_PIPELINE"),
+                   ("0001101001100100111111111", "SB_MAC16_MAC_U_16X16_CIN_ALL_PIPELINE"),
+                   ("0000001001100100110001111", "SB_MAC16_MAC_U_16X16_IM_BYPASS"),
+                   ("0000001001100100100000000", "SB_MAC16_MAC_U_16X16_BYPASS"),
+                   ("1100001001100100110001111", "SB_MAC16_MAC_S_16X16_IM_BYPASS"),
+                   ("0010000001000000100001111", "SB_MAC16_ACC_U_16P16_ALL_PIPELINE"),
+                   ("0010000001000000100000000", "SB_MAC16_ACC_U_16P16_BYPASS"),
+                   ("0010000001100000100001111", "SB_MAC16_ACC_U_32P32_ALL_PIPELINE"),
+                   ("0010000001100000100000000", "SB_MAC16_ACC_U_32P32_BYPASS"),
+                   ("0010010001001000100001111", "SB_MAC16_ADS_U_16P16_ALL_PIPELINE"),
+                   ("0010010000001000000000000", "SB_MAC16_ADS_U_16P16_BYPASS"),
+                   ("0010010001101000100001111", "SB_MAC16_ADS_U_32P32_ALL_PIPELINE"),
+                   ("0010010000101000000000000", "SB_MAC16_ADS_U_32P32_BYPASS"),
+                   ("0010010101001010111111111", "SB_MAC16_MAS_U_8X8_ALL_PIPELINE")]
+
 
 coverage = set()
 for c in allowed_configs:
+    cfg, name = c
     for i in range(25):
-        if c[i] == "1":
+        if cfg[i] == "1":
             coverage.add(i)
 
 assert len(coverage) >= 24
@@ -37,6 +64,13 @@ assert len(coverage) >= 24
 for idx in range(num):
     with open(working_dir + "/dsp_%02d.v" % idx, "w") as f:
         glbs = ["glb[%d]" % i for i in range(np.random.randint(8)+1)]
+        
+        config = allowed_configs[np.random.randint(len(allowed_configs))]
+        params, cfgname = config
+        with open(working_dir + "/dsp_%02d.dsp" % idx, "w") as dspf:
+            dspf.write(cfgname + "\n")
+        params = params[::-1]
+        
         # TODO: ce should be on this list, but causes routing failures
         glbs_choice = ["clk", "a", "b", "c", "d,", "ah", "bh", "ch", "dh", "irt", "irb", "ort", "orb", "olt", "olb", "ast", "asb", "oht", "ohb", "sei"]
         print("""
@@ -118,8 +152,7 @@ for idx in range(num):
             bits_d = "{%s}" % ", ".join(bits_d)
 
             negclk = randbin(1)
-            params = np.random.choice(allowed_configs)
-            params = params[::-1]
+            
             print("""
                 wire [34:0] out_%d;
                 SB_MAC16 #(
