@@ -599,6 +599,389 @@ IOPATH    posedge:CLK        O[30]        1095.71:1095.71:1095.71  1142.97:1142.
 IOPATH    posedge:CLK        O[31]        1076.06:1076.06:1076.06  1118.95:1118.95:1118.95
 IOPATH    posedge:CLK        SIGNEXTOUT   1461.01:1461.01:1461.01  1418.04:1418.04:1418.04
 
+CELL SB_MAC16_ACC_U_16P16_BYPASS
+HOLD      negedge:A[0]       posedge:CLK  225.246:225.246:225.246
+HOLD      negedge:A[1]       posedge:CLK  221.741:221.741:221.741
+HOLD      negedge:A[2]       posedge:CLK  215.99:215.99:215.99
+HOLD      negedge:A[3]       posedge:CLK  216.2:216.2:216.2
+HOLD      negedge:A[4]       posedge:CLK  217.945:217.945:217.945
+HOLD      negedge:A[5]       posedge:CLK  183.875:183.875:183.875
+HOLD      negedge:A[6]       posedge:CLK  221.084:221.084:221.084
+HOLD      negedge:A[7]       posedge:CLK  212.786:212.786:212.786
+HOLD      negedge:A[8]       posedge:CLK  180.124:180.124:180.124
+HOLD      negedge:A[9]       posedge:CLK  168.61:168.61:168.61
+HOLD      negedge:A[10]      posedge:CLK  177.622:177.622:177.622
+HOLD      negedge:A[11]      posedge:CLK  173.057:173.057:173.057
+HOLD      negedge:A[12]      posedge:CLK  171.708:171.708:171.708
+HOLD      negedge:A[13]      posedge:CLK  171.794:171.794:171.794
+HOLD      negedge:A[14]      posedge:CLK  166.812:166.812:166.812
+HOLD      negedge:A[15]      posedge:CLK  182.546:182.546:182.546
+HOLD      negedge:ADDSUBBOT  posedge:CLK  68.98:68.98:68.98
+HOLD      negedge:ADDSUBTOP  posedge:CLK  64.403:64.403:64.403
+HOLD      negedge:AHOLD      posedge:CLK  203.028:203.028:203.028
+HOLD      negedge:B[0]       posedge:CLK  199.318:199.318:199.318
+HOLD      negedge:B[1]       posedge:CLK  205.007:205.007:205.007
+HOLD      negedge:B[2]       posedge:CLK  194.98:194.98:194.98
+HOLD      negedge:B[3]       posedge:CLK  199.743:199.743:199.743
+HOLD      negedge:B[4]       posedge:CLK  201.609:201.609:201.609
+HOLD      negedge:B[5]       posedge:CLK  188.274:188.274:188.274
+HOLD      negedge:B[6]       posedge:CLK  183.668:183.668:183.668
+HOLD      negedge:B[7]       posedge:CLK  183.88:183.88:183.88
+HOLD      negedge:B[8]       posedge:CLK  181.905:181.905:181.905
+HOLD      negedge:B[9]       posedge:CLK  194.213:194.213:194.213
+HOLD      negedge:B[10]      posedge:CLK  166.869:166.869:166.869
+HOLD      negedge:B[11]      posedge:CLK  178.724:178.724:178.724
+HOLD      negedge:B[12]      posedge:CLK  188.759:188.759:188.759
+HOLD      negedge:B[13]      posedge:CLK  178.851:178.851:178.851
+HOLD      negedge:B[14]      posedge:CLK  169.756:169.756:169.756
+HOLD      negedge:B[15]      posedge:CLK  196.689:196.689:196.689
+HOLD      negedge:BHOLD      posedge:CLK  177.143:177.143:177.143
+HOLD      negedge:C[0]       posedge:CLK  238.019:238.019:238.019
+HOLD      negedge:C[1]       posedge:CLK  241.19:241.19:241.19
+HOLD      negedge:C[2]       posedge:CLK  236.487:236.487:236.487
+HOLD      negedge:C[3]       posedge:CLK  233.38:233.38:233.38
+HOLD      negedge:C[4]       posedge:CLK  234.834:234.834:234.834
+HOLD      negedge:C[5]       posedge:CLK  237.059:237.059:237.059
+HOLD      negedge:C[6]       posedge:CLK  235.288:235.288:235.288
+HOLD      negedge:C[7]       posedge:CLK  240.096:240.096:240.096
+HOLD      negedge:C[8]       posedge:CLK  237.083:237.083:237.083
+HOLD      negedge:C[9]       posedge:CLK  235.184:235.184:235.184
+HOLD      negedge:C[10]      posedge:CLK  233.033:233.033:233.033
+HOLD      negedge:C[11]      posedge:CLK  235.949:235.949:235.949
+HOLD      negedge:C[12]      posedge:CLK  239.169:239.169:239.169
+HOLD      negedge:C[13]      posedge:CLK  235.937:235.937:235.937
+HOLD      negedge:C[14]      posedge:CLK  235.235:235.235:235.235
+HOLD      negedge:C[15]      posedge:CLK  235.549:235.549:235.549
+HOLD      negedge:CHOLD      posedge:CLK  215.429:215.429:215.429
+HOLD      negedge:D[0]       posedge:CLK  190.878:190.878:190.878
+HOLD      negedge:D[1]       posedge:CLK  185.317:185.317:185.317
+HOLD      negedge:D[2]       posedge:CLK  184.125:184.125:184.125
+HOLD      negedge:D[3]       posedge:CLK  180.239:180.239:180.239
+HOLD      negedge:D[4]       posedge:CLK  177.004:177.004:177.004
+HOLD      negedge:D[5]       posedge:CLK  186.749:186.749:186.749
+HOLD      negedge:D[6]       posedge:CLK  186.895:186.895:186.895
+HOLD      negedge:D[7]       posedge:CLK  181.237:181.237:181.237
+HOLD      negedge:D[8]       posedge:CLK  254.011:254.011:254.011
+HOLD      negedge:D[9]       posedge:CLK  173.363:173.363:173.363
+HOLD      negedge:D[10]      posedge:CLK  259.158:259.158:259.158
+HOLD      negedge:D[11]      posedge:CLK  256.257:256.257:256.257
+HOLD      negedge:D[12]      posedge:CLK  253.946:253.946:253.946
+HOLD      negedge:D[13]      posedge:CLK  249.826:249.826:249.826
+HOLD      negedge:D[14]      posedge:CLK  182.441:182.441:182.441
+HOLD      negedge:D[15]      posedge:CLK  259.634:259.634:259.634
+HOLD      negedge:DHOLD      posedge:CLK  234.001:234.001:234.001
+HOLD      negedge:OHOLDBOT   posedge:CLK  157.226:157.226:157.226
+HOLD      negedge:OHOLDTOP   posedge:CLK  157.282:157.282:157.282
+HOLD      negedge:OLOADBOT   posedge:CLK  193.798:193.798:193.798
+HOLD      negedge:OLOADTOP   posedge:CLK  178.665:178.665:178.665
+HOLD      posedge:A[0]       posedge:CLK  174.322:174.322:174.322
+HOLD      posedge:A[1]       posedge:CLK  171.322:171.322:171.322
+HOLD      posedge:A[2]       posedge:CLK  163.459:163.459:163.459
+HOLD      posedge:A[3]       posedge:CLK  162.852:162.852:162.852
+HOLD      posedge:A[4]       posedge:CLK  166.475:166.475:166.475
+HOLD      posedge:A[5]       posedge:CLK  140.36:140.36:140.36
+HOLD      posedge:A[6]       posedge:CLK  167.946:167.946:167.946
+HOLD      posedge:A[7]       posedge:CLK  160.919:160.919:160.919
+HOLD      posedge:A[8]       posedge:CLK  138.172:138.172:138.172
+HOLD      posedge:A[9]       posedge:CLK  129.888:129.888:129.888
+HOLD      posedge:A[10]      posedge:CLK  136.785:136.785:136.785
+HOLD      posedge:A[11]      posedge:CLK  133.088:133.088:133.088
+HOLD      posedge:A[12]      posedge:CLK  133.14:133.14:133.14
+HOLD      posedge:A[13]      posedge:CLK  131.736:131.736:131.736
+HOLD      posedge:A[14]      posedge:CLK  125.36:125.36:125.36
+HOLD      posedge:A[15]      posedge:CLK  139.019:139.019:139.019
+HOLD      posedge:ADDSUBBOT  posedge:CLK  58.029:58.029:58.029
+HOLD      posedge:ADDSUBTOP  posedge:CLK  51.971:51.971:51.971
+HOLD      posedge:AHOLD      posedge:CLK  163.435:163.435:163.435
+HOLD      posedge:B[0]       posedge:CLK  159.268:159.268:159.268
+HOLD      posedge:B[1]       posedge:CLK  161.656:161.656:161.656
+HOLD      posedge:B[2]       posedge:CLK  154.102:154.102:154.102
+HOLD      posedge:B[3]       posedge:CLK  158.267:158.267:158.267
+HOLD      posedge:B[4]       posedge:CLK  161.178:161.178:161.178
+HOLD      posedge:B[5]       posedge:CLK  145.66:145.66:145.66
+HOLD      posedge:B[6]       posedge:CLK  141.52:141.52:141.52
+HOLD      posedge:B[7]       posedge:CLK  142.363:142.363:142.363
+HOLD      posedge:B[8]       posedge:CLK  139.228:139.228:139.228
+HOLD      posedge:B[9]       posedge:CLK  151.105:151.105:151.105
+HOLD      posedge:B[10]      posedge:CLK  129.81:129.81:129.81
+HOLD      posedge:B[11]      posedge:CLK  136.215:136.215:136.215
+HOLD      posedge:B[12]      posedge:CLK  146.332:146.332:146.332
+HOLD      posedge:B[13]      posedge:CLK  137.53:137.53:137.53
+HOLD      posedge:B[14]      posedge:CLK  129.905:129.905:129.905
+HOLD      posedge:B[15]      posedge:CLK  153.892:153.892:153.892
+HOLD      posedge:BHOLD      posedge:CLK  146.57:146.57:146.57
+HOLD      posedge:C[0]       posedge:CLK  196.313:196.313:196.313
+HOLD      posedge:C[1]       posedge:CLK  199.675:199.675:199.675
+HOLD      posedge:C[2]       posedge:CLK  194.519:194.519:194.519
+HOLD      posedge:C[3]       posedge:CLK  193.574:193.574:193.574
+HOLD      posedge:C[4]       posedge:CLK  193.811:193.811:193.811
+HOLD      posedge:C[5]       posedge:CLK  196.306:196.306:196.306
+HOLD      posedge:C[6]       posedge:CLK  189.812:189.812:189.812
+HOLD      posedge:C[7]       posedge:CLK  197.702:197.702:197.702
+HOLD      posedge:C[8]       posedge:CLK  193.862:193.862:193.862
+HOLD      posedge:C[9]       posedge:CLK  191.001:191.001:191.001
+HOLD      posedge:C[10]      posedge:CLK  188.338:188.338:188.338
+HOLD      posedge:C[11]      posedge:CLK  193.318:193.318:193.318
+HOLD      posedge:C[12]      posedge:CLK  197.393:197.393:197.393
+HOLD      posedge:C[13]      posedge:CLK  192.921:192.921:192.921
+HOLD      posedge:C[14]      posedge:CLK  190.495:190.495:190.495
+HOLD      posedge:C[15]      posedge:CLK  194.588:194.588:194.588
+HOLD      posedge:CHOLD      posedge:CLK  184.582:184.582:184.582
+HOLD      posedge:D[0]       posedge:CLK  149.936:149.936:149.936
+HOLD      posedge:D[1]       posedge:CLK  143.924:143.924:143.924
+HOLD      posedge:D[2]       posedge:CLK  138.822:138.822:138.822
+HOLD      posedge:D[3]       posedge:CLK  136.464:136.464:136.464
+HOLD      posedge:D[4]       posedge:CLK  135.375:135.375:135.375
+HOLD      posedge:D[5]       posedge:CLK  144.025:144.025:144.025
+HOLD      posedge:D[6]       posedge:CLK  147.529:147.529:147.529
+HOLD      posedge:D[7]       posedge:CLK  140.477:140.477:140.477
+HOLD      posedge:D[8]       posedge:CLK  208.339:208.339:208.339
+HOLD      posedge:D[9]       posedge:CLK  136.361:136.361:136.361
+HOLD      posedge:D[10]      posedge:CLK  210.15:210.15:210.15
+HOLD      posedge:D[11]      posedge:CLK  209.024:209.024:209.024
+HOLD      posedge:D[12]      posedge:CLK  206.327:206.327:206.327
+HOLD      posedge:D[13]      posedge:CLK  201.971:201.971:201.971
+HOLD      posedge:D[14]      posedge:CLK  140.511:140.511:140.511
+HOLD      posedge:D[15]      posedge:CLK  210.689:210.689:210.689
+HOLD      posedge:DHOLD      posedge:CLK  196.151:196.151:196.151
+HOLD      posedge:OHOLDBOT   posedge:CLK  187.891:187.891:187.891
+HOLD      posedge:OHOLDTOP   posedge:CLK  186.884:186.884:186.884
+HOLD      posedge:OLOADBOT   posedge:CLK  171.188:171.188:171.188
+HOLD      posedge:OLOADTOP   posedge:CLK  163.45:163.45:163.45
+RECOVERY  negedge:IRSTBOT    posedge:CLK  797.559:797.559:797.559
+RECOVERY  negedge:IRSTTOP    posedge:CLK  848.859:848.859:848.859
+RECOVERY  negedge:ORSTBOT    posedge:CLK  615.935:615.935:615.935
+RECOVERY  negedge:ORSTTOP    posedge:CLK  709.441:709.441:709.441
+RECOVERY  posedge:IRSTBOT    posedge:CLK  0:0:0
+RECOVERY  posedge:IRSTTOP    posedge:CLK  0:0:0
+RECOVERY  posedge:ORSTBOT    posedge:CLK  0:0:0
+RECOVERY  posedge:ORSTTOP    posedge:CLK  0:0:0
+REMOVAL   negedge:IRSTBOT    posedge:CLK  0:0:0
+REMOVAL   negedge:IRSTTOP    posedge:CLK  0:0:0
+REMOVAL   negedge:ORSTBOT    posedge:CLK  0:0:0
+REMOVAL   negedge:ORSTTOP    posedge:CLK  0:0:0
+REMOVAL   posedge:IRSTBOT    posedge:CLK  0:0:0
+REMOVAL   posedge:IRSTTOP    posedge:CLK  0:0:0
+REMOVAL   posedge:ORSTBOT    posedge:CLK  0:0:0
+REMOVAL   posedge:ORSTTOP    posedge:CLK  0:0:0
+SETUP     negedge:A[0]       posedge:CLK  1574.37:1574.37:1574.37
+SETUP     negedge:A[1]       posedge:CLK  1676.94:1676.94:1676.94
+SETUP     negedge:A[2]       posedge:CLK  1686.38:1686.38:1686.38
+SETUP     negedge:A[3]       posedge:CLK  1718.39:1718.39:1718.39
+SETUP     negedge:A[4]       posedge:CLK  1819.53:1819.53:1819.53
+SETUP     negedge:A[5]       posedge:CLK  1908.04:1908.04:1908.04
+SETUP     negedge:A[6]       posedge:CLK  1819.68:1819.68:1819.68
+SETUP     negedge:A[7]       posedge:CLK  1848.48:1848.48:1848.48
+SETUP     negedge:A[8]       posedge:CLK  1532.57:1532.57:1532.57
+SETUP     negedge:A[9]       posedge:CLK  1702.81:1702.81:1702.81
+SETUP     negedge:A[10]      posedge:CLK  1634.61:1634.61:1634.61
+SETUP     negedge:A[11]      posedge:CLK  1639.84:1639.84:1639.84
+SETUP     negedge:A[12]      posedge:CLK  1710.5:1710.5:1710.5
+SETUP     negedge:A[13]      posedge:CLK  1736.25:1736.25:1736.25
+SETUP     negedge:A[14]      posedge:CLK  1755.84:1755.84:1755.84
+SETUP     negedge:A[15]      posedge:CLK  1769.23:1769.23:1769.23
+SETUP     negedge:ADDSUBBOT  posedge:CLK  1371.05:1371.05:1371.05
+SETUP     negedge:ADDSUBTOP  posedge:CLK  1376.27:1376.27:1376.27
+SETUP     negedge:AHOLD      posedge:CLK  285.142:285.142:285.142
+SETUP     negedge:B[0]       posedge:CLK  1830.18:1830.18:1830.18
+SETUP     negedge:B[1]       posedge:CLK  1969.4:1969.4:1969.4
+SETUP     negedge:B[2]       posedge:CLK  1895.14:1895.14:1895.14
+SETUP     negedge:B[3]       posedge:CLK  1989.46:1989.46:1989.46
+SETUP     negedge:B[4]       posedge:CLK  1809.26:1809.26:1809.26
+SETUP     negedge:B[5]       posedge:CLK  1922.6:1922.6:1922.6
+SETUP     negedge:B[6]       posedge:CLK  1744.86:1744.86:1744.86
+SETUP     negedge:B[7]       posedge:CLK  1844.86:1844.86:1844.86
+SETUP     negedge:B[8]       posedge:CLK  1784.65:1784.65:1784.65
+SETUP     negedge:B[9]       posedge:CLK  2011.33:2011.33:2011.33
+SETUP     negedge:B[10]      posedge:CLK  1888.62:1888.62:1888.62
+SETUP     negedge:B[11]      posedge:CLK  2052.77:2052.77:2052.77
+SETUP     negedge:B[12]      posedge:CLK  1868.01:1868.01:1868.01
+SETUP     negedge:B[13]      posedge:CLK  1912.68:1912.68:1912.68
+SETUP     negedge:B[14]      posedge:CLK  1687.7:1687.7:1687.7
+SETUP     negedge:B[15]      posedge:CLK  1855.75:1855.75:1855.75
+SETUP     negedge:BHOLD      posedge:CLK  264.441:264.441:264.441
+SETUP     negedge:C[0]       posedge:CLK  171.761:171.761:171.761
+SETUP     negedge:C[1]       posedge:CLK  164.027:164.027:164.027
+SETUP     negedge:C[2]       posedge:CLK  150.816:150.816:150.816
+SETUP     negedge:C[3]       posedge:CLK  138.86:138.86:138.86
+SETUP     negedge:C[4]       posedge:CLK  149.551:149.551:149.551
+SETUP     negedge:C[5]       posedge:CLK  131.498:131.498:131.498
+SETUP     negedge:C[6]       posedge:CLK  163.777:163.777:163.777
+SETUP     negedge:C[7]       posedge:CLK  148.388:148.388:148.388
+SETUP     negedge:C[8]       posedge:CLK  145.784:145.784:145.784
+SETUP     negedge:C[9]       posedge:CLK  124.056:124.056:124.056
+SETUP     negedge:C[10]      posedge:CLK  136.101:136.101:136.101
+SETUP     negedge:C[11]      posedge:CLK  151.454:151.454:151.454
+SETUP     negedge:C[12]      posedge:CLK  139.937:139.937:139.937
+SETUP     negedge:C[13]      posedge:CLK  152.873:152.873:152.873
+SETUP     negedge:C[14]      posedge:CLK  143.409:143.409:143.409
+SETUP     negedge:C[15]      posedge:CLK  137.212:137.212:137.212
+SETUP     negedge:CHOLD      posedge:CLK  196.583:196.583:196.583
+SETUP     negedge:D[0]       posedge:CLK  219.957:219.957:219.957
+SETUP     negedge:D[1]       posedge:CLK  188.659:188.659:188.659
+SETUP     negedge:D[2]       posedge:CLK  174.382:174.382:174.382
+SETUP     negedge:D[3]       posedge:CLK  135.268:135.268:135.268
+SETUP     negedge:D[4]       posedge:CLK  177.297:177.297:177.297
+SETUP     negedge:D[5]       posedge:CLK  191.515:191.515:191.515
+SETUP     negedge:D[6]       posedge:CLK  155.316:155.316:155.316
+SETUP     negedge:D[7]       posedge:CLK  151.094:151.094:151.094
+SETUP     negedge:D[8]       posedge:CLK  150.08:150.08:150.08
+SETUP     negedge:D[9]       posedge:CLK  148.146:148.146:148.146
+SETUP     negedge:D[10]      posedge:CLK  169.736:169.736:169.736
+SETUP     negedge:D[11]      posedge:CLK  143.403:143.403:143.403
+SETUP     negedge:D[12]      posedge:CLK  141.62:141.62:141.62
+SETUP     negedge:D[13]      posedge:CLK  109.478:109.478:109.478
+SETUP     negedge:D[14]      posedge:CLK  175.064:175.064:175.064
+SETUP     negedge:D[15]      posedge:CLK  107.673:107.673:107.673
+SETUP     negedge:DHOLD      posedge:CLK  240.354:240.354:240.354
+SETUP     negedge:OHOLDBOT   posedge:CLK  325.586:325.586:325.586
+SETUP     negedge:OHOLDTOP   posedge:CLK  221.055:221.055:221.055
+SETUP     negedge:OLOADBOT   posedge:CLK  343.244:343.244:343.244
+SETUP     negedge:OLOADTOP   posedge:CLK  278.585:278.585:278.585
+SETUP     posedge:A[0]       posedge:CLK  1556.35:1556.35:1556.35
+SETUP     posedge:A[1]       posedge:CLK  1661.81:1661.81:1661.81
+SETUP     posedge:A[2]       posedge:CLK  1683.33:1683.33:1683.33
+SETUP     posedge:A[3]       posedge:CLK  1703.43:1703.43:1703.43
+SETUP     posedge:A[4]       posedge:CLK  1796.34:1796.34:1796.34
+SETUP     posedge:A[5]       posedge:CLK  1960.79:1960.79:1960.79
+SETUP     posedge:A[6]       posedge:CLK  1810.74:1810.74:1810.74
+SETUP     posedge:A[7]       posedge:CLK  1833.36:1833.36:1833.36
+SETUP     posedge:A[8]       posedge:CLK  1530.44:1530.44:1530.44
+SETUP     posedge:A[9]       posedge:CLK  1700.76:1700.76:1700.76
+SETUP     posedge:A[10]      posedge:CLK  1627.23:1627.23:1627.23
+SETUP     posedge:A[11]      posedge:CLK  1661.81:1661.81:1661.81
+SETUP     posedge:A[12]      posedge:CLK  1737.18:1737.18:1737.18
+SETUP     posedge:A[13]      posedge:CLK  1782.81:1782.81:1782.81
+SETUP     posedge:A[14]      posedge:CLK  1804.37:1804.37:1804.37
+SETUP     posedge:A[15]      posedge:CLK  1817.18:1817.18:1817.18
+SETUP     posedge:ADDSUBBOT  posedge:CLK  1413.14:1413.14:1413.14
+SETUP     posedge:ADDSUBTOP  posedge:CLK  1414.02:1414.02:1414.02
+SETUP     posedge:AHOLD      posedge:CLK  228.311:228.311:228.311
+SETUP     posedge:B[0]       posedge:CLK  1930.8:1930.8:1930.8
+SETUP     posedge:B[1]       posedge:CLK  2084.86:2084.86:2084.86
+SETUP     posedge:B[2]       posedge:CLK  2006.63:2006.63:2006.63
+SETUP     posedge:B[3]       posedge:CLK  2049.9:2049.9:2049.9
+SETUP     posedge:B[4]       posedge:CLK  1925.27:1925.27:1925.27
+SETUP     posedge:B[5]       posedge:CLK  2023.7:2023.7:2023.7
+SETUP     posedge:B[6]       posedge:CLK  1828.33:1828.33:1828.33
+SETUP     posedge:B[7]       posedge:CLK  1944.23:1944.23:1944.23
+SETUP     posedge:B[8]       posedge:CLK  1860.3:1860.3:1860.3
+SETUP     posedge:B[9]       posedge:CLK  2056.41:2056.41:2056.41
+SETUP     posedge:B[10]      posedge:CLK  1976.05:1976.05:1976.05
+SETUP     posedge:B[11]      posedge:CLK  2022.13:2022.13:2022.13
+SETUP     posedge:B[12]      posedge:CLK  1922.54:1922.54:1922.54
+SETUP     posedge:B[13]      posedge:CLK  1931.69:1931.69:1931.69
+SETUP     posedge:B[14]      posedge:CLK  1728.21:1728.21:1728.21
+SETUP     posedge:B[15]      posedge:CLK  2081.46:2081.46:2081.46
+SETUP     posedge:BHOLD      posedge:CLK  221.104:221.104:221.104
+SETUP     posedge:C[0]       posedge:CLK  152.16:152.16:152.16
+SETUP     posedge:C[1]       posedge:CLK  167.895:167.895:167.895
+SETUP     posedge:C[2]       posedge:CLK  145.564:145.564:145.564
+SETUP     posedge:C[3]       posedge:CLK  146.993:146.993:146.993
+SETUP     posedge:C[4]       posedge:CLK  151.047:151.047:151.047
+SETUP     posedge:C[5]       posedge:CLK  124.838:124.838:124.838
+SETUP     posedge:C[6]       posedge:CLK  151.905:151.905:151.905
+SETUP     posedge:C[7]       posedge:CLK  138.751:138.751:138.751
+SETUP     posedge:C[8]       posedge:CLK  134.633:134.633:134.633
+SETUP     posedge:C[9]       posedge:CLK  102.902:102.902:102.902
+SETUP     posedge:C[10]      posedge:CLK  122.447:122.447:122.447
+SETUP     posedge:C[11]      posedge:CLK  130.205:130.205:130.205
+SETUP     posedge:C[12]      posedge:CLK  123.376:123.376:123.376
+SETUP     posedge:C[13]      posedge:CLK  142.815:142.815:142.815
+SETUP     posedge:C[14]      posedge:CLK  125.507:125.507:125.507
+SETUP     posedge:C[15]      posedge:CLK  132.912:132.912:132.912
+SETUP     posedge:CHOLD      posedge:CLK  152.68:152.68:152.68
+SETUP     posedge:D[0]       posedge:CLK  194.203:194.203:194.203
+SETUP     posedge:D[1]       posedge:CLK  190.974:190.974:190.974
+SETUP     posedge:D[2]       posedge:CLK  162.722:162.722:162.722
+SETUP     posedge:D[3]       posedge:CLK  127.899:127.899:127.899
+SETUP     posedge:D[4]       posedge:CLK  168.714:168.714:168.714
+SETUP     posedge:D[5]       posedge:CLK  188.082:188.082:188.082
+SETUP     posedge:D[6]       posedge:CLK  131.907:131.907:131.907
+SETUP     posedge:D[7]       posedge:CLK  156.309:156.309:156.309
+SETUP     posedge:D[8]       posedge:CLK  137.909:137.909:137.909
+SETUP     posedge:D[9]       posedge:CLK  137.989:137.989:137.989
+SETUP     posedge:D[10]      posedge:CLK  151.218:151.218:151.218
+SETUP     posedge:D[11]      posedge:CLK  126.786:126.786:126.786
+SETUP     posedge:D[12]      posedge:CLK  133.135:133.135:133.135
+SETUP     posedge:D[13]      posedge:CLK  103.753:103.753:103.753
+SETUP     posedge:D[14]      posedge:CLK  166.767:166.767:166.767
+SETUP     posedge:D[15]      posedge:CLK  115.627:115.627:115.627
+SETUP     posedge:DHOLD      posedge:CLK  193.771:193.771:193.771
+SETUP     posedge:OHOLDBOT   posedge:CLK  261.636:261.636:261.636
+SETUP     posedge:OHOLDTOP   posedge:CLK  160.167:160.167:160.167
+SETUP     posedge:OLOADBOT   posedge:CLK  331.775:331.775:331.775
+SETUP     posedge:OLOADTOP   posedge:CLK  295.65:295.65:295.65
+IOPATH    A[0]               ACCUMCO      1475.35:1475.35:1475.35  1934.41:1934.41:1934.41
+IOPATH    A[0]               CO           2047.76:2047.76:2047.76  2480.4:2480.4:2480.4
+IOPATH    A[1]               ACCUMCO      1714.57:1714.57:1714.57  1994.74:1994.74:1994.74
+IOPATH    A[1]               CO           2286.97:2286.97:2286.97  2540.73:2540.73:2540.73
+IOPATH    A[2]               ACCUMCO      1652.4:1652.4:1652.4     1867.19:1867.19:1867.19
+IOPATH    A[2]               CO           2224.81:2224.81:2224.81  2413.18:2413.18:2413.18
+IOPATH    A[3]               ACCUMCO      1565.21:1565.21:1565.21  1796.17:1796.17:1796.17
+IOPATH    A[3]               CO           2137.61:2137.61:2137.61  2342.15:2342.15:2342.15
+IOPATH    A[4]               ACCUMCO      1603.79:1603.79:1603.79  2005.48:2005.48:2005.48
+IOPATH    A[4]               CO           2176.19:2176.19:2176.19  2551.46:2551.46:2551.46
+IOPATH    A[5]               ACCUMCO      1541.89:1541.89:1541.89  1839.14:1839.14:1839.14
+IOPATH    A[5]               CO           2114.29:2114.29:2114.29  2385.13:2385.13:2385.13
+IOPATH    A[6]               ACCUMCO      1688.15:1688.15:1688.15  1939.64:1939.64:1939.64
+IOPATH    A[6]               CO           2260.55:2260.55:2260.55  2485.63:2485.63:2485.63
+IOPATH    A[7]               ACCUMCO      1614.5:1614.5:1614.5     1860.55:1860.55:1860.55
+IOPATH    A[7]               CO           2186.9:2186.9:2186.9     2406.54:2406.54:2406.54
+IOPATH    A[8]               ACCUMCO      1574.92:1574.92:1574.92  1835.69:1835.69:1835.69
+IOPATH    A[8]               CO           2147.33:2147.33:2147.33  2381.67:2381.67:2381.67
+IOPATH    A[9]               ACCUMCO      1699.8:1699.8:1699.8     1958.06:1958.06:1958.06
+IOPATH    A[9]               CO           2272.2:2272.2:2272.2     2504.04:2504.04:2504.04
+IOPATH    A[10]              ACCUMCO      1580.63:1580.63:1580.63  1733.85:1733.85:1733.85
+IOPATH    A[10]              CO           2153.03:2153.03:2153.03  2279.83:2279.83:2279.83
+IOPATH    A[11]              ACCUMCO      1431.09:1431.09:1431.09  1593.46:1593.46:1593.46
+IOPATH    A[11]              CO           2003.49:2003.49:2003.49  2139.45:2139.45:2139.45
+IOPATH    A[12]              ACCUMCO      1295.31:1295.31:1295.31  1626.47:1626.47:1626.47
+IOPATH    A[12]              CO           1867.71:1867.71:1867.71  2172.46:2172.46:2172.46
+IOPATH    A[13]              ACCUMCO      1379.45:1379.45:1379.45  1661.08:1661.08:1661.08
+IOPATH    A[13]              CO           1951.85:1951.85:1951.85  2207.06:2207.06:2207.06
+IOPATH    A[14]              ACCUMCO      1429.38:1429.38:1429.38  1649.43:1649.43:1649.43
+IOPATH    A[14]              CO           2001.79:2001.79:2001.79  2195.42:2195.42:2195.42
+IOPATH    A[15]              ACCUMCO      1508.68:1508.68:1508.68  1808.14:1808.14:1808.14
+IOPATH    A[15]              CO           2081.09:2081.09:2081.09  2354.13:2354.13:2354.13
+IOPATH    A[15]              SIGNEXTOUT   885.756:885.756:885.756  834.238:834.238:834.238
+IOPATH    ADDSUBTOP          ACCUMCO      1601.27:1601.27:1601.27  1890.88:1890.88:1890.88
+IOPATH    ADDSUBTOP          CO           459.245:459.245:459.245  449.106:449.106:449.106
+IOPATH    posedge:CLK        ACCUMCO      2021.43:2021.43:2021.43  2326.07:2326.07:2326.07
+IOPATH    posedge:CLK        CO           2593.83:2593.83:2593.83  2872.06:2872.06:2872.06
+IOPATH    posedge:CLK        O[0]         984.982:984.982:984.982  1024.49:1024.49:1024.49
+IOPATH    posedge:CLK        O[1]         977.566:977.566:977.566  993.269:993.269:993.269
+IOPATH    posedge:CLK        O[2]         1005.7:1005.7:1005.7     1040.73:1040.73:1040.73
+IOPATH    posedge:CLK        O[3]         1085.69:1085.69:1085.69  1124.37:1124.37:1124.37
+IOPATH    posedge:CLK        O[4]         1007.06:1007.06:1007.06  1050.14:1050.14:1050.14
+IOPATH    posedge:CLK        O[5]         1027.71:1027.71:1027.71  1080.45:1080.45:1080.45
+IOPATH    posedge:CLK        O[6]         1150.29:1150.29:1150.29  1219.64:1219.64:1219.64
+IOPATH    posedge:CLK        O[7]         1115.38:1115.38:1115.38  1187.21:1187.21:1187.21
+IOPATH    posedge:CLK        O[8]         1185.67:1185.67:1185.67  1283.36:1283.36:1283.36
+IOPATH    posedge:CLK        O[9]         1184.3:1184.3:1184.3     1310.03:1310.03:1310.03
+IOPATH    posedge:CLK        O[10]        1143.62:1143.62:1143.62  1222.95:1222.95:1222.95
+IOPATH    posedge:CLK        O[11]        1322.36:1322.36:1322.36  1412.62:1412.62:1412.62
+IOPATH    posedge:CLK        O[12]        1143.17:1143.17:1143.17  1210.69:1210.69:1210.69
+IOPATH    posedge:CLK        O[13]        1173.33:1173.33:1173.33  1267.56:1267.56:1267.56
+IOPATH    posedge:CLK        O[14]        1264.14:1264.14:1264.14  1366.3:1366.3:1366.3
+IOPATH    posedge:CLK        O[15]        1277.87:1277.87:1277.87  1376:1376:1376
+IOPATH    posedge:CLK        O[16]        1254.82:1254.82:1254.82  1419.62:1419.62:1419.62
+IOPATH    posedge:CLK        O[17]        1249.56:1249.56:1249.56  1391.7:1391.7:1391.7
+IOPATH    posedge:CLK        O[18]        1289.97:1289.97:1289.97  1478.22:1478.22:1478.22
+IOPATH    posedge:CLK        O[19]        1381.9:1381.9:1381.9     1497.63:1497.63:1497.63
+IOPATH    posedge:CLK        O[20]        1294.36:1294.36:1294.36  1389.69:1389.69:1389.69
+IOPATH    posedge:CLK        O[21]        1171.05:1171.05:1171.05  1248.86:1248.86:1248.86
+IOPATH    posedge:CLK        O[22]        1195.51:1195.51:1195.51  1311.92:1311.92:1311.92
+IOPATH    posedge:CLK        O[23]        1189.44:1189.44:1189.44  1285.86:1285.86:1285.86
+IOPATH    posedge:CLK        O[24]        1159.95:1159.95:1159.95  1242.3:1242.3:1242.3
+IOPATH    posedge:CLK        O[25]        1186.49:1186.49:1186.49  1283.54:1283.54:1283.54
+IOPATH    posedge:CLK        O[26]        1239.33:1239.33:1239.33  1368.51:1368.51:1368.51
+IOPATH    posedge:CLK        O[27]        1151.38:1151.38:1151.38  1227.48:1227.48:1227.48
+IOPATH    posedge:CLK        O[28]        1130.92:1130.92:1130.92  1204.94:1204.94:1204.94
+IOPATH    posedge:CLK        O[29]        1128.28:1128.28:1128.28  1197.33:1197.33:1197.33
+IOPATH    posedge:CLK        O[30]        1095.71:1095.71:1095.71  1142.97:1142.97:1142.97
+IOPATH    posedge:CLK        O[31]        1076.06:1076.06:1076.06  1118.95:1118.95:1118.95
+
 CELL SB_MAC16_ACC_U_32P32_ALL_PIPELINE
 HOLD      negedge:A[0]       posedge:CLK  225.246:225.246:225.246
 HOLD      negedge:A[1]       posedge:CLK  221.741:221.741:221.741
@@ -957,6 +1340,429 @@ IOPATH    posedge:CLK        O[29]        1128.28:1128.28:1128.28     1197.65:11
 IOPATH    posedge:CLK        O[30]        1095.71:1095.71:1095.71     1142.97:1142.97:1142.97
 IOPATH    posedge:CLK        O[31]        1076.06:1076.06:1076.06     1118.95:1118.95:1118.95
 IOPATH    posedge:CLK        SIGNEXTOUT   1461.01:1461.01:1461.01     1418.04:1418.04:1418.04
+
+CELL SB_MAC16_ACC_U_32P32_BYPASS
+HOLD      negedge:A[0]       posedge:CLK  225.246:225.246:225.246
+HOLD      negedge:A[1]       posedge:CLK  221.741:221.741:221.741
+HOLD      negedge:A[2]       posedge:CLK  215.99:215.99:215.99
+HOLD      negedge:A[3]       posedge:CLK  216.2:216.2:216.2
+HOLD      negedge:A[4]       posedge:CLK  217.945:217.945:217.945
+HOLD      negedge:A[5]       posedge:CLK  183.875:183.875:183.875
+HOLD      negedge:A[6]       posedge:CLK  221.084:221.084:221.084
+HOLD      negedge:A[7]       posedge:CLK  212.786:212.786:212.786
+HOLD      negedge:A[8]       posedge:CLK  180.124:180.124:180.124
+HOLD      negedge:A[9]       posedge:CLK  168.61:168.61:168.61
+HOLD      negedge:A[10]      posedge:CLK  177.622:177.622:177.622
+HOLD      negedge:A[11]      posedge:CLK  173.057:173.057:173.057
+HOLD      negedge:A[12]      posedge:CLK  171.708:171.708:171.708
+HOLD      negedge:A[13]      posedge:CLK  171.794:171.794:171.794
+HOLD      negedge:A[14]      posedge:CLK  166.812:166.812:166.812
+HOLD      negedge:A[15]      posedge:CLK  182.546:182.546:182.546
+HOLD      negedge:ADDSUBBOT  posedge:CLK  68.98:68.98:68.98
+HOLD      negedge:ADDSUBTOP  posedge:CLK  64.403:64.403:64.403
+HOLD      negedge:AHOLD      posedge:CLK  203.028:203.028:203.028
+HOLD      negedge:B[0]       posedge:CLK  199.318:199.318:199.318
+HOLD      negedge:B[1]       posedge:CLK  205.007:205.007:205.007
+HOLD      negedge:B[2]       posedge:CLK  194.98:194.98:194.98
+HOLD      negedge:B[3]       posedge:CLK  199.743:199.743:199.743
+HOLD      negedge:B[4]       posedge:CLK  201.609:201.609:201.609
+HOLD      negedge:B[5]       posedge:CLK  188.274:188.274:188.274
+HOLD      negedge:B[6]       posedge:CLK  183.668:183.668:183.668
+HOLD      negedge:B[7]       posedge:CLK  183.88:183.88:183.88
+HOLD      negedge:B[8]       posedge:CLK  181.905:181.905:181.905
+HOLD      negedge:B[9]       posedge:CLK  194.213:194.213:194.213
+HOLD      negedge:B[10]      posedge:CLK  166.869:166.869:166.869
+HOLD      negedge:B[11]      posedge:CLK  178.724:178.724:178.724
+HOLD      negedge:B[12]      posedge:CLK  188.759:188.759:188.759
+HOLD      negedge:B[13]      posedge:CLK  178.851:178.851:178.851
+HOLD      negedge:B[14]      posedge:CLK  169.756:169.756:169.756
+HOLD      negedge:B[15]      posedge:CLK  196.689:196.689:196.689
+HOLD      negedge:BHOLD      posedge:CLK  177.143:177.143:177.143
+HOLD      negedge:C[0]       posedge:CLK  238.019:238.019:238.019
+HOLD      negedge:C[1]       posedge:CLK  241.19:241.19:241.19
+HOLD      negedge:C[2]       posedge:CLK  236.487:236.487:236.487
+HOLD      negedge:C[3]       posedge:CLK  233.38:233.38:233.38
+HOLD      negedge:C[4]       posedge:CLK  234.834:234.834:234.834
+HOLD      negedge:C[5]       posedge:CLK  237.059:237.059:237.059
+HOLD      negedge:C[6]       posedge:CLK  235.288:235.288:235.288
+HOLD      negedge:C[7]       posedge:CLK  240.096:240.096:240.096
+HOLD      negedge:C[8]       posedge:CLK  237.083:237.083:237.083
+HOLD      negedge:C[9]       posedge:CLK  235.184:235.184:235.184
+HOLD      negedge:C[10]      posedge:CLK  233.033:233.033:233.033
+HOLD      negedge:C[11]      posedge:CLK  235.949:235.949:235.949
+HOLD      negedge:C[12]      posedge:CLK  239.169:239.169:239.169
+HOLD      negedge:C[13]      posedge:CLK  235.937:235.937:235.937
+HOLD      negedge:C[14]      posedge:CLK  235.235:235.235:235.235
+HOLD      negedge:C[15]      posedge:CLK  235.549:235.549:235.549
+HOLD      negedge:CHOLD      posedge:CLK  215.429:215.429:215.429
+HOLD      negedge:CI         posedge:CLK  -182.352:-182.352:-182.352
+HOLD      negedge:D[0]       posedge:CLK  190.878:190.878:190.878
+HOLD      negedge:D[1]       posedge:CLK  185.317:185.317:185.317
+HOLD      negedge:D[2]       posedge:CLK  184.125:184.125:184.125
+HOLD      negedge:D[3]       posedge:CLK  180.239:180.239:180.239
+HOLD      negedge:D[4]       posedge:CLK  177.004:177.004:177.004
+HOLD      negedge:D[5]       posedge:CLK  186.749:186.749:186.749
+HOLD      negedge:D[6]       posedge:CLK  186.895:186.895:186.895
+HOLD      negedge:D[7]       posedge:CLK  181.237:181.237:181.237
+HOLD      negedge:D[8]       posedge:CLK  254.011:254.011:254.011
+HOLD      negedge:D[9]       posedge:CLK  173.363:173.363:173.363
+HOLD      negedge:D[10]      posedge:CLK  259.158:259.158:259.158
+HOLD      negedge:D[11]      posedge:CLK  256.257:256.257:256.257
+HOLD      negedge:D[12]      posedge:CLK  253.946:253.946:253.946
+HOLD      negedge:D[13]      posedge:CLK  249.826:249.826:249.826
+HOLD      negedge:D[14]      posedge:CLK  182.441:182.441:182.441
+HOLD      negedge:D[15]      posedge:CLK  259.634:259.634:259.634
+HOLD      negedge:DHOLD      posedge:CLK  234.001:234.001:234.001
+HOLD      negedge:OHOLDBOT   posedge:CLK  157.226:157.226:157.226
+HOLD      negedge:OHOLDTOP   posedge:CLK  157.282:157.282:157.282
+HOLD      negedge:OLOADBOT   posedge:CLK  193.798:193.798:193.798
+HOLD      negedge:OLOADTOP   posedge:CLK  178.665:178.665:178.665
+HOLD      posedge:A[0]       posedge:CLK  174.322:174.322:174.322
+HOLD      posedge:A[1]       posedge:CLK  171.322:171.322:171.322
+HOLD      posedge:A[2]       posedge:CLK  163.459:163.459:163.459
+HOLD      posedge:A[3]       posedge:CLK  162.852:162.852:162.852
+HOLD      posedge:A[4]       posedge:CLK  166.475:166.475:166.475
+HOLD      posedge:A[5]       posedge:CLK  140.36:140.36:140.36
+HOLD      posedge:A[6]       posedge:CLK  167.946:167.946:167.946
+HOLD      posedge:A[7]       posedge:CLK  160.919:160.919:160.919
+HOLD      posedge:A[8]       posedge:CLK  138.172:138.172:138.172
+HOLD      posedge:A[9]       posedge:CLK  129.888:129.888:129.888
+HOLD      posedge:A[10]      posedge:CLK  136.785:136.785:136.785
+HOLD      posedge:A[11]      posedge:CLK  133.088:133.088:133.088
+HOLD      posedge:A[12]      posedge:CLK  133.14:133.14:133.14
+HOLD      posedge:A[13]      posedge:CLK  131.736:131.736:131.736
+HOLD      posedge:A[14]      posedge:CLK  125.36:125.36:125.36
+HOLD      posedge:A[15]      posedge:CLK  139.019:139.019:139.019
+HOLD      posedge:ADDSUBBOT  posedge:CLK  58.029:58.029:58.029
+HOLD      posedge:ADDSUBTOP  posedge:CLK  51.971:51.971:51.971
+HOLD      posedge:AHOLD      posedge:CLK  163.435:163.435:163.435
+HOLD      posedge:B[0]       posedge:CLK  159.268:159.268:159.268
+HOLD      posedge:B[1]       posedge:CLK  161.656:161.656:161.656
+HOLD      posedge:B[2]       posedge:CLK  154.102:154.102:154.102
+HOLD      posedge:B[3]       posedge:CLK  158.267:158.267:158.267
+HOLD      posedge:B[4]       posedge:CLK  161.178:161.178:161.178
+HOLD      posedge:B[5]       posedge:CLK  145.66:145.66:145.66
+HOLD      posedge:B[6]       posedge:CLK  141.52:141.52:141.52
+HOLD      posedge:B[7]       posedge:CLK  142.363:142.363:142.363
+HOLD      posedge:B[8]       posedge:CLK  139.228:139.228:139.228
+HOLD      posedge:B[9]       posedge:CLK  151.105:151.105:151.105
+HOLD      posedge:B[10]      posedge:CLK  129.81:129.81:129.81
+HOLD      posedge:B[11]      posedge:CLK  136.215:136.215:136.215
+HOLD      posedge:B[12]      posedge:CLK  146.332:146.332:146.332
+HOLD      posedge:B[13]      posedge:CLK  137.53:137.53:137.53
+HOLD      posedge:B[14]      posedge:CLK  129.905:129.905:129.905
+HOLD      posedge:B[15]      posedge:CLK  153.892:153.892:153.892
+HOLD      posedge:BHOLD      posedge:CLK  146.57:146.57:146.57
+HOLD      posedge:C[0]       posedge:CLK  196.313:196.313:196.313
+HOLD      posedge:C[1]       posedge:CLK  199.675:199.675:199.675
+HOLD      posedge:C[2]       posedge:CLK  194.519:194.519:194.519
+HOLD      posedge:C[3]       posedge:CLK  193.574:193.574:193.574
+HOLD      posedge:C[4]       posedge:CLK  193.811:193.811:193.811
+HOLD      posedge:C[5]       posedge:CLK  196.306:196.306:196.306
+HOLD      posedge:C[6]       posedge:CLK  189.812:189.812:189.812
+HOLD      posedge:C[7]       posedge:CLK  197.702:197.702:197.702
+HOLD      posedge:C[8]       posedge:CLK  193.862:193.862:193.862
+HOLD      posedge:C[9]       posedge:CLK  191.001:191.001:191.001
+HOLD      posedge:C[10]      posedge:CLK  188.338:188.338:188.338
+HOLD      posedge:C[11]      posedge:CLK  193.318:193.318:193.318
+HOLD      posedge:C[12]      posedge:CLK  197.393:197.393:197.393
+HOLD      posedge:C[13]      posedge:CLK  192.921:192.921:192.921
+HOLD      posedge:C[14]      posedge:CLK  190.495:190.495:190.495
+HOLD      posedge:C[15]      posedge:CLK  194.588:194.588:194.588
+HOLD      posedge:CHOLD      posedge:CLK  184.582:184.582:184.582
+HOLD      posedge:CI         posedge:CLK  -178.334:-178.334:-178.334
+HOLD      posedge:D[0]       posedge:CLK  149.936:149.936:149.936
+HOLD      posedge:D[1]       posedge:CLK  143.924:143.924:143.924
+HOLD      posedge:D[2]       posedge:CLK  138.822:138.822:138.822
+HOLD      posedge:D[3]       posedge:CLK  136.464:136.464:136.464
+HOLD      posedge:D[4]       posedge:CLK  135.375:135.375:135.375
+HOLD      posedge:D[5]       posedge:CLK  144.025:144.025:144.025
+HOLD      posedge:D[6]       posedge:CLK  147.529:147.529:147.529
+HOLD      posedge:D[7]       posedge:CLK  140.477:140.477:140.477
+HOLD      posedge:D[8]       posedge:CLK  208.339:208.339:208.339
+HOLD      posedge:D[9]       posedge:CLK  136.361:136.361:136.361
+HOLD      posedge:D[10]      posedge:CLK  210.15:210.15:210.15
+HOLD      posedge:D[11]      posedge:CLK  209.024:209.024:209.024
+HOLD      posedge:D[12]      posedge:CLK  206.327:206.327:206.327
+HOLD      posedge:D[13]      posedge:CLK  201.971:201.971:201.971
+HOLD      posedge:D[14]      posedge:CLK  140.511:140.511:140.511
+HOLD      posedge:D[15]      posedge:CLK  210.689:210.689:210.689
+HOLD      posedge:DHOLD      posedge:CLK  196.151:196.151:196.151
+HOLD      posedge:OHOLDBOT   posedge:CLK  187.891:187.891:187.891
+HOLD      posedge:OHOLDTOP   posedge:CLK  186.884:186.884:186.884
+HOLD      posedge:OLOADBOT   posedge:CLK  171.188:171.188:171.188
+HOLD      posedge:OLOADTOP   posedge:CLK  163.45:163.45:163.45
+RECOVERY  negedge:IRSTBOT    posedge:CLK  797.559:797.559:797.559
+RECOVERY  negedge:IRSTTOP    posedge:CLK  848.859:848.859:848.859
+RECOVERY  negedge:ORSTBOT    posedge:CLK  615.935:615.935:615.935
+RECOVERY  negedge:ORSTTOP    posedge:CLK  709.441:709.441:709.441
+RECOVERY  posedge:IRSTBOT    posedge:CLK  0:0:0
+RECOVERY  posedge:IRSTTOP    posedge:CLK  0:0:0
+RECOVERY  posedge:ORSTBOT    posedge:CLK  0:0:0
+RECOVERY  posedge:ORSTTOP    posedge:CLK  0:0:0
+REMOVAL   negedge:IRSTBOT    posedge:CLK  0:0:0
+REMOVAL   negedge:IRSTTOP    posedge:CLK  0:0:0
+REMOVAL   negedge:ORSTBOT    posedge:CLK  0:0:0
+REMOVAL   negedge:ORSTTOP    posedge:CLK  0:0:0
+REMOVAL   posedge:IRSTBOT    posedge:CLK  0:0:0
+REMOVAL   posedge:IRSTTOP    posedge:CLK  0:0:0
+REMOVAL   posedge:ORSTBOT    posedge:CLK  0:0:0
+REMOVAL   posedge:ORSTTOP    posedge:CLK  0:0:0
+SETUP     negedge:A[0]       posedge:CLK  1574.37:1574.37:1574.37
+SETUP     negedge:A[1]       posedge:CLK  1676.94:1676.94:1676.94
+SETUP     negedge:A[2]       posedge:CLK  1686.38:1686.38:1686.38
+SETUP     negedge:A[3]       posedge:CLK  1718.39:1718.39:1718.39
+SETUP     negedge:A[4]       posedge:CLK  1819.53:1819.53:1819.53
+SETUP     negedge:A[5]       posedge:CLK  1908.04:1908.04:1908.04
+SETUP     negedge:A[6]       posedge:CLK  1819.68:1819.68:1819.68
+SETUP     negedge:A[7]       posedge:CLK  1848.48:1848.48:1848.48
+SETUP     negedge:A[8]       posedge:CLK  1532.57:1532.57:1532.57
+SETUP     negedge:A[9]       posedge:CLK  1702.81:1702.81:1702.81
+SETUP     negedge:A[10]      posedge:CLK  1634.61:1634.61:1634.61
+SETUP     negedge:A[11]      posedge:CLK  1639.84:1639.84:1639.84
+SETUP     negedge:A[12]      posedge:CLK  1710.5:1710.5:1710.5
+SETUP     negedge:A[13]      posedge:CLK  1736.25:1736.25:1736.25
+SETUP     negedge:A[14]      posedge:CLK  1755.84:1755.84:1755.84
+SETUP     negedge:A[15]      posedge:CLK  1769.23:1769.23:1769.23
+SETUP     negedge:ADDSUBBOT  posedge:CLK  1951.91:1951.91:1951.91
+SETUP     negedge:ADDSUBTOP  posedge:CLK  1386.27:1386.27:1386.27
+SETUP     negedge:AHOLD      posedge:CLK  285.142:285.142:285.142
+SETUP     negedge:B[0]       posedge:CLK  1971.76:1971.76:1971.76
+SETUP     negedge:B[1]       posedge:CLK  1969.4:1969.4:1969.4
+SETUP     negedge:B[2]       posedge:CLK  1931.07:1931.07:1931.07
+SETUP     negedge:B[3]       posedge:CLK  1989.46:1989.46:1989.46
+SETUP     negedge:B[4]       posedge:CLK  2000.11:2000.11:2000.11
+SETUP     negedge:B[5]       posedge:CLK  1977.32:1977.32:1977.32
+SETUP     negedge:B[6]       posedge:CLK  1940.61:1940.61:1940.61
+SETUP     negedge:B[7]       posedge:CLK  1902.5:1902.5:1902.5
+SETUP     negedge:B[8]       posedge:CLK  1856.62:1856.62:1856.62
+SETUP     negedge:B[9]       posedge:CLK  2011.33:2011.33:2011.33
+SETUP     negedge:B[10]      posedge:CLK  1888.62:1888.62:1888.62
+SETUP     negedge:B[11]      posedge:CLK  2052.77:2052.77:2052.77
+SETUP     negedge:B[12]      posedge:CLK  1975.68:1975.68:1975.68
+SETUP     negedge:B[13]      posedge:CLK  1912.68:1912.68:1912.68
+SETUP     negedge:B[14]      posedge:CLK  1817.14:1817.14:1817.14
+SETUP     negedge:B[15]      posedge:CLK  1855.75:1855.75:1855.75
+SETUP     negedge:BHOLD      posedge:CLK  264.441:264.441:264.441
+SETUP     negedge:C[0]       posedge:CLK  171.761:171.761:171.761
+SETUP     negedge:C[1]       posedge:CLK  164.027:164.027:164.027
+SETUP     negedge:C[2]       posedge:CLK  150.816:150.816:150.816
+SETUP     negedge:C[3]       posedge:CLK  138.86:138.86:138.86
+SETUP     negedge:C[4]       posedge:CLK  149.551:149.551:149.551
+SETUP     negedge:C[5]       posedge:CLK  131.498:131.498:131.498
+SETUP     negedge:C[6]       posedge:CLK  163.777:163.777:163.777
+SETUP     negedge:C[7]       posedge:CLK  148.388:148.388:148.388
+SETUP     negedge:C[8]       posedge:CLK  145.784:145.784:145.784
+SETUP     negedge:C[9]       posedge:CLK  124.056:124.056:124.056
+SETUP     negedge:C[10]      posedge:CLK  136.101:136.101:136.101
+SETUP     negedge:C[11]      posedge:CLK  151.454:151.454:151.454
+SETUP     negedge:C[12]      posedge:CLK  139.937:139.937:139.937
+SETUP     negedge:C[13]      posedge:CLK  152.873:152.873:152.873
+SETUP     negedge:C[14]      posedge:CLK  143.409:143.409:143.409
+SETUP     negedge:C[15]      posedge:CLK  137.212:137.212:137.212
+SETUP     negedge:CHOLD      posedge:CLK  196.583:196.583:196.583
+SETUP     negedge:CI         posedge:CLK  1273.34:1273.34:1273.34
+SETUP     negedge:D[0]       posedge:CLK  219.957:219.957:219.957
+SETUP     negedge:D[1]       posedge:CLK  188.659:188.659:188.659
+SETUP     negedge:D[2]       posedge:CLK  174.382:174.382:174.382
+SETUP     negedge:D[3]       posedge:CLK  135.268:135.268:135.268
+SETUP     negedge:D[4]       posedge:CLK  177.297:177.297:177.297
+SETUP     negedge:D[5]       posedge:CLK  191.515:191.515:191.515
+SETUP     negedge:D[6]       posedge:CLK  155.316:155.316:155.316
+SETUP     negedge:D[7]       posedge:CLK  151.094:151.094:151.094
+SETUP     negedge:D[8]       posedge:CLK  150.08:150.08:150.08
+SETUP     negedge:D[9]       posedge:CLK  148.146:148.146:148.146
+SETUP     negedge:D[10]      posedge:CLK  169.736:169.736:169.736
+SETUP     negedge:D[11]      posedge:CLK  143.403:143.403:143.403
+SETUP     negedge:D[12]      posedge:CLK  141.62:141.62:141.62
+SETUP     negedge:D[13]      posedge:CLK  109.478:109.478:109.478
+SETUP     negedge:D[14]      posedge:CLK  175.064:175.064:175.064
+SETUP     negedge:D[15]      posedge:CLK  107.673:107.673:107.673
+SETUP     negedge:DHOLD      posedge:CLK  240.354:240.354:240.354
+SETUP     negedge:OHOLDBOT   posedge:CLK  325.586:325.586:325.586
+SETUP     negedge:OHOLDTOP   posedge:CLK  221.055:221.055:221.055
+SETUP     negedge:OLOADBOT   posedge:CLK  343.244:343.244:343.244
+SETUP     negedge:OLOADTOP   posedge:CLK  278.585:278.585:278.585
+SETUP     posedge:A[0]       posedge:CLK  1556.35:1556.35:1556.35
+SETUP     posedge:A[1]       posedge:CLK  1661.81:1661.81:1661.81
+SETUP     posedge:A[2]       posedge:CLK  1683.35:1683.35:1683.35
+SETUP     posedge:A[3]       posedge:CLK  1703.43:1703.43:1703.43
+SETUP     posedge:A[4]       posedge:CLK  1796.34:1796.34:1796.34
+SETUP     posedge:A[5]       posedge:CLK  1960.79:1960.79:1960.79
+SETUP     posedge:A[6]       posedge:CLK  1810.74:1810.74:1810.74
+SETUP     posedge:A[7]       posedge:CLK  1833.36:1833.36:1833.36
+SETUP     posedge:A[8]       posedge:CLK  1530.44:1530.44:1530.44
+SETUP     posedge:A[9]       posedge:CLK  1700.76:1700.76:1700.76
+SETUP     posedge:A[10]      posedge:CLK  1627.23:1627.23:1627.23
+SETUP     posedge:A[11]      posedge:CLK  1661.81:1661.81:1661.81
+SETUP     posedge:A[12]      posedge:CLK  1737.18:1737.18:1737.18
+SETUP     posedge:A[13]      posedge:CLK  1782.81:1782.81:1782.81
+SETUP     posedge:A[14]      posedge:CLK  1804.37:1804.37:1804.37
+SETUP     posedge:A[15]      posedge:CLK  1817.18:1817.18:1817.18
+SETUP     posedge:ADDSUBBOT  posedge:CLK  1994.11:1994.11:1994.11
+SETUP     posedge:ADDSUBTOP  posedge:CLK  1424.02:1424.02:1424.02
+SETUP     posedge:AHOLD      posedge:CLK  228.311:228.311:228.311
+SETUP     posedge:B[0]       posedge:CLK  1930.8:1930.8:1930.8
+SETUP     posedge:B[1]       posedge:CLK  2084.86:2084.86:2084.86
+SETUP     posedge:B[2]       posedge:CLK  2006.63:2006.63:2006.63
+SETUP     posedge:B[3]       posedge:CLK  2049.9:2049.9:2049.9
+SETUP     posedge:B[4]       posedge:CLK  1960:1960:1960
+SETUP     posedge:B[5]       posedge:CLK  2035.05:2035.05:2035.05
+SETUP     posedge:B[6]       posedge:CLK  1992.81:1992.81:1992.81
+SETUP     posedge:B[7]       posedge:CLK  1946.79:1946.79:1946.79
+SETUP     posedge:B[8]       posedge:CLK  1860.3:1860.3:1860.3
+SETUP     posedge:B[9]       posedge:CLK  2056.41:2056.41:2056.41
+SETUP     posedge:B[10]      posedge:CLK  1976.05:1976.05:1976.05
+SETUP     posedge:B[11]      posedge:CLK  2022.13:2022.13:2022.13
+SETUP     posedge:B[12]      posedge:CLK  1922.54:1922.54:1922.54
+SETUP     posedge:B[13]      posedge:CLK  1931.69:1931.69:1931.69
+SETUP     posedge:B[14]      posedge:CLK  1829.22:1829.22:1829.22
+SETUP     posedge:B[15]      posedge:CLK  2081.46:2081.46:2081.46
+SETUP     posedge:BHOLD      posedge:CLK  221.104:221.104:221.104
+SETUP     posedge:C[0]       posedge:CLK  152.16:152.16:152.16
+SETUP     posedge:C[1]       posedge:CLK  167.895:167.895:167.895
+SETUP     posedge:C[2]       posedge:CLK  145.564:145.564:145.564
+SETUP     posedge:C[3]       posedge:CLK  146.993:146.993:146.993
+SETUP     posedge:C[4]       posedge:CLK  151.047:151.047:151.047
+SETUP     posedge:C[5]       posedge:CLK  124.838:124.838:124.838
+SETUP     posedge:C[6]       posedge:CLK  151.905:151.905:151.905
+SETUP     posedge:C[7]       posedge:CLK  138.751:138.751:138.751
+SETUP     posedge:C[8]       posedge:CLK  134.633:134.633:134.633
+SETUP     posedge:C[9]       posedge:CLK  102.902:102.902:102.902
+SETUP     posedge:C[10]      posedge:CLK  122.447:122.447:122.447
+SETUP     posedge:C[11]      posedge:CLK  130.205:130.205:130.205
+SETUP     posedge:C[12]      posedge:CLK  123.376:123.376:123.376
+SETUP     posedge:C[13]      posedge:CLK  142.815:142.815:142.815
+SETUP     posedge:C[14]      posedge:CLK  125.507:125.507:125.507
+SETUP     posedge:C[15]      posedge:CLK  132.912:132.912:132.912
+SETUP     posedge:CHOLD      posedge:CLK  152.68:152.68:152.68
+SETUP     posedge:CI         posedge:CLK  1188.68:1188.68:1188.68
+SETUP     posedge:D[0]       posedge:CLK  194.203:194.203:194.203
+SETUP     posedge:D[1]       posedge:CLK  190.974:190.974:190.974
+SETUP     posedge:D[2]       posedge:CLK  162.722:162.722:162.722
+SETUP     posedge:D[3]       posedge:CLK  127.899:127.899:127.899
+SETUP     posedge:D[4]       posedge:CLK  168.714:168.714:168.714
+SETUP     posedge:D[5]       posedge:CLK  188.082:188.082:188.082
+SETUP     posedge:D[6]       posedge:CLK  131.907:131.907:131.907
+SETUP     posedge:D[7]       posedge:CLK  156.309:156.309:156.309
+SETUP     posedge:D[8]       posedge:CLK  137.909:137.909:137.909
+SETUP     posedge:D[9]       posedge:CLK  137.989:137.989:137.989
+SETUP     posedge:D[10]      posedge:CLK  151.218:151.218:151.218
+SETUP     posedge:D[11]      posedge:CLK  126.786:126.786:126.786
+SETUP     posedge:D[12]      posedge:CLK  133.135:133.135:133.135
+SETUP     posedge:D[13]      posedge:CLK  103.753:103.753:103.753
+SETUP     posedge:D[14]      posedge:CLK  166.767:166.767:166.767
+SETUP     posedge:D[15]      posedge:CLK  115.627:115.627:115.627
+SETUP     posedge:DHOLD      posedge:CLK  193.771:193.771:193.771
+SETUP     posedge:OHOLDBOT   posedge:CLK  261.636:261.636:261.636
+SETUP     posedge:OHOLDTOP   posedge:CLK  160.167:160.167:160.167
+SETUP     posedge:OLOADBOT   posedge:CLK  331.775:331.775:331.775
+SETUP     posedge:OLOADTOP   posedge:CLK  295.65:295.65:295.65
+IOPATH    A[0]               ACCUMCO      1481.77:1481.77:1481.77     1938.69:1938.69:1938.69
+IOPATH    A[0]               CO           2054.17:2054.17:2054.17     2484.67:2484.67:2484.67
+IOPATH    A[1]               ACCUMCO      1720.71:1720.71:1720.71     1998.85:1998.85:1998.85
+IOPATH    A[1]               CO           2293.11:2293.11:2293.11     2544.84:2544.84:2544.84
+IOPATH    A[2]               ACCUMCO      1658.54:1658.54:1658.54     1871.3:1871.3:1871.3
+IOPATH    A[2]               CO           2230.95:2230.95:2230.95     2417.28:2417.28:2417.28
+IOPATH    A[3]               ACCUMCO      1571.35:1571.35:1571.35     1800.27:1800.27:1800.27
+IOPATH    A[3]               CO           2143.75:2143.75:2143.75     2346.26:2346.26:2346.26
+IOPATH    A[4]               ACCUMCO      1608.77:1608.77:1608.77     2005.48:2005.48:2005.48
+IOPATH    A[4]               CO           2181.17:2181.17:2181.17     2551.46:2551.46:2551.46
+IOPATH    A[5]               ACCUMCO      1541.99:1541.99:1541.99     1839.14:1839.14:1839.14
+IOPATH    A[5]               CO           2114.39:2114.39:2114.39     2385.13:2385.13:2385.13
+IOPATH    A[6]               ACCUMCO      1688.25:1688.25:1688.25     1939.64:1939.64:1939.64
+IOPATH    A[6]               CO           2260.65:2260.65:2260.65     2485.63:2485.63:2485.63
+IOPATH    A[7]               ACCUMCO      1619.47:1619.47:1619.47     1860.55:1860.55:1860.55
+IOPATH    A[7]               CO           2191.88:2191.88:2191.88     2406.54:2406.54:2406.54
+IOPATH    A[8]               ACCUMCO      1575.02:1575.02:1575.02     1835.69:1835.69:1835.69
+IOPATH    A[8]               CO           2147.43:2147.43:2147.43     2381.67:2381.67:2381.67
+IOPATH    A[9]               ACCUMCO      1699.9:1699.9:1699.9        1958.06:1958.06:1958.06
+IOPATH    A[9]               CO           2272.3:2272.3:2272.3        2504.04:2504.04:2504.04
+IOPATH    A[10]              ACCUMCO      1580.73:1580.73:1580.73     1733.85:1733.85:1733.85
+IOPATH    A[10]              CO           2153.13:2153.13:2153.13     2279.83:2279.83:2279.83
+IOPATH    A[11]              ACCUMCO      1431.19:1431.19:1431.19     1593.46:1593.46:1593.46
+IOPATH    A[11]              CO           2003.6:2003.6:2003.6        2139.45:2139.45:2139.45
+IOPATH    A[12]              ACCUMCO      1429.52:1429.52:1429.52     1626.47:1626.47:1626.47
+IOPATH    A[12]              CO           2001.92:2001.92:2001.92     2172.46:2172.46:2172.46
+IOPATH    A[13]              ACCUMCO      1491.26:1491.26:1491.26     1661.08:1661.08:1661.08
+IOPATH    A[13]              CO           2063.66:2063.66:2063.66     2207.06:2207.06:2207.06
+IOPATH    A[14]              ACCUMCO      1561.46:1561.46:1561.46     1649.43:1649.43:1649.43
+IOPATH    A[14]              CO           2133.86:2133.86:2133.86     2195.42:2195.42:2195.42
+IOPATH    A[15]              ACCUMCO      1643.64:1643.64:1643.64     1808.14:1808.14:1808.14
+IOPATH    A[15]              CO           2216.04:2216.04:2216.04     2354.13:2354.13:2354.13
+IOPATH    A[15]              SIGNEXTOUT   885.756:885.756:885.756     834.238:834.238:834.238
+IOPATH    ADDSUBBOT          ACCUMCO      2253.92:2253.92:2253.92     2498.2:2498.2:2498.2
+IOPATH    ADDSUBBOT          CO           2826.33:2826.33:2826.33     3044.19:3044.19:3044.19
+IOPATH    ADDSUBTOP          ACCUMCO      1607.41:1607.41:1607.41     1894.98:1894.98:1894.98
+IOPATH    ADDSUBTOP          CO           459.245:459.245:459.245     449.106:449.106:449.106
+IOPATH    B[0]               ACCUMCO      2194.56:2194.56:2194.56     2460.21:2460.21:2460.21
+IOPATH    B[0]               CO           2766.96:2766.96:2766.96     3006.2:3006.2:3006.2
+IOPATH    B[1]               ACCUMCO      2259.17:2259.17:2259.17     2520.34:2520.34:2520.34
+IOPATH    B[1]               CO           2831.58:2831.58:2831.58     3066.33:3066.33:3066.33
+IOPATH    B[2]               ACCUMCO      2258.15:2258.15:2258.15     2486.01:2486.01:2486.01
+IOPATH    B[2]               CO           2830.56:2830.56:2830.56     3032:3032:3032
+IOPATH    B[3]               ACCUMCO      2131.59:2131.59:2131.59     2371.61:2371.61:2371.61
+IOPATH    B[3]               CO           2704:2704:2704              2917.59:2917.59:2917.59
+IOPATH    B[4]               ACCUMCO      2256.15:2256.15:2256.15     2508.41:2508.41:2508.41
+IOPATH    B[4]               CO           2828.55:2828.55:2828.55     3054.4:3054.4:3054.4
+IOPATH    B[5]               ACCUMCO      2253.09:2253.09:2253.09     2567.81:2567.81:2567.81
+IOPATH    B[5]               CO           2825.49:2825.49:2825.49     3113.8:3113.8:3113.8
+IOPATH    B[6]               ACCUMCO      2225.34:2225.34:2225.34     2496:2496:2496
+IOPATH    B[6]               CO           2797.75:2797.75:2797.75     3041.99:3041.99:3041.99
+IOPATH    B[7]               ACCUMCO      2174.43:2174.43:2174.43     2417.76:2417.76:2417.76
+IOPATH    B[7]               CO           2746.84:2746.84:2746.84     2963.74:2963.74:2963.74
+IOPATH    B[8]               ACCUMCO      2093.22:2093.22:2093.22     2264.47:2264.47:2264.47
+IOPATH    B[8]               CO           2665.63:2665.63:2665.63     2810.46:2810.46:2810.46
+IOPATH    B[9]               ACCUMCO      2194.25:2194.25:2194.25     2316.12:2316.12:2316.12
+IOPATH    B[9]               CO           2766.65:2766.65:2766.65     2862.11:2862.11:2862.11
+IOPATH    B[10]              ACCUMCO      2145.64:2145.64:2145.64     2269.49:2269.49:2269.49
+IOPATH    B[10]              CO           2718.05:2718.05:2718.05     2815.48:2815.48:2815.48
+IOPATH    B[11]              ACCUMCO      2247.87:2247.87:2247.87     2337.51:2337.51:2337.51
+IOPATH    B[11]              CO           2820.27:2820.27:2820.27     2883.49:2883.49:2883.49
+IOPATH    B[12]              ACCUMCO      2275.08:2275.08:2275.08     2466.88:2466.88:2466.88
+IOPATH    B[12]              CO           2847.48:2847.48:2847.48     3012.87:3012.87:3012.87
+IOPATH    B[13]              ACCUMCO      2155.04:2155.04:2155.04     2345.71:2345.71:2345.71
+IOPATH    B[13]              CO           2727.44:2727.44:2727.44     2891.7:2891.7:2891.7
+IOPATH    B[14]              ACCUMCO      2114.35:2114.35:2114.35     2217.9:2217.9:2217.9
+IOPATH    B[14]              CO           2686.76:2686.76:2686.76     2763.89:2763.89:2763.89
+IOPATH    B[15]              ACCUMCO      2339.95:2339.95:2339.95     2480.28:2480.28:2480.28
+IOPATH    B[15]              CO           2912.35:2912.35:2912.35     3026.27:3026.27:3026.27
+IOPATH    CI                 ACCUMCO      1202.55:1202.55:1202.55     1272.89:1272.89:1272.89
+IOPATH    CI                 CO           1774.95:1774.95:1774.95     1818.88:1818.88:1818.88
+IOPATH    posedge:CLK        ACCUMCO      2626.57:2626.57:2626.57     2846.62:2846.62:2846.62
+IOPATH    posedge:CLK        CO           3198.97:3198.97:3198.97     3392.61:3392.61:3392.61
+IOPATH    posedge:CLK        O[0]         984.982:984.982:984.982     1024.49:1024.49:1024.49
+IOPATH    posedge:CLK        O[1]         977.566:977.566:977.566     993.269:993.269:993.269
+IOPATH    posedge:CLK        O[2]         1005.7:1005.7:1005.7        1040.73:1040.73:1040.73
+IOPATH    posedge:CLK        O[3]         1085.69:1085.69:1085.69     1124.37:1124.37:1124.37
+IOPATH    posedge:CLK        O[4]         1007.06:1007.06:1007.06     1050.14:1050.14:1050.14
+IOPATH    posedge:CLK        O[5]         1027.71:1027.71:1027.71     1080.45:1080.45:1080.45
+IOPATH    posedge:CLK        O[6]         1150.29:1150.29:1150.29     1219.64:1219.64:1219.64
+IOPATH    posedge:CLK        O[7]         1115.38:1115.38:1115.38     1187.21:1187.21:1187.21
+IOPATH    posedge:CLK        O[8]         1185.67:1185.67:1185.67     1283.36:1283.36:1283.36
+IOPATH    posedge:CLK        O[9]         1184.3:1184.3:1184.3        1310.03:1310.03:1310.03
+IOPATH    posedge:CLK        O[10]        1143.62:1143.62:1143.62     1222.95:1222.95:1222.95
+IOPATH    posedge:CLK        O[11]        1322.36:1322.36:1322.36     1412.62:1412.62:1412.62
+IOPATH    posedge:CLK        O[12]        1143.17:1143.17:1143.17     1210.69:1210.69:1210.69
+IOPATH    posedge:CLK        O[13]        1173.33:1173.33:1173.33     1267.56:1267.56:1267.56
+IOPATH    posedge:CLK        O[14]        1264.14:1264.14:1264.14     1366.3:1366.3:1366.3
+IOPATH    posedge:CLK        O[15]        1277.87:1277.87:1277.87     1376:1376:1376
+IOPATH    posedge:CLK        O[16]        1254.82:1254.82:1254.82     1419.62:1419.62:1419.62
+IOPATH    posedge:CLK        O[17]        1249.56:1249.56:1249.56     1391.7:1391.7:1391.7
+IOPATH    posedge:CLK        O[18]        1289.97:1289.97:1289.97     1478.22:1478.22:1478.22
+IOPATH    posedge:CLK        O[19]        1381.9:1381.9:1381.9        1497.63:1497.63:1497.63
+IOPATH    posedge:CLK        O[20]        1294.36:1294.36:1294.36     1389.69:1389.69:1389.69
+IOPATH    posedge:CLK        O[21]        1171.05:1171.05:1171.05     1248.86:1248.86:1248.86
+IOPATH    posedge:CLK        O[22]        1195.51:1195.51:1195.51     1311.92:1311.92:1311.92
+IOPATH    posedge:CLK        O[23]        1189.44:1189.44:1189.44     1285.86:1285.86:1285.86
+IOPATH    posedge:CLK        O[24]        1159.95:1159.95:1159.95     1242.3:1242.3:1242.3
+IOPATH    posedge:CLK        O[25]        1186.49:1186.49:1186.49     1283.54:1283.54:1283.54
+IOPATH    posedge:CLK        O[26]        1239.33:1239.33:1239.33     1368.51:1368.51:1368.51
+IOPATH    posedge:CLK        O[27]        1151.38:1151.38:1151.38     1227.48:1227.48:1227.48
+IOPATH    posedge:CLK        O[28]        1130.92:1130.92:1130.92     1204.94:1204.94:1204.94
+IOPATH    posedge:CLK        O[29]        1128.28:1128.28:1128.28     1197.33:1197.33:1197.33
+IOPATH    posedge:CLK        O[30]        1095.71:1095.71:1095.71     1142.97:1142.97:1142.97
+IOPATH    posedge:CLK        O[31]        1076.06:1076.06:1076.06     1118.95:1118.95:1118.95
 
 CELL SB_MAC16_ADS_U_16P16_ALL_PIPELINE
 HOLD      negedge:A[0]       posedge:CLK  225.246:225.246:225.246
@@ -1985,6 +2791,365 @@ IOPATH  OLOADTOP   O[28]       923.324:923.324:923.324  1109.8:1109.8:1109.8
 IOPATH  OLOADTOP   O[29]       818.752:818.752:818.752  930.026:930.026:930.026
 IOPATH  OLOADTOP   O[30]       945.173:945.173:945.173  1048.45:1048.45:1048.45
 IOPATH  OLOADTOP   O[31]       938.322:938.322:938.322  1033.57:1033.57:1033.57
+
+CELL SB_MAC16_ADS_U_32P32_ALL_PIPELINE
+HOLD      negedge:A[0]       posedge:CLK  225.246:225.246:225.246
+HOLD      negedge:A[1]       posedge:CLK  221.741:221.741:221.741
+HOLD      negedge:A[2]       posedge:CLK  215.99:215.99:215.99
+HOLD      negedge:A[3]       posedge:CLK  216.2:216.2:216.2
+HOLD      negedge:A[4]       posedge:CLK  217.945:217.945:217.945
+HOLD      negedge:A[5]       posedge:CLK  183.875:183.875:183.875
+HOLD      negedge:A[6]       posedge:CLK  221.084:221.084:221.084
+HOLD      negedge:A[7]       posedge:CLK  212.786:212.786:212.786
+HOLD      negedge:A[8]       posedge:CLK  180.124:180.124:180.124
+HOLD      negedge:A[9]       posedge:CLK  168.61:168.61:168.61
+HOLD      negedge:A[10]      posedge:CLK  177.622:177.622:177.622
+HOLD      negedge:A[11]      posedge:CLK  173.057:173.057:173.057
+HOLD      negedge:A[12]      posedge:CLK  171.708:171.708:171.708
+HOLD      negedge:A[13]      posedge:CLK  171.794:171.794:171.794
+HOLD      negedge:A[14]      posedge:CLK  166.812:166.812:166.812
+HOLD      negedge:A[15]      posedge:CLK  182.546:182.546:182.546
+HOLD      negedge:ADDSUBBOT  posedge:CLK  68.653:68.653:68.653
+HOLD      negedge:ADDSUBTOP  posedge:CLK  64.575:64.575:64.575
+HOLD      negedge:AHOLD      posedge:CLK  203.028:203.028:203.028
+HOLD      negedge:B[0]       posedge:CLK  199.318:199.318:199.318
+HOLD      negedge:B[1]       posedge:CLK  205.007:205.007:205.007
+HOLD      negedge:B[2]       posedge:CLK  194.98:194.98:194.98
+HOLD      negedge:B[3]       posedge:CLK  199.743:199.743:199.743
+HOLD      negedge:B[4]       posedge:CLK  201.609:201.609:201.609
+HOLD      negedge:B[5]       posedge:CLK  188.274:188.274:188.274
+HOLD      negedge:B[6]       posedge:CLK  183.668:183.668:183.668
+HOLD      negedge:B[7]       posedge:CLK  183.88:183.88:183.88
+HOLD      negedge:B[8]       posedge:CLK  181.905:181.905:181.905
+HOLD      negedge:B[9]       posedge:CLK  194.213:194.213:194.213
+HOLD      negedge:B[10]      posedge:CLK  166.869:166.869:166.869
+HOLD      negedge:B[11]      posedge:CLK  178.724:178.724:178.724
+HOLD      negedge:B[12]      posedge:CLK  188.759:188.759:188.759
+HOLD      negedge:B[13]      posedge:CLK  178.851:178.851:178.851
+HOLD      negedge:B[14]      posedge:CLK  169.756:169.756:169.756
+HOLD      negedge:B[15]      posedge:CLK  196.689:196.689:196.689
+HOLD      negedge:BHOLD      posedge:CLK  177.143:177.143:177.143
+HOLD      negedge:C[0]       posedge:CLK  238.019:238.019:238.019
+HOLD      negedge:C[1]       posedge:CLK  241.19:241.19:241.19
+HOLD      negedge:C[2]       posedge:CLK  236.487:236.487:236.487
+HOLD      negedge:C[3]       posedge:CLK  233.38:233.38:233.38
+HOLD      negedge:C[4]       posedge:CLK  234.834:234.834:234.834
+HOLD      negedge:C[5]       posedge:CLK  237.059:237.059:237.059
+HOLD      negedge:C[6]       posedge:CLK  235.288:235.288:235.288
+HOLD      negedge:C[7]       posedge:CLK  240.096:240.096:240.096
+HOLD      negedge:C[8]       posedge:CLK  237.083:237.083:237.083
+HOLD      negedge:C[9]       posedge:CLK  235.184:235.184:235.184
+HOLD      negedge:C[10]      posedge:CLK  233.033:233.033:233.033
+HOLD      negedge:C[11]      posedge:CLK  235.949:235.949:235.949
+HOLD      negedge:C[12]      posedge:CLK  239.169:239.169:239.169
+HOLD      negedge:C[13]      posedge:CLK  235.937:235.937:235.937
+HOLD      negedge:C[14]      posedge:CLK  235.235:235.235:235.235
+HOLD      negedge:C[15]      posedge:CLK  235.549:235.549:235.549
+HOLD      negedge:CHOLD      posedge:CLK  215.429:215.429:215.429
+HOLD      negedge:CI         posedge:CLK  -166.545:-166.545:-166.545
+HOLD      negedge:D[0]       posedge:CLK  190.878:190.878:190.878
+HOLD      negedge:D[1]       posedge:CLK  185.317:185.317:185.317
+HOLD      negedge:D[2]       posedge:CLK  184.125:184.125:184.125
+HOLD      negedge:D[3]       posedge:CLK  180.239:180.239:180.239
+HOLD      negedge:D[4]       posedge:CLK  177.004:177.004:177.004
+HOLD      negedge:D[5]       posedge:CLK  186.749:186.749:186.749
+HOLD      negedge:D[6]       posedge:CLK  186.895:186.895:186.895
+HOLD      negedge:D[7]       posedge:CLK  181.237:181.237:181.237
+HOLD      negedge:D[8]       posedge:CLK  254.011:254.011:254.011
+HOLD      negedge:D[9]       posedge:CLK  173.363:173.363:173.363
+HOLD      negedge:D[10]      posedge:CLK  259.158:259.158:259.158
+HOLD      negedge:D[11]      posedge:CLK  256.257:256.257:256.257
+HOLD      negedge:D[12]      posedge:CLK  253.946:253.946:253.946
+HOLD      negedge:D[13]      posedge:CLK  249.826:249.826:249.826
+HOLD      negedge:D[14]      posedge:CLK  182.441:182.441:182.441
+HOLD      negedge:D[15]      posedge:CLK  259.634:259.634:259.634
+HOLD      negedge:DHOLD      posedge:CLK  234.001:234.001:234.001
+HOLD      negedge:OHOLDBOT   posedge:CLK  157.226:157.226:157.226
+HOLD      negedge:OHOLDTOP   posedge:CLK  157.282:157.282:157.282
+HOLD      negedge:OLOADBOT   posedge:CLK  193.798:193.798:193.798
+HOLD      negedge:OLOADTOP   posedge:CLK  178.665:178.665:178.665
+HOLD      posedge:A[0]       posedge:CLK  174.322:174.322:174.322
+HOLD      posedge:A[1]       posedge:CLK  171.322:171.322:171.322
+HOLD      posedge:A[2]       posedge:CLK  163.459:163.459:163.459
+HOLD      posedge:A[3]       posedge:CLK  162.852:162.852:162.852
+HOLD      posedge:A[4]       posedge:CLK  166.475:166.475:166.475
+HOLD      posedge:A[5]       posedge:CLK  140.36:140.36:140.36
+HOLD      posedge:A[6]       posedge:CLK  167.946:167.946:167.946
+HOLD      posedge:A[7]       posedge:CLK  160.919:160.919:160.919
+HOLD      posedge:A[8]       posedge:CLK  138.172:138.172:138.172
+HOLD      posedge:A[9]       posedge:CLK  129.888:129.888:129.888
+HOLD      posedge:A[10]      posedge:CLK  136.785:136.785:136.785
+HOLD      posedge:A[11]      posedge:CLK  133.088:133.088:133.088
+HOLD      posedge:A[12]      posedge:CLK  133.14:133.14:133.14
+HOLD      posedge:A[13]      posedge:CLK  131.736:131.736:131.736
+HOLD      posedge:A[14]      posedge:CLK  125.36:125.36:125.36
+HOLD      posedge:A[15]      posedge:CLK  139.019:139.019:139.019
+HOLD      posedge:ADDSUBBOT  posedge:CLK  57.867:57.867:57.867
+HOLD      posedge:ADDSUBTOP  posedge:CLK  52.173:52.173:52.173
+HOLD      posedge:AHOLD      posedge:CLK  163.435:163.435:163.435
+HOLD      posedge:B[0]       posedge:CLK  159.268:159.268:159.268
+HOLD      posedge:B[1]       posedge:CLK  161.656:161.656:161.656
+HOLD      posedge:B[2]       posedge:CLK  154.102:154.102:154.102
+HOLD      posedge:B[3]       posedge:CLK  158.267:158.267:158.267
+HOLD      posedge:B[4]       posedge:CLK  161.178:161.178:161.178
+HOLD      posedge:B[5]       posedge:CLK  145.66:145.66:145.66
+HOLD      posedge:B[6]       posedge:CLK  141.52:141.52:141.52
+HOLD      posedge:B[7]       posedge:CLK  142.363:142.363:142.363
+HOLD      posedge:B[8]       posedge:CLK  139.228:139.228:139.228
+HOLD      posedge:B[9]       posedge:CLK  151.105:151.105:151.105
+HOLD      posedge:B[10]      posedge:CLK  129.81:129.81:129.81
+HOLD      posedge:B[11]      posedge:CLK  136.215:136.215:136.215
+HOLD      posedge:B[12]      posedge:CLK  146.332:146.332:146.332
+HOLD      posedge:B[13]      posedge:CLK  137.53:137.53:137.53
+HOLD      posedge:B[14]      posedge:CLK  129.905:129.905:129.905
+HOLD      posedge:B[15]      posedge:CLK  153.892:153.892:153.892
+HOLD      posedge:BHOLD      posedge:CLK  146.57:146.57:146.57
+HOLD      posedge:C[0]       posedge:CLK  196.313:196.313:196.313
+HOLD      posedge:C[1]       posedge:CLK  199.675:199.675:199.675
+HOLD      posedge:C[2]       posedge:CLK  194.519:194.519:194.519
+HOLD      posedge:C[3]       posedge:CLK  193.574:193.574:193.574
+HOLD      posedge:C[4]       posedge:CLK  193.811:193.811:193.811
+HOLD      posedge:C[5]       posedge:CLK  196.306:196.306:196.306
+HOLD      posedge:C[6]       posedge:CLK  189.812:189.812:189.812
+HOLD      posedge:C[7]       posedge:CLK  197.702:197.702:197.702
+HOLD      posedge:C[8]       posedge:CLK  193.862:193.862:193.862
+HOLD      posedge:C[9]       posedge:CLK  191.001:191.001:191.001
+HOLD      posedge:C[10]      posedge:CLK  188.338:188.338:188.338
+HOLD      posedge:C[11]      posedge:CLK  193.318:193.318:193.318
+HOLD      posedge:C[12]      posedge:CLK  197.393:197.393:197.393
+HOLD      posedge:C[13]      posedge:CLK  192.921:192.921:192.921
+HOLD      posedge:C[14]      posedge:CLK  190.495:190.495:190.495
+HOLD      posedge:C[15]      posedge:CLK  194.588:194.588:194.588
+HOLD      posedge:CHOLD      posedge:CLK  184.582:184.582:184.582
+HOLD      posedge:CI         posedge:CLK  -159.601:-159.601:-159.601
+HOLD      posedge:D[0]       posedge:CLK  149.936:149.936:149.936
+HOLD      posedge:D[1]       posedge:CLK  143.924:143.924:143.924
+HOLD      posedge:D[2]       posedge:CLK  138.822:138.822:138.822
+HOLD      posedge:D[3]       posedge:CLK  136.464:136.464:136.464
+HOLD      posedge:D[4]       posedge:CLK  135.375:135.375:135.375
+HOLD      posedge:D[5]       posedge:CLK  144.025:144.025:144.025
+HOLD      posedge:D[6]       posedge:CLK  147.529:147.529:147.529
+HOLD      posedge:D[7]       posedge:CLK  140.477:140.477:140.477
+HOLD      posedge:D[8]       posedge:CLK  208.339:208.339:208.339
+HOLD      posedge:D[9]       posedge:CLK  136.361:136.361:136.361
+HOLD      posedge:D[10]      posedge:CLK  210.15:210.15:210.15
+HOLD      posedge:D[11]      posedge:CLK  209.024:209.024:209.024
+HOLD      posedge:D[12]      posedge:CLK  206.327:206.327:206.327
+HOLD      posedge:D[13]      posedge:CLK  202.007:202.007:202.007
+HOLD      posedge:D[14]      posedge:CLK  140.511:140.511:140.511
+HOLD      posedge:D[15]      posedge:CLK  210.689:210.689:210.689
+HOLD      posedge:DHOLD      posedge:CLK  196.151:196.151:196.151
+HOLD      posedge:OHOLDBOT   posedge:CLK  187.891:187.891:187.891
+HOLD      posedge:OHOLDTOP   posedge:CLK  186.884:186.884:186.884
+HOLD      posedge:OLOADBOT   posedge:CLK  171.27:171.27:171.27
+HOLD      posedge:OLOADTOP   posedge:CLK  164.913:164.913:164.913
+RECOVERY  negedge:IRSTBOT    posedge:CLK  797.559:797.559:797.559
+RECOVERY  negedge:IRSTTOP    posedge:CLK  849.107:849.107:849.107
+RECOVERY  negedge:ORSTBOT    posedge:CLK  615.935:615.935:615.935
+RECOVERY  negedge:ORSTTOP    posedge:CLK  709.441:709.441:709.441
+RECOVERY  posedge:IRSTBOT    posedge:CLK  0:0:0
+RECOVERY  posedge:IRSTTOP    posedge:CLK  0:0:0
+RECOVERY  posedge:ORSTBOT    posedge:CLK  0:0:0
+RECOVERY  posedge:ORSTTOP    posedge:CLK  0:0:0
+REMOVAL   negedge:IRSTBOT    posedge:CLK  0:0:0
+REMOVAL   negedge:IRSTTOP    posedge:CLK  0:0:0
+REMOVAL   negedge:ORSTBOT    posedge:CLK  0:0:0
+REMOVAL   negedge:ORSTTOP    posedge:CLK  0:0:0
+REMOVAL   posedge:IRSTBOT    posedge:CLK  0:0:0
+REMOVAL   posedge:IRSTTOP    posedge:CLK  0:0:0
+REMOVAL   posedge:ORSTBOT    posedge:CLK  0:0:0
+REMOVAL   posedge:ORSTTOP    posedge:CLK  0:0:0
+SETUP     negedge:A[0]       posedge:CLK  -77.473:-77.473:-77.473
+SETUP     negedge:A[1]       posedge:CLK  -71.881:-71.881:-71.881
+SETUP     negedge:A[2]       posedge:CLK  -73.986:-73.986:-73.986
+SETUP     negedge:A[3]       posedge:CLK  -64.638:-64.638:-64.638
+SETUP     negedge:A[4]       posedge:CLK  -67.238:-67.238:-67.238
+SETUP     negedge:A[5]       posedge:CLK  -49.595:-49.595:-49.595
+SETUP     negedge:A[6]       posedge:CLK  -75.652:-75.652:-75.652
+SETUP     negedge:A[7]       posedge:CLK  -59.925:-59.925:-59.925
+SETUP     negedge:A[8]       posedge:CLK  -47.479:-47.479:-47.479
+SETUP     negedge:A[9]       posedge:CLK  -15.901:-15.901:-15.901
+SETUP     negedge:A[10]      posedge:CLK  -41.604:-41.604:-41.604
+SETUP     negedge:A[11]      posedge:CLK  -42.005:-42.005:-42.005
+SETUP     negedge:A[12]      posedge:CLK  -38.201:-38.201:-38.201
+SETUP     negedge:A[13]      posedge:CLK  -39.344:-39.344:-39.344
+SETUP     negedge:A[14]      posedge:CLK  -22.514:-22.514:-22.514
+SETUP     negedge:A[15]      posedge:CLK  -42.39:-42.39:-42.39
+SETUP     negedge:ADDSUBBOT  posedge:CLK  1955.16:1955.16:1955.16
+SETUP     negedge:ADDSUBTOP  posedge:CLK  1386.42:1386.42:1386.42
+SETUP     negedge:AHOLD      posedge:CLK  285.142:285.142:285.142
+SETUP     negedge:B[0]       posedge:CLK  -54.502:-54.502:-54.502
+SETUP     negedge:B[1]       posedge:CLK  -54.051:-54.051:-54.051
+SETUP     negedge:B[2]       posedge:CLK  -54.579:-54.579:-54.579
+SETUP     negedge:B[3]       posedge:CLK  -63.621:-63.621:-63.621
+SETUP     negedge:B[4]       posedge:CLK  -41.745:-41.745:-41.745
+SETUP     negedge:B[5]       posedge:CLK  -46.918:-46.918:-46.918
+SETUP     negedge:B[6]       posedge:CLK  -43.289:-43.289:-43.289
+SETUP     negedge:B[7]       posedge:CLK  -43.367:-43.367:-43.367
+SETUP     negedge:B[8]       posedge:CLK  -49.684:-49.684:-49.684
+SETUP     negedge:B[9]       posedge:CLK  -57.778:-57.778:-57.778
+SETUP     negedge:B[10]      posedge:CLK  -19.205:-19.205:-19.205
+SETUP     negedge:B[11]      posedge:CLK  -41.766:-41.766:-41.766
+SETUP     negedge:B[12]      posedge:CLK  -43.714:-43.714:-43.714
+SETUP     negedge:B[13]      posedge:CLK  -13.597:-13.597:-13.597
+SETUP     negedge:B[14]      posedge:CLK  -21.967:-21.967:-21.967
+SETUP     negedge:B[15]      posedge:CLK  -28.196:-28.196:-28.196
+SETUP     negedge:BHOLD      posedge:CLK  264.441:264.441:264.441
+SETUP     negedge:C[0]       posedge:CLK  -65.088:-65.088:-65.088
+SETUP     negedge:C[1]       posedge:CLK  -67.488:-67.488:-67.488
+SETUP     negedge:C[2]       posedge:CLK  -78.958:-78.958:-78.958
+SETUP     negedge:C[3]       posedge:CLK  -74.861:-74.861:-74.861
+SETUP     negedge:C[4]       posedge:CLK  -63.449:-63.449:-63.449
+SETUP     negedge:C[5]       posedge:CLK  -62.561:-62.561:-62.561
+SETUP     negedge:C[6]       posedge:CLK  -70.749:-70.749:-70.749
+SETUP     negedge:C[7]       posedge:CLK  -62.793:-62.793:-62.793
+SETUP     negedge:C[8]       posedge:CLK  -64.198:-64.198:-64.198
+SETUP     negedge:C[9]       posedge:CLK  -69.708:-69.708:-69.708
+SETUP     negedge:C[10]      posedge:CLK  -64.965:-64.965:-64.965
+SETUP     negedge:C[11]      posedge:CLK  -63.909:-63.909:-63.909
+SETUP     negedge:C[12]      posedge:CLK  -71.105:-71.105:-71.105
+SETUP     negedge:C[13]      posedge:CLK  -70.516:-70.516:-70.516
+SETUP     negedge:C[14]      posedge:CLK  -68.482:-68.482:-68.482
+SETUP     negedge:C[15]      posedge:CLK  -86.58:-86.58:-86.58
+SETUP     negedge:CHOLD      posedge:CLK  196.583:196.583:196.583
+SETUP     negedge:CI         posedge:CLK  1279.42:1279.42:1279.42
+SETUP     negedge:D[0]       posedge:CLK  -48.447:-48.447:-48.447
+SETUP     negedge:D[1]       posedge:CLK  -45.711:-45.711:-45.711
+SETUP     negedge:D[2]       posedge:CLK  -39.393:-39.393:-39.393
+SETUP     negedge:D[3]       posedge:CLK  -47.595:-47.595:-47.595
+SETUP     negedge:D[4]       posedge:CLK  -27.159:-27.159:-27.159
+SETUP     negedge:D[5]       posedge:CLK  -40.55:-40.55:-40.55
+SETUP     negedge:D[6]       posedge:CLK  -32.331:-32.331:-32.331
+SETUP     negedge:D[7]       posedge:CLK  -44.414:-44.414:-44.414
+SETUP     negedge:D[8]       posedge:CLK  -90.946:-90.946:-90.946
+SETUP     negedge:D[9]       posedge:CLK  -29.741:-29.741:-29.741
+SETUP     negedge:D[10]      posedge:CLK  -92.825:-92.825:-92.825
+SETUP     negedge:D[11]      posedge:CLK  -94.672:-94.672:-94.672
+SETUP     negedge:D[12]      posedge:CLK  -93.497:-93.497:-93.497
+SETUP     negedge:D[13]      posedge:CLK  -90.431:-90.431:-90.431
+SETUP     negedge:D[14]      posedge:CLK  -31.009:-31.009:-31.009
+SETUP     negedge:D[15]      posedge:CLK  -87.209:-87.209:-87.209
+SETUP     negedge:DHOLD      posedge:CLK  240.354:240.354:240.354
+SETUP     negedge:OHOLDBOT   posedge:CLK  325.725:325.725:325.725
+SETUP     negedge:OHOLDTOP   posedge:CLK  221.298:221.298:221.298
+SETUP     negedge:OLOADBOT   posedge:CLK  343.673:343.673:343.673
+SETUP     negedge:OLOADTOP   posedge:CLK  278.306:278.306:278.306
+SETUP     posedge:A[0]       posedge:CLK  -52.512:-52.512:-52.512
+SETUP     posedge:A[1]       posedge:CLK  -43.696:-43.696:-43.696
+SETUP     posedge:A[2]       posedge:CLK  -56.595:-56.595:-56.595
+SETUP     posedge:A[3]       posedge:CLK  -30.939:-30.939:-30.939
+SETUP     posedge:A[4]       posedge:CLK  -36.245:-36.245:-36.245
+SETUP     posedge:A[5]       posedge:CLK  -25.992:-25.992:-25.992
+SETUP     posedge:A[6]       posedge:CLK  -55.085:-55.085:-55.085
+SETUP     posedge:A[7]       posedge:CLK  -38.191:-38.191:-38.191
+SETUP     posedge:A[8]       posedge:CLK  -40.441:-40.441:-40.441
+SETUP     posedge:A[9]       posedge:CLK  10.648:10.648:10.648
+SETUP     posedge:A[10]      posedge:CLK  -22.25:-22.25:-22.25
+SETUP     posedge:A[11]      posedge:CLK  -30.189:-30.189:-30.189
+SETUP     posedge:A[12]      posedge:CLK  -20.236:-20.236:-20.236
+SETUP     posedge:A[13]      posedge:CLK  -27.669:-27.669:-27.669
+SETUP     posedge:A[14]      posedge:CLK  -6.47:-6.47:-6.47
+SETUP     posedge:A[15]      posedge:CLK  -23.253:-23.253:-23.253
+SETUP     posedge:ADDSUBBOT  posedge:CLK  1997.36:1997.36:1997.36
+SETUP     posedge:ADDSUBTOP  posedge:CLK  1424.31:1424.31:1424.31
+SETUP     posedge:AHOLD      posedge:CLK  228.311:228.311:228.311
+SETUP     posedge:B[0]       posedge:CLK  -36.762:-36.762:-36.762
+SETUP     posedge:B[1]       posedge:CLK  -41.073:-41.073:-41.073
+SETUP     posedge:B[2]       posedge:CLK  -38.814:-38.814:-38.814
+SETUP     posedge:B[3]       posedge:CLK  -48.415:-48.415:-48.415
+SETUP     posedge:B[4]       posedge:CLK  -21.082:-21.082:-21.082
+SETUP     posedge:B[5]       posedge:CLK  -25.634:-25.634:-25.634
+SETUP     posedge:B[6]       posedge:CLK  -19.568:-19.568:-19.568
+SETUP     posedge:B[7]       posedge:CLK  -23.846:-23.846:-23.846
+SETUP     posedge:B[8]       posedge:CLK  -37.375:-37.375:-37.375
+SETUP     posedge:B[9]       posedge:CLK  -43.785:-43.785:-43.785
+SETUP     posedge:B[10]      posedge:CLK  1.875:1.875:1.875
+SETUP     posedge:B[11]      posedge:CLK  -20.631:-20.631:-20.631
+SETUP     posedge:B[12]      posedge:CLK  -16.556:-16.556:-16.556
+SETUP     posedge:B[13]      posedge:CLK  4.908:4.908:4.908
+SETUP     posedge:B[14]      posedge:CLK  -6.683:-6.683:-6.683
+SETUP     posedge:B[15]      posedge:CLK  -10.426:-10.426:-10.426
+SETUP     posedge:BHOLD      posedge:CLK  221.104:221.104:221.104
+SETUP     posedge:C[0]       posedge:CLK  -52.649:-52.649:-52.649
+SETUP     posedge:C[1]       posedge:CLK  -48.462:-48.462:-48.462
+SETUP     posedge:C[2]       posedge:CLK  -56.661:-56.661:-56.661
+SETUP     posedge:C[3]       posedge:CLK  -49.11:-49.11:-49.11
+SETUP     posedge:C[4]       posedge:CLK  -42.401:-42.401:-42.401
+SETUP     posedge:C[5]       posedge:CLK  -48.085:-48.085:-48.085
+SETUP     posedge:C[6]       posedge:CLK  -62.064:-62.064:-62.064
+SETUP     posedge:C[7]       posedge:CLK  -44.84:-44.84:-44.84
+SETUP     posedge:C[8]       posedge:CLK  -51.954:-51.954:-51.954
+SETUP     posedge:C[9]       posedge:CLK  -54.79:-54.79:-54.79
+SETUP     posedge:C[10]      posedge:CLK  -45.967:-45.967:-45.967
+SETUP     posedge:C[11]      posedge:CLK  -43.927:-43.927:-43.927
+SETUP     posedge:C[12]      posedge:CLK  -57.279:-57.279:-57.279
+SETUP     posedge:C[13]      posedge:CLK  -48.749:-48.749:-48.749
+SETUP     posedge:C[14]      posedge:CLK  -54.83:-54.83:-54.83
+SETUP     posedge:C[15]      posedge:CLK  -73.046:-73.046:-73.046
+SETUP     posedge:CHOLD      posedge:CLK  152.68:152.68:152.68
+SETUP     posedge:CI         posedge:CLK  1198.87:1198.87:1198.87
+SETUP     posedge:D[0]       posedge:CLK  -31.413:-31.413:-31.413
+SETUP     posedge:D[1]       posedge:CLK  -22.733:-22.733:-22.733
+SETUP     posedge:D[2]       posedge:CLK  -11.518:-11.518:-11.518
+SETUP     posedge:D[3]       posedge:CLK  -30.675:-30.675:-30.675
+SETUP     posedge:D[4]       posedge:CLK  -15.605:-15.605:-15.605
+SETUP     posedge:D[5]       posedge:CLK  -25.758:-25.758:-25.758
+SETUP     posedge:D[6]       posedge:CLK  -10.128:-10.128:-10.128
+SETUP     posedge:D[7]       posedge:CLK  -30.187:-30.187:-30.187
+SETUP     posedge:D[8]       posedge:CLK  -82.692:-82.692:-82.692
+SETUP     posedge:D[9]       posedge:CLK  -11.364:-11.364:-11.364
+SETUP     posedge:D[10]      posedge:CLK  -74.081:-74.081:-74.081
+SETUP     posedge:D[11]      posedge:CLK  -86.016:-86.016:-86.016
+SETUP     posedge:D[12]      posedge:CLK  -77.487:-77.487:-77.487
+SETUP     posedge:D[13]      posedge:CLK  -62.07:-62.07:-62.07
+SETUP     posedge:D[14]      posedge:CLK  -14.539:-14.539:-14.539
+SETUP     posedge:D[15]      posedge:CLK  -68.431:-68.431:-68.431
+SETUP     posedge:DHOLD      posedge:CLK  193.771:193.771:193.771
+SETUP     posedge:OHOLDBOT   posedge:CLK  261.816:261.816:261.816
+SETUP     posedge:OHOLDTOP   posedge:CLK  160.37:160.37:160.37
+SETUP     posedge:OLOADBOT   posedge:CLK  331.775:331.775:331.775
+SETUP     posedge:OLOADTOP   posedge:CLK  296.118:296.118:296.118
+IOPATH    ADDSUBBOT          ACCUMCO      2267.19:2267.19:2267.19     2503.75:2503.75:2503.75
+IOPATH    ADDSUBBOT          CO           2839.59:2839.59:2839.59     3049.73:3049.73:3049.73
+IOPATH    ADDSUBTOP          ACCUMCO      1607.9:1607.9:1607.9        1895.47:1895.47:1895.47
+IOPATH    ADDSUBTOP          CO           459.731:459.731:459.731     449.378:449.378:449.378
+IOPATH    CI                 ACCUMCO      1219.89:1219.89:1219.89     1283.26:1283.26:1283.26
+IOPATH    CI                 CO           1792.3:1792.3:1792.3        1829.25:1829.25:1829.25
+IOPATH    posedge:CLK        ACCUMCO      2882.62:2882.62:2882.62     3128.68:3128.68:3128.68
+IOPATH    posedge:CLK        CO           3455.02:3455.02:3455.02     3674.66:3674.66:3674.66
+IOPATH    posedge:CLK        O[0]         985.237:985.237:985.237     1024.88:1024.88:1024.88
+IOPATH    posedge:CLK        O[1]         977.986:977.986:977.986     993.269:993.269:993.269
+IOPATH    posedge:CLK        O[2]         1005.7:1005.7:1005.7        1040.73:1040.73:1040.73
+IOPATH    posedge:CLK        O[3]         1085.7:1085.7:1085.7        1124.37:1124.37:1124.37
+IOPATH    posedge:CLK        O[4]         1007.35:1007.35:1007.35     1050.14:1050.14:1050.14
+IOPATH    posedge:CLK        O[5]         1027.97:1027.97:1027.97     1080.45:1080.45:1080.45
+IOPATH    posedge:CLK        O[6]         1150.29:1150.29:1150.29     1219.64:1219.64:1219.64
+IOPATH    posedge:CLK        O[7]         1115.38:1115.38:1115.38     1187.21:1187.21:1187.21
+IOPATH    posedge:CLK        O[8]         1185.68:1185.68:1185.68     1283.36:1283.36:1283.36
+IOPATH    posedge:CLK        O[9]         1188.24:1188.24:1188.24     1310.28:1310.28:1310.28
+IOPATH    posedge:CLK        O[10]        1143.62:1143.62:1143.62     1222.95:1222.95:1222.95
+IOPATH    posedge:CLK        O[11]        1322.61:1322.61:1322.61     1412.98:1412.98:1412.98
+IOPATH    posedge:CLK        O[12]        1143.17:1143.17:1143.17     1210.69:1210.69:1210.69
+IOPATH    posedge:CLK        O[13]        1173.6:1173.6:1173.6        1267.91:1267.91:1267.91
+IOPATH    posedge:CLK        O[14]        1264.73:1264.73:1264.73     1367.2:1367.2:1367.2
+IOPATH    posedge:CLK        O[15]        1278.15:1278.15:1278.15     1376:1376:1376
+IOPATH    posedge:CLK        O[16]        1255.02:1255.02:1255.02     1420.56:1420.56:1420.56
+IOPATH    posedge:CLK        O[17]        1249.55:1249.55:1249.55     1392.63:1392.63:1392.63
+IOPATH    posedge:CLK        O[18]        1289.97:1289.97:1289.97     1478.77:1478.77:1478.77
+IOPATH    posedge:CLK        O[19]        1382.25:1382.25:1382.25     1497.97:1497.97:1497.97
+IOPATH    posedge:CLK        O[20]        1294.36:1294.36:1294.36     1389.91:1389.91:1389.91
+IOPATH    posedge:CLK        O[21]        1171.36:1171.36:1171.36     1250.98:1250.98:1250.98
+IOPATH    posedge:CLK        O[22]        1195.51:1195.51:1195.51     1311.92:1311.92:1311.92
+IOPATH    posedge:CLK        O[23]        1189.67:1189.67:1189.67     1285.86:1285.86:1285.86
+IOPATH    posedge:CLK        O[24]        1160.26:1160.26:1160.26     1242.81:1242.81:1242.81
+IOPATH    posedge:CLK        O[25]        1186.49:1186.49:1186.49     1283.54:1283.54:1283.54
+IOPATH    posedge:CLK        O[26]        1239.64:1239.64:1239.64     1370.67:1370.67:1370.67
+IOPATH    posedge:CLK        O[27]        1151.53:1151.53:1151.53     1227.48:1227.48:1227.48
+IOPATH    posedge:CLK        O[28]        1130.92:1130.92:1130.92     1204.94:1204.94:1204.94
+IOPATH    posedge:CLK        O[29]        1128.28:1128.28:1128.28     1197.65:1197.65:1197.65
+IOPATH    posedge:CLK        O[30]        1095.71:1095.71:1095.71     1142.97:1142.97:1142.97
+IOPATH    posedge:CLK        O[31]        1076.06:1076.06:1076.06     1118.95:1118.95:1118.95
+IOPATH    posedge:CLK        SIGNEXTOUT   1461.01:1461.01:1461.01     1418.04:1418.04:1418.04
 
 CELL SB_MAC16_ADS_U_32P32_BYPASS
 IOPATH  A[0]       ACCUMCO     1473.75:1473.75:1473.75  1927.31:1927.31:1927.31
@@ -4393,6 +5558,357 @@ IOPATH    posedge:CLK        O[29]        1128.28:1128.28:1128.28  1197.33:1197.
 IOPATH    posedge:CLK        O[30]        1095.71:1095.71:1095.71  1142.97:1142.97:1142.97
 IOPATH    posedge:CLK        O[31]        1076.06:1076.06:1076.06  1118.95:1118.95:1118.95
 
+CELL SB_MAC16_MAC_U_8X8_IM_BYPASS
+HOLD      negedge:A[0]       posedge:CLK  225.246:225.246:225.246
+HOLD      negedge:A[1]       posedge:CLK  221.741:221.741:221.741
+HOLD      negedge:A[2]       posedge:CLK  215.99:215.99:215.99
+HOLD      negedge:A[3]       posedge:CLK  216.2:216.2:216.2
+HOLD      negedge:A[4]       posedge:CLK  217.945:217.945:217.945
+HOLD      negedge:A[5]       posedge:CLK  183.875:183.875:183.875
+HOLD      negedge:A[6]       posedge:CLK  221.084:221.084:221.084
+HOLD      negedge:A[7]       posedge:CLK  212.786:212.786:212.786
+HOLD      negedge:A[8]       posedge:CLK  180.124:180.124:180.124
+HOLD      negedge:A[9]       posedge:CLK  168.61:168.61:168.61
+HOLD      negedge:A[10]      posedge:CLK  177.622:177.622:177.622
+HOLD      negedge:A[11]      posedge:CLK  173.057:173.057:173.057
+HOLD      negedge:A[12]      posedge:CLK  171.708:171.708:171.708
+HOLD      negedge:A[13]      posedge:CLK  171.794:171.794:171.794
+HOLD      negedge:A[14]      posedge:CLK  166.812:166.812:166.812
+HOLD      negedge:A[15]      posedge:CLK  182.546:182.546:182.546
+HOLD      negedge:ADDSUBBOT  posedge:CLK  68.98:68.98:68.98
+HOLD      negedge:ADDSUBTOP  posedge:CLK  64.575:64.575:64.575
+HOLD      negedge:AHOLD      posedge:CLK  203.028:203.028:203.028
+HOLD      negedge:B[0]       posedge:CLK  199.318:199.318:199.318
+HOLD      negedge:B[1]       posedge:CLK  205.007:205.007:205.007
+HOLD      negedge:B[2]       posedge:CLK  194.98:194.98:194.98
+HOLD      negedge:B[3]       posedge:CLK  199.743:199.743:199.743
+HOLD      negedge:B[4]       posedge:CLK  201.609:201.609:201.609
+HOLD      negedge:B[5]       posedge:CLK  188.274:188.274:188.274
+HOLD      negedge:B[6]       posedge:CLK  183.668:183.668:183.668
+HOLD      negedge:B[7]       posedge:CLK  183.88:183.88:183.88
+HOLD      negedge:B[8]       posedge:CLK  181.905:181.905:181.905
+HOLD      negedge:B[9]       posedge:CLK  194.213:194.213:194.213
+HOLD      negedge:B[10]      posedge:CLK  166.869:166.869:166.869
+HOLD      negedge:B[11]      posedge:CLK  178.724:178.724:178.724
+HOLD      negedge:B[12]      posedge:CLK  188.759:188.759:188.759
+HOLD      negedge:B[13]      posedge:CLK  178.851:178.851:178.851
+HOLD      negedge:B[14]      posedge:CLK  169.756:169.756:169.756
+HOLD      negedge:B[15]      posedge:CLK  196.689:196.689:196.689
+HOLD      negedge:BHOLD      posedge:CLK  177.143:177.143:177.143
+HOLD      negedge:C[0]       posedge:CLK  238.019:238.019:238.019
+HOLD      negedge:C[1]       posedge:CLK  241.19:241.19:241.19
+HOLD      negedge:C[2]       posedge:CLK  236.487:236.487:236.487
+HOLD      negedge:C[3]       posedge:CLK  233.38:233.38:233.38
+HOLD      negedge:C[4]       posedge:CLK  234.834:234.834:234.834
+HOLD      negedge:C[5]       posedge:CLK  237.059:237.059:237.059
+HOLD      negedge:C[6]       posedge:CLK  235.288:235.288:235.288
+HOLD      negedge:C[7]       posedge:CLK  240.096:240.096:240.096
+HOLD      negedge:C[8]       posedge:CLK  237.083:237.083:237.083
+HOLD      negedge:C[9]       posedge:CLK  235.184:235.184:235.184
+HOLD      negedge:C[10]      posedge:CLK  233.033:233.033:233.033
+HOLD      negedge:C[11]      posedge:CLK  235.949:235.949:235.949
+HOLD      negedge:C[12]      posedge:CLK  239.169:239.169:239.169
+HOLD      negedge:C[13]      posedge:CLK  235.937:235.937:235.937
+HOLD      negedge:C[14]      posedge:CLK  235.235:235.235:235.235
+HOLD      negedge:C[15]      posedge:CLK  235.549:235.549:235.549
+HOLD      negedge:CHOLD      posedge:CLK  215.429:215.429:215.429
+HOLD      negedge:D[0]       posedge:CLK  190.878:190.878:190.878
+HOLD      negedge:D[1]       posedge:CLK  185.317:185.317:185.317
+HOLD      negedge:D[2]       posedge:CLK  184.125:184.125:184.125
+HOLD      negedge:D[3]       posedge:CLK  180.239:180.239:180.239
+HOLD      negedge:D[4]       posedge:CLK  177.004:177.004:177.004
+HOLD      negedge:D[5]       posedge:CLK  186.749:186.749:186.749
+HOLD      negedge:D[6]       posedge:CLK  186.895:186.895:186.895
+HOLD      negedge:D[7]       posedge:CLK  181.237:181.237:181.237
+HOLD      negedge:D[8]       posedge:CLK  254.011:254.011:254.011
+HOLD      negedge:D[9]       posedge:CLK  173.363:173.363:173.363
+HOLD      negedge:D[10]      posedge:CLK  259.158:259.158:259.158
+HOLD      negedge:D[11]      posedge:CLK  256.257:256.257:256.257
+HOLD      negedge:D[12]      posedge:CLK  253.946:253.946:253.946
+HOLD      negedge:D[13]      posedge:CLK  249.826:249.826:249.826
+HOLD      negedge:D[14]      posedge:CLK  182.441:182.441:182.441
+HOLD      negedge:D[15]      posedge:CLK  259.634:259.634:259.634
+HOLD      negedge:DHOLD      posedge:CLK  234.001:234.001:234.001
+HOLD      negedge:OHOLDBOT   posedge:CLK  157.226:157.226:157.226
+HOLD      negedge:OHOLDTOP   posedge:CLK  157.282:157.282:157.282
+HOLD      negedge:OLOADBOT   posedge:CLK  193.798:193.798:193.798
+HOLD      negedge:OLOADTOP   posedge:CLK  178.665:178.665:178.665
+HOLD      posedge:A[0]       posedge:CLK  174.322:174.322:174.322
+HOLD      posedge:A[1]       posedge:CLK  171.322:171.322:171.322
+HOLD      posedge:A[2]       posedge:CLK  163.459:163.459:163.459
+HOLD      posedge:A[3]       posedge:CLK  162.852:162.852:162.852
+HOLD      posedge:A[4]       posedge:CLK  166.475:166.475:166.475
+HOLD      posedge:A[5]       posedge:CLK  140.36:140.36:140.36
+HOLD      posedge:A[6]       posedge:CLK  167.946:167.946:167.946
+HOLD      posedge:A[7]       posedge:CLK  160.919:160.919:160.919
+HOLD      posedge:A[8]       posedge:CLK  138.172:138.172:138.172
+HOLD      posedge:A[9]       posedge:CLK  129.888:129.888:129.888
+HOLD      posedge:A[10]      posedge:CLK  136.785:136.785:136.785
+HOLD      posedge:A[11]      posedge:CLK  133.088:133.088:133.088
+HOLD      posedge:A[12]      posedge:CLK  133.14:133.14:133.14
+HOLD      posedge:A[13]      posedge:CLK  131.736:131.736:131.736
+HOLD      posedge:A[14]      posedge:CLK  125.36:125.36:125.36
+HOLD      posedge:A[15]      posedge:CLK  139.019:139.019:139.019
+HOLD      posedge:ADDSUBBOT  posedge:CLK  58.029:58.029:58.029
+HOLD      posedge:ADDSUBTOP  posedge:CLK  52.175:52.175:52.175
+HOLD      posedge:AHOLD      posedge:CLK  163.435:163.435:163.435
+HOLD      posedge:B[0]       posedge:CLK  159.268:159.268:159.268
+HOLD      posedge:B[1]       posedge:CLK  161.656:161.656:161.656
+HOLD      posedge:B[2]       posedge:CLK  154.102:154.102:154.102
+HOLD      posedge:B[3]       posedge:CLK  158.267:158.267:158.267
+HOLD      posedge:B[4]       posedge:CLK  161.178:161.178:161.178
+HOLD      posedge:B[5]       posedge:CLK  145.66:145.66:145.66
+HOLD      posedge:B[6]       posedge:CLK  141.52:141.52:141.52
+HOLD      posedge:B[7]       posedge:CLK  142.363:142.363:142.363
+HOLD      posedge:B[8]       posedge:CLK  139.228:139.228:139.228
+HOLD      posedge:B[9]       posedge:CLK  151.105:151.105:151.105
+HOLD      posedge:B[10]      posedge:CLK  129.81:129.81:129.81
+HOLD      posedge:B[11]      posedge:CLK  136.215:136.215:136.215
+HOLD      posedge:B[12]      posedge:CLK  146.332:146.332:146.332
+HOLD      posedge:B[13]      posedge:CLK  137.53:137.53:137.53
+HOLD      posedge:B[14]      posedge:CLK  129.905:129.905:129.905
+HOLD      posedge:B[15]      posedge:CLK  153.892:153.892:153.892
+HOLD      posedge:BHOLD      posedge:CLK  146.57:146.57:146.57
+HOLD      posedge:C[0]       posedge:CLK  196.313:196.313:196.313
+HOLD      posedge:C[1]       posedge:CLK  199.675:199.675:199.675
+HOLD      posedge:C[2]       posedge:CLK  194.519:194.519:194.519
+HOLD      posedge:C[3]       posedge:CLK  193.574:193.574:193.574
+HOLD      posedge:C[4]       posedge:CLK  193.811:193.811:193.811
+HOLD      posedge:C[5]       posedge:CLK  196.306:196.306:196.306
+HOLD      posedge:C[6]       posedge:CLK  189.812:189.812:189.812
+HOLD      posedge:C[7]       posedge:CLK  197.702:197.702:197.702
+HOLD      posedge:C[8]       posedge:CLK  193.862:193.862:193.862
+HOLD      posedge:C[9]       posedge:CLK  191.001:191.001:191.001
+HOLD      posedge:C[10]      posedge:CLK  188.338:188.338:188.338
+HOLD      posedge:C[11]      posedge:CLK  193.318:193.318:193.318
+HOLD      posedge:C[12]      posedge:CLK  197.393:197.393:197.393
+HOLD      posedge:C[13]      posedge:CLK  192.921:192.921:192.921
+HOLD      posedge:C[14]      posedge:CLK  190.495:190.495:190.495
+HOLD      posedge:C[15]      posedge:CLK  194.588:194.588:194.588
+HOLD      posedge:CHOLD      posedge:CLK  184.582:184.582:184.582
+HOLD      posedge:D[0]       posedge:CLK  149.936:149.936:149.936
+HOLD      posedge:D[1]       posedge:CLK  143.924:143.924:143.924
+HOLD      posedge:D[2]       posedge:CLK  138.822:138.822:138.822
+HOLD      posedge:D[3]       posedge:CLK  136.464:136.464:136.464
+HOLD      posedge:D[4]       posedge:CLK  135.375:135.375:135.375
+HOLD      posedge:D[5]       posedge:CLK  144.025:144.025:144.025
+HOLD      posedge:D[6]       posedge:CLK  147.529:147.529:147.529
+HOLD      posedge:D[7]       posedge:CLK  140.477:140.477:140.477
+HOLD      posedge:D[8]       posedge:CLK  208.339:208.339:208.339
+HOLD      posedge:D[9]       posedge:CLK  136.361:136.361:136.361
+HOLD      posedge:D[10]      posedge:CLK  210.15:210.15:210.15
+HOLD      posedge:D[11]      posedge:CLK  209.024:209.024:209.024
+HOLD      posedge:D[12]      posedge:CLK  206.327:206.327:206.327
+HOLD      posedge:D[13]      posedge:CLK  202.007:202.007:202.007
+HOLD      posedge:D[14]      posedge:CLK  140.511:140.511:140.511
+HOLD      posedge:D[15]      posedge:CLK  210.689:210.689:210.689
+HOLD      posedge:DHOLD      posedge:CLK  196.151:196.151:196.151
+HOLD      posedge:OHOLDBOT   posedge:CLK  187.891:187.891:187.891
+HOLD      posedge:OHOLDTOP   posedge:CLK  186.884:186.884:186.884
+HOLD      posedge:OLOADBOT   posedge:CLK  171.27:171.27:171.27
+HOLD      posedge:OLOADTOP   posedge:CLK  164.919:164.919:164.919
+RECOVERY  negedge:IRSTBOT    posedge:CLK  797.559:797.559:797.559
+RECOVERY  negedge:IRSTTOP    posedge:CLK  849.107:849.107:849.107
+RECOVERY  negedge:ORSTBOT    posedge:CLK  615.935:615.935:615.935
+RECOVERY  negedge:ORSTTOP    posedge:CLK  709.441:709.441:709.441
+RECOVERY  posedge:IRSTBOT    posedge:CLK  0:0:0
+RECOVERY  posedge:IRSTTOP    posedge:CLK  0:0:0
+RECOVERY  posedge:ORSTBOT    posedge:CLK  0:0:0
+RECOVERY  posedge:ORSTTOP    posedge:CLK  0:0:0
+REMOVAL   negedge:IRSTBOT    posedge:CLK  0:0:0
+REMOVAL   negedge:IRSTTOP    posedge:CLK  0:0:0
+REMOVAL   negedge:ORSTBOT    posedge:CLK  0:0:0
+REMOVAL   negedge:ORSTTOP    posedge:CLK  0:0:0
+REMOVAL   posedge:IRSTBOT    posedge:CLK  0:0:0
+REMOVAL   posedge:IRSTTOP    posedge:CLK  0:0:0
+REMOVAL   posedge:ORSTBOT    posedge:CLK  0:0:0
+REMOVAL   posedge:ORSTTOP    posedge:CLK  0:0:0
+SETUP     negedge:A[0]       posedge:CLK  -77.473:-77.473:-77.473
+SETUP     negedge:A[1]       posedge:CLK  -71.881:-71.881:-71.881
+SETUP     negedge:A[2]       posedge:CLK  -73.986:-73.986:-73.986
+SETUP     negedge:A[3]       posedge:CLK  -64.638:-64.638:-64.638
+SETUP     negedge:A[4]       posedge:CLK  -67.238:-67.238:-67.238
+SETUP     negedge:A[5]       posedge:CLK  -49.595:-49.595:-49.595
+SETUP     negedge:A[6]       posedge:CLK  -75.652:-75.652:-75.652
+SETUP     negedge:A[7]       posedge:CLK  -59.925:-59.925:-59.925
+SETUP     negedge:A[8]       posedge:CLK  -47.479:-47.479:-47.479
+SETUP     negedge:A[9]       posedge:CLK  -15.901:-15.901:-15.901
+SETUP     negedge:A[10]      posedge:CLK  -41.604:-41.604:-41.604
+SETUP     negedge:A[11]      posedge:CLK  -42.005:-42.005:-42.005
+SETUP     negedge:A[12]      posedge:CLK  -38.201:-38.201:-38.201
+SETUP     negedge:A[13]      posedge:CLK  -39.344:-39.344:-39.344
+SETUP     negedge:A[14]      posedge:CLK  -22.514:-22.514:-22.514
+SETUP     negedge:A[15]      posedge:CLK  -42.39:-42.39:-42.39
+SETUP     negedge:ADDSUBBOT  posedge:CLK  1371.04:1371.04:1371.04
+SETUP     negedge:ADDSUBTOP  posedge:CLK  1376.42:1376.42:1376.42
+SETUP     negedge:AHOLD      posedge:CLK  285.142:285.142:285.142
+SETUP     negedge:B[0]       posedge:CLK  -54.502:-54.502:-54.502
+SETUP     negedge:B[1]       posedge:CLK  -54.051:-54.051:-54.051
+SETUP     negedge:B[2]       posedge:CLK  -54.579:-54.579:-54.579
+SETUP     negedge:B[3]       posedge:CLK  -63.621:-63.621:-63.621
+SETUP     negedge:B[4]       posedge:CLK  -41.745:-41.745:-41.745
+SETUP     negedge:B[5]       posedge:CLK  -46.918:-46.918:-46.918
+SETUP     negedge:B[6]       posedge:CLK  -43.289:-43.289:-43.289
+SETUP     negedge:B[7]       posedge:CLK  -43.367:-43.367:-43.367
+SETUP     negedge:B[8]       posedge:CLK  -49.684:-49.684:-49.684
+SETUP     negedge:B[9]       posedge:CLK  -57.778:-57.778:-57.778
+SETUP     negedge:B[10]      posedge:CLK  -19.205:-19.205:-19.205
+SETUP     negedge:B[11]      posedge:CLK  -41.766:-41.766:-41.766
+SETUP     negedge:B[12]      posedge:CLK  -43.714:-43.714:-43.714
+SETUP     negedge:B[13]      posedge:CLK  -13.597:-13.597:-13.597
+SETUP     negedge:B[14]      posedge:CLK  -21.967:-21.967:-21.967
+SETUP     negedge:B[15]      posedge:CLK  -28.196:-28.196:-28.196
+SETUP     negedge:BHOLD      posedge:CLK  264.441:264.441:264.441
+SETUP     negedge:C[0]       posedge:CLK  -65.088:-65.088:-65.088
+SETUP     negedge:C[1]       posedge:CLK  -67.488:-67.488:-67.488
+SETUP     negedge:C[2]       posedge:CLK  -78.958:-78.958:-78.958
+SETUP     negedge:C[3]       posedge:CLK  -74.861:-74.861:-74.861
+SETUP     negedge:C[4]       posedge:CLK  -63.449:-63.449:-63.449
+SETUP     negedge:C[5]       posedge:CLK  -62.561:-62.561:-62.561
+SETUP     negedge:C[6]       posedge:CLK  -70.749:-70.749:-70.749
+SETUP     negedge:C[7]       posedge:CLK  -62.793:-62.793:-62.793
+SETUP     negedge:C[8]       posedge:CLK  -64.198:-64.198:-64.198
+SETUP     negedge:C[9]       posedge:CLK  -69.708:-69.708:-69.708
+SETUP     negedge:C[10]      posedge:CLK  -64.965:-64.965:-64.965
+SETUP     negedge:C[11]      posedge:CLK  -63.909:-63.909:-63.909
+SETUP     negedge:C[12]      posedge:CLK  -71.105:-71.105:-71.105
+SETUP     negedge:C[13]      posedge:CLK  -70.516:-70.516:-70.516
+SETUP     negedge:C[14]      posedge:CLK  -68.482:-68.482:-68.482
+SETUP     negedge:C[15]      posedge:CLK  -86.58:-86.58:-86.58
+SETUP     negedge:CHOLD      posedge:CLK  196.583:196.583:196.583
+SETUP     negedge:D[0]       posedge:CLK  -48.447:-48.447:-48.447
+SETUP     negedge:D[1]       posedge:CLK  -45.711:-45.711:-45.711
+SETUP     negedge:D[2]       posedge:CLK  -39.393:-39.393:-39.393
+SETUP     negedge:D[3]       posedge:CLK  -47.595:-47.595:-47.595
+SETUP     negedge:D[4]       posedge:CLK  -27.159:-27.159:-27.159
+SETUP     negedge:D[5]       posedge:CLK  -40.55:-40.55:-40.55
+SETUP     negedge:D[6]       posedge:CLK  -32.331:-32.331:-32.331
+SETUP     negedge:D[7]       posedge:CLK  -44.414:-44.414:-44.414
+SETUP     negedge:D[8]       posedge:CLK  -90.946:-90.946:-90.946
+SETUP     negedge:D[9]       posedge:CLK  -29.741:-29.741:-29.741
+SETUP     negedge:D[10]      posedge:CLK  -92.825:-92.825:-92.825
+SETUP     negedge:D[11]      posedge:CLK  -94.672:-94.672:-94.672
+SETUP     negedge:D[12]      posedge:CLK  -93.497:-93.497:-93.497
+SETUP     negedge:D[13]      posedge:CLK  -90.431:-90.431:-90.431
+SETUP     negedge:D[14]      posedge:CLK  -31.009:-31.009:-31.009
+SETUP     negedge:D[15]      posedge:CLK  -87.209:-87.209:-87.209
+SETUP     negedge:DHOLD      posedge:CLK  240.354:240.354:240.354
+SETUP     negedge:OHOLDBOT   posedge:CLK  325.725:325.725:325.725
+SETUP     negedge:OHOLDTOP   posedge:CLK  221.298:221.298:221.298
+SETUP     negedge:OLOADBOT   posedge:CLK  343.702:343.702:343.702
+SETUP     negedge:OLOADTOP   posedge:CLK  278.817:278.817:278.817
+SETUP     posedge:A[0]       posedge:CLK  -52.512:-52.512:-52.512
+SETUP     posedge:A[1]       posedge:CLK  -43.696:-43.696:-43.696
+SETUP     posedge:A[2]       posedge:CLK  -56.595:-56.595:-56.595
+SETUP     posedge:A[3]       posedge:CLK  -30.939:-30.939:-30.939
+SETUP     posedge:A[4]       posedge:CLK  -36.245:-36.245:-36.245
+SETUP     posedge:A[5]       posedge:CLK  -25.992:-25.992:-25.992
+SETUP     posedge:A[6]       posedge:CLK  -55.085:-55.085:-55.085
+SETUP     posedge:A[7]       posedge:CLK  -38.191:-38.191:-38.191
+SETUP     posedge:A[8]       posedge:CLK  -40.441:-40.441:-40.441
+SETUP     posedge:A[9]       posedge:CLK  10.648:10.648:10.648
+SETUP     posedge:A[10]      posedge:CLK  -22.25:-22.25:-22.25
+SETUP     posedge:A[11]      posedge:CLK  -30.189:-30.189:-30.189
+SETUP     posedge:A[12]      posedge:CLK  -20.236:-20.236:-20.236
+SETUP     posedge:A[13]      posedge:CLK  -27.669:-27.669:-27.669
+SETUP     posedge:A[14]      posedge:CLK  -6.47:-6.47:-6.47
+SETUP     posedge:A[15]      posedge:CLK  -23.253:-23.253:-23.253
+SETUP     posedge:ADDSUBBOT  posedge:CLK  1413.14:1413.14:1413.14
+SETUP     posedge:ADDSUBTOP  posedge:CLK  1414.31:1414.31:1414.31
+SETUP     posedge:AHOLD      posedge:CLK  228.311:228.311:228.311
+SETUP     posedge:B[0]       posedge:CLK  -36.762:-36.762:-36.762
+SETUP     posedge:B[1]       posedge:CLK  -41.073:-41.073:-41.073
+SETUP     posedge:B[2]       posedge:CLK  -38.814:-38.814:-38.814
+SETUP     posedge:B[3]       posedge:CLK  -48.415:-48.415:-48.415
+SETUP     posedge:B[4]       posedge:CLK  -21.082:-21.082:-21.082
+SETUP     posedge:B[5]       posedge:CLK  -25.634:-25.634:-25.634
+SETUP     posedge:B[6]       posedge:CLK  -19.568:-19.568:-19.568
+SETUP     posedge:B[7]       posedge:CLK  -23.846:-23.846:-23.846
+SETUP     posedge:B[8]       posedge:CLK  -37.375:-37.375:-37.375
+SETUP     posedge:B[9]       posedge:CLK  -43.785:-43.785:-43.785
+SETUP     posedge:B[10]      posedge:CLK  1.875:1.875:1.875
+SETUP     posedge:B[11]      posedge:CLK  -20.631:-20.631:-20.631
+SETUP     posedge:B[12]      posedge:CLK  -16.556:-16.556:-16.556
+SETUP     posedge:B[13]      posedge:CLK  4.908:4.908:4.908
+SETUP     posedge:B[14]      posedge:CLK  -6.683:-6.683:-6.683
+SETUP     posedge:B[15]      posedge:CLK  -10.426:-10.426:-10.426
+SETUP     posedge:BHOLD      posedge:CLK  221.104:221.104:221.104
+SETUP     posedge:C[0]       posedge:CLK  -52.649:-52.649:-52.649
+SETUP     posedge:C[1]       posedge:CLK  -48.462:-48.462:-48.462
+SETUP     posedge:C[2]       posedge:CLK  -56.661:-56.661:-56.661
+SETUP     posedge:C[3]       posedge:CLK  -49.11:-49.11:-49.11
+SETUP     posedge:C[4]       posedge:CLK  -42.401:-42.401:-42.401
+SETUP     posedge:C[5]       posedge:CLK  -48.085:-48.085:-48.085
+SETUP     posedge:C[6]       posedge:CLK  -62.064:-62.064:-62.064
+SETUP     posedge:C[7]       posedge:CLK  -44.84:-44.84:-44.84
+SETUP     posedge:C[8]       posedge:CLK  -51.954:-51.954:-51.954
+SETUP     posedge:C[9]       posedge:CLK  -54.79:-54.79:-54.79
+SETUP     posedge:C[10]      posedge:CLK  -45.967:-45.967:-45.967
+SETUP     posedge:C[11]      posedge:CLK  -43.927:-43.927:-43.927
+SETUP     posedge:C[12]      posedge:CLK  -57.279:-57.279:-57.279
+SETUP     posedge:C[13]      posedge:CLK  -48.749:-48.749:-48.749
+SETUP     posedge:C[14]      posedge:CLK  -54.83:-54.83:-54.83
+SETUP     posedge:C[15]      posedge:CLK  -73.046:-73.046:-73.046
+SETUP     posedge:CHOLD      posedge:CLK  152.68:152.68:152.68
+SETUP     posedge:D[0]       posedge:CLK  -31.413:-31.413:-31.413
+SETUP     posedge:D[1]       posedge:CLK  -22.733:-22.733:-22.733
+SETUP     posedge:D[2]       posedge:CLK  -11.518:-11.518:-11.518
+SETUP     posedge:D[3]       posedge:CLK  -30.675:-30.675:-30.675
+SETUP     posedge:D[4]       posedge:CLK  -15.605:-15.605:-15.605
+SETUP     posedge:D[5]       posedge:CLK  -25.758:-25.758:-25.758
+SETUP     posedge:D[6]       posedge:CLK  -10.128:-10.128:-10.128
+SETUP     posedge:D[7]       posedge:CLK  -30.187:-30.187:-30.187
+SETUP     posedge:D[8]       posedge:CLK  -82.692:-82.692:-82.692
+SETUP     posedge:D[9]       posedge:CLK  -11.364:-11.364:-11.364
+SETUP     posedge:D[10]      posedge:CLK  -74.081:-74.081:-74.081
+SETUP     posedge:D[11]      posedge:CLK  -86.016:-86.016:-86.016
+SETUP     posedge:D[12]      posedge:CLK  -77.487:-77.487:-77.487
+SETUP     posedge:D[13]      posedge:CLK  -62.07:-62.07:-62.07
+SETUP     posedge:D[14]      posedge:CLK  -14.539:-14.539:-14.539
+SETUP     posedge:D[15]      posedge:CLK  -68.431:-68.431:-68.431
+SETUP     posedge:DHOLD      posedge:CLK  193.771:193.771:193.771
+SETUP     posedge:OHOLDBOT   posedge:CLK  261.816:261.816:261.816
+SETUP     posedge:OHOLDTOP   posedge:CLK  160.37:160.37:160.37
+SETUP     posedge:OLOADBOT   posedge:CLK  331.775:331.775:331.775
+SETUP     posedge:OLOADTOP   posedge:CLK  296.117:296.117:296.117
+IOPATH    ADDSUBTOP          ACCUMCO      1601.77:1601.77:1601.77  1891.37:1891.37:1891.37
+IOPATH    ADDSUBTOP          CO           459.731:459.731:459.731  449.368:449.368:449.368
+IOPATH    posedge:CLK        ACCUMCO      5638.08:5638.08:5638.08  5851.21:5851.21:5851.21
+IOPATH    posedge:CLK        CO           6210.49:6210.49:6210.49  6397.2:6397.2:6397.2
+IOPATH    posedge:CLK        O[0]         985.237:985.237:985.237  1024.88:1024.88:1024.88
+IOPATH    posedge:CLK        O[1]         977.986:977.986:977.986  993.269:993.269:993.269
+IOPATH    posedge:CLK        O[2]         1005.7:1005.7:1005.7     1040.73:1040.73:1040.73
+IOPATH    posedge:CLK        O[3]         1085.7:1085.7:1085.7     1124.37:1124.37:1124.37
+IOPATH    posedge:CLK        O[4]         1007.35:1007.35:1007.35  1050.14:1050.14:1050.14
+IOPATH    posedge:CLK        O[5]         1027.97:1027.97:1027.97  1080.45:1080.45:1080.45
+IOPATH    posedge:CLK        O[6]         1150.43:1150.43:1150.43  1219.65:1219.65:1219.65
+IOPATH    posedge:CLK        O[7]         1115.38:1115.38:1115.38  1187.21:1187.21:1187.21
+IOPATH    posedge:CLK        O[8]         1185.68:1185.68:1185.68  1283.36:1283.36:1283.36
+IOPATH    posedge:CLK        O[9]         1188.24:1188.24:1188.24  1310.28:1310.28:1310.28
+IOPATH    posedge:CLK        O[10]        1143.62:1143.62:1143.62  1222.95:1222.95:1222.95
+IOPATH    posedge:CLK        O[11]        1322.61:1322.61:1322.61  1412.98:1412.98:1412.98
+IOPATH    posedge:CLK        O[12]        1143.17:1143.17:1143.17  1210.69:1210.69:1210.69
+IOPATH    posedge:CLK        O[13]        1173.6:1173.6:1173.6     1267.91:1267.91:1267.91
+IOPATH    posedge:CLK        O[14]        1264.73:1264.73:1264.73  1367.2:1367.2:1367.2
+IOPATH    posedge:CLK        O[15]        1278.15:1278.15:1278.15  1376:1376:1376
+IOPATH    posedge:CLK        O[16]        1255.02:1255.02:1255.02  1420.56:1420.56:1420.56
+IOPATH    posedge:CLK        O[17]        1249.55:1249.55:1249.55  1392.63:1392.63:1392.63
+IOPATH    posedge:CLK        O[18]        1289.97:1289.97:1289.97  1478.77:1478.77:1478.77
+IOPATH    posedge:CLK        O[19]        1382.29:1382.29:1382.29  1497.97:1497.97:1497.97
+IOPATH    posedge:CLK        O[20]        1294.36:1294.36:1294.36  1389.91:1389.91:1389.91
+IOPATH    posedge:CLK        O[21]        1171.36:1171.36:1171.36  1250.98:1250.98:1250.98
+IOPATH    posedge:CLK        O[22]        1195.51:1195.51:1195.51  1311.92:1311.92:1311.92
+IOPATH    posedge:CLK        O[23]        1189.67:1189.67:1189.67  1285.86:1285.86:1285.86
+IOPATH    posedge:CLK        O[24]        1160.26:1160.26:1160.26  1242.81:1242.81:1242.81
+IOPATH    posedge:CLK        O[25]        1186.49:1186.49:1186.49  1283.54:1283.54:1283.54
+IOPATH    posedge:CLK        O[26]        1239.65:1239.65:1239.65  1370.67:1370.67:1370.67
+IOPATH    posedge:CLK        O[27]        1151.53:1151.53:1151.53  1227.48:1227.48:1227.48
+IOPATH    posedge:CLK        O[28]        1130.92:1130.92:1130.92  1204.94:1204.94:1204.94
+IOPATH    posedge:CLK        O[29]        1128.28:1128.28:1128.28  1197.65:1197.65:1197.65
+IOPATH    posedge:CLK        O[30]        1095.71:1095.71:1095.71  1142.97:1142.97:1142.97
+IOPATH    posedge:CLK        O[31]        1076.06:1076.06:1076.06  1118.95:1118.95:1118.95
+IOPATH    posedge:CLK        SIGNEXTOUT   4925.14:4925.14:4925.14  5062.08:5062.08:5062.08
+
 CELL SB_MAC16_MAC_U_16X16_ALL_PIPELINE
 HOLD      negedge:A[0]       posedge:CLK  225.246:225.246:225.246
 HOLD      negedge:A[1]       posedge:CLK  221.741:221.741:221.741
@@ -6252,6 +7768,708 @@ IOPATH    posedge:CLK        O[29]        1128.28:1128.28:1128.28  1197.65:1197.
 IOPATH    posedge:CLK        O[30]        1095.71:1095.71:1095.71  1142.97:1142.97:1142.97
 IOPATH    posedge:CLK        O[31]        1076.06:1076.06:1076.06  1118.95:1118.95:1118.95
 IOPATH    posedge:CLK        SIGNEXTOUT   1340.32:1340.32:1340.32  1272.03:1272.03:1272.03
+
+CELL SB_MAC16_MAS_U_8X8_ALL_PIPELINE
+HOLD      negedge:A[0]       posedge:CLK  225.246:225.246:225.246
+HOLD      negedge:A[1]       posedge:CLK  221.741:221.741:221.741
+HOLD      negedge:A[2]       posedge:CLK  215.99:215.99:215.99
+HOLD      negedge:A[3]       posedge:CLK  216.2:216.2:216.2
+HOLD      negedge:A[4]       posedge:CLK  217.945:217.945:217.945
+HOLD      negedge:A[5]       posedge:CLK  183.875:183.875:183.875
+HOLD      negedge:A[6]       posedge:CLK  221.084:221.084:221.084
+HOLD      negedge:A[7]       posedge:CLK  212.786:212.786:212.786
+HOLD      negedge:A[8]       posedge:CLK  180.124:180.124:180.124
+HOLD      negedge:A[9]       posedge:CLK  168.61:168.61:168.61
+HOLD      negedge:A[10]      posedge:CLK  177.622:177.622:177.622
+HOLD      negedge:A[11]      posedge:CLK  173.057:173.057:173.057
+HOLD      negedge:A[12]      posedge:CLK  171.708:171.708:171.708
+HOLD      negedge:A[13]      posedge:CLK  171.794:171.794:171.794
+HOLD      negedge:A[14]      posedge:CLK  166.812:166.812:166.812
+HOLD      negedge:A[15]      posedge:CLK  182.546:182.546:182.546
+HOLD      negedge:ADDSUBBOT  posedge:CLK  68.653:68.653:68.653
+HOLD      negedge:ADDSUBTOP  posedge:CLK  64.575:64.575:64.575
+HOLD      negedge:AHOLD      posedge:CLK  203.028:203.028:203.028
+HOLD      negedge:B[0]       posedge:CLK  199.302:199.302:199.302
+HOLD      negedge:B[1]       posedge:CLK  205.007:205.007:205.007
+HOLD      negedge:B[2]       posedge:CLK  195.006:195.006:195.006
+HOLD      negedge:B[3]       posedge:CLK  199.769:199.769:199.769
+HOLD      negedge:B[4]       posedge:CLK  201.609:201.609:201.609
+HOLD      negedge:B[5]       posedge:CLK  188.274:188.274:188.274
+HOLD      negedge:B[6]       posedge:CLK  183.668:183.668:183.668
+HOLD      negedge:B[7]       posedge:CLK  183.878:183.878:183.878
+HOLD      negedge:B[8]       posedge:CLK  181.905:181.905:181.905
+HOLD      negedge:B[9]       posedge:CLK  194.213:194.213:194.213
+HOLD      negedge:B[10]      posedge:CLK  166.869:166.869:166.869
+HOLD      negedge:B[11]      posedge:CLK  178.724:178.724:178.724
+HOLD      negedge:B[12]      posedge:CLK  188.759:188.759:188.759
+HOLD      negedge:B[13]      posedge:CLK  178.851:178.851:178.851
+HOLD      negedge:B[14]      posedge:CLK  169.754:169.754:169.754
+HOLD      negedge:B[15]      posedge:CLK  196.689:196.689:196.689
+HOLD      negedge:BHOLD      posedge:CLK  177.169:177.169:177.169
+HOLD      negedge:C[0]       posedge:CLK  238.019:238.019:238.019
+HOLD      negedge:C[1]       posedge:CLK  241.19:241.19:241.19
+HOLD      negedge:C[2]       posedge:CLK  236.487:236.487:236.487
+HOLD      negedge:C[3]       posedge:CLK  233.38:233.38:233.38
+HOLD      negedge:C[4]       posedge:CLK  234.834:234.834:234.834
+HOLD      negedge:C[5]       posedge:CLK  237.059:237.059:237.059
+HOLD      negedge:C[6]       posedge:CLK  235.288:235.288:235.288
+HOLD      negedge:C[7]       posedge:CLK  240.096:240.096:240.096
+HOLD      negedge:C[8]       posedge:CLK  237.083:237.083:237.083
+HOLD      negedge:C[9]       posedge:CLK  235.184:235.184:235.184
+HOLD      negedge:C[10]      posedge:CLK  233.033:233.033:233.033
+HOLD      negedge:C[11]      posedge:CLK  235.949:235.949:235.949
+HOLD      negedge:C[12]      posedge:CLK  239.169:239.169:239.169
+HOLD      negedge:C[13]      posedge:CLK  235.937:235.937:235.937
+HOLD      negedge:C[14]      posedge:CLK  235.235:235.235:235.235
+HOLD      negedge:C[15]      posedge:CLK  235.549:235.549:235.549
+HOLD      negedge:CHOLD      posedge:CLK  215.429:215.429:215.429
+HOLD      negedge:D[0]       posedge:CLK  190.878:190.878:190.878
+HOLD      negedge:D[1]       posedge:CLK  185.317:185.317:185.317
+HOLD      negedge:D[2]       posedge:CLK  184.125:184.125:184.125
+HOLD      negedge:D[3]       posedge:CLK  180.239:180.239:180.239
+HOLD      negedge:D[4]       posedge:CLK  177.004:177.004:177.004
+HOLD      negedge:D[5]       posedge:CLK  186.749:186.749:186.749
+HOLD      negedge:D[6]       posedge:CLK  186.895:186.895:186.895
+HOLD      negedge:D[7]       posedge:CLK  181.237:181.237:181.237
+HOLD      negedge:D[8]       posedge:CLK  254.011:254.011:254.011
+HOLD      negedge:D[9]       posedge:CLK  173.317:173.317:173.317
+HOLD      negedge:D[10]      posedge:CLK  259.158:259.158:259.158
+HOLD      negedge:D[11]      posedge:CLK  256.257:256.257:256.257
+HOLD      negedge:D[12]      posedge:CLK  253.946:253.946:253.946
+HOLD      negedge:D[13]      posedge:CLK  249.826:249.826:249.826
+HOLD      negedge:D[14]      posedge:CLK  182.441:182.441:182.441
+HOLD      negedge:D[15]      posedge:CLK  259.634:259.634:259.634
+HOLD      negedge:DHOLD      posedge:CLK  234.001:234.001:234.001
+HOLD      negedge:OHOLDBOT   posedge:CLK  157.23:157.23:157.23
+HOLD      negedge:OHOLDTOP   posedge:CLK  157.282:157.282:157.282
+HOLD      negedge:OLOADBOT   posedge:CLK  193.798:193.798:193.798
+HOLD      negedge:OLOADTOP   posedge:CLK  178.665:178.665:178.665
+HOLD      posedge:A[0]       posedge:CLK  174.322:174.322:174.322
+HOLD      posedge:A[1]       posedge:CLK  171.322:171.322:171.322
+HOLD      posedge:A[2]       posedge:CLK  163.459:163.459:163.459
+HOLD      posedge:A[3]       posedge:CLK  162.852:162.852:162.852
+HOLD      posedge:A[4]       posedge:CLK  166.475:166.475:166.475
+HOLD      posedge:A[5]       posedge:CLK  140.36:140.36:140.36
+HOLD      posedge:A[6]       posedge:CLK  167.946:167.946:167.946
+HOLD      posedge:A[7]       posedge:CLK  160.919:160.919:160.919
+HOLD      posedge:A[8]       posedge:CLK  138.172:138.172:138.172
+HOLD      posedge:A[9]       posedge:CLK  129.888:129.888:129.888
+HOLD      posedge:A[10]      posedge:CLK  136.785:136.785:136.785
+HOLD      posedge:A[11]      posedge:CLK  133.088:133.088:133.088
+HOLD      posedge:A[12]      posedge:CLK  133.14:133.14:133.14
+HOLD      posedge:A[13]      posedge:CLK  131.736:131.736:131.736
+HOLD      posedge:A[14]      posedge:CLK  125.36:125.36:125.36
+HOLD      posedge:A[15]      posedge:CLK  139.019:139.019:139.019
+HOLD      posedge:ADDSUBBOT  posedge:CLK  57.867:57.867:57.867
+HOLD      posedge:ADDSUBTOP  posedge:CLK  52.175:52.175:52.175
+HOLD      posedge:AHOLD      posedge:CLK  163.435:163.435:163.435
+HOLD      posedge:B[0]       posedge:CLK  159.228:159.228:159.228
+HOLD      posedge:B[1]       posedge:CLK  161.656:161.656:161.656
+HOLD      posedge:B[2]       posedge:CLK  154.102:154.102:154.102
+HOLD      posedge:B[3]       posedge:CLK  158.305:158.305:158.305
+HOLD      posedge:B[4]       posedge:CLK  161.178:161.178:161.178
+HOLD      posedge:B[5]       posedge:CLK  145.703:145.703:145.703
+HOLD      posedge:B[6]       posedge:CLK  141.52:141.52:141.52
+HOLD      posedge:B[7]       posedge:CLK  142.364:142.364:142.364
+HOLD      posedge:B[8]       posedge:CLK  139.228:139.228:139.228
+HOLD      posedge:B[9]       posedge:CLK  151.105:151.105:151.105
+HOLD      posedge:B[10]      posedge:CLK  129.81:129.81:129.81
+HOLD      posedge:B[11]      posedge:CLK  136.215:136.215:136.215
+HOLD      posedge:B[12]      posedge:CLK  146.332:146.332:146.332
+HOLD      posedge:B[13]      posedge:CLK  137.53:137.53:137.53
+HOLD      posedge:B[14]      posedge:CLK  129.906:129.906:129.906
+HOLD      posedge:B[15]      posedge:CLK  153.892:153.892:153.892
+HOLD      posedge:BHOLD      posedge:CLK  146.57:146.57:146.57
+HOLD      posedge:C[0]       posedge:CLK  196.313:196.313:196.313
+HOLD      posedge:C[1]       posedge:CLK  199.675:199.675:199.675
+HOLD      posedge:C[2]       posedge:CLK  194.519:194.519:194.519
+HOLD      posedge:C[3]       posedge:CLK  193.574:193.574:193.574
+HOLD      posedge:C[4]       posedge:CLK  193.811:193.811:193.811
+HOLD      posedge:C[5]       posedge:CLK  196.306:196.306:196.306
+HOLD      posedge:C[6]       posedge:CLK  189.812:189.812:189.812
+HOLD      posedge:C[7]       posedge:CLK  197.702:197.702:197.702
+HOLD      posedge:C[8]       posedge:CLK  193.862:193.862:193.862
+HOLD      posedge:C[9]       posedge:CLK  191.001:191.001:191.001
+HOLD      posedge:C[10]      posedge:CLK  188.338:188.338:188.338
+HOLD      posedge:C[11]      posedge:CLK  193.318:193.318:193.318
+HOLD      posedge:C[12]      posedge:CLK  197.393:197.393:197.393
+HOLD      posedge:C[13]      posedge:CLK  192.921:192.921:192.921
+HOLD      posedge:C[14]      posedge:CLK  190.495:190.495:190.495
+HOLD      posedge:C[15]      posedge:CLK  194.588:194.588:194.588
+HOLD      posedge:CHOLD      posedge:CLK  184.582:184.582:184.582
+HOLD      posedge:D[0]       posedge:CLK  149.936:149.936:149.936
+HOLD      posedge:D[1]       posedge:CLK  143.924:143.924:143.924
+HOLD      posedge:D[2]       posedge:CLK  138.822:138.822:138.822
+HOLD      posedge:D[3]       posedge:CLK  136.464:136.464:136.464
+HOLD      posedge:D[4]       posedge:CLK  135.375:135.375:135.375
+HOLD      posedge:D[5]       posedge:CLK  144.025:144.025:144.025
+HOLD      posedge:D[6]       posedge:CLK  147.529:147.529:147.529
+HOLD      posedge:D[7]       posedge:CLK  140.477:140.477:140.477
+HOLD      posedge:D[8]       posedge:CLK  208.339:208.339:208.339
+HOLD      posedge:D[9]       posedge:CLK  136.177:136.177:136.177
+HOLD      posedge:D[10]      posedge:CLK  210.15:210.15:210.15
+HOLD      posedge:D[11]      posedge:CLK  209.024:209.024:209.024
+HOLD      posedge:D[12]      posedge:CLK  206.327:206.327:206.327
+HOLD      posedge:D[13]      posedge:CLK  202.007:202.007:202.007
+HOLD      posedge:D[14]      posedge:CLK  140.511:140.511:140.511
+HOLD      posedge:D[15]      posedge:CLK  210.689:210.689:210.689
+HOLD      posedge:DHOLD      posedge:CLK  196.151:196.151:196.151
+HOLD      posedge:OHOLDBOT   posedge:CLK  187.889:187.889:187.889
+HOLD      posedge:OHOLDTOP   posedge:CLK  186.884:186.884:186.884
+HOLD      posedge:OLOADBOT   posedge:CLK  171.27:171.27:171.27
+HOLD      posedge:OLOADTOP   posedge:CLK  164.919:164.919:164.919
+RECOVERY  negedge:IRSTBOT    posedge:CLK  797.724:797.724:797.724
+RECOVERY  negedge:IRSTTOP    posedge:CLK  849.18:849.18:849.18
+RECOVERY  negedge:ORSTBOT    posedge:CLK  615.935:615.935:615.935
+RECOVERY  negedge:ORSTTOP    posedge:CLK  709.441:709.441:709.441
+RECOVERY  posedge:IRSTBOT    posedge:CLK  0:0:0
+RECOVERY  posedge:IRSTTOP    posedge:CLK  0:0:0
+RECOVERY  posedge:ORSTBOT    posedge:CLK  0:0:0
+RECOVERY  posedge:ORSTTOP    posedge:CLK  0:0:0
+REMOVAL   negedge:IRSTBOT    posedge:CLK  0:0:0
+REMOVAL   negedge:IRSTTOP    posedge:CLK  0:0:0
+REMOVAL   negedge:ORSTBOT    posedge:CLK  0:0:0
+REMOVAL   negedge:ORSTTOP    posedge:CLK  0:0:0
+REMOVAL   posedge:IRSTBOT    posedge:CLK  0:0:0
+REMOVAL   posedge:IRSTTOP    posedge:CLK  0:0:0
+REMOVAL   posedge:ORSTBOT    posedge:CLK  0:0:0
+REMOVAL   posedge:ORSTTOP    posedge:CLK  0:0:0
+SETUP     negedge:A[0]       posedge:CLK  -77.473:-77.473:-77.473
+SETUP     negedge:A[1]       posedge:CLK  -71.881:-71.881:-71.881
+SETUP     negedge:A[2]       posedge:CLK  -73.986:-73.986:-73.986
+SETUP     negedge:A[3]       posedge:CLK  -64.638:-64.638:-64.638
+SETUP     negedge:A[4]       posedge:CLK  -67.238:-67.238:-67.238
+SETUP     negedge:A[5]       posedge:CLK  -49.594:-49.594:-49.594
+SETUP     negedge:A[6]       posedge:CLK  -75.652:-75.652:-75.652
+SETUP     negedge:A[7]       posedge:CLK  -59.925:-59.925:-59.925
+SETUP     negedge:A[8]       posedge:CLK  -47.478:-47.478:-47.478
+SETUP     negedge:A[9]       posedge:CLK  -15.9:-15.9:-15.9
+SETUP     negedge:A[10]      posedge:CLK  -41.604:-41.604:-41.604
+SETUP     negedge:A[11]      posedge:CLK  -42.004:-42.004:-42.004
+SETUP     negedge:A[12]      posedge:CLK  -38.212:-38.212:-38.212
+SETUP     negedge:A[13]      posedge:CLK  -39.344:-39.344:-39.344
+SETUP     negedge:A[14]      posedge:CLK  -22.514:-22.514:-22.514
+SETUP     negedge:A[15]      posedge:CLK  -42.389:-42.389:-42.389
+SETUP     negedge:ADDSUBBOT  posedge:CLK  1371.04:1371.04:1371.04
+SETUP     negedge:ADDSUBTOP  posedge:CLK  1376.42:1376.42:1376.42
+SETUP     negedge:AHOLD      posedge:CLK  285.142:285.142:285.142
+SETUP     negedge:B[0]       posedge:CLK  -54.519:-54.519:-54.519
+SETUP     negedge:B[1]       posedge:CLK  -54.051:-54.051:-54.051
+SETUP     negedge:B[2]       posedge:CLK  -54.492:-54.492:-54.492
+SETUP     negedge:B[3]       posedge:CLK  -63.529:-63.529:-63.529
+SETUP     negedge:B[4]       posedge:CLK  -41.745:-41.745:-41.745
+SETUP     negedge:B[5]       posedge:CLK  -46.83:-46.83:-46.83
+SETUP     negedge:B[6]       posedge:CLK  -43.288:-43.288:-43.288
+SETUP     negedge:B[7]       posedge:CLK  -43.367:-43.367:-43.367
+SETUP     negedge:B[8]       posedge:CLK  -49.683:-49.683:-49.683
+SETUP     negedge:B[9]       posedge:CLK  -57.778:-57.778:-57.778
+SETUP     negedge:B[10]      posedge:CLK  -19.203:-19.203:-19.203
+SETUP     negedge:B[11]      posedge:CLK  -41.766:-41.766:-41.766
+SETUP     negedge:B[12]      posedge:CLK  -43.713:-43.713:-43.713
+SETUP     negedge:B[13]      posedge:CLK  -13.597:-13.597:-13.597
+SETUP     negedge:B[14]      posedge:CLK  -21.964:-21.964:-21.964
+SETUP     negedge:B[15]      posedge:CLK  -28.196:-28.196:-28.196
+SETUP     negedge:BHOLD      posedge:CLK  264.407:264.407:264.407
+SETUP     negedge:C[0]       posedge:CLK  -65.088:-65.088:-65.088
+SETUP     negedge:C[1]       posedge:CLK  -67.488:-67.488:-67.488
+SETUP     negedge:C[2]       posedge:CLK  -78.958:-78.958:-78.958
+SETUP     negedge:C[3]       posedge:CLK  -74.861:-74.861:-74.861
+SETUP     negedge:C[4]       posedge:CLK  -63.449:-63.449:-63.449
+SETUP     negedge:C[5]       posedge:CLK  -62.561:-62.561:-62.561
+SETUP     negedge:C[6]       posedge:CLK  -70.749:-70.749:-70.749
+SETUP     negedge:C[7]       posedge:CLK  -62.793:-62.793:-62.793
+SETUP     negedge:C[8]       posedge:CLK  -64.198:-64.198:-64.198
+SETUP     negedge:C[9]       posedge:CLK  -69.708:-69.708:-69.708
+SETUP     negedge:C[10]      posedge:CLK  -64.965:-64.965:-64.965
+SETUP     negedge:C[11]      posedge:CLK  -63.909:-63.909:-63.909
+SETUP     negedge:C[12]      posedge:CLK  -71.105:-71.105:-71.105
+SETUP     negedge:C[13]      posedge:CLK  -70.516:-70.516:-70.516
+SETUP     negedge:C[14]      posedge:CLK  -68.482:-68.482:-68.482
+SETUP     negedge:C[15]      posedge:CLK  -86.58:-86.58:-86.58
+SETUP     negedge:CHOLD      posedge:CLK  196.583:196.583:196.583
+SETUP     negedge:D[0]       posedge:CLK  -48.447:-48.447:-48.447
+SETUP     negedge:D[1]       posedge:CLK  -45.711:-45.711:-45.711
+SETUP     negedge:D[2]       posedge:CLK  -39.393:-39.393:-39.393
+SETUP     negedge:D[3]       posedge:CLK  -47.595:-47.595:-47.595
+SETUP     negedge:D[4]       posedge:CLK  -27.159:-27.159:-27.159
+SETUP     negedge:D[5]       posedge:CLK  -40.55:-40.55:-40.55
+SETUP     negedge:D[6]       posedge:CLK  -32.331:-32.331:-32.331
+SETUP     negedge:D[7]       posedge:CLK  -44.414:-44.414:-44.414
+SETUP     negedge:D[8]       posedge:CLK  -90.946:-90.946:-90.946
+SETUP     negedge:D[9]       posedge:CLK  -29.781:-29.781:-29.781
+SETUP     negedge:D[10]      posedge:CLK  -92.825:-92.825:-92.825
+SETUP     negedge:D[11]      posedge:CLK  -94.672:-94.672:-94.672
+SETUP     negedge:D[12]      posedge:CLK  -93.497:-93.497:-93.497
+SETUP     negedge:D[13]      posedge:CLK  -90.431:-90.431:-90.431
+SETUP     negedge:D[14]      posedge:CLK  -31.009:-31.009:-31.009
+SETUP     negedge:D[15]      posedge:CLK  -87.209:-87.209:-87.209
+SETUP     negedge:DHOLD      posedge:CLK  240.354:240.354:240.354
+SETUP     negedge:OHOLDBOT   posedge:CLK  325.706:325.706:325.706
+SETUP     negedge:OHOLDTOP   posedge:CLK  221.298:221.298:221.298
+SETUP     negedge:OLOADBOT   posedge:CLK  343.702:343.702:343.702
+SETUP     negedge:OLOADTOP   posedge:CLK  278.309:278.309:278.309
+SETUP     posedge:A[0]       posedge:CLK  -52.512:-52.512:-52.512
+SETUP     posedge:A[1]       posedge:CLK  -43.696:-43.696:-43.696
+SETUP     posedge:A[2]       posedge:CLK  -56.595:-56.595:-56.595
+SETUP     posedge:A[3]       posedge:CLK  -30.939:-30.939:-30.939
+SETUP     posedge:A[4]       posedge:CLK  -36.245:-36.245:-36.245
+SETUP     posedge:A[5]       posedge:CLK  -25.991:-25.991:-25.991
+SETUP     posedge:A[6]       posedge:CLK  -55.085:-55.085:-55.085
+SETUP     posedge:A[7]       posedge:CLK  -38.191:-38.191:-38.191
+SETUP     posedge:A[8]       posedge:CLK  -40.441:-40.441:-40.441
+SETUP     posedge:A[9]       posedge:CLK  10.648:10.648:10.648
+SETUP     posedge:A[10]      posedge:CLK  -22.249:-22.249:-22.249
+SETUP     posedge:A[11]      posedge:CLK  -30.189:-30.189:-30.189
+SETUP     posedge:A[12]      posedge:CLK  -20.247:-20.247:-20.247
+SETUP     posedge:A[13]      posedge:CLK  -27.668:-27.668:-27.668
+SETUP     posedge:A[14]      posedge:CLK  -6.469:-6.469:-6.469
+SETUP     posedge:A[15]      posedge:CLK  -23.253:-23.253:-23.253
+SETUP     posedge:ADDSUBBOT  posedge:CLK  1413.14:1413.14:1413.14
+SETUP     posedge:ADDSUBTOP  posedge:CLK  1414.31:1414.31:1414.31
+SETUP     posedge:AHOLD      posedge:CLK  228.311:228.311:228.311
+SETUP     posedge:B[0]       posedge:CLK  -36.943:-36.943:-36.943
+SETUP     posedge:B[1]       posedge:CLK  -41.073:-41.073:-41.073
+SETUP     posedge:B[2]       posedge:CLK  -38.514:-38.514:-38.514
+SETUP     posedge:B[3]       posedge:CLK  -48.154:-48.154:-48.154
+SETUP     posedge:B[4]       posedge:CLK  -21.082:-21.082:-21.082
+SETUP     posedge:B[5]       posedge:CLK  -25.633:-25.633:-25.633
+SETUP     posedge:B[6]       posedge:CLK  -19.568:-19.568:-19.568
+SETUP     posedge:B[7]       posedge:CLK  -23.844:-23.844:-23.844
+SETUP     posedge:B[8]       posedge:CLK  -37.375:-37.375:-37.375
+SETUP     posedge:B[9]       posedge:CLK  -43.787:-43.787:-43.787
+SETUP     posedge:B[10]      posedge:CLK  1.876:1.876:1.876
+SETUP     posedge:B[11]      posedge:CLK  -20.63:-20.63:-20.63
+SETUP     posedge:B[12]      posedge:CLK  -16.556:-16.556:-16.556
+SETUP     posedge:B[13]      posedge:CLK  4.909:4.909:4.909
+SETUP     posedge:B[14]      posedge:CLK  -6.688:-6.688:-6.688
+SETUP     posedge:B[15]      posedge:CLK  -10.426:-10.426:-10.426
+SETUP     posedge:BHOLD      posedge:CLK  221.109:221.109:221.109
+SETUP     posedge:C[0]       posedge:CLK  -52.649:-52.649:-52.649
+SETUP     posedge:C[1]       posedge:CLK  -48.462:-48.462:-48.462
+SETUP     posedge:C[2]       posedge:CLK  -56.661:-56.661:-56.661
+SETUP     posedge:C[3]       posedge:CLK  -49.11:-49.11:-49.11
+SETUP     posedge:C[4]       posedge:CLK  -42.401:-42.401:-42.401
+SETUP     posedge:C[5]       posedge:CLK  -48.085:-48.085:-48.085
+SETUP     posedge:C[6]       posedge:CLK  -62.064:-62.064:-62.064
+SETUP     posedge:C[7]       posedge:CLK  -44.84:-44.84:-44.84
+SETUP     posedge:C[8]       posedge:CLK  -51.954:-51.954:-51.954
+SETUP     posedge:C[9]       posedge:CLK  -54.79:-54.79:-54.79
+SETUP     posedge:C[10]      posedge:CLK  -45.967:-45.967:-45.967
+SETUP     posedge:C[11]      posedge:CLK  -43.927:-43.927:-43.927
+SETUP     posedge:C[12]      posedge:CLK  -57.279:-57.279:-57.279
+SETUP     posedge:C[13]      posedge:CLK  -48.749:-48.749:-48.749
+SETUP     posedge:C[14]      posedge:CLK  -54.83:-54.83:-54.83
+SETUP     posedge:C[15]      posedge:CLK  -73.046:-73.046:-73.046
+SETUP     posedge:CHOLD      posedge:CLK  152.68:152.68:152.68
+SETUP     posedge:D[0]       posedge:CLK  -31.413:-31.413:-31.413
+SETUP     posedge:D[1]       posedge:CLK  -22.733:-22.733:-22.733
+SETUP     posedge:D[2]       posedge:CLK  -11.518:-11.518:-11.518
+SETUP     posedge:D[3]       posedge:CLK  -30.675:-30.675:-30.675
+SETUP     posedge:D[4]       posedge:CLK  -15.605:-15.605:-15.605
+SETUP     posedge:D[5]       posedge:CLK  -25.758:-25.758:-25.758
+SETUP     posedge:D[6]       posedge:CLK  -10.128:-10.128:-10.128
+SETUP     posedge:D[7]       posedge:CLK  -30.187:-30.187:-30.187
+SETUP     posedge:D[8]       posedge:CLK  -82.692:-82.692:-82.692
+SETUP     posedge:D[9]       posedge:CLK  -11.422:-11.422:-11.422
+SETUP     posedge:D[10]      posedge:CLK  -74.081:-74.081:-74.081
+SETUP     posedge:D[11]      posedge:CLK  -86.016:-86.016:-86.016
+SETUP     posedge:D[12]      posedge:CLK  -77.487:-77.487:-77.487
+SETUP     posedge:D[13]      posedge:CLK  -62.07:-62.07:-62.07
+SETUP     posedge:D[14]      posedge:CLK  -14.539:-14.539:-14.539
+SETUP     posedge:D[15]      posedge:CLK  -68.431:-68.431:-68.431
+SETUP     posedge:DHOLD      posedge:CLK  193.771:193.771:193.771
+SETUP     posedge:OHOLDBOT   posedge:CLK  261.787:261.787:261.787
+SETUP     posedge:OHOLDTOP   posedge:CLK  160.37:160.37:160.37
+SETUP     posedge:OLOADBOT   posedge:CLK  331.775:331.775:331.775
+SETUP     posedge:OLOADTOP   posedge:CLK  296.117:296.117:296.117
+IOPATH    ADDSUBTOP          ACCUMCO      1601.77:1601.77:1601.77  1891.37:1891.37:1891.37
+IOPATH    ADDSUBTOP          CO           459.731:459.731:459.731  449.378:449.378:449.378
+IOPATH    posedge:CLK        ACCUMCO      2239.12:2239.12:2239.12  2541.75:2541.75:2541.75
+IOPATH    posedge:CLK        CO           2811.52:2811.52:2811.52  3087.74:3087.74:3087.74
+IOPATH    posedge:CLK        O[0]         985.237:985.237:985.237  1024.88:1024.88:1024.88
+IOPATH    posedge:CLK        O[1]         977.986:977.986:977.986  993.269:993.269:993.269
+IOPATH    posedge:CLK        O[2]         1005.7:1005.7:1005.7     1040.73:1040.73:1040.73
+IOPATH    posedge:CLK        O[3]         1085.7:1085.7:1085.7     1124.37:1124.37:1124.37
+IOPATH    posedge:CLK        O[4]         1007.35:1007.35:1007.35  1050.14:1050.14:1050.14
+IOPATH    posedge:CLK        O[5]         1027.97:1027.97:1027.97  1080.45:1080.45:1080.45
+IOPATH    posedge:CLK        O[6]         1150.43:1150.43:1150.43  1219.65:1219.65:1219.65
+IOPATH    posedge:CLK        O[7]         1115.38:1115.38:1115.38  1187.21:1187.21:1187.21
+IOPATH    posedge:CLK        O[8]         1185.68:1185.68:1185.68  1283.36:1283.36:1283.36
+IOPATH    posedge:CLK        O[9]         1188.24:1188.24:1188.24  1310.28:1310.28:1310.28
+IOPATH    posedge:CLK        O[10]        1143.43:1143.43:1143.43  1222.86:1222.86:1222.86
+IOPATH    posedge:CLK        O[11]        1322.61:1322.61:1322.61  1412.98:1412.98:1412.98
+IOPATH    posedge:CLK        O[12]        1143.17:1143.17:1143.17  1210.69:1210.69:1210.69
+IOPATH    posedge:CLK        O[13]        1173.6:1173.6:1173.6     1267.91:1267.91:1267.91
+IOPATH    posedge:CLK        O[14]        1265.57:1265.57:1265.57  1367.23:1367.23:1367.23
+IOPATH    posedge:CLK        O[15]        1278.1:1278.1:1278.1     1375.74:1375.74:1375.74
+IOPATH    posedge:CLK        O[16]        1255.02:1255.02:1255.02  1420.56:1420.56:1420.56
+IOPATH    posedge:CLK        O[17]        1249.55:1249.55:1249.55  1392.63:1392.63:1392.63
+IOPATH    posedge:CLK        O[18]        1289.97:1289.97:1289.97  1478.77:1478.77:1478.77
+IOPATH    posedge:CLK        O[19]        1382.82:1382.82:1382.82  1498.84:1498.84:1498.84
+IOPATH    posedge:CLK        O[20]        1294.38:1294.38:1294.38  1390.33:1390.33:1390.33
+IOPATH    posedge:CLK        O[21]        1171.36:1171.36:1171.36  1250.98:1250.98:1250.98
+IOPATH    posedge:CLK        O[22]        1195.51:1195.51:1195.51  1311.92:1311.92:1311.92
+IOPATH    posedge:CLK        O[23]        1190.05:1190.05:1190.05  1285.92:1285.92:1285.92
+IOPATH    posedge:CLK        O[24]        1160.26:1160.26:1160.26  1242.81:1242.81:1242.81
+IOPATH    posedge:CLK        O[25]        1186.49:1186.49:1186.49  1283.54:1283.54:1283.54
+IOPATH    posedge:CLK        O[26]        1239.65:1239.65:1239.65  1370.67:1370.67:1370.67
+IOPATH    posedge:CLK        O[27]        1151.53:1151.53:1151.53  1227.48:1227.48:1227.48
+IOPATH    posedge:CLK        O[28]        1130.93:1130.93:1130.93  1205.02:1205.02:1205.02
+IOPATH    posedge:CLK        O[29]        1128.28:1128.28:1128.28  1197.65:1197.65:1197.65
+IOPATH    posedge:CLK        O[30]        1095.71:1095.71:1095.71  1142.97:1142.97:1142.97
+IOPATH    posedge:CLK        O[31]        1076.06:1076.06:1076.06  1118.95:1118.95:1118.95
+IOPATH    posedge:CLK        SIGNEXTOUT   1254.72:1254.72:1254.72  1376.9:1376.9:1376.9
+
+CELL SB_MAC16_MUL_S_8X8_ALL_PIPELINE
+HOLD      negedge:A[0]       posedge:CLK  225.246:225.246:225.246
+HOLD      negedge:A[1]       posedge:CLK  221.741:221.741:221.741
+HOLD      negedge:A[2]       posedge:CLK  215.99:215.99:215.99
+HOLD      negedge:A[3]       posedge:CLK  216.2:216.2:216.2
+HOLD      negedge:A[4]       posedge:CLK  217.945:217.945:217.945
+HOLD      negedge:A[5]       posedge:CLK  183.874:183.874:183.874
+HOLD      negedge:A[6]       posedge:CLK  221.084:221.084:221.084
+HOLD      negedge:A[7]       posedge:CLK  210.785:210.785:210.785
+HOLD      negedge:A[8]       posedge:CLK  180.124:180.124:180.124
+HOLD      negedge:A[9]       posedge:CLK  168.61:168.61:168.61
+HOLD      negedge:A[10]      posedge:CLK  177.622:177.622:177.622
+HOLD      negedge:A[11]      posedge:CLK  173.057:173.057:173.057
+HOLD      negedge:A[12]      posedge:CLK  171.708:171.708:171.708
+HOLD      negedge:A[13]      posedge:CLK  171.794:171.794:171.794
+HOLD      negedge:A[14]      posedge:CLK  166.812:166.812:166.812
+HOLD      negedge:A[15]      posedge:CLK  182.546:182.546:182.546
+HOLD      negedge:ADDSUBBOT  posedge:CLK  68.98:68.98:68.98
+HOLD      negedge:ADDSUBTOP  posedge:CLK  64.403:64.403:64.403
+HOLD      negedge:AHOLD      posedge:CLK  203.028:203.028:203.028
+HOLD      negedge:B[0]       posedge:CLK  199.303:199.303:199.303
+HOLD      negedge:B[1]       posedge:CLK  205.007:205.007:205.007
+HOLD      negedge:B[2]       posedge:CLK  194.98:194.98:194.98
+HOLD      negedge:B[3]       posedge:CLK  199.743:199.743:199.743
+HOLD      negedge:B[4]       posedge:CLK  201.607:201.607:201.607
+HOLD      negedge:B[5]       posedge:CLK  188.274:188.274:188.274
+HOLD      negedge:B[6]       posedge:CLK  183.668:183.668:183.668
+HOLD      negedge:B[7]       posedge:CLK  183.88:183.88:183.88
+HOLD      negedge:B[8]       posedge:CLK  181.905:181.905:181.905
+HOLD      negedge:B[9]       posedge:CLK  194.213:194.213:194.213
+HOLD      negedge:B[10]      posedge:CLK  166.869:166.869:166.869
+HOLD      negedge:B[11]      posedge:CLK  178.724:178.724:178.724
+HOLD      negedge:B[12]      posedge:CLK  188.759:188.759:188.759
+HOLD      negedge:B[13]      posedge:CLK  178.851:178.851:178.851
+HOLD      negedge:B[14]      posedge:CLK  169.756:169.756:169.756
+HOLD      negedge:B[15]      posedge:CLK  196.691:196.691:196.691
+HOLD      negedge:BHOLD      posedge:CLK  177.143:177.143:177.143
+HOLD      negedge:C[0]       posedge:CLK  238.019:238.019:238.019
+HOLD      negedge:C[1]       posedge:CLK  241.19:241.19:241.19
+HOLD      negedge:C[2]       posedge:CLK  236.127:236.127:236.127
+HOLD      negedge:C[3]       posedge:CLK  233.38:233.38:233.38
+HOLD      negedge:C[4]       posedge:CLK  234.834:234.834:234.834
+HOLD      negedge:C[5]       posedge:CLK  236.307:236.307:236.307
+HOLD      negedge:C[6]       posedge:CLK  235.288:235.288:235.288
+HOLD      negedge:C[7]       posedge:CLK  240.096:240.096:240.096
+HOLD      negedge:C[8]       posedge:CLK  237.083:237.083:237.083
+HOLD      negedge:C[9]       posedge:CLK  235.184:235.184:235.184
+HOLD      negedge:C[10]      posedge:CLK  233.033:233.033:233.033
+HOLD      negedge:C[11]      posedge:CLK  235.949:235.949:235.949
+HOLD      negedge:C[12]      posedge:CLK  239.169:239.169:239.169
+HOLD      negedge:C[13]      posedge:CLK  235.937:235.937:235.937
+HOLD      negedge:C[14]      posedge:CLK  235.235:235.235:235.235
+HOLD      negedge:C[15]      posedge:CLK  235.549:235.549:235.549
+HOLD      negedge:CHOLD      posedge:CLK  215.429:215.429:215.429
+HOLD      negedge:D[0]       posedge:CLK  190.878:190.878:190.878
+HOLD      negedge:D[1]       posedge:CLK  185.317:185.317:185.317
+HOLD      negedge:D[2]       posedge:CLK  184.113:184.113:184.113
+HOLD      negedge:D[3]       posedge:CLK  180.239:180.239:180.239
+HOLD      negedge:D[4]       posedge:CLK  170.471:170.471:170.471
+HOLD      negedge:D[5]       posedge:CLK  186.749:186.749:186.749
+HOLD      negedge:D[6]       posedge:CLK  186.895:186.895:186.895
+HOLD      negedge:D[7]       posedge:CLK  181.209:181.209:181.209
+HOLD      negedge:D[8]       posedge:CLK  248.742:248.742:248.742
+HOLD      negedge:D[9]       posedge:CLK  172.629:172.629:172.629
+HOLD      negedge:D[10]      posedge:CLK  252.963:252.963:252.963
+HOLD      negedge:D[11]      posedge:CLK  256.257:256.257:256.257
+HOLD      negedge:D[12]      posedge:CLK  253.946:253.946:253.946
+HOLD      negedge:D[13]      posedge:CLK  248.781:248.781:248.781
+HOLD      negedge:D[14]      posedge:CLK  177.772:177.772:177.772
+HOLD      negedge:D[15]      posedge:CLK  259.634:259.634:259.634
+HOLD      negedge:DHOLD      posedge:CLK  233.999:233.999:233.999
+HOLD      negedge:OHOLDBOT   posedge:CLK  149.494:149.494:149.494
+HOLD      negedge:OHOLDTOP   posedge:CLK  157.282:157.282:157.282
+HOLD      negedge:OLOADBOT   posedge:CLK  194.446:194.446:194.446
+HOLD      negedge:OLOADTOP   posedge:CLK  178.665:178.665:178.665
+HOLD      posedge:A[0]       posedge:CLK  174.322:174.322:174.322
+HOLD      posedge:A[1]       posedge:CLK  171.322:171.322:171.322
+HOLD      posedge:A[2]       posedge:CLK  163.459:163.459:163.459
+HOLD      posedge:A[3]       posedge:CLK  162.852:162.852:162.852
+HOLD      posedge:A[4]       posedge:CLK  166.475:166.475:166.475
+HOLD      posedge:A[5]       posedge:CLK  140.361:140.361:140.361
+HOLD      posedge:A[6]       posedge:CLK  167.946:167.946:167.946
+HOLD      posedge:A[7]       posedge:CLK  159.272:159.272:159.272
+HOLD      posedge:A[8]       posedge:CLK  138.172:138.172:138.172
+HOLD      posedge:A[9]       posedge:CLK  129.888:129.888:129.888
+HOLD      posedge:A[10]      posedge:CLK  136.785:136.785:136.785
+HOLD      posedge:A[11]      posedge:CLK  133.088:133.088:133.088
+HOLD      posedge:A[12]      posedge:CLK  133.14:133.14:133.14
+HOLD      posedge:A[13]      posedge:CLK  131.736:131.736:131.736
+HOLD      posedge:A[14]      posedge:CLK  125.36:125.36:125.36
+HOLD      posedge:A[15]      posedge:CLK  139.019:139.019:139.019
+HOLD      posedge:ADDSUBBOT  posedge:CLK  58.029:58.029:58.029
+HOLD      posedge:ADDSUBTOP  posedge:CLK  51.971:51.971:51.971
+HOLD      posedge:AHOLD      posedge:CLK  163.435:163.435:163.435
+HOLD      posedge:B[0]       posedge:CLK  159.227:159.227:159.227
+HOLD      posedge:B[1]       posedge:CLK  161.656:161.656:161.656
+HOLD      posedge:B[2]       posedge:CLK  154.102:154.102:154.102
+HOLD      posedge:B[3]       posedge:CLK  158.267:158.267:158.267
+HOLD      posedge:B[4]       posedge:CLK  161.178:161.178:161.178
+HOLD      posedge:B[5]       posedge:CLK  145.66:145.66:145.66
+HOLD      posedge:B[6]       posedge:CLK  141.52:141.52:141.52
+HOLD      posedge:B[7]       posedge:CLK  142.363:142.363:142.363
+HOLD      posedge:B[8]       posedge:CLK  139.225:139.225:139.225
+HOLD      posedge:B[9]       posedge:CLK  151.105:151.105:151.105
+HOLD      posedge:B[10]      posedge:CLK  129.808:129.808:129.808
+HOLD      posedge:B[11]      posedge:CLK  136.215:136.215:136.215
+HOLD      posedge:B[12]      posedge:CLK  146.332:146.332:146.332
+HOLD      posedge:B[13]      posedge:CLK  137.53:137.53:137.53
+HOLD      posedge:B[14]      posedge:CLK  129.905:129.905:129.905
+HOLD      posedge:B[15]      posedge:CLK  153.884:153.884:153.884
+HOLD      posedge:BHOLD      posedge:CLK  146.57:146.57:146.57
+HOLD      posedge:C[0]       posedge:CLK  196.313:196.313:196.313
+HOLD      posedge:C[1]       posedge:CLK  199.623:199.623:199.623
+HOLD      posedge:C[2]       posedge:CLK  194.01:194.01:194.01
+HOLD      posedge:C[3]       posedge:CLK  193.574:193.574:193.574
+HOLD      posedge:C[4]       posedge:CLK  193.81:193.81:193.81
+HOLD      posedge:C[5]       posedge:CLK  195.343:195.343:195.343
+HOLD      posedge:C[6]       posedge:CLK  189.812:189.812:189.812
+HOLD      posedge:C[7]       posedge:CLK  197.702:197.702:197.702
+HOLD      posedge:C[8]       posedge:CLK  193.862:193.862:193.862
+HOLD      posedge:C[9]       posedge:CLK  191.001:191.001:191.001
+HOLD      posedge:C[10]      posedge:CLK  188.338:188.338:188.338
+HOLD      posedge:C[11]      posedge:CLK  193.318:193.318:193.318
+HOLD      posedge:C[12]      posedge:CLK  197.393:197.393:197.393
+HOLD      posedge:C[13]      posedge:CLK  192.921:192.921:192.921
+HOLD      posedge:C[14]      posedge:CLK  190.495:190.495:190.495
+HOLD      posedge:C[15]      posedge:CLK  194.588:194.588:194.588
+HOLD      posedge:CHOLD      posedge:CLK  184.582:184.582:184.582
+HOLD      posedge:D[0]       posedge:CLK  149.936:149.936:149.936
+HOLD      posedge:D[1]       posedge:CLK  143.924:143.924:143.924
+HOLD      posedge:D[2]       posedge:CLK  138.821:138.821:138.821
+HOLD      posedge:D[3]       posedge:CLK  136.464:136.464:136.464
+HOLD      posedge:D[4]       posedge:CLK  129.506:129.506:129.506
+HOLD      posedge:D[5]       posedge:CLK  144.025:144.025:144.025
+HOLD      posedge:D[6]       posedge:CLK  147.529:147.529:147.529
+HOLD      posedge:D[7]       posedge:CLK  140.476:140.476:140.476
+HOLD      posedge:D[8]       posedge:CLK  205.497:205.497:205.497
+HOLD      posedge:D[9]       posedge:CLK  133.806:133.806:133.806
+HOLD      posedge:D[10]      posedge:CLK  204.539:204.539:204.539
+HOLD      posedge:D[11]      posedge:CLK  209.024:209.024:209.024
+HOLD      posedge:D[12]      posedge:CLK  206.327:206.327:206.327
+HOLD      posedge:D[13]      posedge:CLK  201.378:201.378:201.378
+HOLD      posedge:D[14]      posedge:CLK  138.606:138.606:138.606
+HOLD      posedge:D[15]      posedge:CLK  210.689:210.689:210.689
+HOLD      posedge:DHOLD      posedge:CLK  196.151:196.151:196.151
+HOLD      posedge:OHOLDBOT   posedge:CLK  181.224:181.224:181.224
+HOLD      posedge:OHOLDTOP   posedge:CLK  186.884:186.884:186.884
+HOLD      posedge:OLOADBOT   posedge:CLK  171.851:171.851:171.851
+HOLD      posedge:OLOADTOP   posedge:CLK  163.45:163.45:163.45
+RECOVERY  negedge:IRSTBOT    posedge:CLK  797.559:797.559:797.559
+RECOVERY  negedge:IRSTTOP    posedge:CLK  849.107:849.107:849.107
+RECOVERY  negedge:ORSTBOT    posedge:CLK  615.935:615.935:615.935
+RECOVERY  negedge:ORSTTOP    posedge:CLK  711.505:711.505:711.505
+RECOVERY  posedge:IRSTBOT    posedge:CLK  0:0:0
+RECOVERY  posedge:IRSTTOP    posedge:CLK  0:0:0
+RECOVERY  posedge:ORSTBOT    posedge:CLK  0:0:0
+RECOVERY  posedge:ORSTTOP    posedge:CLK  0:0:0
+REMOVAL   negedge:IRSTBOT    posedge:CLK  0:0:0
+REMOVAL   negedge:IRSTTOP    posedge:CLK  0:0:0
+REMOVAL   negedge:ORSTBOT    posedge:CLK  0:0:0
+REMOVAL   negedge:ORSTTOP    posedge:CLK  0:0:0
+REMOVAL   posedge:IRSTBOT    posedge:CLK  0:0:0
+REMOVAL   posedge:IRSTTOP    posedge:CLK  0:0:0
+REMOVAL   posedge:ORSTBOT    posedge:CLK  0:0:0
+REMOVAL   posedge:ORSTTOP    posedge:CLK  0:0:0
+SETUP     negedge:A[0]       posedge:CLK  -77.471:-77.471:-77.471
+SETUP     negedge:A[1]       posedge:CLK  -71.877:-71.877:-71.877
+SETUP     negedge:A[2]       posedge:CLK  -73.986:-73.986:-73.986
+SETUP     negedge:A[3]       posedge:CLK  -64.635:-64.635:-64.635
+SETUP     negedge:A[4]       posedge:CLK  -67.234:-67.234:-67.234
+SETUP     negedge:A[5]       posedge:CLK  -49.594:-49.594:-49.594
+SETUP     negedge:A[6]       posedge:CLK  -75.652:-75.652:-75.652
+SETUP     negedge:A[7]       posedge:CLK  -62.293:-62.293:-62.293
+SETUP     negedge:A[8]       posedge:CLK  -47.478:-47.478:-47.478
+SETUP     negedge:A[9]       posedge:CLK  -15.9:-15.9:-15.9
+SETUP     negedge:A[10]      posedge:CLK  -41.604:-41.604:-41.604
+SETUP     negedge:A[11]      posedge:CLK  -42.004:-42.004:-42.004
+SETUP     negedge:A[12]      posedge:CLK  -38.212:-38.212:-38.212
+SETUP     negedge:A[13]      posedge:CLK  -39.344:-39.344:-39.344
+SETUP     negedge:A[14]      posedge:CLK  -22.509:-22.509:-22.509
+SETUP     negedge:A[15]      posedge:CLK  -42.389:-42.389:-42.389
+SETUP     negedge:ADDSUBBOT  posedge:CLK  1371.05:1371.05:1371.05
+SETUP     negedge:ADDSUBTOP  posedge:CLK  1376.18:1376.18:1376.18
+SETUP     negedge:AHOLD      posedge:CLK  285.142:285.142:285.142
+SETUP     negedge:B[0]       posedge:CLK  -54.518:-54.518:-54.518
+SETUP     negedge:B[1]       posedge:CLK  -54.051:-54.051:-54.051
+SETUP     negedge:B[2]       posedge:CLK  -54.579:-54.579:-54.579
+SETUP     negedge:B[3]       posedge:CLK  -63.621:-63.621:-63.621
+SETUP     negedge:B[4]       posedge:CLK  -41.744:-41.744:-41.744
+SETUP     negedge:B[5]       posedge:CLK  -46.918:-46.918:-46.918
+SETUP     negedge:B[6]       posedge:CLK  -43.288:-43.288:-43.288
+SETUP     negedge:B[7]       posedge:CLK  -43.367:-43.367:-43.367
+SETUP     negedge:B[8]       posedge:CLK  -49.686:-49.686:-49.686
+SETUP     negedge:B[9]       posedge:CLK  -57.778:-57.778:-57.778
+SETUP     negedge:B[10]      posedge:CLK  -19.203:-19.203:-19.203
+SETUP     negedge:B[11]      posedge:CLK  -41.766:-41.766:-41.766
+SETUP     negedge:B[12]      posedge:CLK  -43.713:-43.713:-43.713
+SETUP     negedge:B[13]      posedge:CLK  -13.597:-13.597:-13.597
+SETUP     negedge:B[14]      posedge:CLK  -21.966:-21.966:-21.966
+SETUP     negedge:B[15]      posedge:CLK  -28.205:-28.205:-28.205
+SETUP     negedge:BHOLD      posedge:CLK  264.407:264.407:264.407
+SETUP     negedge:C[0]       posedge:CLK  171.759:171.759:171.759
+SETUP     negedge:C[1]       posedge:CLK  162.194:162.194:162.194
+SETUP     negedge:C[2]       posedge:CLK  149.402:149.402:149.402
+SETUP     negedge:C[3]       posedge:CLK  138.859:138.859:138.859
+SETUP     negedge:C[4]       posedge:CLK  147.951:147.951:147.951
+SETUP     negedge:C[5]       posedge:CLK  130.538:130.538:130.538
+SETUP     negedge:C[6]       posedge:CLK  161.699:161.699:161.699
+SETUP     negedge:C[7]       posedge:CLK  148.388:148.388:148.388
+SETUP     negedge:C[8]       posedge:CLK  145.784:145.784:145.784
+SETUP     negedge:C[9]       posedge:CLK  124.056:124.056:124.056
+SETUP     negedge:C[10]      posedge:CLK  136.101:136.101:136.101
+SETUP     negedge:C[11]      posedge:CLK  151.454:151.454:151.454
+SETUP     negedge:C[12]      posedge:CLK  138.56:138.56:138.56
+SETUP     negedge:C[13]      posedge:CLK  152.873:152.873:152.873
+SETUP     negedge:C[14]      posedge:CLK  142.095:142.095:142.095
+SETUP     negedge:C[15]      posedge:CLK  137.211:137.211:137.211
+SETUP     negedge:CHOLD      posedge:CLK  196.56:196.56:196.56
+SETUP     negedge:D[0]       posedge:CLK  219.648:219.648:219.648
+SETUP     negedge:D[1]       posedge:CLK  188.401:188.401:188.401
+SETUP     negedge:D[2]       posedge:CLK  174.237:174.237:174.237
+SETUP     negedge:D[3]       posedge:CLK  135.109:135.109:135.109
+SETUP     negedge:D[4]       posedge:CLK  174.314:174.314:174.314
+SETUP     negedge:D[5]       posedge:CLK  191.513:191.513:191.513
+SETUP     negedge:D[6]       posedge:CLK  155.322:155.322:155.322
+SETUP     negedge:D[7]       posedge:CLK  149.74:149.74:149.74
+SETUP     negedge:D[8]       posedge:CLK  143.368:143.368:143.368
+SETUP     negedge:D[9]       posedge:CLK  147.15:147.15:147.15
+SETUP     negedge:D[10]      posedge:CLK  166.267:166.267:166.267
+SETUP     negedge:D[11]      posedge:CLK  143.41:143.41:143.41
+SETUP     negedge:D[12]      posedge:CLK  141.628:141.628:141.628
+SETUP     negedge:D[13]      posedge:CLK  109.927:109.927:109.927
+SETUP     negedge:D[14]      posedge:CLK  170.776:170.776:170.776
+SETUP     negedge:D[15]      posedge:CLK  107.669:107.669:107.669
+SETUP     negedge:DHOLD      posedge:CLK  240.311:240.311:240.311
+SETUP     negedge:OHOLDBOT   posedge:CLK  313.047:313.047:313.047
+SETUP     negedge:OHOLDTOP   posedge:CLK  221.054:221.054:221.054
+SETUP     negedge:OLOADBOT   posedge:CLK  342.935:342.935:342.935
+SETUP     negedge:OLOADTOP   posedge:CLK  278.583:278.583:278.583
+SETUP     posedge:A[0]       posedge:CLK  -52.512:-52.512:-52.512
+SETUP     posedge:A[1]       posedge:CLK  -43.696:-43.696:-43.696
+SETUP     posedge:A[2]       posedge:CLK  -56.595:-56.595:-56.595
+SETUP     posedge:A[3]       posedge:CLK  -30.939:-30.939:-30.939
+SETUP     posedge:A[4]       posedge:CLK  -36.245:-36.245:-36.245
+SETUP     posedge:A[5]       posedge:CLK  -25.999:-25.999:-25.999
+SETUP     posedge:A[6]       posedge:CLK  -55.085:-55.085:-55.085
+SETUP     posedge:A[7]       posedge:CLK  -39.895:-39.895:-39.895
+SETUP     posedge:A[8]       posedge:CLK  -40.441:-40.441:-40.441
+SETUP     posedge:A[9]       posedge:CLK  10.648:10.648:10.648
+SETUP     posedge:A[10]      posedge:CLK  -22.249:-22.249:-22.249
+SETUP     posedge:A[11]      posedge:CLK  -30.189:-30.189:-30.189
+SETUP     posedge:A[12]      posedge:CLK  -20.247:-20.247:-20.247
+SETUP     posedge:A[13]      posedge:CLK  -27.668:-27.668:-27.668
+SETUP     posedge:A[14]      posedge:CLK  -6.469:-6.469:-6.469
+SETUP     posedge:A[15]      posedge:CLK  -23.253:-23.253:-23.253
+SETUP     posedge:ADDSUBBOT  posedge:CLK  1413.14:1413.14:1413.14
+SETUP     posedge:ADDSUBTOP  posedge:CLK  1413.94:1413.94:1413.94
+SETUP     posedge:AHOLD      posedge:CLK  228.311:228.311:228.311
+SETUP     posedge:B[0]       posedge:CLK  -36.945:-36.945:-36.945
+SETUP     posedge:B[1]       posedge:CLK  -41.073:-41.073:-41.073
+SETUP     posedge:B[2]       posedge:CLK  -38.814:-38.814:-38.814
+SETUP     posedge:B[3]       posedge:CLK  -48.415:-48.415:-48.415
+SETUP     posedge:B[4]       posedge:CLK  -21.081:-21.081:-21.081
+SETUP     posedge:B[5]       posedge:CLK  -25.633:-25.633:-25.633
+SETUP     posedge:B[6]       posedge:CLK  -19.568:-19.568:-19.568
+SETUP     posedge:B[7]       posedge:CLK  -23.845:-23.845:-23.845
+SETUP     posedge:B[8]       posedge:CLK  -37.373:-37.373:-37.373
+SETUP     posedge:B[9]       posedge:CLK  -43.785:-43.785:-43.785
+SETUP     posedge:B[10]      posedge:CLK  1.875:1.875:1.875
+SETUP     posedge:B[11]      posedge:CLK  -20.63:-20.63:-20.63
+SETUP     posedge:B[12]      posedge:CLK  -16.556:-16.556:-16.556
+SETUP     posedge:B[13]      posedge:CLK  4.909:4.909:4.909
+SETUP     posedge:B[14]      posedge:CLK  -6.683:-6.683:-6.683
+SETUP     posedge:B[15]      posedge:CLK  -10.423:-10.423:-10.423
+SETUP     posedge:BHOLD      posedge:CLK  221.109:221.109:221.109
+SETUP     posedge:C[0]       posedge:CLK  152.163:152.163:152.163
+SETUP     posedge:C[1]       posedge:CLK  159.364:159.364:159.364
+SETUP     posedge:C[2]       posedge:CLK  140.319:140.319:140.319
+SETUP     posedge:C[3]       posedge:CLK  146.996:146.996:146.996
+SETUP     posedge:C[4]       posedge:CLK  146.059:146.059:146.059
+SETUP     posedge:C[5]       posedge:CLK  122.886:122.886:122.886
+SETUP     posedge:C[6]       posedge:CLK  148.269:148.269:148.269
+SETUP     posedge:C[7]       posedge:CLK  138.751:138.751:138.751
+SETUP     posedge:C[8]       posedge:CLK  133.598:133.598:133.598
+SETUP     posedge:C[9]       posedge:CLK  102.902:102.902:102.902
+SETUP     posedge:C[10]      posedge:CLK  122.447:122.447:122.447
+SETUP     posedge:C[11]      posedge:CLK  130.205:130.205:130.205
+SETUP     posedge:C[12]      posedge:CLK  119.61:119.61:119.61
+SETUP     posedge:C[13]      posedge:CLK  142.815:142.815:142.815
+SETUP     posedge:C[14]      posedge:CLK  125.506:125.506:125.506
+SETUP     posedge:C[15]      posedge:CLK  132.911:132.911:132.911
+SETUP     posedge:CHOLD      posedge:CLK  152.68:152.68:152.68
+SETUP     posedge:D[0]       posedge:CLK  193.623:193.623:193.623
+SETUP     posedge:D[1]       posedge:CLK  190.973:190.973:190.973
+SETUP     posedge:D[2]       posedge:CLK  162.722:162.722:162.722
+SETUP     posedge:D[3]       posedge:CLK  127.911:127.911:127.911
+SETUP     posedge:D[4]       posedge:CLK  166.937:166.937:166.937
+SETUP     posedge:D[5]       posedge:CLK  188.082:188.082:188.082
+SETUP     posedge:D[6]       posedge:CLK  131.918:131.918:131.918
+SETUP     posedge:D[7]       posedge:CLK  153.25:153.25:153.25
+SETUP     posedge:D[8]       posedge:CLK  129.934:129.934:129.934
+SETUP     posedge:D[9]       posedge:CLK  140.934:140.934:140.934
+SETUP     posedge:D[10]      posedge:CLK  149.013:149.013:149.013
+SETUP     posedge:D[11]      posedge:CLK  126.798:126.798:126.798
+SETUP     posedge:D[12]      posedge:CLK  132.223:132.223:132.223
+SETUP     posedge:D[13]      posedge:CLK  105.304:105.304:105.304
+SETUP     posedge:D[14]      posedge:CLK  159.392:159.392:159.392
+SETUP     posedge:D[15]      posedge:CLK  115.627:115.627:115.627
+SETUP     posedge:DHOLD      posedge:CLK  193.767:193.767:193.767
+SETUP     posedge:OHOLDBOT   posedge:CLK  254.785:254.785:254.785
+SETUP     posedge:OHOLDTOP   posedge:CLK  160.17:160.17:160.17
+SETUP     posedge:OLOADBOT   posedge:CLK  331.518:331.518:331.518
+SETUP     posedge:OLOADTOP   posedge:CLK  295.649:295.649:295.649
+IOPATH    ADDSUBTOP          ACCUMCO      1601.27:1601.27:1601.27  1890.88:1890.88:1890.88
+IOPATH    ADDSUBTOP          CO           459.245:459.245:459.245  449.106:449.106:449.106
+IOPATH    posedge:CLK        ACCUMCO      2367.66:2367.66:2367.66  2654.83:2654.83:2654.83
+IOPATH    posedge:CLK        CO           2940.07:2940.07:2940.07  3200.82:3200.82:3200.82
+IOPATH    posedge:CLK        O[0]         1179.35:1179.35:1179.35  1321.62:1321.62:1321.62
+IOPATH    posedge:CLK        O[1]         1358.96:1358.96:1358.96  1504.24:1504.24:1504.24
+IOPATH    posedge:CLK        O[2]         1349.86:1349.86:1349.86  1494.01:1494.01:1494.01
+IOPATH    posedge:CLK        O[3]         1313.98:1313.98:1313.98  1429.72:1429.72:1429.72
+IOPATH    posedge:CLK        O[4]         1306.92:1306.92:1306.92  1419.95:1419.95:1419.95
+IOPATH    posedge:CLK        O[5]         1326.35:1326.35:1326.35  1454.62:1454.62:1454.62
+IOPATH    posedge:CLK        O[6]         1307.55:1307.55:1307.55  1435.93:1435.93:1435.93
+IOPATH    posedge:CLK        O[7]         1157.83:1157.83:1157.83  1265.92:1265.92:1265.92
+IOPATH    posedge:CLK        O[8]         1334.42:1334.42:1334.42  1399.24:1399.24:1399.24
+IOPATH    posedge:CLK        O[9]         1261.2:1261.2:1261.2     1356.27:1356.27:1356.27
+IOPATH    posedge:CLK        O[10]        1445.58:1445.58:1445.58  1524.86:1524.86:1524.86
+IOPATH    posedge:CLK        O[11]        1424.71:1424.71:1424.71  1498.96:1498.96:1498.96
+IOPATH    posedge:CLK        O[12]        1354.42:1354.42:1354.42  1425.22:1425.22:1425.22
+IOPATH    posedge:CLK        O[13]        1289.9:1289.9:1289.9     1361.6:1361.6:1361.6
+IOPATH    posedge:CLK        O[14]        1525.29:1525.29:1525.29  1600.58:1600.58:1600.58
+IOPATH    posedge:CLK        O[15]        1356.99:1356.99:1356.99  1434.44:1434.44:1434.44
+IOPATH    posedge:CLK        O[16]        1249.06:1249.06:1249.06  1356.38:1356.38:1356.38
+IOPATH    posedge:CLK        O[17]        1252.24:1252.24:1252.24  1397.15:1397.15:1397.15
+IOPATH    posedge:CLK        O[18]        1242.81:1242.81:1242.81  1385.48:1385.48:1385.48
+IOPATH    posedge:CLK        O[19]        1399.15:1399.15:1399.15  1517.13:1517.13:1517.13
+IOPATH    posedge:CLK        O[20]        1324.95:1324.95:1324.95  1429.32:1429.32:1429.32
+IOPATH    posedge:CLK        O[21]        1219.67:1219.67:1219.67  1324.57:1324.57:1324.57
+IOPATH    posedge:CLK        O[22]        1195.6:1195.6:1195.6     1306.86:1306.86:1306.86
+IOPATH    posedge:CLK        O[23]        1164.82:1164.82:1164.82  1273.39:1273.39:1273.39
+IOPATH    posedge:CLK        O[24]        1237.56:1237.56:1237.56  1359.01:1359.01:1359.01
+IOPATH    posedge:CLK        O[25]        1222.51:1222.51:1222.51  1318.76:1318.76:1318.76
+IOPATH    posedge:CLK        O[26]        1212.58:1212.58:1212.58  1303.17:1303.17:1303.17
+IOPATH    posedge:CLK        O[27]        1227.24:1227.24:1227.24  1320.96:1320.96:1320.96
+IOPATH    posedge:CLK        O[28]        1241.58:1241.58:1241.58  1342.8:1342.8:1342.8
+IOPATH    posedge:CLK        O[29]        1309.42:1309.42:1309.42  1396.29:1396.29:1396.29
+IOPATH    posedge:CLK        O[30]        1279.47:1279.47:1279.47  1399.54:1399.54:1399.54
+IOPATH    posedge:CLK        O[31]        1278.71:1278.71:1278.71  1388.55:1388.55:1388.55
+IOPATH    posedge:CLK        SIGNEXTOUT   1465.45:1465.45:1465.45  1431.72:1431.72:1431.72
 
 CELL SB_MAC16_MUL_S_8X8_BYPASS
 IOPATH  A[0]       ACCUMCO  1474.89:1474.89:1474.89  1932.61:1932.61:1932.61

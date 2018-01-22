@@ -104,7 +104,8 @@ std::set<int> declared_nets;
 int dangling_cnt = 0;
 
 std::map<std::string, std::vector<std::pair<int, int>>> logic_tile_bits,
-		io_tile_bits, ramb_tile_bits, ramt_tile_bits;
+		io_tile_bits, ramb_tile_bits, ramt_tile_bits, ipcon_tile_bits, dsp0_tile_bits,
+		dsp1_tile_bits, dsp2_tile_bits, dsp3_tile_bits;
 
 std::string vstringf(const char *fmt, va_list ap)
 {
@@ -432,7 +433,8 @@ void read_chipdb()
 				gbufpin.push_back(items);
 		}
 
-		if (mode == ".logic_tile_bits" || mode == ".io_tile_bits" || mode == ".ramb_tile_bits" || mode == ".ramt_tile_bits") {
+		if (mode == ".logic_tile_bits" || mode == ".io_tile_bits" || mode == ".ramb_tile_bits" || mode == ".ramt_tile_bits" ||
+				mode == ".ipcon_tile_bits" || mode == ".dsp0_tile_bits" || mode == ".dsp1_tile_bits" || mode == ".dsp2_tile_bits" || mode == ".dsp3_tile_bits") {
 			std::vector<std::pair<int, int>> items;
 			while (1) {
 				const char *s = strtok(nullptr, " \t\r\n");
@@ -451,6 +453,16 @@ void read_chipdb()
 				ramb_tile_bits[tok] = items;
 			if (mode == ".ramt_tile_bits")
 				ramt_tile_bits[tok] = items;
+			if (mode == ".ipcon_tile_bits")
+				ipcon_tile_bits[tok] = items;
+			if (mode == ".dsp0_tile_bits")
+				dsp0_tile_bits[tok] = items;
+			if (mode == ".dsp1_tile_bits")
+				dsp1_tile_bits[tok] = items;
+			if (mode == ".dsp2_tile_bits")
+				dsp2_tile_bits[tok] = items;
+			if (mode == ".dsp3_tile_bits")
+				dsp3_tile_bits[tok] = items;
 		}
 
 		if (mode == ".extra_bits") {
