@@ -107,6 +107,9 @@ std::map<std::string, std::vector<std::pair<int, int>>> logic_tile_bits,
 		io_tile_bits, ramb_tile_bits, ramt_tile_bits, ipcon_tile_bits, dsp0_tile_bits,
 		dsp1_tile_bits, dsp2_tile_bits, dsp3_tile_bits;
 
+std::map<std::tuple<std::string, int, int, int>,
+				 std::map<std::string, std::tuple<int, int, std::string>>> extra_cells;
+ 
 std::string vstringf(const char *fmt, va_list ap)
 {
 	std::string string;
@@ -329,8 +332,9 @@ void read_chipdb()
 
 	std::string mode;
 	int current_net = -1;
-	int tile_x = -1, tile_y = -1;
+	int tile_x = -1, tile_y = -1, cell_z = -1;
 	std::string thiscfg;
+	std::string cellname;
 
 	std::vector<std::vector<int>> gbufin;
 	std::vector<std::vector<int>> gbufpin;
@@ -375,6 +379,22 @@ void read_chipdb()
 					assert(rc == 2);
 					thiscfg.push_back(config_bits[tile_x][tile_y][bit_row][bit_col] ? '1' : '0');
 				}
+				continue;
+			}
+
+			if (mode == ".extra_cell") {
+				tile_x = atoi(strtok(nullptr, " \t\r\n"));
+				tile_y = atoi(strtok(nullptr, " \t\r\n"));
+				// For legacy reasons, extra_cell may be X Y name or X Y Z name
+				const char *z_or_name = strtok(nullptr, " \t\r\n");
+				if(isdigit(z_or_name[0])) {
+					cell_z = atoi(z_or_name);
+					cellname = std::string(strtok(nullptr, " \t\r\n"));
+				} else {
+					cell_z = 0;
+					cellname = std::string(z_or_name);
+				}
+				extra_cells[std::make_tuple(cellname, tile_x, tile_y, cell_z)] = {};
 				continue;
 			}
 
@@ -472,6 +492,14 @@ void read_chipdb()
 			std::tuple<int, int, int> key(b, x, y);
 			if (extra_bits.count(key))
 				extrabitfunc.insert(tok);
+		}
+
+		if(mode == ".extra_cell") {
+			std::string key = std::string(tok);
+			int x = atoi(strtok(nullptr, " \t\r\n"));
+			int y = atoi(strtok(nullptr, " \t\r\n"));
+			std::string name = std::string(strtok(nullptr, " \t\r\n"));
+			extra_cells[make_tuple(cellname, tile_x, tile_y, cell_z)][key] = make_tuple(x, y, name);
 		}
 	}
 
@@ -658,7 +686,28 @@ const std::set<std::string> &get_inports(std::string cell_type)
 			inports_map["SB_RAM40_4K"].insert(stringf("RADDR[%d]", i));
 			inports_map["SB_RAM40_4K"].insert(stringf("WADDR[%d]", i));
 		}
+		
+		inports_map["SB_MAC16"] = { "CLK", "CE", "AHOLD", "BHOLD", "CHOLD", "DHOLD", "IRSTTOP", "IRSTBOT", "ORSTTOP", "ORSTBOT",
+																"OLOADTOP", "OLOADBOT", "ADDSUBTOP", "ADDSUBBOT", "OHOLDTOP", "OHOLDBOT", "CI", "ACCUMCI",
+																"SIGNEXTIN"};
+		for (int i = 0; i < 16; i++) {
+			inports_map["SB_MAC16"].insert(stringf("C[%d]", i));
+			inports_map["SB_MAC16"].insert(stringf("A[%d]", i));
+			inports_map["SB_MAC16"].insert(stringf("B[%d]", i));
+			inports_map["SB_MAC16"].insert(stringf("D[%d]", i));
+		}
+		
+		inports_map["SB_SPRAM256KA"] = { "WREN", "CHIPSELECT", "CLOCK", "STANDBY", "SLEEP", "POWEROFF",
+																		 "MASKWREN[0]", "MASKWREN[1]", "MASKWREN[2]", "MASKWREN[3]"};
+		
+	  for (int i = 0; i < 16; i++) {
+			inports_map["SB_SPRAM256KA"].insert(stringf("DATAIN[%d]", i));
+		}
 
+		for (int i = 0; i < 14; i++) {
+			inports_map["SB_SPRAM256KA"].insert(stringf("ADDRESS[%d]", i));
+		}
+		
 		inports_map["INTERCONN"] = { "I" };
 	}
 
