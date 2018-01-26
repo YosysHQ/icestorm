@@ -710,12 +710,19 @@ const std::set<std::string> &get_inports(std::string cell_type)
 		
 		inports_map["INTERCONN"] = { "I" };
 	}
-
+	
+	
+	std::string dsp_prefix = "SB_MAC16";
+	
+	if(cell_type.substr(0, dsp_prefix.length()) == dsp_prefix)
+		cell_type = "SB_MAC16";
+	
 	if (inports_map.count(cell_type) == 0) {
 		fprintf(stderr, "Missing entry in inports_map for cell type %s!\n", cell_type.c_str());
 		exit(1);
 	}
 
+	
 	return inports_map.at(cell_type);
 }
 
@@ -1243,6 +1250,154 @@ std::string make_lc40(int x, int y, int z)
 	return cell;
 }
 
+bool get_dsp_ip_cbit(std::tuple<int, int, std::string> cbit) {
+	std::string name = "IpConfig." + std::get<2>(cbit);
+	// DSP0 contains all CBITs, the same as any DSP/IP tile
+	if(dsp0_tile_bits.count(name)) {
+		auto bitpos = dsp0_tile_bits.at(name)[0];
+		return config_bits[std::get<0>(cbit)][std::get<1>(cbit)][bitpos.first][bitpos.second];
+	}
+	return false;
+}
+
+std::string make_dsp_ip(int x, int y, std::string net, std::string &primnet)
+{	
+	std::tuple<int, int, std::string> ecnet(x, y, net);
+	std::tuple<std::string, int, int, int> key("", -1, -1, -1);
+	bool found = false;
+	for(auto ec : extra_cells) {
+		for(auto entry : ec.second) {
+			if(entry.second == ecnet) {
+				key = ec.first;
+				primnet = entry.first;
+				found = true;
+				break;
+			}
+		}
+	}
+	if(!found) {
+		fprintf(stderr, "Error: net (%d, %d, '%s') does not correspond to any IP\n", x, y, net.c_str());
+		exit(1);
+	}
+	int cx, cy, cz;
+	std::string ectype;
+	std::tie(ectype, cx, cy, cz) = key;
+	
+	auto cell = stringf("%s_%d_%d_%d", ectype.c_str(), cx, cy, cz);
+
+	if (netlist_cell_types.count(cell))
+		return cell;
+		
+	if(ectype == "MAC16") {
+		// Given the few actual unique timing possibilites, only look at a subset
+		// of the CBITs to pick the closest cell type from a timing point of view
+		std::string dsptype = "";
+		bool mode_8x8 = get_dsp_ip_cbit(extra_cells[key].at("MODE_8x8"));
+		// It seems no different between any pipeline mode, so pick pipelining based
+		// on one of the bits
+		bool pipeline = get_dsp_ip_cbit(extra_cells[key].at("A_REG"));
+		int botout = (get_dsp_ip_cbit(extra_cells[key].at("BOTOUTPUT_SELECT_1")) << 1) | get_dsp_ip_cbit(extra_cells[key].at("BOTOUTPUT_SELECT_0"));
+		int botlwrin = (get_dsp_ip_cbit(extra_cells[key].at("BOTADDSUB_LOWERINPUT_1")) << 1) | get_dsp_ip_cbit(extra_cells[key].at("BOTADDSUB_LOWERINPUT_0"));
+		bool botuprin = get_dsp_ip_cbit(extra_cells[key].at("BOTADDSUB_UPPERINPUT"));
+		int topcarry = (get_dsp_ip_cbit(extra_cells[key].at("TOPADDSUB_CARRYSELECT_1")) << 1) | get_dsp_ip_cbit(extra_cells[key].at("TOPADDSUB_CARRYSELECT_0"));
+		// Worst case default
+		std::string basename = "SB_MAC16_MUL_U_16X16";
+		// Note: signedness is ignored as it seems to have no effect
+		if(mode_8x8 && !botuprin && (botlwrin == 0) && (botout == 2)) {
+			basename = "SB_MAC16_MUL_U_8X8";
+		} else if (!mode_8x8 && !botuprin && (botlwrin == 0) && (botout == 3)) {
+			basename = "SB_MAC16_MUL_U_16X16";
+		} else if (mode_8x8 && !botuprin && (botlwrin == 1) && (botout == 1)) {
+			basename = "SB_MAC16_MAC_U_8X8";
+		} else if (!mode_8x8 && !botuprin && (botlwrin == 2) && (botout == 1)) {
+			basename = "SB_MAC16_MAC_U_16X16";
+		} else if (mode_8x8 && !botuprin && (botlwrin == 0) && (botout == 1) && (topcarry == 0)) {
+			basename = "SB_MAC16_ACC_U_16P16";
+		} else if (mode_8x8 && !botuprin && (botlwrin == 0) && (botout == 1) && (topcarry == 2)) {
+			basename = "SB_MAC16_ACC_U_32P32";
+		} else if (mode_8x8 && botuprin && (botlwrin == 0) && (topcarry == 0)) {
+			basename = "SB_MAC16_ADS_U_16P16";
+		} else if (mode_8x8 && botuprin && (botlwrin == 0) && (topcarry == 2)) {
+			basename = "SB_MAC16_ADS_U_32P32";
+		} else if (mode_8x8 && botuprin && (botlwrin == 1)) {
+			basename = "SB_MAC16_MAS_U_8X8";
+		} else if (!mode_8x8 && botuprin && (botlwrin == 2)) {
+			basename = "SB_MAC16_MAS_U_16X16";
+		} else {
+			fprintf(stderr, "Warning: detected unknown/unsupported DSP config, defaulting to 16x16 MUL.\n");
+		}
+		dsptype = basename + (pipeline ? "_ALL_PIPELINE" : "_BYPASS");
+		netlist_cell_types[cell] = dsptype;
+		
+		for (int i = 0; i < 16; i++) {
+			netlist_cell_ports[cell][stringf("C[%d]", i)] = "gnd";
+			netlist_cell_ports[cell][stringf("A[%d]", i)] = "gnd";
+			netlist_cell_ports[cell][stringf("B[%d]", i)] = "gnd";
+			netlist_cell_ports[cell][stringf("D[%d]", i)] = "gnd";
+		}
+		
+		netlist_cell_ports[cell]["CLK"] = "";
+		netlist_cell_ports[cell]["CE"] = "";
+		netlist_cell_ports[cell]["AHOLD"] = "gnd";
+		netlist_cell_ports[cell]["BHOLD"] = "gnd";
+		netlist_cell_ports[cell]["CHOLD"] = "gnd";
+		netlist_cell_ports[cell]["DHOLD"] = "gnd";
+
+		netlist_cell_ports[cell]["IRSTTOP"] = "";
+		netlist_cell_ports[cell]["IRSTBOT"] = "";
+		netlist_cell_ports[cell]["ORSTTOP"] = "";
+		netlist_cell_ports[cell]["ORSTBOT"] = "";
+
+		netlist_cell_ports[cell]["OLOADTOP"] = "gnd";
+		netlist_cell_ports[cell]["OLOADBOT"] = "gnd";
+		netlist_cell_ports[cell]["ADDSUBTOP"] = "gnd";
+		netlist_cell_ports[cell]["ADDSUBBOT"] = "gnd";
+		netlist_cell_ports[cell]["OHOLDTOP"] = "gnd";
+		netlist_cell_ports[cell]["OHOLDBOT"] = "gnd";
+		netlist_cell_ports[cell]["CI"] = "gnd";
+		netlist_cell_ports[cell]["ACCUMCI"] = "";
+		netlist_cell_ports[cell]["SIGNEXTIN"] = "";
+		
+		for (int i = 0; i < 32; i++) {
+			netlist_cell_ports[cell][stringf("O[%d]", i)] = "";
+		}
+		
+		netlist_cell_ports[cell]["ACCUMCO"] = "";
+		netlist_cell_ports[cell]["SIGNEXTOUT"] = "";
+		
+		return cell;
+	} else if(ectype == "SPRAM256KA") {
+		netlist_cell_types[cell] = "SB_SPRAM256KA";
+		
+		for (int i = 0; i < 14; i++) {
+			netlist_cell_ports[cell][stringf("ADDRESS[%d]", i)] = "gnd";
+		}
+		
+		for (int i = 0; i < 16; i++) {
+			netlist_cell_ports[cell][stringf("DATAIN[%d]", i)] = "gnd";
+			netlist_cell_ports[cell][stringf("DATAOUT[%d]", i)] = "";
+		}
+		
+		netlist_cell_ports[cell]["MASKWREN[3]"] = "gnd";
+		netlist_cell_ports[cell]["MASKWREN[2]"] = "gnd";
+		netlist_cell_ports[cell]["MASKWREN[1]"] = "gnd";
+		netlist_cell_ports[cell]["MASKWREN[0]"] = "gnd";
+
+		netlist_cell_ports[cell]["WREN"] = "gnd";
+		netlist_cell_ports[cell]["CHIPSELECT"] = "gnd";
+		netlist_cell_ports[cell]["CLOCK"] = "";
+		netlist_cell_ports[cell]["STANDBY"] = "gnd";
+		netlist_cell_ports[cell]["SLEEP"] = "gnd";
+		netlist_cell_ports[cell]["POWEROFF"] = "gnd";
+
+		return cell;
+	} else {
+		netlist_cell_types[cell] = "SB_" + ectype;
+		fprintf(stderr, "Warning: timing analysis not supported for cell type %s\n", ectype.c_str());
+		return cell;
+	}
+}
+
 std::string make_ram(int x, int y)
 {
 	auto cell = stringf("ram_%d_%d", x, y);
@@ -1377,17 +1532,28 @@ void make_seg_cell(int net, const net_segment_t &seg)
 	}
 
 	if (sscanf(seg.name.c_str(), "lutff_%d/in_%d", &a, &b) == 2) {
-		auto cell = make_lc40(seg.x, seg.y, a);
-		if (b == 2) {
-			// Lattice tools always put a CascadeMux on in2
-			netlist_cell_ports[cell][stringf("in%d", b)] = cascademuxed(net_name(net));
+		//"logic" wires at the side of the device are actually IP or DSP
+		if(device_type == "up5k" && ((seg.x == 0) || (seg.x == config_tile_type.size() - 1))) {
+			std::string primnet;
+			auto cell = make_dsp_ip(seg.x, seg.y, seg.name, primnet);
+			if(cell != "") {
+				make_inmux(seg.x, seg.y, net);
+			}
+			return;
 		} else {
-			netlist_cell_ports[cell][stringf("in%d", b)] = net_name(net);
+			auto cell = make_lc40(seg.x, seg.y, a);
+			if (b == 2) {
+				// Lattice tools always put a CascadeMux on in2
+				netlist_cell_ports[cell][stringf("in%d", b)] = cascademuxed(net_name(net));
+			} else {
+				netlist_cell_ports[cell][stringf("in%d", b)] = net_name(net);
+			}
+			make_inmux(seg.x, seg.y, net);
 		}
-		make_inmux(seg.x, seg.y, net);
+
 		return;
 	}
-
+	
 	if (sscanf(seg.name.c_str(), "lutff_%d/ou%c", &a, &c) == 2 && c == 't')
 	{
 		for (int dst_net : net_buffers.at(seg.net))
@@ -1406,6 +1572,28 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		return;
 	}
 
+	if (sscanf(seg.name.c_str(), "slf_op_%d", &a) == 1)
+	{
+		std::string primnet;
+		auto cell = make_dsp_ip(seg.x, seg.y, seg.name, primnet);
+		if(cell != "") {
+			netlist_cell_ports[cell][primnet] = net_name(net);
+			make_odrv(seg.x, seg.y, net);
+		}
+		return;
+	}
+	
+	if (sscanf(seg.name.c_str(), "mult/O_%d", &a) == 1)
+	{
+		std::string primnet;
+		auto cell = make_dsp_ip(seg.x, seg.y, seg.name, primnet);
+		if(cell != "") {
+			netlist_cell_ports[cell][primnet] = net_name(net);
+			make_odrv(seg.x, seg.y, net);
+		}
+		return;
+	}
+	
 	if (sscanf(seg.name.c_str(), "lutff_%d/cou%c", &a, &c) == 2 && c == 't')
 	{
 		auto cell = make_lc40(seg.x, seg.y, a);
