@@ -599,6 +599,10 @@ bool is_primary(std::string cell_name, std::string out_port)
 	if (cell_type == "PRE_IO")
 		return true;
 
+	std::string dsp_prefix = "SB_MAC16";
+	if(cell_type.substr(0, dsp_prefix.length()) == dsp_prefix)
+			return true;
+
 	return false;
 }
 
@@ -1260,6 +1264,26 @@ bool get_dsp_ip_cbit(std::tuple<int, int, std::string> cbit) {
 	return false;
 }
 
+std::string ecnetname_to_vlog(std::string ec_name)
+{
+	// Convert a net name from the form A_0 used in the chipdb for extra cells to
+  // verilog form A[0]
+	size_t last_ = ec_name.find_last_of('_');
+	if(last_ == std::string::npos)
+		return ec_name;
+	
+	std::string base = ec_name.substr(0, last_);
+	std::string end = ec_name.substr(last_+1);
+	size_t nidx = 0;
+	
+	int num = std::stoi(end, &nidx, 10);
+	if(nidx == end.length()) {
+		return base + "[" + std::to_string(num) + "]";
+	} else {
+		return ec_name;
+	}
+}
+
 std::string make_dsp_ip(int x, int y, std::string net, std::string &primnet)
 {	
 	std::tuple<int, int, std::string> ecnet(x, y, net);
@@ -1269,7 +1293,7 @@ std::string make_dsp_ip(int x, int y, std::string net, std::string &primnet)
 		for(auto entry : ec.second) {
 			if(entry.second == ecnet) {
 				key = ec.first;
-				primnet = entry.first;
+				primnet = ecnetname_to_vlog(entry.first);
 				found = true;
 				break;
 			}
@@ -1536,6 +1560,7 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		if(device_type == "up5k" && ((seg.x == 0) || (seg.x == config_tile_type.size() - 1))) {
 			std::string primnet;
 			auto cell = make_dsp_ip(seg.x, seg.y, seg.name, primnet);
+			netlist_cell_ports[cell][primnet] = net_name(net);
 			if(cell != "") {
 				make_inmux(seg.x, seg.y, net);
 			}

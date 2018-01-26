@@ -10,7 +10,7 @@ def timings_to_c(chip, f):
     print("{")
 
     in_cell = False
-
+    last_cell = ""
     for line in f:
         fields = line.split()
         if len(fields) == 0:
@@ -18,8 +18,14 @@ def timings_to_c(chip, f):
 
         if fields[0] == "CELL":
             if in_cell:
+                if last_cell.startswith("SB_MAC16"):
+                    # DSPs have incomplete timing specification, as some paths
+                    # don't mathematically exist - e.g. there is no path from
+                    # A[1] to O[0]
+                    print("    if (in_port != \"*clkedge*\" && out_port != \"*setup*\") return 0.0;")
                 print("  }")
             print("  if (cell_type == \"%s\") {" % fields[1])
+            last_cell = fields[1]
             in_cell = True
 
         if fields[0] == "SETUP":
@@ -44,4 +50,3 @@ def timings_to_c(chip, f):
 for db in "lp384 lp1k lp8k hx1k hx8k up5k".split():
     with open("../icefuzz/timings_%s.txt" % db, "r") as f:
         timings_to_c(db, f);
-
