@@ -601,7 +601,8 @@ bool is_primary(std::string cell_name, std::string out_port)
 
 	std::string dsp_prefix = "SB_MAC16";
 	if(cell_type.substr(0, dsp_prefix.length()) == dsp_prefix)
-			return true;
+			return (cell_type != "SB_MAC16_MUL_U_16X16_BYPASS" && cell_type != "SB_MAC16_MUL_U_8X8_BYPASS"
+							&& cell_type != "SB_MAC16_ADS_U_16P16_BYPASS" && cell_type != "SB_MAC16_ADS_U_32P32_BYPASS");
 
 	return false;
 }
