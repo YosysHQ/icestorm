@@ -496,10 +496,13 @@ void read_chipdb()
 
 		if(mode == ".extra_cell") {
 			std::string key = std::string(tok);
-			int x = atoi(strtok(nullptr, " \t\r\n"));
-			int y = atoi(strtok(nullptr, " \t\r\n"));
-			std::string name = std::string(strtok(nullptr, " \t\r\n"));
-			extra_cells[make_tuple(cellname, tile_x, tile_y, cell_z)][key] = make_tuple(x, y, name);
+			if(key != "LOCKED") {
+				int x = atoi(strtok(nullptr, " \t\r\n"));
+				int y = atoi(strtok(nullptr, " \t\r\n"));
+				std::string name = std::string(strtok(nullptr, " \t\r\n"));
+				extra_cells[make_tuple(cellname, tile_x, tile_y, cell_z)][key] = make_tuple(x, y, name);
+			}
+
 		}
 	}
 
