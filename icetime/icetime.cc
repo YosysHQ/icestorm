@@ -109,7 +109,7 @@ std::map<std::string, std::vector<std::pair<int, int>>> logic_tile_bits,
 
 std::map<std::tuple<std::string, int, int, int>,
 				 std::map<std::string, std::tuple<int, int, std::string>>> extra_cells;
- 
+
 std::string vstringf(const char *fmt, va_list ap)
 {
 	std::string string;
@@ -602,6 +602,9 @@ bool is_primary(std::string cell_name, std::string out_port)
 	if (cell_type == "PRE_IO")
 		return true;
 
+	if (cell_type == "SB_SPRAM256KA")
+		return true;
+
 	std::string dsp_prefix = "SB_MAC16";
 	if(cell_type.substr(0, dsp_prefix.length()) == dsp_prefix)
 			return (cell_type != "SB_MAC16_MUL_U_16X16_BYPASS" && cell_type != "SB_MAC16_MUL_U_8X8_BYPASS"
@@ -694,7 +697,7 @@ const std::set<std::string> &get_inports(std::string cell_type)
 			inports_map["SB_RAM40_4K"].insert(stringf("RADDR[%d]", i));
 			inports_map["SB_RAM40_4K"].insert(stringf("WADDR[%d]", i));
 		}
-		
+
 		inports_map["SB_MAC16"] = { "CLK", "CE", "AHOLD", "BHOLD", "CHOLD", "DHOLD", "IRSTTOP", "IRSTBOT", "ORSTTOP", "ORSTBOT",
 																"OLOADTOP", "OLOADBOT", "ADDSUBTOP", "ADDSUBBOT", "OHOLDTOP", "OHOLDBOT", "CI", "ACCUMCI",
 																"SIGNEXTIN"};
@@ -704,10 +707,10 @@ const std::set<std::string> &get_inports(std::string cell_type)
 			inports_map["SB_MAC16"].insert(stringf("B[%d]", i));
 			inports_map["SB_MAC16"].insert(stringf("D[%d]", i));
 		}
-		
+
 		inports_map["SB_SPRAM256KA"] = { "WREN", "CHIPSELECT", "CLOCK", "STANDBY", "SLEEP", "POWEROFF",
 																		 "MASKWREN[0]", "MASKWREN[1]", "MASKWREN[2]", "MASKWREN[3]"};
-		
+
 	  for (int i = 0; i < 16; i++) {
 			inports_map["SB_SPRAM256KA"].insert(stringf("DATAIN[%d]", i));
 		}
@@ -715,22 +718,22 @@ const std::set<std::string> &get_inports(std::string cell_type)
 		for (int i = 0; i < 14; i++) {
 			inports_map["SB_SPRAM256KA"].insert(stringf("ADDRESS[%d]", i));
 		}
-		
+
 		inports_map["INTERCONN"] = { "I" };
 	}
-	
-	
+
+
 	std::string dsp_prefix = "SB_MAC16";
-	
+
 	if(cell_type.substr(0, dsp_prefix.length()) == dsp_prefix)
 		cell_type = "SB_MAC16";
-	
+
 	if (inports_map.count(cell_type) == 0) {
 		fprintf(stderr, "Missing entry in inports_map for cell type %s!\n", cell_type.c_str());
 		exit(1);
 	}
 
-	
+
 	return inports_map.at(cell_type);
 }
 
@@ -755,7 +758,7 @@ double get_delay(std::string cell_type, std::string in_port, std::string out_por
 
 	if (device_type == "hx8k")
 		return get_delay_hx8k(cell_type, in_port, out_port);
-		
+
 	if (device_type == "up5k")
 		return get_delay_up5k(cell_type, in_port, out_port);
 	fprintf(stderr, "No built-in timing database for '%s' devices!\n", device_type.c_str());
@@ -1275,11 +1278,11 @@ std::string ecnetname_to_vlog(std::string ec_name)
 	size_t last_ = ec_name.find_last_of('_');
 	if(last_ == std::string::npos)
 		return ec_name;
-	
+
 	std::string base = ec_name.substr(0, last_);
 	std::string end = ec_name.substr(last_+1);
 	size_t nidx = 0;
-	
+
 	int num = std::stoi(end, &nidx, 10);
 	if(nidx == end.length()) {
 		return base + "[" + std::to_string(num) + "]";
@@ -1289,7 +1292,7 @@ std::string ecnetname_to_vlog(std::string ec_name)
 }
 
 std::string make_dsp_ip(int x, int y, std::string net, std::string &primnet)
-{	
+{
 	std::tuple<int, int, std::string> ecnet(x, y, net);
 	std::tuple<std::string, int, int, int> key("", -1, -1, -1);
 	bool found = false;
@@ -1310,12 +1313,12 @@ std::string make_dsp_ip(int x, int y, std::string net, std::string &primnet)
 	int cx, cy, cz;
 	std::string ectype;
 	std::tie(ectype, cx, cy, cz) = key;
-	
+
 	auto cell = stringf("%s_%d_%d_%d", ectype.c_str(), cx, cy, cz);
 
 	if (netlist_cell_types.count(cell))
 		return cell;
-		
+
 	if(ectype == "MAC16") {
 		// Given the few actual unique timing possibilites, only look at a subset
 		// of the CBITs to pick the closest cell type from a timing point of view
@@ -1356,14 +1359,14 @@ std::string make_dsp_ip(int x, int y, std::string net, std::string &primnet)
 		}
 		dsptype = basename + (pipeline ? "_ALL_PIPELINE" : "_BYPASS");
 		netlist_cell_types[cell] = dsptype;
-		
+
 		for (int i = 0; i < 16; i++) {
 			netlist_cell_ports[cell][stringf("C[%d]", i)] = "gnd";
 			netlist_cell_ports[cell][stringf("A[%d]", i)] = "gnd";
 			netlist_cell_ports[cell][stringf("B[%d]", i)] = "gnd";
 			netlist_cell_ports[cell][stringf("D[%d]", i)] = "gnd";
 		}
-		
+
 		netlist_cell_ports[cell]["CLK"] = "";
 		netlist_cell_ports[cell]["CE"] = "";
 		netlist_cell_ports[cell]["AHOLD"] = "gnd";
@@ -1385,27 +1388,27 @@ std::string make_dsp_ip(int x, int y, std::string net, std::string &primnet)
 		netlist_cell_ports[cell]["CI"] = "gnd";
 		netlist_cell_ports[cell]["ACCUMCI"] = "";
 		netlist_cell_ports[cell]["SIGNEXTIN"] = "";
-		
+
 		for (int i = 0; i < 32; i++) {
 			netlist_cell_ports[cell][stringf("O[%d]", i)] = "";
 		}
-		
+
 		netlist_cell_ports[cell]["ACCUMCO"] = "";
 		netlist_cell_ports[cell]["SIGNEXTOUT"] = "";
-		
+
 		return cell;
-	} else if(ectype == "SPRAM256KA") {
+	} else if(ectype == "SPRAM") {
 		netlist_cell_types[cell] = "SB_SPRAM256KA";
-		
+
 		for (int i = 0; i < 14; i++) {
 			netlist_cell_ports[cell][stringf("ADDRESS[%d]", i)] = "gnd";
 		}
-		
+
 		for (int i = 0; i < 16; i++) {
 			netlist_cell_ports[cell][stringf("DATAIN[%d]", i)] = "gnd";
 			netlist_cell_ports[cell][stringf("DATAOUT[%d]", i)] = "";
 		}
-		
+
 		netlist_cell_ports[cell]["MASKWREN[3]"] = "gnd";
 		netlist_cell_ports[cell]["MASKWREN[2]"] = "gnd";
 		netlist_cell_ports[cell]["MASKWREN[1]"] = "gnd";
@@ -1582,7 +1585,7 @@ void make_seg_cell(int net, const net_segment_t &seg)
 
 		return;
 	}
-	
+
 	if (sscanf(seg.name.c_str(), "lutff_%d/ou%c", &a, &c) == 2 && c == 't')
 	{
 		for (int dst_net : net_buffers.at(seg.net))
@@ -1611,7 +1614,7 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		}
 		return;
 	}
-	
+
 	if (sscanf(seg.name.c_str(), "mult/O_%d", &a) == 1)
 	{
 		std::string primnet;
@@ -1622,7 +1625,7 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		}
 		return;
 	}
-	
+
 	if (sscanf(seg.name.c_str(), "lutff_%d/cou%c", &a, &c) == 2 && c == 't')
 	{
 		auto cell = make_lc40(seg.x, seg.y, a);
@@ -2303,7 +2306,10 @@ int main(int argc, char **argv)
 	read_config();
 
 	if (device_type.empty()) {
-		device_type = "lp" + config_device;
+		if(config_device == "5k")
+			device_type = "up" + config_device;
+		else
+			device_type = "lp" + config_device;
 		printf("// Warning: Missing -d parameter. Assuming '%s' device.\n", device_type.c_str());
 	}
 
