@@ -183,6 +183,10 @@ case "${ICEDEV:-hx1k-tq144}" in
 		iCEPACKAGE="SG48"
 		iCE40DEV="iCE40UP5K"
 		;;
+	up5k-uwg30)
+		iCEPACKAGE="UWG30"
+		iCE40DEV="iCE40UP5K"
+		;;
 	*)
 		echo "ERROR: Invalid \$ICEDEV device config '$ICEDEV'."
 		exit 1
@@ -379,8 +383,8 @@ cat > foobar_sbt.project << EOT
 Implementations=foobar_Implmnt
 
 [foobar_Implmnt]
-DeviceFamily=$( echo $iCE40DEV | sed -re 's,(HX).*,,'; )
-Device=$( echo $iCE40DEV | sed -re 's,iCE40,,'; )
+DeviceFamily=$( echo $iCE40DEV | sed -re 's,(HX|5K).*,,'; )
+Device=$( echo $iCE40DEV | sed -re 's,iCE40(UP)?,,'; )
 DevicePackage=$iCEPACKAGE
 Devicevoltage=1.14
 DevicevoltagePerformance=+/-5%(datasheet default)
@@ -419,4 +423,3 @@ fi
 
 export LD_LIBRARY_PATH=""
 $scriptdir/../icepack/iceunpack "$1.bin" "$1.asc"
-

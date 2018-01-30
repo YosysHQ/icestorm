@@ -29,4 +29,4 @@ hierarchy -generate gio2CtrlBuf i:I o:O
 hierarchy -generate CascadeBuf i:I o:O
 
 hierarchy -check
-tee -a tmedges.tmp edgetypes
+tee -o tmedges_unrenamed.tmp edgetypes

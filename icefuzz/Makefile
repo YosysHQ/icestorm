@@ -77,7 +77,7 @@ endif
 timings:
 ifeq ($(DEVICECLASS),5k)
 	cp tmedges.txt tmedges.tmp
-	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; sed '/defparam/d' < $$f > $$f.fixed;  yosys -q -f verilog -s tmedges.ys $$f.fixed; done
+	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; sed '/defparam/d' < $$f > $$f.fixed;  yosys -q -f verilog -s tmedges.ys $$f.fixed; python3 rename_dsps.py $$f; done
 	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
 	python3 timings.py -t timings_up5k.txt work_*/*.sdf > timings_up5k.new
 	mv timings_up5k.new timings_up5k.txt

@@ -104,7 +104,11 @@ std::set<int> declared_nets;
 int dangling_cnt = 0;
 
 std::map<std::string, std::vector<std::pair<int, int>>> logic_tile_bits,
-		io_tile_bits, ramb_tile_bits, ramt_tile_bits;
+		io_tile_bits, ramb_tile_bits, ramt_tile_bits, ipcon_tile_bits, dsp0_tile_bits,
+		dsp1_tile_bits, dsp2_tile_bits, dsp3_tile_bits;
+
+std::map<std::tuple<std::string, int, int, int>,
+				 std::map<std::string, std::tuple<int, int, std::string>>> extra_cells;
 
 std::string vstringf(const char *fmt, va_list ap)
 {
@@ -328,8 +332,9 @@ void read_chipdb()
 
 	std::string mode;
 	int current_net = -1;
-	int tile_x = -1, tile_y = -1;
+	int tile_x = -1, tile_y = -1, cell_z = -1;
 	std::string thiscfg;
+	std::string cellname;
 
 	std::vector<std::vector<int>> gbufin;
 	std::vector<std::vector<int>> gbufpin;
@@ -374,6 +379,22 @@ void read_chipdb()
 					assert(rc == 2);
 					thiscfg.push_back(config_bits[tile_x][tile_y][bit_row][bit_col] ? '1' : '0');
 				}
+				continue;
+			}
+
+			if (mode == ".extra_cell") {
+				tile_x = atoi(strtok(nullptr, " \t\r\n"));
+				tile_y = atoi(strtok(nullptr, " \t\r\n"));
+				// For legacy reasons, extra_cell may be X Y name or X Y Z name
+				const char *z_or_name = strtok(nullptr, " \t\r\n");
+				if(isdigit(z_or_name[0])) {
+					cell_z = atoi(z_or_name);
+					cellname = std::string(strtok(nullptr, " \t\r\n"));
+				} else {
+					cell_z = 0;
+					cellname = std::string(z_or_name);
+				}
+				extra_cells[std::make_tuple(cellname, tile_x, tile_y, cell_z)] = {};
 				continue;
 			}
 
@@ -432,7 +453,8 @@ void read_chipdb()
 				gbufpin.push_back(items);
 		}
 
-		if (mode == ".logic_tile_bits" || mode == ".io_tile_bits" || mode == ".ramb_tile_bits" || mode == ".ramt_tile_bits") {
+		if (mode == ".logic_tile_bits" || mode == ".io_tile_bits" || mode == ".ramb_tile_bits" || mode == ".ramt_tile_bits" ||
+				mode == ".ipcon_tile_bits" || mode == ".dsp0_tile_bits" || mode == ".dsp1_tile_bits" || mode == ".dsp2_tile_bits" || mode == ".dsp3_tile_bits") {
 			std::vector<std::pair<int, int>> items;
 			while (1) {
 				const char *s = strtok(nullptr, " \t\r\n");
@@ -451,6 +473,16 @@ void read_chipdb()
 				ramb_tile_bits[tok] = items;
 			if (mode == ".ramt_tile_bits")
 				ramt_tile_bits[tok] = items;
+			if (mode == ".ipcon_tile_bits")
+				ipcon_tile_bits[tok] = items;
+			if (mode == ".dsp0_tile_bits")
+				dsp0_tile_bits[tok] = items;
+			if (mode == ".dsp1_tile_bits")
+				dsp1_tile_bits[tok] = items;
+			if (mode == ".dsp2_tile_bits")
+				dsp2_tile_bits[tok] = items;
+			if (mode == ".dsp3_tile_bits")
+				dsp3_tile_bits[tok] = items;
 		}
 
 		if (mode == ".extra_bits") {
@@ -460,6 +492,17 @@ void read_chipdb()
 			std::tuple<int, int, int> key(b, x, y);
 			if (extra_bits.count(key))
 				extrabitfunc.insert(tok);
+		}
+
+		if(mode == ".extra_cell") {
+			std::string key = std::string(tok);
+			if(key != "LOCKED") {
+				int x = atoi(strtok(nullptr, " \t\r\n"));
+				int y = atoi(strtok(nullptr, " \t\r\n"));
+				std::string name = std::string(strtok(nullptr, " \t\r\n"));
+				extra_cells[make_tuple(cellname, tile_x, tile_y, cell_z)][key] = make_tuple(x, y, name);
+			}
+
 		}
 	}
 
@@ -559,6 +602,14 @@ bool is_primary(std::string cell_name, std::string out_port)
 	if (cell_type == "PRE_IO")
 		return true;
 
+	if (cell_type == "SB_SPRAM256KA")
+		return true;
+
+	std::string dsp_prefix = "SB_MAC16";
+	if(cell_type.substr(0, dsp_prefix.length()) == dsp_prefix)
+			return (cell_type != "SB_MAC16_MUL_U_16X16_BYPASS" && cell_type != "SB_MAC16_MUL_U_8X8_BYPASS"
+							&& cell_type != "SB_MAC16_ADS_U_16P16_BYPASS" && cell_type != "SB_MAC16_ADS_U_32P32_BYPASS");
+
 	return false;
 }
 
@@ -647,13 +698,41 @@ const std::set<std::string> &get_inports(std::string cell_type)
 			inports_map["SB_RAM40_4K"].insert(stringf("WADDR[%d]", i));
 		}
 
+		inports_map["SB_MAC16"] = { "CLK", "CE", "AHOLD", "BHOLD", "CHOLD", "DHOLD", "IRSTTOP", "IRSTBOT", "ORSTTOP", "ORSTBOT",
+																"OLOADTOP", "OLOADBOT", "ADDSUBTOP", "ADDSUBBOT", "OHOLDTOP", "OHOLDBOT", "CI", "ACCUMCI",
+																"SIGNEXTIN"};
+		for (int i = 0; i < 16; i++) {
+			inports_map["SB_MAC16"].insert(stringf("C[%d]", i));
+			inports_map["SB_MAC16"].insert(stringf("A[%d]", i));
+			inports_map["SB_MAC16"].insert(stringf("B[%d]", i));
+			inports_map["SB_MAC16"].insert(stringf("D[%d]", i));
+		}
+
+		inports_map["SB_SPRAM256KA"] = { "WREN", "CHIPSELECT", "CLOCK", "STANDBY", "SLEEP", "POWEROFF",
+																		 "MASKWREN[0]", "MASKWREN[1]", "MASKWREN[2]", "MASKWREN[3]"};
+
+	  for (int i = 0; i < 16; i++) {
+			inports_map["SB_SPRAM256KA"].insert(stringf("DATAIN[%d]", i));
+		}
+
+		for (int i = 0; i < 14; i++) {
+			inports_map["SB_SPRAM256KA"].insert(stringf("ADDRESS[%d]", i));
+		}
+
 		inports_map["INTERCONN"] = { "I" };
 	}
+
+
+	std::string dsp_prefix = "SB_MAC16";
+
+	if(cell_type.substr(0, dsp_prefix.length()) == dsp_prefix)
+		cell_type = "SB_MAC16";
 
 	if (inports_map.count(cell_type) == 0) {
 		fprintf(stderr, "Missing entry in inports_map for cell type %s!\n", cell_type.c_str());
 		exit(1);
 	}
+
 
 	return inports_map.at(cell_type);
 }
@@ -679,7 +758,7 @@ double get_delay(std::string cell_type, std::string in_port, std::string out_por
 
 	if (device_type == "hx8k")
 		return get_delay_hx8k(cell_type, in_port, out_port);
-		
+
 	if (device_type == "up5k")
 		return get_delay_up5k(cell_type, in_port, out_port);
 	fprintf(stderr, "No built-in timing database for '%s' devices!\n", device_type.c_str());
@@ -1182,6 +1261,174 @@ std::string make_lc40(int x, int y, int z)
 	return cell;
 }
 
+bool get_dsp_ip_cbit(std::tuple<int, int, std::string> cbit) {
+	std::string name = "IpConfig." + std::get<2>(cbit);
+	// DSP0 contains all CBITs, the same as any DSP/IP tile
+	if(dsp0_tile_bits.count(name)) {
+		auto bitpos = dsp0_tile_bits.at(name)[0];
+		return config_bits[std::get<0>(cbit)][std::get<1>(cbit)][bitpos.first][bitpos.second];
+	}
+	return false;
+}
+
+std::string ecnetname_to_vlog(std::string ec_name)
+{
+	// Convert a net name from the form A_0 used in the chipdb for extra cells to
+  // verilog form A[0]
+	size_t last_ = ec_name.find_last_of('_');
+	if(last_ == std::string::npos)
+		return ec_name;
+
+	std::string base = ec_name.substr(0, last_);
+	std::string end = ec_name.substr(last_+1);
+	size_t nidx = 0;
+
+	int num = std::stoi(end, &nidx, 10);
+	if(nidx == end.length()) {
+		return base + "[" + std::to_string(num) + "]";
+	} else {
+		return ec_name;
+	}
+}
+
+std::string make_dsp_ip(int x, int y, std::string net, std::string &primnet)
+{
+	std::tuple<int, int, std::string> ecnet(x, y, net);
+	std::tuple<std::string, int, int, int> key("", -1, -1, -1);
+	bool found = false;
+	for(auto ec : extra_cells) {
+		for(auto entry : ec.second) {
+			if(entry.second == ecnet) {
+				key = ec.first;
+				primnet = ecnetname_to_vlog(entry.first);
+				found = true;
+				break;
+			}
+		}
+	}
+	if(!found) {
+		fprintf(stderr, "Error: net (%d, %d, '%s') does not correspond to any IP\n", x, y, net.c_str());
+		exit(1);
+	}
+	int cx, cy, cz;
+	std::string ectype;
+	std::tie(ectype, cx, cy, cz) = key;
+
+	auto cell = stringf("%s_%d_%d_%d", ectype.c_str(), cx, cy, cz);
+
+	if (netlist_cell_types.count(cell))
+		return cell;
+
+	if(ectype == "MAC16") {
+		// Given the few actual unique timing possibilites, only look at a subset
+		// of the CBITs to pick the closest cell type from a timing point of view
+		std::string dsptype = "";
+		bool mode_8x8 = get_dsp_ip_cbit(extra_cells[key].at("MODE_8x8"));
+		// It seems no different between any pipeline mode, so pick pipelining based
+		// on one of the bits
+		bool pipeline = get_dsp_ip_cbit(extra_cells[key].at("A_REG"));
+		int botout = (get_dsp_ip_cbit(extra_cells[key].at("BOTOUTPUT_SELECT_1")) << 1) | get_dsp_ip_cbit(extra_cells[key].at("BOTOUTPUT_SELECT_0"));
+		int botlwrin = (get_dsp_ip_cbit(extra_cells[key].at("BOTADDSUB_LOWERINPUT_1")) << 1) | get_dsp_ip_cbit(extra_cells[key].at("BOTADDSUB_LOWERINPUT_0"));
+		bool botuprin = get_dsp_ip_cbit(extra_cells[key].at("BOTADDSUB_UPPERINPUT"));
+		int topcarry = (get_dsp_ip_cbit(extra_cells[key].at("TOPADDSUB_CARRYSELECT_1")) << 1) | get_dsp_ip_cbit(extra_cells[key].at("TOPADDSUB_CARRYSELECT_0"));
+		// Worst case default
+		std::string basename = "SB_MAC16_MUL_U_16X16";
+		// Note: signedness is ignored as it seems to have no effect
+		if(mode_8x8 && !botuprin && (botlwrin == 0) && (botout == 2)) {
+			basename = "SB_MAC16_MUL_U_8X8";
+		} else if (!mode_8x8 && !botuprin && (botlwrin == 0) && (botout == 3)) {
+			basename = "SB_MAC16_MUL_U_16X16";
+		} else if (mode_8x8 && !botuprin && (botlwrin == 1) && (botout == 1)) {
+			basename = "SB_MAC16_MAC_U_8X8";
+		} else if (!mode_8x8 && !botuprin && (botlwrin == 2) && (botout == 1)) {
+			basename = "SB_MAC16_MAC_U_16X16";
+		} else if (mode_8x8 && !botuprin && (botlwrin == 0) && (botout == 1) && (topcarry == 0)) {
+			basename = "SB_MAC16_ACC_U_16P16";
+		} else if (mode_8x8 && !botuprin && (botlwrin == 0) && (botout == 1) && (topcarry == 2)) {
+			basename = "SB_MAC16_ACC_U_32P32";
+		} else if (mode_8x8 && botuprin && (botlwrin == 0) && (topcarry == 0)) {
+			basename = "SB_MAC16_ADS_U_16P16";
+		} else if (mode_8x8 && botuprin && (botlwrin == 0) && (topcarry == 2)) {
+			basename = "SB_MAC16_ADS_U_32P32";
+		} else if (mode_8x8 && botuprin && (botlwrin == 1)) {
+			basename = "SB_MAC16_MAS_U_8X8";
+		} else if (!mode_8x8 && botuprin && (botlwrin == 2)) {
+			basename = "SB_MAC16_MAS_U_16X16";
+		} else {
+			fprintf(stderr, "Warning: detected unknown/unsupported DSP config, defaulting to 16x16 MUL.\n");
+		}
+		dsptype = basename + (pipeline ? "_ALL_PIPELINE" : "_BYPASS");
+		netlist_cell_types[cell] = dsptype;
+
+		for (int i = 0; i < 16; i++) {
+			netlist_cell_ports[cell][stringf("C[%d]", i)] = "gnd";
+			netlist_cell_ports[cell][stringf("A[%d]", i)] = "gnd";
+			netlist_cell_ports[cell][stringf("B[%d]", i)] = "gnd";
+			netlist_cell_ports[cell][stringf("D[%d]", i)] = "gnd";
+		}
+
+		netlist_cell_ports[cell]["CLK"] = "";
+		netlist_cell_ports[cell]["CE"] = "";
+		netlist_cell_ports[cell]["AHOLD"] = "gnd";
+		netlist_cell_ports[cell]["BHOLD"] = "gnd";
+		netlist_cell_ports[cell]["CHOLD"] = "gnd";
+		netlist_cell_ports[cell]["DHOLD"] = "gnd";
+
+		netlist_cell_ports[cell]["IRSTTOP"] = "";
+		netlist_cell_ports[cell]["IRSTBOT"] = "";
+		netlist_cell_ports[cell]["ORSTTOP"] = "";
+		netlist_cell_ports[cell]["ORSTBOT"] = "";
+
+		netlist_cell_ports[cell]["OLOADTOP"] = "gnd";
+		netlist_cell_ports[cell]["OLOADBOT"] = "gnd";
+		netlist_cell_ports[cell]["ADDSUBTOP"] = "gnd";
+		netlist_cell_ports[cell]["ADDSUBBOT"] = "gnd";
+		netlist_cell_ports[cell]["OHOLDTOP"] = "gnd";
+		netlist_cell_ports[cell]["OHOLDBOT"] = "gnd";
+		netlist_cell_ports[cell]["CI"] = "gnd";
+		netlist_cell_ports[cell]["ACCUMCI"] = "";
+		netlist_cell_ports[cell]["SIGNEXTIN"] = "";
+
+		for (int i = 0; i < 32; i++) {
+			netlist_cell_ports[cell][stringf("O[%d]", i)] = "";
+		}
+
+		netlist_cell_ports[cell]["ACCUMCO"] = "";
+		netlist_cell_ports[cell]["SIGNEXTOUT"] = "";
+
+		return cell;
+	} else if(ectype == "SPRAM") {
+		netlist_cell_types[cell] = "SB_SPRAM256KA";
+
+		for (int i = 0; i < 14; i++) {
+			netlist_cell_ports[cell][stringf("ADDRESS[%d]", i)] = "gnd";
+		}
+
+		for (int i = 0; i < 16; i++) {
+			netlist_cell_ports[cell][stringf("DATAIN[%d]", i)] = "gnd";
+			netlist_cell_ports[cell][stringf("DATAOUT[%d]", i)] = "";
+		}
+
+		netlist_cell_ports[cell]["MASKWREN[3]"] = "gnd";
+		netlist_cell_ports[cell]["MASKWREN[2]"] = "gnd";
+		netlist_cell_ports[cell]["MASKWREN[1]"] = "gnd";
+		netlist_cell_ports[cell]["MASKWREN[0]"] = "gnd";
+
+		netlist_cell_ports[cell]["WREN"] = "gnd";
+		netlist_cell_ports[cell]["CHIPSELECT"] = "gnd";
+		netlist_cell_ports[cell]["CLOCK"] = "";
+		netlist_cell_ports[cell]["STANDBY"] = "gnd";
+		netlist_cell_ports[cell]["SLEEP"] = "gnd";
+		netlist_cell_ports[cell]["POWEROFF"] = "gnd";
+
+		return cell;
+	} else {
+		netlist_cell_types[cell] = "SB_" + ectype;
+		fprintf(stderr, "Warning: timing analysis not supported for cell type %s\n", ectype.c_str());
+		return cell;
+	}
+}
+
 std::string make_ram(int x, int y)
 {
 	auto cell = stringf("ram_%d_%d", x, y);
@@ -1316,14 +1563,26 @@ void make_seg_cell(int net, const net_segment_t &seg)
 	}
 
 	if (sscanf(seg.name.c_str(), "lutff_%d/in_%d", &a, &b) == 2) {
-		auto cell = make_lc40(seg.x, seg.y, a);
-		if (b == 2) {
-			// Lattice tools always put a CascadeMux on in2
-			netlist_cell_ports[cell][stringf("in%d", b)] = cascademuxed(net_name(net));
+		//"logic" wires at the side of the device are actually IP or DSP
+		if(device_type == "up5k" && ((seg.x == 0) || (seg.x == config_tile_type.size() - 1))) {
+			std::string primnet;
+			auto cell = make_dsp_ip(seg.x, seg.y, seg.name, primnet);
+			netlist_cell_ports[cell][primnet] = net_name(net);
+			if(cell != "") {
+				make_inmux(seg.x, seg.y, net);
+			}
+			return;
 		} else {
-			netlist_cell_ports[cell][stringf("in%d", b)] = net_name(net);
+			auto cell = make_lc40(seg.x, seg.y, a);
+			if (b == 2) {
+				// Lattice tools always put a CascadeMux on in2
+				netlist_cell_ports[cell][stringf("in%d", b)] = cascademuxed(net_name(net));
+			} else {
+				netlist_cell_ports[cell][stringf("in%d", b)] = net_name(net);
+			}
+			make_inmux(seg.x, seg.y, net);
 		}
-		make_inmux(seg.x, seg.y, net);
+
 		return;
 	}
 
@@ -1342,6 +1601,28 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		auto cell = make_lc40(seg.x, seg.y, a);
 		netlist_cell_ports[cell]["lcout"] = net_name(net);
 		make_odrv(seg.x, seg.y, net);
+		return;
+	}
+
+	if (sscanf(seg.name.c_str(), "slf_op_%d", &a) == 1)
+	{
+		std::string primnet;
+		auto cell = make_dsp_ip(seg.x, seg.y, seg.name, primnet);
+		if(cell != "") {
+			netlist_cell_ports[cell][primnet] = net_name(net);
+			make_odrv(seg.x, seg.y, net);
+		}
+		return;
+	}
+
+	if (sscanf(seg.name.c_str(), "mult/O_%d", &a) == 1)
+	{
+		std::string primnet;
+		auto cell = make_dsp_ip(seg.x, seg.y, seg.name, primnet);
+		if(cell != "") {
+			netlist_cell_ports[cell][primnet] = net_name(net);
+			make_odrv(seg.x, seg.y, net);
+		}
 		return;
 	}
 
@@ -2025,7 +2306,10 @@ int main(int argc, char **argv)
 	read_config();
 
 	if (device_type.empty()) {
-		device_type = "lp" + config_device;
+		if(config_device == "5k")
+			device_type = "up" + config_device;
+		else
+			device_type = "lp" + config_device;
 		printf("// Warning: Missing -d parameter. Assuming '%s' device.\n", device_type.c_str());
 	}
 
