@@ -4988,7 +4988,16 @@ extra_cells_db = {
     		"PWMOUT1":               (0, 28, "slf_op_5"), 
     		"PWMOUT2":               (0, 28, "slf_op_6"), 
     	},
-
+        ("IO_I3C", (25, 27, 0)): {
+            "PU_ENB":                (25, 27, "lutff_6/in_0"),
+            "WEAK_PU_ENB":           (25, 27, "lutff_4/in_0"),
+            "PACKAGE_PIN":           (19, 31, 0)
+        },
+        ("IO_I3C", (25, 27, 1)): {
+            "PU_ENB":                (25, 27, "lutff_7/in_0"),
+            "WEAK_PU_ENB":           (25, 27, "lutff_5/in_0"),
+            "PACKAGE_PIN":           (19, 31, 1)
+        }
     }
 }
 
