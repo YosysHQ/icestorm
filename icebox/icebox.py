@@ -4769,6 +4769,10 @@ extra_cells_db = {
             "RGB2_CURRENT_5":               (0, 30, "CBIT_7"),
             "CURRENT_MODE":                 (0, 28, "CBIT_4"),
             
+            "RGB0":                         (4, 31, 0),
+            "RGB1":                         (5, 31, 0),
+            "RGB2":                         (6, 31, 0),
+
         },
         ("I2C", (0, 31, 0)): {
     		"I2CIRQ":                (0, 30, "slf_op_7"), 
