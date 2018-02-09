@@ -288,7 +288,7 @@ static void help(const char *progname)
 	fprintf(stderr, "       %s -t\n", progname);
 	fprintf(stderr, "\n");
 	fprintf(stderr, "General options:\n");
-	fprintf(stderr, "  -d <device string>    use the specified USB device [default: i:0x0403:0x6010]\n");
+	fprintf(stderr, "  -d <device string>    use the specified USB device [default: i:0x0403:0x6010 or i:0x0403:0x6014]\n");
 	fprintf(stderr, "                          d:<devicenode>               (e.g. d:002/005)\n");
 	fprintf(stderr, "                          i:<vendor>:<product>         (e.g. i:0x0403:0x6010)\n");
 	fprintf(stderr, "                          i:<vendor>:<product>:<index> (e.g. i:0x0403:0x6010:0)\n");
@@ -610,8 +610,8 @@ int main(int argc, char **argv)
 			error(2);
 		}
 	} else {
-		if (ftdi_usb_open(&ftdic, 0x0403, 0x6010)) {
-			fprintf(stderr, "Can't find iCE FTDI USB device (vendor_id 0x0403, device_id 0x6010).\n");
+		if (ftdi_usb_open(&ftdic, 0x0403, 0x6010) && ftdi_usb_open(&ftdic, 0x0403, 0x6014)) {
+			fprintf(stderr, "Can't find iCE FTDI USB device (vendor_id 0x0403, device_id 0x6010 or 0x6014).\n");
 			error(2);
 		}
 	}
