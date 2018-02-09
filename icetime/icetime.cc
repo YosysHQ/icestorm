@@ -1564,7 +1564,7 @@ void make_seg_cell(int net, const net_segment_t &seg)
 
 	if (sscanf(seg.name.c_str(), "lutff_%d/in_%d", &a, &b) == 2) {
 		//"logic" wires at the side of the device are actually IP or DSP
-		if(device_type == "up5k" && ((seg.x == 0) || (seg.x == config_tile_type.size() - 1))) {
+		if(device_type == "up5k" && ((seg.x == 0) || (seg.x == int(config_tile_type.size()) - 1))) {
 			std::string primnet;
 			auto cell = make_dsp_ip(seg.x, seg.y, seg.name, primnet);
 			netlist_cell_ports[cell][primnet] = net_name(net);
