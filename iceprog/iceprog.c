@@ -279,6 +279,31 @@ static void flash_wait()
 		fprintf(stderr, "\n");
 }
 
+static void flash_disable_protection()
+{
+	fprintf(stderr, "disable flash protection...\n");
+
+  //WRSR 0x00
+	uint8_t data[2] = { 0x01, 0x00 };
+	set_gpio(0, 0);
+	xfer_spi(data, 2);
+	set_gpio(1, 0);
+	
+	flash_wait();
+	
+	//RDSR
+	data[0] = 0x5;
+
+	set_gpio(0, 0);\
+	xfer_spi(data, 2);
+	set_gpio(1, 0);
+
+	if(data[1] != 0x00)
+		fprintf(stderr, "failed to disable protection, SR now equal to 0x%02x (expected 0x00)\n", data[1]);
+
+}
+
+
 static void help(const char *progname)
 {
 	fprintf(stderr, "Simple programming tool for FTDI-based Lattice iCE programmers.\n");
@@ -317,6 +342,9 @@ static void help(const char *progname)
 	fprintf(stderr, "  -b                    bulk erase entire flash before writing\n");
 	fprintf(stderr, "  -e <size in bytes>    erase flash as if we were writing that number of bytes\n");
 	fprintf(stderr, "  -n                    do not erase flash before writing\n");
+	fprintf(stderr, "  -p                    disable write protection before erasing or writing\n");
+	fprintf(stderr, "                          This can be useful if flash memory appears to be\n");
+	fprintf(stderr, "                          bricked and won't respond to erasing or programming.\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "Miscellaneous options:\n");
 	fprintf(stderr, "      --help            display this help and exit\n");
@@ -365,6 +393,7 @@ int main(int argc, char **argv)
 	bool dont_erase = false;
 	bool prog_sram = false;
 	bool test_mode = false;
+	bool disable_protect = false;
 	const char *filename = NULL;
 	const char *devstr = NULL;
 	enum ftdi_interface ifnum = INTERFACE_A;
@@ -376,7 +405,7 @@ int main(int argc, char **argv)
 
 	int opt;
 	char *endptr;
-	while ((opt = getopt_long(argc, argv, "d:I:rR:e:o:cbnStv", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "d:I:rR:e:o:cbnStvp", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'd':
 			devstr = optarg;
@@ -457,6 +486,9 @@ int main(int argc, char **argv)
 		case 'v':
 			verbose = true;
 			break;
+		case 'p':
+			disable_protect = true;
+			break;
 		case -2:
 			help(argv[0]);
 			return EXIT_SUCCESS;
@@ -474,6 +506,11 @@ int main(int argc, char **argv)
 
 	if (bulk_erase && dont_erase) {
 		fprintf(stderr, "%s: options `-b' and `-n' are mutually exclusive\n", my_name);
+		return EXIT_FAILURE;
+	}
+
+	if (disable_protect && (read_mode || check_mode || prog_sram || test_mode)) {
+		fprintf(stderr, "%s: option `-p' only valid in programming mode\n", my_name);
 		return EXIT_FAILURE;
 	}
 
@@ -508,9 +545,9 @@ int main(int argc, char **argv)
 		fprintf(stderr, "%s: too many arguments\n", my_name);
 		fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
 		return EXIT_FAILURE;
-	} else if (bulk_erase) {
+	} else if (bulk_erase || disable_protect) {
 		filename = "/dev/null";
-	} else if (!test_mode && !erase_mode) {
+	} else if (!test_mode && !erase_mode && !disable_protect) {
 		fprintf(stderr, "%s: missing argument\n", my_name);
 		fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
 		return EXIT_FAILURE;
@@ -747,6 +784,12 @@ int main(int argc, char **argv)
 
 		if (!read_mode && !check_mode)
 		{
+			if (disable_protect)
+			{
+				flash_write_enable();
+				flash_disable_protection();
+			}
+			
 			if (!dont_erase)
 			{
 				if (bulk_erase)
