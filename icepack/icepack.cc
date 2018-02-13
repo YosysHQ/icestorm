@@ -414,6 +414,8 @@ void FpgaConfig::read_bits(std::istream &ifs)
 		this->device = "8k";
 	else if (this->cram_width == 692 && this->cram_height == 336)
 		this->device = "5k";
+	else if (this->cram_width == 692 && this->cram_height == 176)
+		this->device = "u4k";
 	else
 		error("Failed to detect chip type.\n");
 
@@ -679,6 +681,12 @@ void FpgaConfig::read_ascii(std::istream &ifs, bool nosleep)
 				this->cram_width = 692;
 				this->cram_height = 336;
 				this->bram_width = 160;
+				this->bram_height = 2 * 128;
+			} else
+			if (this->device == "u4k") {
+				this->cram_width = 692;
+				this->cram_height = 176;
+				this->bram_width = 80;
 				this->bram_height = 2 * 128;
 			} else
 				error("Unsupported chip type '%s'.\n", this->device.c_str());
@@ -1035,6 +1043,7 @@ int FpgaConfig::chip_width() const
 	if (this->device == "384") return 6;
 	if (this->device == "1k") return 12;
 	if (this->device == "5k") return 24;
+	if (this->device == "u4k") return 24;
 	if (this->device == "8k") return 32;
 	panic("Unknown chip type '%s'.\n", this->device.c_str());
 }
@@ -1044,6 +1053,7 @@ int FpgaConfig::chip_height() const
 	if (this->device == "384") return 8;
 	if (this->device == "1k") return 16;
 	if (this->device == "5k") return 30;
+	if (this->device == "u4k") return 20;
 	if (this->device == "8k") return 32;
 	panic("Unknown chip type '%s'.\n", this->device.c_str());
 }
@@ -1052,6 +1062,7 @@ vector<int> FpgaConfig::chip_cols() const
 {
 	if (this->device == "384") return vector<int>({18, 54, 54, 54, 54});
 	if (this->device == "1k") return vector<int>({18, 54, 54, 42, 54, 54, 54});
+	if (this->device == "u4k") return vector<int>({54, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54});
 	// Its IPConnect or Mutiplier block, five logic, ram, six logic.
 	if (this->device == "5k") return vector<int>({54, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54});
 	if (this->device == "8k") return vector<int>({18, 54, 54, 54, 54, 54, 54, 54, 42, 54, 54, 54, 54, 54, 54, 54, 54});
@@ -1063,7 +1074,7 @@ string FpgaConfig::tile_type(int x, int y) const
 	if ((x == 0 || x == this->chip_width()+1) && (y == 0 || y == this->chip_height()+1)) return "corner";
 	// The sides on the 5k devices are IPConnect or DSP tiles
 	if (this->device == "5k" && (x == 0 || x == this->chip_width()+1)) {
-		if( (y == 5) || (y == 10) || (y == 15) || (y == 23)) //check ordering here, tile 23-26 might be reversed
+		if( (y == 5) || (y == 10) || (y == 15) || (y == 23))
 			return "dsp0";
 		if( (y == 6) || (y == 11) || (y == 16) || (y == 24))
 			return "dsp1";
@@ -1073,6 +1084,19 @@ string FpgaConfig::tile_type(int x, int y) const
 			return "dsp3";
 		return "ipcon";
 	}
+	
+	if (this->device == "u4k" && (x == 0 || x == this->chip_width()+1)) {
+		if( (y == 5) || (y == 13))
+			return "dsp0";
+		if( (y == 6) || (y == 14))
+			return "dsp1";
+		if( (y == 7) || (y == 15))
+			return "dsp2";
+		if( (y == 8) || (y == 16))
+			return "dsp3";
+		return "ipcon";
+	}
+	
 	if ((x == 0 || x == this->chip_width()+1) || (y == 0 || y == this->chip_height()+1)) return "io";
 
 	if (this->device == "384") return "logic";
@@ -1082,7 +1106,7 @@ string FpgaConfig::tile_type(int x, int y) const
 		return "logic";
 	}
 
-	if (this->device == "5k") {
+	if (this->device == "5k" || this->device == "u4k") {
 		if (x == 6 || x == 19) return y % 2 == 1 ? "ramb" : "ramt";
 		return "logic";
 	}
