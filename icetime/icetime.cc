@@ -1293,6 +1293,8 @@ std::string ecnetname_to_vlog(std::string ec_name)
 
 std::string make_dsp_ip(int x, int y, std::string net, std::string &primnet)
 {
+	// Don't generate excessive warnings about unknown cells
+	static std::set<std::string> unsupported_cells;
 	std::tuple<int, int, std::string> ecnet(x, y, net);
 	std::tuple<std::string, int, int, int> key("", -1, -1, -1);
 	bool found = false;
@@ -1423,9 +1425,11 @@ std::string make_dsp_ip(int x, int y, std::string net, std::string &primnet)
 
 		return cell;
 	} else {
-		netlist_cell_types[cell] = "SB_" + ectype;
-		fprintf(stderr, "Warning: timing analysis not supported for cell type %s\n", ectype.c_str());
-		return cell;
+		if (unsupported_cells.find(ectype) == unsupported_cells.end()) {
+			fprintf(stderr, "Warning: timing analysis not supported for cell type %s\n", ectype.c_str());
+			unsupported_cells.insert(ectype);
+		}
+		return "";
 	}
 }
 
@@ -1567,8 +1571,8 @@ void make_seg_cell(int net, const net_segment_t &seg)
 		if(device_type == "up5k" && ((seg.x == 0) || (seg.x == int(config_tile_type.size()) - 1))) {
 			std::string primnet;
 			auto cell = make_dsp_ip(seg.x, seg.y, seg.name, primnet);
-			netlist_cell_ports[cell][primnet] = net_name(net);
 			if(cell != "") {
+				netlist_cell_ports[cell][primnet] = net_name(net);
 				make_inmux(seg.x, seg.y, net);
 			}
 			return;
