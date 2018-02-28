@@ -1283,12 +1283,18 @@ std::string ecnetname_to_vlog(std::string ec_name)
 	std::string end = ec_name.substr(last_+1);
 	size_t nidx = 0;
 
-	int num = std::stoi(end, &nidx, 10);
-	if(nidx == end.length()) {
-		return base + "[" + std::to_string(num) + "]";
-	} else {
+	int num = 0;
+	try {
+		num = std::stoi(end, &nidx, 10);
+		if(nidx == end.length()) {
+			return base + "[" + std::to_string(num) + "]";
+		} else {
+			return ec_name;
+		}
+	} catch(std::invalid_argument e) { // Not numeric and stoi throws exception
 		return ec_name;
 	}
+
 }
 
 std::string make_dsp_ip(int x, int y, std::string net, std::string &primnet)
