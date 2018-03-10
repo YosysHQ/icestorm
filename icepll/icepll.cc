@@ -52,6 +52,9 @@ void help(const char *cmd)
 	printf("    -m\n");
 	printf("        Save PLL configuration as Verilog module (use with -f)\n");
 	printf("\n");
+	printf("    -n <module name>\n");
+	printf("        Specify different Verilog module name than the default 'pll'\n");
+	printf("\n");
 	printf("    -q\n");
 	printf("        Do not print PLL configuration to stdout\n");
 	printf("\n");
@@ -64,11 +67,12 @@ int main(int argc, char **argv)
 	double f_pllout = 60;
 	bool simple_feedback = true;
 	char* filename = NULL;
+	char* module_name = NULL;
 	bool save_as_module = false;
 	bool quiet = false;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "i:o:Smf:q")) != -1)
+	while ((opt = getopt(argc, argv, "i:o:Smf:n:q")) != -1)
 	{
 		switch (opt)
 		{
@@ -86,6 +90,9 @@ int main(int argc, char **argv)
 			break;
 		case 'f':
 			filename = optarg;
+			break;
+		case 'n':
+			module_name = optarg;
 			break;
 		case 'q':
 			quiet = true;
@@ -238,11 +245,11 @@ int main(int argc, char **argv)
 						f_pllin, f_pllout, best_fout);
 
 			// generate Verilog module
-			fprintf(f,  "module pll(\n"
+			fprintf(f,  "module %s(\n"
 						"\tinput  clock_in,\n"
 						"\toutput clock_out,\n"
 						"\toutput locked\n"
-						"\t);\n\n"
+						"\t);\n\n", (module_name ? module_name : "pll")
 					);
 
 			// save iCE40 PLL tile configuration
