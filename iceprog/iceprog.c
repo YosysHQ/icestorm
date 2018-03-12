@@ -116,6 +116,46 @@ enum mpsse_cmd
 #define MC_DATA_BITS (0x02) /* When set count bits not bytes */
 #define MC_DATA_OCN  (0x01) /* When set update data on negative clock edge */
 
+/* Flash command definitions */
+/* This command list is based on the Winbond W25Q128JV Datasheet */
+enum flash_cmd {
+	FC_WE = 0x06, /* Write Enable */
+	FC_SRWE = 0x50, /* Volatile SR Write Enable */
+	FC_WD = 0x04, /* Write Disable */
+	FC_RPD = 0xAB, /* Release Power-Down, returns Device ID */
+	FC_MFGID = 0x90, /*  Read Manufacturer/Device ID */
+	FC_JEDECID = 0x9F, /* Read JEDEC ID */
+	FC_UID = 0x4B, /* Read Unique ID */
+	FC_RD = 0x03, /* Read Data */
+	FC_FR = 0x0B, /* Fast Read */
+	FC_PP = 0x02, /* Page Program */
+	FC_SE = 0x20, /* Sector Erase 4kb */
+	FC_BE32 = 0x52, /* Block Erase 32kb */
+	FC_BE64 = 0xD8, /* Block Erase 64kb */
+	FC_CE = 0xC7, /* Chip Erase */
+	FC_RSR1 = 0x05, /* Read Status Register 1 */
+	FC_WSR1 = 0x01, /* Write Status Register 1 */
+	FC_RSR2 = 0x35, /* Read Status Register 2 */
+	FC_WSR2 = 0x31, /* Write Status Register 2 */
+	FC_RSR3 = 0x15, /* Read Status Register 3 */
+	FC_WSR3 = 0x11, /* Write Status Register 3 */
+	FC_RSFDP = 0x5A, /* Read SFDP Register */
+	FC_ESR = 0x44, /* Erase Security Register */
+	FC_PSR = 0x42, /* Program Security Register */
+	FC_RSR = 0x48, /* Read Security Register */
+	FC_GBL = 0x7E, /* Global Block Lock */
+	FC_GBU = 0x98, /* Global Block Unlock */
+	FC_RBL = 0x3D, /* Read Block Lock */
+	FC_IBL = 0x36, /* Individual Block Lock */
+	FC_IBU = 0x39, /* Individual Block Unlock */
+	FC_EPS = 0x75, /* Erase / Program Suspend */
+	FC_EPR = 0x7A, /* Erase / Program Resume */
+	FC_PD = 0xB9, /* Power-down */
+	FC_QPI = 0x38, /* Enter QPI mode */
+	FC_ERESET = 0x66, /* Enable Reset */
+	FC_RESET = 0x99, /* Reset Device */
+};
+
 static void check_rx()
 {
 	while (1) {
@@ -234,7 +274,7 @@ static void flash_read_id()
 {
 	// fprintf(stderr, "read flash ID..\n");
 
-	uint8_t data[21] = { 0x9F };
+	uint8_t data[21] = { FC_JEDECID };
 	set_gpio(0, 0);
 	xfer_spi(data, 21);
 	set_gpio(1, 0);
@@ -247,7 +287,7 @@ static void flash_read_id()
 
 static void flash_power_up()
 {
-	uint8_t data[1] = { 0xAB };
+	uint8_t data[1] = { FC_RPD };
 	set_gpio(0, 0);
 	xfer_spi(data, 1);
 	set_gpio(1, 0);
@@ -255,7 +295,7 @@ static void flash_power_up()
 
 static void flash_power_down()
 {
-	uint8_t data[1] = { 0xB9 };
+	uint8_t data[1] = { FC_PD };
 	set_gpio(0, 0);
 	xfer_spi(data, 1);
 	set_gpio(1, 0);
@@ -266,7 +306,7 @@ static void flash_write_enable()
 	if (verbose)
 		fprintf(stderr, "write enable..\n");
 
-	uint8_t data[1] = { 0x06 };
+	uint8_t data[1] = { FC_WE };
 	set_gpio(0, 0);
 	xfer_spi(data, 1);
 	set_gpio(1, 0);
@@ -276,7 +316,7 @@ static void flash_bulk_erase()
 {
 	fprintf(stderr, "bulk erase..\n");
 
-	uint8_t data[1] = { 0xc7 };
+	uint8_t data[1] = { FC_CE };
 	set_gpio(0, 0);
 	xfer_spi(data, 1);
 	set_gpio(1, 0);
@@ -286,7 +326,7 @@ static void flash_64kB_sector_erase(int addr)
 {
 	fprintf(stderr, "erase 64kB sector at 0x%06X..\n", addr);
 
-	uint8_t command[4] = { 0xd8, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
+	uint8_t command[4] = { FC_BE64, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 
 	set_gpio(0, 0);
 	send_spi(command, 4);
@@ -298,7 +338,7 @@ static void flash_prog(int addr, uint8_t *data, int n)
 	if (verbose)
 		fprintf(stderr, "prog 0x%06X +0x%03X..\n", addr, n);
 
-	uint8_t command[4] = { 0x02, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
+	uint8_t command[4] = { FC_PP, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 
 	set_gpio(0, 0);
 	send_spi(command, 4);
@@ -315,7 +355,7 @@ static void flash_read(int addr, uint8_t *data, int n)
 	if (verbose)
 		fprintf(stderr, "read 0x%06X +0x%03X..\n", addr, n);
 
-	uint8_t command[4] = { 0x03, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
+	uint8_t command[4] = { FC_RD, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 
 	set_gpio(0, 0);
 	send_spi(command, 4);
@@ -335,7 +375,7 @@ static void flash_wait()
 
 	while (1)
 	{
-		uint8_t data[2] = { 0x05 };
+		uint8_t data[2] = { FC_RSR1 };
 
 		set_gpio(0, 0);
 		xfer_spi(data, 2);
