@@ -33,6 +33,10 @@
 #include <map>
 #include <set>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 // add this number of ns as estimate for clock distribution mismatch
 #define GLOBAL_CLK_DIST_JITTER 0.1
 
@@ -2223,6 +2227,18 @@ void help(const char *cmd)
 
 int main(int argc, char **argv)
 {
+#ifdef __EMSCRIPTEN__
+	EM_ASM(
+		if (ENVIRONMENT_IS_NODE)
+		{
+			FS.mkdir('/hostcwd');
+			FS.mount(NODEFS, { root: '.' }, '/hostcwd');
+			FS.mkdir('/hostfs');
+			FS.mount(NODEFS, { root: '/' }, '/hostfs');
+		}
+	);
+#endif
+
 	bool listnets = false;
 	bool print_timing = false;
 	bool interior_timing = false;

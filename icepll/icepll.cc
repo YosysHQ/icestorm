@@ -20,6 +20,10 @@
 #include <string.h>
 #include <math.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 const char *binstr(int v, int n)
 {
 	static char buffer[16];
@@ -63,6 +67,18 @@ void help(const char *cmd)
 
 int main(int argc, char **argv)
 {
+#ifdef __EMSCRIPTEN__
+	EM_ASM(
+		if (ENVIRONMENT_IS_NODE)
+		{
+			FS.mkdir('/hostcwd');
+			FS.mount(NODEFS, { root: '.' }, '/hostcwd');
+			FS.mkdir('/hostfs');
+			FS.mount(NODEFS, { root: '/' }, '/hostfs');
+		}
+	);
+#endif
+
 	double f_pllin = 12;
 	double f_pllout = 60;
 	bool simple_feedback = true;
