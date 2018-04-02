@@ -39,7 +39,9 @@ fully open source Verilog-to-Bitstream flow for iCE40 FPGAs.
 
 <p>
 The focus of the project is on the iCE40 LP/HX 1K/4K/8K chips. (Most of the
-work was done on HX1K-TQ144 and HX8K-CT256 parts.)
+work was done on HX1K-TQ144 and HX8K-CT256 parts.) The iCE40 UltraPlus parts
+are also supported, including DSPs, oscillators, RGB and SPRAM. iCE40 LM, Ultra
+and UltraLite parts are not yet supported.
 </p>
 
 <h2>Why the Lattice iCE40?</h2>
@@ -74,6 +76,8 @@ Here is a list of currently supported parts and the corresponding options for ar
 <table class="ctab">
 <tr><th>Part</th><th>Package</th><th>Pin Spacing</th><th>I/Os</th><th>arachne-pnr opts</th><th>icetime opts</th></tr>
 <tr><td>iCE40-LP1K-SWG16TR</td><td>16-ball WLCSP (1.40 x 1.48 mm)</td><td>0.35 mm</td><td>10</td><td>-d 1k -P swg16tr</td><td>-d lp1k</td></tr>
+<tr><td>iCE40-UP3K-UWG30</td><td>30-ball WLCSP (2.15 x 2.55 mm)</td><td>0.40 mm</td><td>21</td><td>-d 5k -P uwg30</td><td>-d up5k</td></tr>
+<tr><td>iCE40-UP5K-UWG30</td><td>30-ball WLCSP (2.15 x 2.55 mm)</td><td>0.40 mm</td><td>21</td><td>-d 5k -P uwg30</td><td>-d up5k</td></tr>
 <tr><td>iCE40-LP384-CM36</td><td>36-ball ucBGA (2.5 x 2.5 mm)</td><td>0.40 mm</td><td>25</td><td>-d 384 -P cm36</td><td>-d lp384</td></tr>
 <tr><td>iCE40-LP1K-CM36</td><td>36-ball ucBGA (2.5 x 2.5 mm)</td><td>0.40 mm</td><td>25</td><td>-d 1k -P cm36</td><td>-d lp1k</td></tr>
 <tr><td>iCE40-LP384-CM49</td><td>49-ball ucBGA (3 x 3 mm)</td><td>0.40 mm</td><td>37</td><td>-d 384 -P cm49</td><td>-d lp384</td></tr>
@@ -88,6 +92,7 @@ Here is a list of currently supported parts and the corresponding options for ar
 <tr><td>iCE40-LP8K-CM225</td><td>225-ball ucBGA (7 x 7 mm)</td><td>0.40 mm</td><td>178</td><td>-d 8k -P cm225</td><td>-d lp8k</td></tr>
 <tr><td>iCE40-HX8K-CM225</td><td>225-ball ucBGA (7 x 7 mm)</td><td>0.40 mm</td><td>178</td><td>-d 8k -P cm225</td><td>-d hx8k</td></tr>
 <tr><td>iCE40-LP384-QN32</td><td>32-pin QFN (5 x 5 mm)</td><td>0.50 mm</td><td>21</td><td>-d 384 -P qn32</td><td>-d lp384</td></tr>
+<tr><td>iCE40-UP5K-SG48</td><td>48-pin QFN (7 x 7 mm)</td><td>0.50 mm</td><td>39</td><td>-d 5k -P sg48</td><td>-d up5k</td></tr>
 <tr><td>iCE40-LP1K-QN84</td><td>84-pin QFNS (7 x 7 mm)</td><td>0.50 mm</td><td>67</td><td>-d 1k -P qn84</td><td>-d lp1k</td></tr>
 <tr><td>iCE40-LP1K-CB81</td><td>81-ball csBGA (5 x 5 mm)</td><td>0.50 mm</td><td>62</td><td>-d 1k -P cb81</td><td>-d lp1k</td></tr>
 <tr><td>iCE40-LP1K-CB121</td><td>121-ball csBGA (6 x 6 mm)</td><td>0.50 mm</td><td>92</td><td>-d 1k -P cb121</td><td>-d lp1k</td></tr>
@@ -97,13 +102,10 @@ Here is a list of currently supported parts and the corresponding options for ar
 <tr><td>iCE40-HX1K-VQ100</td><td>100-pin VQFP (14 x 14 mm)</td><td>0.50 mm</td><td>72</td><td>-d 1k -P vq100</td><td>-d hx1k</td></tr>
 <tr><td>iCE40-HX1K-TQ144</td><td>144-pin TQFP (20 x 20 mm)</td><td>0.50 mm</td><td>96</td><td>-d 1k -P tq144</td><td>-d hx1k</td></tr>
 <tr><td>iCE40-HX4K-TQ144</td><td>144-pin TQFP (20 x 20 mm)</td><td>0.50 mm</td><td>107</td><td>-d 8k -P tq144:4k</td><td>-d hx8k</td></tr>
+<tr><td>iCE40-HX4K-BG121</td><td>121-ball caBGA (9 x 9 mm)</td><td>0.80 mm</td><td>93</td><td>-d 8k -P bg121:4k</td><td>-d hx8k</td></tr>
+<tr><td>iCE40-HX8K-BG121</td><td>121-ball caBGA (9 x 9 mm)</td><td>0.80 mm</td><td>93</td><td>-d 8k -P bg121</td><td>-d hx8k</td></tr>
 <tr><td>iCE40-HX8K-CT256</td><td>256-ball caBGA (14 x 14 mm)</td><td>0.80 mm</td><td>206</td><td>-d 8k -P ct256</td><td>-d hx8k</td></tr>
 </table>
-
-<p>
-	Experimental support is also included for one iCE40 UltraPlus device, the iCE40-UP5K-SG48, including support for some of
-	the new UltraPlus features such as DSPs, SPRAM and internal oscillators.
-</p>
 
 <p>
 Current work focuses on further improving our timing analysis flow.
