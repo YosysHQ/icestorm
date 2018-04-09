@@ -29,7 +29,7 @@ The <i>span-4</i> and <i>span-12</i> wires are the main interconnect resource in
 </p>
 
 <p>
-The bits marked <span style="font-family:monospace">routing</span> in the bitstream do enable switches (transfer gates) that can
+The bits marked <span style="font-family:monospace">routing</span> in the bitstream enable switches (transfer gates) that can
 be used to connect wire segments bidirectionally to each other in order to create larger
 segments. The bits marked <span style="font-family:monospace">buffer</span> in the bitstream enable tristate buffers that drive
 the signal in one direction from one wire to another. Both types of bits exist for routing between
@@ -56,7 +56,7 @@ for this wire names.) The wires connecting the left and right horizontal span-4 
 </p>
 
 <p>
-The wires <span style="font-family:monospace">sp4_h_l_36</span> to <span style="font-family:monospace">sp4_h_l_47</span> terminate in the cell, so do the wires <span style="font-family:monospace">sp4_h_r_0</span> to <span style="font-family:monospace">sp4_h_r_11</span>.
+The wires <span style="font-family:monospace">sp4_h_l_36</span> to <span style="font-family:monospace">sp4_h_l_47</span> terminate in the cell as do the wires <span style="font-family:monospace">sp4_h_r_0</span> to <span style="font-family:monospace">sp4_h_r_11</span>.
 </p>
 
 <p>
@@ -150,7 +150,7 @@ Each logic tile has 32 local tracks. They are organized in 4 groups of 8 wires e
 
 <p>
 The span wires, global signals, and neighbour outputs can be routed to the local tracks. But not
-every of those signals can be routed to every of the local tracks. Instead there is a different
+all of those signals can be routed to all of the local tracks. Instead there is a different
 mix of 16 signals for each local track.
 </p>
 
