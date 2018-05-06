@@ -18,6 +18,11 @@ ifeq ($(DEVICECLASS), 5k)
 	RAM_SUFFIX := _8k
 endif
 
+ifeq ($(DEVICECLASS), 4k)
+	DEVICE := lm4k-cm49
+	RAM_SUFFIX := _8k
+endif
+
 ifeq ($(DEVICECLASS), 8k)
   DEVICE := hx8k-ct256
   RAM_SUFFIX = _8k
