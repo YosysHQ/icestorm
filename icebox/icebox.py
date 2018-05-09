@@ -230,6 +230,19 @@ class iceconfig:
                     entries.append((x, src_y, x, y))
             return entries
 
+        # TODO(awygle) - actually capture 0 and 21 here
+        if self.device == "lm4k":
+            entries = list()
+            for x in range(self.max_x+1):
+                for y in range(self.max_y+1):
+                    src_y = None
+                    if  0 <= y <=  4: src_y =  4
+                    if  5 <= y <= 10: src_y =  5
+                    if 11 <= y <= 16: src_y = 16 
+                    if 17 <= y <= 21: src_y = 17 
+                    entries.append((x, src_y, x, y))
+            return entries
+
         if self.device == "8k":
             entries = list()
             for x in range(self.max_x+1):
@@ -1409,6 +1422,10 @@ extra_bits_db = {
         (0, 331, 143): ("padin_glb_netwk", "7"),
     },
     "lm4k": {
+        #(0, 654, 175): 1?
+        #(0, 655, 175): 1?
+        #(0, 655, 174): 1? 7?
+        #(1, 655, 174): 1?
     },
     "5k": {
         (0, 690, 334): ("padin_glb_netwk", "0"), # check
@@ -1463,14 +1480,14 @@ gbufin_db = {
         (13, 31,  1), #checked
         (19, 31,  2), #checked
     ],
-    "lm4k": [ # TODO(awygle) - learn why the other parts don't match floor planner
-        ( 6,  0,  2),
-        (12,  0,  2),
-        (13,  0,  2),
-        (19,  0,  2),
-        ( 6, 21,  2),
-        (12, 21,  2),
-        (13, 21,  2),
+    "lm4k": [
+        ( 6,  0,  6),
+        (12,  0,  5),
+        (13,  0,  0),
+        (19,  0,  7),
+        ( 6, 21,  3),
+        (12, 21,  4),
+        (13, 21,  1),
         (19, 21,  2),
     ],
     "8k": [
