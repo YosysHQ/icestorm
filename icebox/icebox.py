@@ -1409,7 +1409,6 @@ def parse_db(text, device="1k"):
         db.append(line)
     return db
 
-# XXX
 extra_bits_db = {
     "1k": {
         (0, 330, 142): ("padin_glb_netwk", "0"),
@@ -1422,10 +1421,14 @@ extra_bits_db = {
         (0, 331, 143): ("padin_glb_netwk", "7"),
     },
     "lm4k": {
-        #(0, 654, 175): 1?
-        #(0, 655, 175): 1?
-        #(0, 655, 174): 1? 7?
-        #(1, 655, 174): 1?
+        (0, 654, 174): ("padin_glb_netwk", "0"),
+        (0, 655, 174): ("padin_glb_netwk", "1"),
+        (1, 654, 175): ("padin_glb_netwk", "2"),
+        (1, 655, 175): ("padin_glb_netwk", "3"),
+        (1, 654, 174): ("padin_glb_netwk", "4"), # HSOSC
+        (1, 655, 174): ("padin_glb_netwk", "5"), # LSOSC
+        (0, 654, 175): ("padin_glb_netwk", "6"),
+        (0, 655, 175): ("padin_glb_netwk", "7"),
     },
     "5k": {
         (0, 690, 334): ("padin_glb_netwk", "0"), # check
@@ -2072,17 +2075,17 @@ padin_pio_db = {
         ( 6,  0, 1),  # glb_netwk_6
         ( 6, 17, 1),  # glb_netwk_7
     ],
-    "lm4k": [ # XXX
-        (19,  0, 1), #0 fixed
+    "lm4k": [
+        (19,  0, 0), #0 fixed
         ( 6,  0, 1), #1 fixed
-        (13, 31, 0), #2 fixed
+        (13, 21, 0), #2 fixed
         (13,  0, 0), #3 fixed
         
-        (19, 31, 0), #These two are questionable, but keep the order correct
-        ( 6, 31, 0), #They may need to be fixed if other package options are added.
+        ( 0, 21, 1), #These two are questionable, but keep the order correct
+        (25, 21, 1), #They may need to be fixed if other package options are added.
 
         (12,  0, 1), #6 fixed
-        (12, 31, 1), #7 fixed
+        (12, 21, 1), #7 fixed
     ],
     "5k": [
         (19,  0, 1), #0 fixed
