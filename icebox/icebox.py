@@ -2081,8 +2081,8 @@ padin_pio_db = {
         (13, 21, 0), #2 fixed
         (13,  0, 0), #3 fixed
         
-        ( 0, 21, 1), #These two are questionable, but keep the order correct
-        (25, 21, 1), #They may need to be fixed if other package options are added.
+        (19, 21, 0), #These two are questionable, but keep the order correct
+        ( 6, 21, 0), #They may need to be fixed if other package options are added.
 
         (12,  0, 1), #6 fixed
         (12, 21, 1), #7 fixed
