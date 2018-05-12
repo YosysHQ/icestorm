@@ -79,6 +79,30 @@ class iceconfig:
             self.io_tiles[(0, y)] = ["0" * 18 for i in range(16)]
             self.io_tiles[(self.max_x, y)] = ["0" * 18 for i in range(16)]
 
+    def setup_empty_lm4k(self):
+        self.clear()
+        self.device = "lm4k"
+        self.max_x = 25
+        self.max_y = 21
+        
+        for x in range(1, self.max_x):
+            for y in range(1, self.max_y):
+                if x in (6, 19):
+                    if y % 2 == 1:
+                        self.ramb_tiles[(x, y)] = ["0" * 42 for i in range(16)]
+                    else:
+                        self.ramt_tiles[(x, y)] = ["0" * 42 for i in range(16)]
+                else:
+                    self.logic_tiles[(x, y)] = ["0" * 54 for i in range(16)]
+
+        for x in range(1, self.max_x):
+            self.io_tiles[(x, 0)] = ["0" * 18 for i in range(16)]
+            self.io_tiles[(x, self.max_y)] = ["0" * 18 for i in range(16)]
+
+        for y in range(1, self.max_y):
+            self.io_tiles[(0, y)] = ["0" * 18 for i in range(16)]
+            self.io_tiles[(self.max_x, y)] = ["0" * 18 for i in range(16)]
+
     def setup_empty_5k(self):
         self.clear()
         self.device = "5k"
@@ -153,6 +177,7 @@ class iceconfig:
     def pinloc_db(self):
         if self.device == "384": return pinloc_db["384-qn32"]
         if self.device == "1k": return pinloc_db["1k-tq144"]
+        if self.device == "lm4k": return pinloc_db["lm4k-cm49"]
         if self.device == "5k": return pinloc_db["5k-sg48"]
         if self.device == "8k": return pinloc_db["8k-ct256"]
         assert False
@@ -175,6 +200,8 @@ class iceconfig:
     def pll_list(self):
         if self.device == "1k":
             return ["1k"]
+        if self.device == "lm4k":
+            return ["lm4k"]
         if self.device == "5k":
             return ["5k"]
         if self.device == "8k":
@@ -200,6 +227,19 @@ class iceconfig:
                     if 13 <= y <= 17: src_y = 13
                     if x in [3, 10] and src_y ==  4: src_y =  3
                     if x in [3, 10] and src_y == 12: src_y = 11
+                    entries.append((x, src_y, x, y))
+            return entries
+
+        # TODO(awygle) - actually capture 0 and 21 here
+        if self.device == "lm4k":
+            entries = list()
+            for x in range(self.max_x+1):
+                for y in range(self.max_y+1):
+                    src_y = None
+                    if  0 <= y <=  4: src_y =  4
+                    if  5 <= y <= 10: src_y =  5
+                    if 11 <= y <= 16: src_y = 16 
+                    if 17 <= y <= 21: src_y = 17 
                     entries.append((x, src_y, x, y))
             return entries
 
@@ -302,7 +342,7 @@ class iceconfig:
     
     def tile_db(self, x, y):
         # Only these devices have IO on the left and right sides.
-        if self.device in ["384", "1k", "8k"]:
+        if self.device in ["384", "1k", "lm4k", "8k"]:
           if x == 0: return iotile_l_db
           if x == self.max_x: return iotile_r_db
         # The 5k needs an IO db including the extra bits
@@ -326,7 +366,7 @@ class iceconfig:
             if (x, y) in self.dsp_tiles[2]: return dsp2_5k_db
             if (x, y) in self.dsp_tiles[3]: return dsp3_5k_db
 
-        elif self.device == "8k":
+        elif self.device == "8k" or self.device == "lm4k":
             if (x, y) in self.logic_tiles: return logictile_8k_db
             if (x, y) in self.ramb_tiles: return rambtile_8k_db
             if (x, y) in self.ramt_tiles: return ramttile_8k_db
@@ -449,7 +489,7 @@ class iceconfig:
                         return (nx, ny, "ram/RDATA_%d" % func)
                     elif self.device == "5k":
                         return (nx, ny, "ram/RDATA_%d" % (15-func))
-                    elif self.device == "8k":
+                    elif self.device == "8k" or self.device == "lm4k":
                         return (nx, ny, "ram/RDATA_%d" % (15-func))
                     else:
                         assert False
@@ -458,7 +498,7 @@ class iceconfig:
                         return (nx, ny, "ram/RDATA_%d" % (8+func))
                     elif self.device == "5k":
                         return (nx, ny, "ram/RDATA_%d" % (7-func))
-                    elif self.device == "8k":
+                    elif self.device == "8k" or self.device == "lm4k":
                         return (nx, ny, "ram/RDATA_%d" % (7-func))
                     else:
                         assert False
@@ -500,7 +540,7 @@ class iceconfig:
                 funcnets |= self.follow_funcnet(x, y, int(match.group(1)) % 8)
             elif self.device == "5k":
                 funcnets |= self.follow_funcnet(x, y, 7 - int(match.group(1)) % 8)
-            elif self.device == "8k":
+            elif self.device == "8k" or self.device == "lm4k":
                 funcnets |= self.follow_funcnet(x, y, 7 - int(match.group(1)) % 8)
             else:
                 assert False
@@ -714,7 +754,7 @@ class iceconfig:
                 add_seed_segments(idx, tile, logictile_db)
             elif self.device == "5k":
                 add_seed_segments(idx, tile, logictile_5k_db)
-            elif self.device == "8k":
+            elif self.device == "8k" or self.device == "lm4k":
                 add_seed_segments(idx, tile, logictile_8k_db)
             elif self.device == "384":
                 add_seed_segments(idx, tile, logictile_384_db)
@@ -726,7 +766,7 @@ class iceconfig:
                 add_seed_segments(idx, tile, rambtile_db)
             elif self.device == "5k":
                 add_seed_segments(idx, tile, rambtile_8k_db)
-            elif self.device == "8k":
+            elif self.device == "8k" or self.device == "lm4k":
                 add_seed_segments(idx, tile, rambtile_8k_db)
             else:
                 assert False
@@ -736,7 +776,7 @@ class iceconfig:
                 add_seed_segments(idx, tile, ramttile_db)
             elif self.device == "5k":
                 add_seed_segments(idx, tile, ramttile_8k_db)
-            elif self.device == "8k":
+            elif self.device == "8k" or self.device == "lm4k":
                 add_seed_segments(idx, tile, ramttile_8k_db)
             else:
                 assert False
@@ -881,7 +921,7 @@ class iceconfig:
                     self.extra_bits.add((int(line[1]), int(line[2]), int(line[3])))
                     continue
                 if line[0] == ".device":
-                    assert line[1] in ["1k", "5k", "8k", "384"]
+                    assert line[1] in ["1k", "lm4k", "5k", "8k", "384"]
                     self.device = line[1]
                     continue
                 if line[0] == ".warmboot":
@@ -1303,7 +1343,8 @@ def run_checks_neigh():
     print("Running consistency checks on neighbour finder..")
     ic = iceconfig()
     # ic.setup_empty_1k()
-    ic.setup_empty_5k()
+    ic.setup_empty_lm4k()
+    # ic.setup_empty_5k()
     # ic.setup_empty_8k()
     # ic.setup_empty_384()
 
@@ -1353,7 +1394,8 @@ def parse_db(text, device="1k"):
                 continue
             line = line_1k
         elif line_8k != line:
-            if device != "8k" and device != "5k": # global network is the same for 8k and 5k
+            # global network is the same for 8k, 5k, and lm4k
+            if device != "8k" and device != "5k" and device != "lm4k": 
                 continue
             line = line_8k
         elif line_384 != line:
@@ -1377,6 +1419,16 @@ extra_bits_db = {
         (1, 331, 142): ("padin_glb_netwk", "5"),
         (0, 330, 143): ("padin_glb_netwk", "6"), # (0 0)  (330 143)  (330 143)  routing T_0_0.padin_6 <X> T_0_0.glb_netwk_6
         (0, 331, 143): ("padin_glb_netwk", "7"),
+    },
+    "lm4k": {
+        (0, 654, 174): ("padin_glb_netwk", "0"),
+        (0, 655, 174): ("padin_glb_netwk", "1"),
+        (1, 654, 175): ("padin_glb_netwk", "2"),
+        (1, 655, 175): ("padin_glb_netwk", "3"),
+        (1, 654, 174): ("padin_glb_netwk", "4"), # HSOSC
+        (1, 655, 174): ("padin_glb_netwk", "5"), # LSOSC
+        (0, 654, 175): ("padin_glb_netwk", "6"),
+        (0, 655, 175): ("padin_glb_netwk", "7"),
     },
     "5k": {
         (0, 690, 334): ("padin_glb_netwk", "0"), # check
@@ -1431,6 +1483,16 @@ gbufin_db = {
         (13, 31,  1), #checked
         (19, 31,  2), #checked
     ],
+    "lm4k": [
+        ( 6,  0,  6),
+        (12,  0,  5),
+        (13,  0,  0),
+        (19,  0,  7),
+        ( 6, 21,  3),
+        (12, 21,  4),
+        (13, 21,  1),
+        (19, 21,  2),
+    ],
     "8k": [
         (33, 16,  7),
         ( 0, 16,  6),
@@ -1468,6 +1530,10 @@ iolatch_db = {
         ( 5,  0),
         ( 8, 17),
     ],
+    "lm4k": [
+        (14, 0),
+        (14, 21)
+    ],
     "5k": [
         (14, 0),
         (14, 31),
@@ -1499,6 +1565,12 @@ warmbootinfo_db = {
         "BOOT": ( 22, 0, "fabout" ),
         "S0":   ( 23, 0, "fabout" ),
         "S1":   ( 24, 0, "fabout" ),
+    },
+    "lm4k": {
+        # These are the right locations but may be the wrong order.
+        "BOOT": ( 23, 0, "fabout" ),
+        "S0":   ( 24, 0, "fabout" ),
+        "S1":   ( 25, 1, "fabout" ),
     },
     "8k": {
         "BOOT": ( 31, 0, "fabout" ),
@@ -1618,6 +1690,99 @@ pllinfo_db = {
         "SDO":                  (12,  1, "neigh_op_bnr_3"),
         "SDI":                  ( 4,  0, "fabout"),
         "SCLK":                 ( 3,  0, "fabout"),
+    },
+    "lm4k": {
+        "LOC" : (12, 0),
+
+        # 3'b000 = "DISABLED"
+        # 3'b010 = "SB_PLL40_PAD"
+        # 3'b100 = "SB_PLL40_2_PAD"
+        # 3'b110 = "SB_PLL40_2F_PAD"
+        # 3'b011 = "SB_PLL40_CORE"
+        # 3'b111 = "SB_PLL40_2F_CORE"
+        "PLLTYPE_0":            (12,  0, "PLLCONFIG_5"),
+        "PLLTYPE_1":            (14,  0, "PLLCONFIG_1"),
+        "PLLTYPE_2":            (14,  0, "PLLCONFIG_3"),
+
+        # 3'b000 = "DELAY"
+        # 3'b001 = "SIMPLE"
+        # 3'b010 = "PHASE_AND_DELAY"
+        # 3'b110 = "EXTERNAL"
+        "FEEDBACK_PATH_0":      (14,  0, "PLLCONFIG_5"),
+        "FEEDBACK_PATH_1":      (11,  0, "PLLCONFIG_9"),
+        "FEEDBACK_PATH_2":      (12,  0, "PLLCONFIG_1"),
+
+        # 1'b0 = "FIXED"
+        # 1'b1 = "DYNAMIC" (also set FDA_FEEDBACK=4'b1111)
+        "DELAY_ADJMODE_FB":     (13,  0, "PLLCONFIG_4"),
+
+        # 1'b0 = "FIXED"
+        # 1'b1 = "DYNAMIC" (also set FDA_RELATIVE=4'b1111)
+        "DELAY_ADJMODE_REL":    (13,  0, "PLLCONFIG_9"),
+
+        # 2'b00 = "GENCLK"
+        # 2'b01 = "GENCLK_HALF"
+        # 2'b10 = "SHIFTREG_90deg"
+        # 2'b11 = "SHIFTREG_0deg"
+        "PLLOUT_SELECT_A_0":    (12,  0, "PLLCONFIG_6"),
+        "PLLOUT_SELECT_A_1":    (12,  0, "PLLCONFIG_7"),
+        # 2'b00 = "GENCLK"
+        # 2'b01 = "GENCLK_HALF"
+        # 2'b10 = "SHIFTREG_90deg"
+        # 2'b11 = "SHIFTREG_0deg"
+        "PLLOUT_SELECT_B_0":    (12,  0, "PLLCONFIG_2"),
+        "PLLOUT_SELECT_B_1":    (12,  0, "PLLCONFIG_3"),
+
+        # Numeric Parameters
+        "SHIFTREG_DIV_MODE":    (12,  0, "PLLCONFIG_4"),
+        "FDA_FEEDBACK_0":       (12,  0, "PLLCONFIG_9"),
+        "FDA_FEEDBACK_1":       (13,  0, "PLLCONFIG_1"),
+        "FDA_FEEDBACK_2":       (13,  0, "PLLCONFIG_2"),
+        "FDA_FEEDBACK_3":       (13,  0, "PLLCONFIG_3"),
+        "FDA_RELATIVE_0":       (13,  0, "PLLCONFIG_5"),
+        "FDA_RELATIVE_1":       (13,  0, "PLLCONFIG_6"),
+        "FDA_RELATIVE_2":       (13,  0, "PLLCONFIG_7"),
+        "FDA_RELATIVE_3":       (13,  0, "PLLCONFIG_8"),
+        "DIVR_0":               (10,  0, "PLLCONFIG_1"),
+        "DIVR_1":               (10,  0, "PLLCONFIG_2"),
+        "DIVR_2":               (10,  0, "PLLCONFIG_3"),
+        "DIVR_3":               (10,  0, "PLLCONFIG_4"),
+        "DIVF_0":               (10,  0, "PLLCONFIG_5"),
+        "DIVF_1":               (10,  0, "PLLCONFIG_6"),
+        "DIVF_2":               (10,  0, "PLLCONFIG_7"),
+        "DIVF_3":               (10,  0, "PLLCONFIG_8"),
+        "DIVF_4":               (10,  0, "PLLCONFIG_9"),
+        "DIVF_5":               (11,  0, "PLLCONFIG_1"),
+        "DIVF_6":               (11,  0, "PLLCONFIG_2"),
+        "DIVQ_0":               (11,  0, "PLLCONFIG_3"),
+        "DIVQ_1":               (11,  0, "PLLCONFIG_4"),
+        "DIVQ_2":               (11,  0, "PLLCONFIG_5"),
+        "FILTER_RANGE_0":       (11,  0, "PLLCONFIG_6"),
+        "FILTER_RANGE_1":       (11,  0, "PLLCONFIG_7"),
+        "FILTER_RANGE_2":       (11,  0, "PLLCONFIG_8"),
+        "TEST_MODE":            (12,  0, "PLLCONFIG_8"),
+
+        # PLL Ports
+        # TODO(awygle) confirm these
+        "PLLOUT_A":             ( 12,  0, 1), 
+        "PLLOUT_B":             ( 13,  0, 0), 
+        "REFERENCECLK":         ( 10,  0, "fabout"),
+        "EXTFEEDBACK":          ( 11,  0, "fabout"), 
+        "DYNAMICDELAY_0":       (  1,  0, "fabout"), 
+        "DYNAMICDELAY_1":       (  2,  0, "fabout"), 
+        "DYNAMICDELAY_2":       (  3,  0, "fabout"), 
+        "DYNAMICDELAY_3":       (  4,  0, "fabout"), 
+        "DYNAMICDELAY_4":       (  5,  0, "fabout"), 
+        "DYNAMICDELAY_5":       (  7,  0, "fabout"), 
+        "DYNAMICDELAY_6":       (  8,  0, "fabout"), 
+        "DYNAMICDELAY_7":       (  9,  0, "fabout"), 
+        "LOCK":                 (  1,  1, "neigh_op_bnl_1"), #check?
+        "BYPASS":               ( 15,  0, "fabout"),
+        "RESETB":               ( 16,  0, "fabout"),
+        "LATCHINPUTVALUE":      ( 14,  0, "fabout"),
+        "SDO":                  ( 24,  1, "neigh_op_bnr_3"), #check?
+        "SDI":                  ( 18,  0, "fabout"),
+        "SCLK":                 ( 17,  0, "fabout"),
     },
     "5k": {
         "LOC" : (12, 31),
@@ -1909,6 +2074,18 @@ padin_pio_db = {
         (13,  9, 0),  # glb_netwk_5
         ( 6,  0, 1),  # glb_netwk_6
         ( 6, 17, 1),  # glb_netwk_7
+    ],
+    "lm4k": [
+        (19,  0, 0), #0 fixed
+        ( 6,  0, 1), #1 fixed
+        (13, 21, 0), #2 fixed
+        (13,  0, 0), #3 fixed
+        
+        ( 0, 21, 1), #These two are questionable, but keep the order correct
+        (25, 21, 1), #They may need to be fixed if other package options are added.
+
+        (12,  0, 1), #6 fixed
+        (12, 21, 1), #7 fixed
     ],
     "5k": [
         (19,  0, 1), #0 fixed
@@ -2307,6 +2484,41 @@ ieren_db = {
         ( 7,  5, 1,  7,  5, 0),
         ( 7,  6, 0,  7,  6, 1),
         ( 7,  6, 1,  7,  6, 0),
+    ],
+    "lm4k": [
+        ( 5, 21,  1,  5, 21,  0),
+        ( 6, 21,  0,  6, 21,  1),
+        (12, 21,  1, 12, 21,  0),
+        (13, 21,  0, 13, 21,  1),
+        (17, 21,  1, 17, 21,  0),
+        (19, 21,  1, 19, 21,  0),
+        (22, 21,  1, 22, 21,  0),
+        ( 4, 21,  1,  4, 21,  0),
+        ( 7, 21,  1,  7, 21,  0),
+        (15, 21,  0, 15, 21,  1),
+        (18, 21,  0, 18, 21,  1),
+        (23, 21,  1, 23, 21,  0),
+        ( 4, 21,  0,  4, 21,  1),
+        ( 9, 21,  0,  9, 21,  1),
+        (19, 21,  0, 19, 21,  1),
+        (21, 21,  1, 21, 21,  0),
+        (23, 21,  0, 23, 21,  1),
+        ( 7,  0,  1,  7,  0,  0),
+        ( 6,  0,  1,  6,  0,  0),
+        (10,  0,  0, 10,  0,  1),
+        (19,  0,  1, 19,  0,  0),
+        (21,  0,  0, 21,  0,  1),
+        ( 6,  0,  0,  6,  0,  1),
+        (12,  0,  1, 12,  0,  0),
+        ( 7,  0,  0,  7,  0,  1),
+        (12,  0,  0, 12,  0,  1),
+        (19,  0,  0, 19,  0,  1),
+        (22,  0,  0, 22,  0,  1),
+        ( 8,  0,  1,  8,  0,  0),
+        ( 8,  0,  0,  8,  0,  1),
+        (13,  0,  1, 13,  0,  0),
+        (21,  0,  1, 21,  0,  0),
+        (13,  0,  0, 13,  0,  1),
     ],
     "5k": [
         ( 8,  0,  0,  8,  0,  1),
@@ -4615,6 +4827,45 @@ pinloc_db = {
         ( "F2", 19,  0, 1),
         ( "F4", 12,  0, 1),
         ( "F5",  6,  0, 1),
+    ],
+    "lm4k-cm49": [
+        ( "A1",  5,  21, 1),
+        ( "A2",  6,  21, 0),
+        ( "A3",  12, 21, 1),
+        ( "A4",  13, 21, 0),
+        ( "A5",  17, 21, 1),
+        ( "A6",  19, 21, 1),
+        ( "A7",  22, 21, 1),
+        ( "B1",  4, 21, 1),
+        ( "B2",  7, 21, 1),
+        ( "B4",  15, 21, 0),
+        ( "B6",  18, 21, 0),
+        ( "B7",  23, 21, 0),
+        ( "C1",  4, 21, 0),
+        ( "C3",  9, 21, 0),
+        ( "C4",  19, 21, 0),
+        ( "C6",  21, 21, 1),
+        ( "C7",  23, 21, 0),
+        ( "D1",  7,  0, 1),
+        ( "D2",  6,  0, 1),
+        ( "D3", 10,  0, 0),
+        ( "D6", 19,  0, 1),
+        ( "D7", 21,  0, 0),
+        ( "E1",  6,  0, 0),
+        ( "E2", 12,  0, 1),
+        ( "E3",  7,  0, 0),
+        ( "E4", 12,  0, 0),
+        ( "E5", 19,  0, 0),
+        ( "E6", 24,  0, 1),
+        ( "E7", 22,  0, 0),
+        ( "F2",  8,  0, 1),
+        ( "F3",  8,  0, 0),
+        ( "F4", 13,  0, 1),
+        ( "F5", 23,  0, 0),
+        ( "F6", 24,  0, 0),
+        ( "F7", 21,  0, 1),
+        ( "G3", 13,  0, 0),
+        ( "G6", 23,  0, 1),
     ]
 }
 
