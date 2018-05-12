@@ -56,6 +56,11 @@ if [ "$1" == "-up5k" ]; then
 	shift
 fi
 
+if [ "$1" == "-lm4k" ]; then
+	ICEDEV=lm4k-cm49
+	shift
+fi
+
 set -ex
 set -- ${1%.v}
 icecubedir="${ICECUBEDIR:-/opt/lscc/iCEcube2.2015.08}"
@@ -187,6 +192,42 @@ case "${ICEDEV:-hx1k-tq144}" in
 		iCEPACKAGE="UWG30"
 		iCE40DEV="iCE40UP5K"
 		;;
+	lm4k-cm49)
+		iCEPACKAGE="CM49"
+		iCE40DEV="iCE40LM4K"
+		;;
+	lm4k-cm36)
+		iCEPACKAGE="CM36"
+		iCE40DEV="iCE40LM4K"
+		;;
+	lm4k-swg25tr)
+		iCEPACKAGE="SWG25TR"
+		iCE40DEV="iCE40LM4K"
+		;;
+	lm2k-cm49)
+		iCEPACKAGE="CM49"
+		iCE40DEV="iCE40LM2K"
+		;;
+	lm2k-cm36)
+		iCEPACKAGE="CM36"
+		iCE40DEV="iCE40LM2K"
+		;;
+	lm2k-swg25tr)
+		iCEPACKAGE="SWG25TR"
+		iCE40DEV="iCE40LM2K"
+		;;
+	lm1k-cm49)
+		iCEPACKAGE="CM49"
+		iCE40DEV="iCE40LM1K"
+		;;
+	lm1k-cm36)
+		iCEPACKAGE="CM36"
+		iCE40DEV="iCE40LM1K"
+		;;
+	lm1k-swg25tr)
+		iCEPACKAGE="SWG25TR"
+		iCE40DEV="iCE40LM1K"
+		;;
 	*)
 		echo "ERROR: Invalid \$ICEDEV device config '$ICEDEV'."
 		exit 1
@@ -237,6 +278,21 @@ case "$iCE40DEV" in
 		icetech="SBTiCE40UP"
 		libfile="ice40UP5K.lib"
 		devfile="ICE40T05.dev"
+		;;
+	iCE40LM1K)
+		icetech="SBTiCE40LM"
+		libfile="ice40LM4K.lib"
+		devfile="ICE40R04.dev"
+		;;
+	iCE40LM2K)
+		icetech="SBTiCE40LM"
+		libfile="ice40LM4K.lib"
+		devfile="ICE40R04.dev"
+		;;
+	iCE40LM4K)
+		icetech="SBTiCE40LM"
+		libfile="ice40LM4K.lib"
+		devfile="ICE40R04.dev"
 		;;
 esac
 
