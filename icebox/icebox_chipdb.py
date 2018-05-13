@@ -319,7 +319,7 @@ for dsploc in ic.dsp_tiles[0]:
     print()
     
 if ic.device in icebox.extra_cells_db:
-    for cell in icebox.extra_cells_db[ic.device]:
+    for cell in sorted(icebox.extra_cells_db[ic.device]):
         name, loc = cell
         x, y, z = loc
         print(".extra_cell %d %d %d %s" % (x, y, z, name))
@@ -329,7 +329,7 @@ if ic.device in icebox.extra_cells_db:
         print()
      
 if ic.device in icebox.spram_db:
-    for cell in icebox.spram_db[ic.device]:
+    for cell in sorted(icebox.spram_db[ic.device]):
         loc = cell
         x, y, z = loc
         print(".extra_cell %d %d %d SPRAM" % (x, y, z))
