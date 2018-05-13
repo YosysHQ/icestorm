@@ -209,7 +209,8 @@ device = "up5k" #TODO: environment variable?
 #and look for the stuck bit)
 #TODO: clever code could get rid of this
 divq_bit0 = {
-    "up5k" : (11, 31, 3)
+    "up5k" : (11, 31, 3),
+    "lm4k" : (11, 0, 3)
 }
 
 #Return a list of PLL config bits in the format (x, y, bit)

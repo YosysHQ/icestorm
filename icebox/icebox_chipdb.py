@@ -19,6 +19,7 @@ import icebox
 import getopt, sys, re
 
 mode_384 = False
+mode_lm4k = False
 mode_5k = False
 mode_8k = False
 
@@ -34,11 +35,14 @@ Usage: icebox_chipdb [options] [bitmap.asc]
 
     -8
         create chipdb for 8k device
+
+    -4
+        create chipdb for lm4k device
 """)
     sys.exit(0)
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "358")
+    opts, args = getopt.getopt(sys.argv[1:], "3584")
 except:
     usage()
 
@@ -49,6 +53,8 @@ for o, a in opts:
         mode_5k = True
     elif o == "-3":
         mode_384 = True
+    elif o == "-4":
+        mode_lm4k = True
     else:
         usage()
 
@@ -59,6 +65,8 @@ elif mode_5k:
     ic.setup_empty_5k()
 elif mode_384:
     ic.setup_empty_384()
+elif mode_lm4k:
+    ic.setup_empty_lm4k()
 else:
     ic.setup_empty_1k()
 

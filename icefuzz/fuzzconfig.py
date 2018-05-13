@@ -60,6 +60,25 @@ elif device_class == "1k":
     """.split()
 
     gpins = "20 21 49 50 93 94 128 129".split()
+
+elif device_class == "4k":
+    num_ramb40 = 20
+    num_iobanks = 2
+    num_dsp = 0
+
+    # TODO(awygle) add F5 G6 F6 E6 which are constrained to (config) SPI.
+    pins = """
+        A1 A2 A3 A4 A5 A6 A7
+        B1 B2    B4    B6 B7
+        C1    C3 C4    C6 C7
+        D1 D2 D3       D6 D7
+        E1 E2 E3 E4 E5    E7
+           F2 F3 F4       F7
+              G3
+    """.split()
+
+    gpins = "A3 A4 D2 E2 E5 G3".split()
+
 elif device_class == "5k":
     num_ramb40 = 30
     num_iobanks = 2
