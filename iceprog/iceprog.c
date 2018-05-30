@@ -312,6 +312,21 @@ static void flash_write_enable()
 	set_gpio(1, 0);
 }
 
+static void flash_unprotect()
+{
+	if (verbose)
+		fprintf(stderr, "unprotect sectors..\n");
+
+	/* Global Unprotect */
+	uint8_t data3[2] = { FC_WSR1, 0x00 };
+	set_gpio(0, 0);
+	xfer_spi(data3, 2);
+	set_gpio(1, 0);
+
+	/* After global unprotect, need to re-enable writes */
+	flash_write_enable();
+}
+
 static void flash_bulk_erase()
 {
 	fprintf(stderr, "bulk erase..\n");
@@ -912,6 +927,7 @@ int main(int argc, char **argv)
 				if (bulk_erase)
 				{
 					flash_write_enable();
+					flash_unprotect();
 					flash_bulk_erase();
 					flash_wait();
 				}
@@ -924,6 +940,7 @@ int main(int argc, char **argv)
 
 					for (int addr = begin_addr; addr < end_addr; addr += 0x10000) {
 						flash_write_enable();
+						flash_unprotect();
 						flash_64kB_sector_erase(addr);
 						flash_wait();
 					}
@@ -941,6 +958,7 @@ int main(int argc, char **argv)
 					if (rc <= 0)
 						break;
 					flash_write_enable();
+					flash_unprotect();
 					flash_prog(rw_offset + addr, buffer, rc);
 					flash_wait();
 				}
