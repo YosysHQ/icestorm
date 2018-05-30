@@ -174,12 +174,15 @@ class iceconfig:
         if (x, y) in self.ipcon_tiles: return self.ipcon_tiles[(x, y)]            
         return None
 
-    def pinloc_db(self):
-        if self.device == "384": return pinloc_db["384-qn32"]
-        if self.device == "1k": return pinloc_db["1k-tq144"]
-        if self.device == "lm4k": return pinloc_db["lm4k-cm49"]
-        if self.device == "5k": return pinloc_db["5k-sg48"]
-        if self.device == "8k": return pinloc_db["8k-ct256"]
+    def pinloc_db(self, package = None):
+        if package is None:
+            if self.device == "384": return pinloc_db["384-qn32"]
+            if self.device == "1k": return pinloc_db["1k-tq144"]
+            if self.device == "lm4k": return pinloc_db["lm4k-cm49"]
+            if self.device == "5k": return pinloc_db["5k-sg48"]
+            if self.device == "8k": return pinloc_db["8k-ct256"]
+        else:
+            return pinloc_db[self.device + "-" + package]
         assert False
 
     def gbufin_db(self):
