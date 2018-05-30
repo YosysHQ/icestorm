@@ -805,6 +805,13 @@ class LogicCell:
             self.seq_bits[3] = '1'
         elif len(fields) >= 3 and (fields[1] == '->' or fields[1] == '<->'):
             prefix = 'lutff_%d/' % self.index
+
+            # Strip prefix if it is given
+            if fields[0].startswith(prefix):
+                fields[0] = fields[0][len(prefix):]
+            if fields[-1].startswith(prefix):
+                fields[-1] = fields[-1][len(prefix):]
+
             if fields[0] == 'out':
                 self.tile.read([prefix + fields[0]] + fields[1:])
             elif fields[-1].startswith('in_'):
@@ -955,6 +962,13 @@ class IOBlock:
             self.tile.ic.extra_bits.add(bit[0])
         elif len(fields) >= 3 and (fields[1] == '->' or fields[1] == '<->'):
             prefix = 'io_%d/' % self.index
+
+            # Strip prefix if it is given
+            if fields[0].startswith(prefix):
+                fields[0] = fields[0][len(prefix):]
+            if fields[-1].startswith(prefix):
+                fields[-1] = fields[-1][len(prefix):]
+
             if fields[0] in ('D_IN_0', 'D_IN_1'):
                 self.tile.read([prefix + fields[0]] + fields[1:])
             elif fields[-1] in ('cen',
