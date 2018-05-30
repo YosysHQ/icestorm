@@ -25,6 +25,7 @@ check_ieren = False
 check_driver = False
 lookup_symbols = False
 do_collect = False
+package = None
 pcf_data = dict()
 portnames = set()
 unmatched_ports = set()
@@ -56,6 +57,10 @@ Usage: icebox_vlog [options] [bitmap.asc]
         like -p, enable some hacks for pcf files created
         by the iCEcube2 placer.
 
+    -d <package>
+        use the given package to obtain chip pin numbers,
+        rather than the default for a device
+
     -c
         collect multi-bit ports
 
@@ -68,7 +73,7 @@ Usage: icebox_vlog [options] [bitmap.asc]
     sys.exit(0)
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "sSlLap:P:n:cRD")
+    opts, args = getopt.getopt(sys.argv[1:], "sSlLap:P:n:d:cRD")
 except:
     usage()
 
@@ -111,6 +116,8 @@ for o, a in opts:
                     else:
                         pinloc = (line[2],)
                     pcf_data[pinloc] = p
+    elif o == "-d":
+        package = a
     elif o == "-c":
         do_collect = True
     elif o == "-R":
@@ -285,7 +292,7 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
             idx = (s[0], s[1], int(match.group(1)))
             p = "io_%d_%d_%d" % idx
             if lookup_pins or pcf_data:
-                for entry in ic.pinloc_db():
+                for entry in ic.pinloc_db(package):
                     if idx[0] == entry[1] and idx[1] == entry[2] and idx[2] == entry[3]:
                         if (entry[0],) in pcf_data:
                             p = pcf_data[(entry[0],)]
