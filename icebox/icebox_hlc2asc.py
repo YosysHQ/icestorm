@@ -692,10 +692,15 @@ class Tile:
         self.bits_set = set()
         self.bits_cleared = set()
 
+    def __str__(self):
+        return "{}({}, {}, {})".format(self.__class__.__name__, self.ic.device, self.x, self.y)
+
     def apply_directive(self, *fields):
         fields = list(fields)
-        bits, = [entry[0] for entry in self.db if entry[1:] == fields]
-        self.set_bits(bits)
+        bits = [entry[0] for entry in self.db if entry[1:] == fields]
+        if len(bits) == 0:
+            raise ParseError("No bit pattern for {} in {}".format(fields, self))
+        self.set_bits(bits[0])
 
     def set_bits(self, bits):
         bits_set = set()
@@ -1010,9 +1015,12 @@ def main1(path):
                 stack.append(stack[-1].new_block(fields[:-1]))
             else:
                 stack[-1].read(fields)
-        except ParseError:
+        except ParseError as e:
             sys.stderr.write("Parse error in line %d:\n" % (i + 1))
             sys.stderr.write(line)
+            if e.args:
+                sys.stderr.write("\n")
+                print(*e.args, file=sys.stderr)
             sys.exit(1)
     if len(stack) != 1:
         sys.stderr.write("Parse error: unexpected end of file")
