@@ -803,7 +803,11 @@ class LogicCell:
             self.seq_bits[2] = '1'
         elif fields == ['async_setreset']:
             self.seq_bits[3] = '1'
-        elif len(fields) >= 3 and (fields[1] == '->' or fields[1] == '<->'):
+        elif len(fields) > 3 and (fields[1] == '->' or fields[1] == '<->'):
+            self.read(fields[:3])
+            self.read(fields[2:])
+            return
+        elif len(fields) == 3 and (fields[1] == '->' or fields[1] == '<->'):
             prefix = 'lutff_%d/' % self.index
 
             # Strip prefix if it is given
@@ -960,7 +964,10 @@ class IOBlock:
                           == ("padin_glb_netwk", fields[2][10:])]
             assert len(bit) == 1
             self.tile.ic.extra_bits.add(bit[0])
-        elif len(fields) >= 3 and (fields[1] == '->' or fields[1] == '<->'):
+        elif len(fields) > 3 and (fields[1] == '->' or fields[1] == '<->'):
+            self.read(fields[:3])
+            self.read(fields[2:])
+        elif len(fields) == 3 and (fields[1] == '->' or fields[1] == '<->'):
             prefix = 'io_%d/' % self.index
 
             # Strip prefix if it is given
