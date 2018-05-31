@@ -692,10 +692,15 @@ class Tile:
         self.bits_set = set()
         self.bits_cleared = set()
 
+    def __str__(self):
+        return "{}({}, {}, {})".format(self.__class__.__name__, self.ic.device, self.x, self.y)
+
     def apply_directive(self, *fields):
         fields = list(fields)
-        bits, = [entry[0] for entry in self.db if entry[1:] == fields]
-        self.set_bits(bits)
+        bits = [entry[0] for entry in self.db if entry[1:] == fields]
+        if len(bits) == 0:
+            raise ParseError("No bit pattern for {} in {}".format(fields, self))
+        self.set_bits(bits[0])
 
     def set_bits(self, bits):
         bits_set = set()
@@ -803,8 +808,19 @@ class LogicCell:
             self.seq_bits[2] = '1'
         elif fields == ['async_setreset']:
             self.seq_bits[3] = '1'
-        elif len(fields) >= 3 and (fields[1] == '->' or fields[1] == '<->'):
+        elif len(fields) > 3 and (fields[1] == '->' or fields[1] == '<->'):
+            self.read(fields[:3])
+            self.read(fields[2:])
+            return
+        elif len(fields) == 3 and (fields[1] == '->' or fields[1] == '<->'):
             prefix = 'lutff_%d/' % self.index
+
+            # Strip prefix if it is given
+            if fields[0].startswith(prefix):
+                fields[0] = fields[0][len(prefix):]
+            if fields[-1].startswith(prefix):
+                fields[-1] = fields[-1][len(prefix):]
+
             if fields[0] == 'out':
                 self.tile.read([prefix + fields[0]] + fields[1:])
             elif fields[-1].startswith('in_'):
@@ -953,8 +969,18 @@ class IOBlock:
                           == ("padin_glb_netwk", fields[2][10:])]
             assert len(bit) == 1
             self.tile.ic.extra_bits.add(bit[0])
-        elif len(fields) >= 3 and (fields[1] == '->' or fields[1] == '<->'):
+        elif len(fields) > 3 and (fields[1] == '->' or fields[1] == '<->'):
+            self.read(fields[:3])
+            self.read(fields[2:])
+        elif len(fields) == 3 and (fields[1] == '->' or fields[1] == '<->'):
             prefix = 'io_%d/' % self.index
+
+            # Strip prefix if it is given
+            if fields[0].startswith(prefix):
+                fields[0] = fields[0][len(prefix):]
+            if fields[-1].startswith(prefix):
+                fields[-1] = fields[-1][len(prefix):]
+
             if fields[0] in ('D_IN_0', 'D_IN_1'):
                 self.tile.read([prefix + fields[0]] + fields[1:])
             elif fields[-1] in ('cen',
@@ -989,9 +1015,12 @@ def main1(path):
                 stack.append(stack[-1].new_block(fields[:-1]))
             else:
                 stack[-1].read(fields)
-        except ParseError:
+        except ParseError as e:
             sys.stderr.write("Parse error in line %d:\n" % (i + 1))
             sys.stderr.write(line)
+            if e.args:
+                sys.stderr.write("\n")
+                print(*e.args, file=sys.stderr)
             sys.exit(1)
     if len(stack) != 1:
         sys.stderr.write("Parse error: unexpected end of file")
