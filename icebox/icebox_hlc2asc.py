@@ -687,6 +687,29 @@ class Tile:
         self.data = ic.tile(x, y)
         self.db = ic.tile_db(x, y)
 
+        self.bits_lookup = {}
+        def add_entry(entry, bits):
+            entry = tuple(entry)
+            if entry in self.bits_lookup:
+                if self.bits_lookup[entry] == bits:
+                    logging.warn(
+                        "{} {} - {} (adding) != {} (existing)".format(
+                            (x, y), entry, bits, self.bits_lookup[entry]))
+            self.bits_lookup[entry] = bits
+
+        for bits, *entry in self.db:
+            if not ic.tile_has_entry(x, y, (bits, *entry)):
+                continue
+            add_entry(entry, bits)
+
+        # Let the routing bits be specified in both a->b and b->a direction.
+        for bits, *entry in self.db:
+            if not ic.tile_has_entry(x, y, (bits, *entry)):
+                continue
+            if entry[0] != "routing":
+                continue
+            add_entry((entry[0], entry[2], entry[1]), bits)
+
         self.buffers = []
         self.routings = []
         self.bits_set = set()
@@ -696,11 +719,21 @@ class Tile:
         return "{}({}, {}, {})".format(self.__class__.__name__, self.ic.device, self.x, self.y)
 
     def apply_directive(self, *fields):
-        fields = list(fields)
-        bits = [entry[0] for entry in self.db if entry[1:] == fields]
-        if len(bits) == 0:
+        if fields not in self.bits_lookup:
+            print("Possible matches:", file=sys.stderr)
+            for bits, *entry in self.db:
+                if entry[0] in ("routing", "buffer"):
+                    if entry[1] == fields[1]:
+                        print(" ", entry, bits, file=sys.stderr)
+                    elif entry[1] == fields[2]:
+                        print(" ", entry, bits, file=sys.stderr)
+                    elif entry[2] == fields[2]:
+                        print(" ", entry, bits, file=sys.stderr)
+                    elif entry[2] == fields[1]:
+                        print(" ", entry, bits, file=sys.stderr)
             raise ParseError("No bit pattern for {} in {}".format(fields, self))
-        self.set_bits(bits[0])
+        bits = self.bits_lookup[fields]
+        self.set_bits(bits)
 
     def set_bits(self, bits):
         bits_set = set()
