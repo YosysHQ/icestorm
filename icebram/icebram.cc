@@ -94,7 +94,7 @@ void help(const char *cmd)
 {
 	printf("\n");
 	printf("Usage: %s [options] <from_hexfile> <to_hexfile>\n", cmd);
-	printf("       %s [options] -g <width> <depth>\n", cmd);
+	printf("       %s [options] -g [-s <seed>]  <width> <depth>\n", cmd);
 	printf("\n");
 	printf("Replace BRAM initialization data in a .asc file. This can be used\n");
 	printf("for example to replace firmware images without re-running synthesis\n");
@@ -104,6 +104,9 @@ void help(const char *cmd)
 	printf("        generate a hex file with random contents.\n");
 	printf("        use this to generate the hex file used during synthesis, then\n");
 	printf("        use the same file as <from_hexfile> later.\n");
+	printf("\n");
+	printf("    -s <seed>\n");
+	printf("        seed random generator with fixed value.\n");
 	printf("\n");
 	printf("    -v\n");
 	printf("        verbose output\n");
@@ -127,9 +130,11 @@ int main(int argc, char **argv)
 
 	bool verbose = false;
 	bool generate = false;
+	bool seed = false;
+    uint32_t seed_nr = getpid();
 
 	int opt;
-	while ((opt = getopt(argc, argv, "vg")) != -1)
+	while ((opt = getopt(argc, argv, "vgs:")) != -1)
 	{
 		switch (opt)
 		{
@@ -138,6 +143,10 @@ int main(int argc, char **argv)
 			break;
 		case 'g':
 			generate = true;
+			break;
+		case 's':
+			seed = true;
+			seed_nr = atoi(optarg);
 			break;
 		default:
 			help(argv[0]);
@@ -162,7 +171,10 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 
-		x = uint64_t(getpid()) << 32;
+		if (verbose && seed)
+			fprintf(stderr, "Seed: %d\n", seed_nr);
+
+		x =  uint64_t(seed_nr) << 32;
 		x ^= uint64_t(depth) << 16;
 		x ^= uint64_t(width) << 10;
 
@@ -170,10 +182,16 @@ int main(int argc, char **argv)
 		xorshift64star();
 		xorshift64star();
 
-		struct timeval tv;
-		gettimeofday(&tv, NULL);
-		x ^= uint64_t(tv.tv_sec) << 20;
-		x ^= uint64_t(tv.tv_usec);
+		if (!seed){
+			struct timeval tv;
+			gettimeofday(&tv, NULL);
+			x ^= uint64_t(tv.tv_sec) << 20;
+			x ^= uint64_t(tv.tv_usec);
+		}
+		else {
+			x ^= uint64_t(seed) << 20;
+			x ^= uint64_t(seed);
+		}
 
 		xorshift64star();
 		xorshift64star();
