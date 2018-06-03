@@ -94,7 +94,7 @@ void help(const char *cmd)
 {
 	printf("\n");
 	printf("Usage: %s [options] <from_hexfile> <to_hexfile>\n", cmd);
-	printf("       %s [options] -g [-s <seed>]  <width> <depth>\n", cmd);
+	printf("       %s [options] -g [-s <seed>] <width> <depth>\n", cmd);
 	printf("\n");
 	printf("Replace BRAM initialization data in a .asc file. This can be used\n");
 	printf("for example to replace firmware images without re-running synthesis\n");
