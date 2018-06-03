@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 	bool verbose = false;
 	bool generate = false;
 	bool seed = false;
-    uint32_t seed_nr = getpid();
+	uint32_t seed_nr = getpid();
 
 	int opt;
 	while ((opt = getopt(argc, argv, "vgs:")) != -1)
