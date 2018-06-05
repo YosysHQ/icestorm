@@ -509,7 +509,6 @@ def logic_expression_to_lut(s, args):
                                          for j in range(len(args)))) else '0'
                    for i in range(1 << len(args)))
 
-
 class ParseError(Exception):
     pass
 
@@ -749,11 +748,19 @@ class Tile:
                 bits_set.add((int(match.group(2)), int(match.group(3))))
 
         if set.intersection(bits_set, bits_clear):
-            raise ValueError("trying to set/clear the same bit(s) at once")
+            raise ValueError(
+                "trying to set/clear the same bit(s) at once set:{} clear:{}".format(
+                    bits_set, bits_clear))
 
         if set.intersection(bits_set, self.bits_cleared) or \
            set.intersection(bits_clear, self.bits_set):
-            raise ParseError("conflicting bits")
+               raise ParseError("""\
+conflicting bits {}
+ setting:{:<30} - current clear:{}
+clearing:{:<30} - current set  :{}""".format(
+                bits,
+                str(bits_set), self.bits_cleared,
+                str(bits_clear), self.bits_set))
 
         self.bits_set.update(bits_set)
         self.bits_cleared.update(bits_clear)
