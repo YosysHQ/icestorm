@@ -871,7 +871,7 @@ class LogicCell:
             elif fields[-1].startswith('in_'):
                 self.tile.read(fields[:-1] + [prefix + fields[-1]])
             else:
-                raise ParseError
+                self.tile.read(fields)
             return
 
         bits = ''.join([
@@ -1037,7 +1037,7 @@ class IOBlock:
                                 'OUT_ENB'):
                 self.tile.read(fields[:-1] + [prefix + fields[-1]])
             else:
-                raise ParseError
+                self.tile.read(fields)
         else:
             raise ParseError
 
