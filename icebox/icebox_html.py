@@ -35,7 +35,7 @@ def usage():
     sys.exit(0)
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "x:y:d:8:3")
+    opts, args = getopt.getopt(sys.argv[1:], "x:y:d:83")
 except:
     usage()
 
