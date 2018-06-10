@@ -418,8 +418,8 @@ nets are connected with nets from cells in its neighbourhood.</p>""")
     print("<h2>Routing Configuration</h2>")
 
     print("""<p>This section lists the routing configuration bits in the tile.
-The entries titled "routing" configure transfer gates, the entries titled
-"buffer" configure tri-state drivers.</p>""")
+All routing resources are directional tristate buffers that are in tristate mode
+in the all-zeros configuration.</p>""")
 
     grpgrp = dict()
     config_groups = dict()
