@@ -29,15 +29,9 @@ The <i>span-4</i> and <i>span-12</i> wires are the main interconnect resource in
 </p>
 
 <p>
-The bits marked <span style="font-family:monospace">routing</span> in the bitstream enable switches (transfer gates) that can
-be used to connect wire segments bidirectionally to each other in order to create larger
-segments. The bits marked <span style="font-family:monospace">buffer</span> in the bitstream enable tristate buffers that drive
-the signal in one direction from one wire to another. Both types of bits exist for routing between
-span-wires. See the auto generated documentation for the LOGIC Tile configuration bits for details.
-</p>
-
-<p>
-Only directional tristate buffers are used to route signals between the span-wires and the logic cells.
+All routing resources in iCE40 are directional tristate buffers. The bits marked <span style="font-family:monospace">routing</span>
+use the all-zeros config pattern for tristate, while the bits marked <span style="font-family:monospace">buffer</span> have
+a dedicated buffer-enable bit, which is 1 in all non-tristate configurations.
 </p>
 
 <h3 style="clear:both">Span-4 Horizontal</h3>
