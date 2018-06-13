@@ -851,11 +851,11 @@ for lut in luts_queue:
             l_expr = make_lut_expr(bits[0:len(bits)//2], sigs[1:])
             h_expr = make_lut_expr(bits[len(bits)//2:len(bits)], sigs[1:])
             if h_expr == l_expr: return h_expr
-            if sigs[0] == "0": return l_expr
-            if sigs[0] == "1": return h_expr
-            if h_expr == "1" and l_expr == "0": return sigs[0]
-            if h_expr == "0" and l_expr == "1": return "!" + sigs[0]
-            return "%s ? %s : %s" % (sigs[0], h_expr, l_expr)
+            if sigs[0] == "1'b0": return l_expr
+            if sigs[0] == "1'b1": return h_expr
+            if h_expr == "1'b1" and l_expr == "1'b0": return sigs[0]
+            if h_expr == "1'b0" and l_expr == "1'b1": return "!" + sigs[0]
+            return "(%s ? %s : %s)" % (sigs[0], h_expr, l_expr)
         lut_expr = make_lut_expr(lut_bits, [net_in3, net_in2, net_in1, net_in0])
         lut_assigns.append([net_lout, "/* LUT   %2d %2d %2d */ %s" % (lut[0], lut[1], lut[2], lut_expr)])
     max_net_len = max(max_net_len, len(net_lout))
