@@ -825,7 +825,7 @@ class LogicCell:
     def __init__(self, tile, index):
         self.tile = tile
         self.index = index
-        self.lut_bits = None
+        self.lut_bits = ['0'] * 16
         self.seq_bits = ['0'] * 4
 
     def read(self, fields):
@@ -841,7 +841,7 @@ class LogicCell:
                 if m < 16:
                     lut_bits = (16-m) * "0" + lut_bits
                 # Verilog 16'bXXXX is MSB first but the bitstream wants LSB.
-                self.lut_bits = lut_bits[::-1]
+                self.lut_bits = list(lut_bits[::-1])
             else:
                 self.lut_bits = logic_expression_to_lut(
                     ' '.join(fields[2:]), ('in_0', 'in_1', 'in_2', 'in_3'))
