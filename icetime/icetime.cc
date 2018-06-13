@@ -57,6 +57,23 @@ std::set<std::string> io_names;
 
 std::map<int, std::string> net_symbols;
 
+bool get_config_bit(int tile_x, int tile_y, int bit_row, int bit_col)
+{
+	if (int(config_bits.size()) < tile_x)
+		return false;
+
+	if (int(config_bits[tile_x].size()) < tile_y)
+		return false;
+
+	if (int(config_bits[tile_x][tile_y].size()) < bit_row)
+		return false;
+
+	if (int(config_bits[tile_x][tile_y][bit_row].size()) < bit_col)
+		return false;
+
+	return config_bits[tile_x][tile_y][bit_row][bit_col];
+}
+
 struct net_segment_t
 {
 	int x, y, net;
@@ -382,7 +399,7 @@ void read_chipdb()
 					int bit_row, bit_col, rc;
 					rc = sscanf(tok, "B%d[%d]", &bit_row, &bit_col);
 					assert(rc == 2);
-					thiscfg.push_back(config_bits[tile_x][tile_y][bit_row][bit_col] ? '1' : '0');
+					thiscfg.push_back(get_config_bit(tile_x, tile_y, bit_row, bit_col) ? '1' : '0');
 				}
 				continue;
 			}
@@ -1140,11 +1157,11 @@ std::string make_seg_pre_io(int x, int y, int z)
 
 	for (int i = 0; i < 6; i++) {
 		bitpos = io_tile_bits[stringf("IOB_%d.PINTYPE_%d", z, 5-i)][0];
-		pintype.push_back(config_bits[x][y][bitpos.first][bitpos.second] ? '1' : '0');
+		pintype.push_back(get_config_bit(x, y, bitpos.first, bitpos.second) ? '1' : '0');
 	}
 
 	bitpos = io_tile_bits["NegClk"][0];
-	char negclk = config_bits[x][y][bitpos.first][bitpos.second] ? '1' : '0';
+	char negclk = get_config_bit(x, y, bitpos.first, bitpos.second) ? '1' : '0';
 
 	netlist_cell_params[cell]["NEG_TRIGGER"] = stringf("1'b%c", negclk);
 	netlist_cell_params[cell]["PIN_TYPE"] = stringf("6'b%s", pintype.c_str());
@@ -1200,7 +1217,7 @@ std::string make_lc40(int x, int y, int z)
 	auto &lcbits_pos = logic_tile_bits[stringf("LC_%d", z)];
 
 	for (int i = 0; i < 20; i++)
-		lcbits[i] = config_bits[x][y][lcbits_pos[i].first][lcbits_pos[i].second] ? '1' : '0';
+		lcbits[i] = get_config_bit(x, y, lcbits_pos[i].first, lcbits_pos[i].second) ? '1' : '0';
 
 	// FIXME: fill in the '0'
 	netlist_cell_params[cell]["C_ON"] = stringf("1'b%c", lcbits[8]);
@@ -1218,8 +1235,8 @@ std::string make_lc40(int x, int y, int z)
 			auto co_cell = 1 < y ? make_lc40(x, y-1, 7) : std::string();
 			std::string n1, n2;
 
-			char cinit_1 = config_bits[x][y][1][49] ? '1' : '0';
-			char cinit_0 = config_bits[x][y][1][50] ? '1' : '0';
+			char cinit_1 = get_config_bit(x, y, 1, 49) ? '1' : '0';
+			char cinit_0 = get_config_bit(x, y, 1, 50) ? '1' : '0';
 
 			if (cinit_1 == '1') {
 				std::tuple<int, int, std::string> key(x, y-1, "lutff_7/cout");
@@ -1271,7 +1288,7 @@ bool get_dsp_ip_cbit(std::tuple<int, int, std::string> cbit) {
 	// DSP0 contains all CBITs, the same as any DSP/IP tile
 	if(dsp0_tile_bits.count(name)) {
 		auto bitpos = dsp0_tile_bits.at(name)[0];
-		return config_bits[std::get<0>(cbit)][std::get<1>(cbit)][bitpos.first][bitpos.second];
+		return get_config_bit(std::get<0>(cbit), std::get<1>(cbit), bitpos.first, bitpos.second);
 	}
 	return false;
 }
@@ -1478,7 +1495,7 @@ std::string make_ram(int x, int y)
 bool dff_uses_clock(int x, int y, int z)
 {
 	auto bitpos = logic_tile_bits[stringf("LC_%d", z)][9];
-	return config_bits[x][y][bitpos.first][bitpos.second];
+	return get_config_bit(x, y, bitpos.first, bitpos.second);
 }
 
 void make_odrv(int x, int y, int src)
@@ -1722,7 +1739,7 @@ void make_seg_cell(int net, const net_segment_t &seg)
 
 			for (int i = 0; i < 6; i++) {
 				bitpos = io_tile_bits[stringf("IOB_%d.PINTYPE_%d", z, 5-i)][0];
-				pintype.push_back(config_bits[seg.x][seg.y][bitpos.first][bitpos.second] ? '1' : '0');
+				pintype.push_back(get_config_bit(seg.x, seg.y, bitpos.first, bitpos.second) ? '1' : '0');
 			}
 
 			bool use_inclk = false;
@@ -2399,11 +2416,11 @@ device_chip_mismatch:
 				std::string cbit_name = stringf("RamCascade.CBIT_%d", i+4);
 				if (ramb_tile_bits.count(cbit_name)) {
 					bitpos = ramb_tile_bits.at(cbit_name)[0];
-					cascade_cbits[i] = config_bits[x][y][bitpos.first][bitpos.second];
+					cascade_cbits[i] = get_config_bit(x, y, bitpos.first, bitpos.second);
 				}
 				if (ramt_tile_bits.count(cbit_name)) {
 					bitpos = ramt_tile_bits.at(cbit_name)[0];
-					cascade_cbits[i] = config_bits[x][y+1][bitpos.first][bitpos.second];
+					cascade_cbits[i] = get_config_bit(x, y+1, bitpos.first, bitpos.second);
 				}
 			}
 
