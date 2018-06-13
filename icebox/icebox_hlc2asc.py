@@ -703,14 +703,6 @@ class Tile:
                 continue
             add_entry(entry, bits)
 
-        # Let the routing bits be specified in both a->b and b->a direction.
-        for bits, *entry in self.db:
-            if not ic.tile_has_entry(x, y, (bits, *entry)):
-                continue
-            if entry[0] != "routing":
-                continue
-            add_entry((entry[0], entry[2], entry[1]), bits)
-
         self.buffers = []
         self.routings = []
         self.bits_set = set()
@@ -785,7 +777,7 @@ clearing:{:<30} - current set  :{}""".format(
             if (src, dst) not in self.buffers:
                 self.buffers.append((src, dst))
                 self.apply_directive('buffer', src, dst)
-        elif len(fields) == 3 and fields[1] == '<->':
+        elif len(fields) == 3 and fields[1] == '~>':
             src = untranslate_netname(self.x, self.y,
                                       self.ic.max_x - 1,
                                       self.ic.max_y - 1, fields[0])
@@ -796,7 +788,7 @@ clearing:{:<30} - current set  :{}""".format(
             if (src, dst) not in self.routings:
                 self.routings.append((src, dst))
                 self.apply_directive('routing', src, dst)
-        elif len(fields) >= 5 and (fields[1] == '->' or fields[1] == '<->'):
+        elif len(fields) >= 5 and (fields[1] == '->' or fields[1] == '~>'):
             self.read(fields[:3])
             self.read(fields[2:])
         else:
@@ -850,11 +842,11 @@ class LogicCell:
             self.seq_bits[2] = '1'
         elif fields == ['async_setreset']:
             self.seq_bits[3] = '1'
-        elif len(fields) > 3 and (fields[1] == '->' or fields[1] == '<->'):
+        elif len(fields) > 3 and (fields[1] == '->' or fields[1] == '~>'):
             self.read(fields[:3])
             self.read(fields[2:])
             return
-        elif len(fields) == 3 and (fields[1] == '->' or fields[1] == '<->'):
+        elif len(fields) == 3 and (fields[1] == '->' or fields[1] == '~>'):
             prefix = 'lutff_%d/' % self.index
 
             # Strip prefix if it is given
@@ -1011,10 +1003,10 @@ class IOBlock:
                           == ("padin_glb_netwk", fields[2][10:])]
             assert len(bit) == 1
             self.tile.ic.extra_bits.add(bit[0])
-        elif len(fields) > 3 and (fields[1] == '->' or fields[1] == '<->'):
+        elif len(fields) > 3 and (fields[1] == '->' or fields[1] == '~>'):
             self.read(fields[:3])
             self.read(fields[2:])
-        elif len(fields) == 3 and (fields[1] == '->' or fields[1] == '<->'):
+        elif len(fields) == 3 and (fields[1] == '->' or fields[1] == '~>'):
             prefix = 'io_%d/' % self.index
 
             # Strip prefix if it is given

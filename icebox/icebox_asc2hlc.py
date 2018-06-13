@@ -797,7 +797,7 @@ class Tile:
                                             self.ic.max_y - 1, entry[3])
                     if dst == 'fabout':
                         dst = lookup_fabout(*self.xy)
-                    self.buffer_and_routing.add((src, '<->', dst))
+                    self.buffer_and_routing.add((src, '~>', dst))
                 continue
             if entry[1] == 'buffer':
                 if match:
