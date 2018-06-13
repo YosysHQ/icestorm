@@ -26,12 +26,13 @@
 #include <string.h>
 #include <stdarg.h>
 
+#include <algorithm>
 #include <functional>
-#include <string>
-#include <vector>
-#include <tuple>
 #include <map>
 #include <set>
+#include <string>
+#include <tuple>
+#include <vector>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -2331,6 +2332,8 @@ int main(int argc, char **argv)
 	fflush(stdout);
 	read_config();
 
+	std::transform(config_device.begin(), config_device.end(), config_device.begin(), ::tolower);
+
 	if (device_type.empty()) {
 		if(config_device == "5k")
 			device_type = "up" + config_device;
@@ -2338,6 +2341,8 @@ int main(int argc, char **argv)
 			device_type = "lp" + config_device;
 		printf("// Warning: Missing -d parameter. Assuming '%s' device.\n", device_type.c_str());
 	}
+
+	std::transform(device_type.begin(), device_type.end(), device_type.begin(), ::tolower);
 
 	if (device_type == "lp384") {
 		if (config_device != "384")
