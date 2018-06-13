@@ -532,7 +532,9 @@ class Main:
                 and len(fields[1]) >= 2 and fields[1][0] == '"' \
                                         and fields[1][-1] == '"' \
                 and self.ic is None and self.device is None:
-            self.device = fields[1][1:-1]
+            self.device = fields[1][1:-1].lower()
+            if self.device.startswith('lp') or self.device.startswith('hx'):
+                self.device = self.device[2:]
             if self.device == '1k':
                 self.ic = icebox.iceconfig()
                 self.ic.setup_empty_1k()
