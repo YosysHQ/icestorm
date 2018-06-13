@@ -701,14 +701,6 @@ class Tile:
                 continue
             add_entry(entry, bits)
 
-        # Let the routing bits be specified in both a->b and b->a direction.
-        for bits, *entry in self.db:
-            if not ic.tile_has_entry(x, y, (bits, *entry)):
-                continue
-            if entry[0] != "routing":
-                continue
-            add_entry((entry[0], entry[2], entry[1]), bits)
-
         self.buffers = []
         self.routings = []
         self.bits_set = set()
