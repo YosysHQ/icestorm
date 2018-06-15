@@ -343,12 +343,14 @@ void read_chipdb()
 		homedir += getenv("HOME");
 #endif
 		snprintf(buffer, 1024, "%s%s/share/" CHIPDB_SUBDIR "/chipdb-%s.txt", homedir.c_str(), PREFIX+1, config_device.c_str());
-	} else
+	} else {
 		snprintf(buffer, 1024, PREFIX "/share/" CHIPDB_SUBDIR "/chipdb-%s.txt", config_device.c_str());
+	}
 
 	FILE *fdb = fopen(buffer, "r");
 	if (fdb == nullptr) {
 		perror("Can't open chipdb file");
+		fprintf(stderr, "  %s\n", buffer);
 		exit(1);
 	}
 
