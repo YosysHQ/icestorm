@@ -535,13 +535,13 @@ class Main:
             self.device = fields[1][1:-1].lower()
             if self.device.startswith('lp') or self.device.startswith('hx'):
                 self.device = self.device[2:]
-            if self.device == '1k':
+            if self.device.startswith('1k'):
                 self.ic = icebox.iceconfig()
                 self.ic.setup_empty_1k()
-            elif self.device == '8k':
+            elif self.device.startswith('8k'):
                 self.ic = icebox.iceconfig()
                 self.ic.setup_empty_8k()
-            elif self.device == '384':
+            elif self.device.startswith('384'):
                 self.ic = icebox.iceconfig()
                 self.ic.setup_empty_384()
             else:
