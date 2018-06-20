@@ -293,7 +293,7 @@ def revert_to_fabout(x, y, net):
         for i, xy in enumerate(GLB_NETWK_INTERNAL_TILES):
             if net == 'glb_netwk_%d' % i and (x, y) == xy:
                 return 'fabout'
-        raise ParseError
+        raise ParseError("{} is a global netowrk, but not at an expectd location {} {}".format(net, x, y))
 
     return net
 
@@ -517,7 +517,7 @@ def parse_bool(s):
         return True
     if s == 'off':
         return False
-    raise ParseError
+    raise ParseError("Unable to parse '{}' as boolean".format(s))
 
 class Main:
     def __init__(self):
@@ -535,17 +535,18 @@ class Main:
             self.device = fields[1][1:-1].lower()
             if self.device.startswith('lp') or self.device.startswith('hx'):
                 self.device = self.device[2:]
-            if self.device == '1k':
+            if self.device.startswith('1k'):
                 self.ic = icebox.iceconfig()
                 self.ic.setup_empty_1k()
-            elif self.device == '8k':
+            elif self.device.startswith('8k'):
                 self.ic = icebox.iceconfig()
                 self.ic.setup_empty_8k()
-            elif self.device == '384':
+            elif self.device.startswith('384'):
                 self.ic = icebox.iceconfig()
                 self.ic.setup_empty_384()
             else:
-                raise ParseError
+                raise ParseError("Unknown device {}".format(self.device))
+
         #elif fields[0] == 'coldboot' and fields[1] == '=' \
         #        and self.coldboot is None:
         #    # parsed but ignored (can't be represented in IceStorm .asc format)
@@ -555,39 +556,39 @@ class Main:
             # parsed but ignored (can't be represented in IceStorm .asc format)
             self.warmboot = parse_bool(fields[2])
         else:
-            raise ParseError
+            raise ParseError("Unknown preamble directive {}".format(fields[0]))
 
     def new_block(self, fields):
         if len(fields) != 3:
-            raise ParseError
+            raise ParseError("Expect 3 fields for top block. Received: {}".format(fields))
         x = int(fields[1])
         y = int(fields[2])
         if (x, y) in self.tiles:
             return self.tiles[x, y]
         if fields[0] == 'logic_tile':
             if (x, y) not in self.ic.logic_tiles:
-                raise ParseError
+                raise ParseError("{} position({},{}) not in defined list for device".format(fields[0], x, y))
             tile = LogicTile(self.ic, x, y)
         elif fields[0] == 'ramb_tile':
             if (x, y) not in self.ic.ramb_tiles:
-                raise ParseError
+                raise ParseError("{} position({},{}) not in defined list for device".format(fields[0], x, y))
             tile = RAMBTile(self.ic, x, y)
         elif fields[0] == 'ramt_tile':
             if (x, y) not in self.ic.ramt_tiles:
-                raise ParseError
+                raise ParseError("{} position({},{}) not in defined list for device".format(fields[0], x, y))
             tile = RAMTTile(self.ic, x, y)
         elif fields[0] == 'io_tile':
             if (x, y) not in self.ic.io_tiles:
-                raise ParseError
+                raise ParseError("{} position({},{}) not in defined list for device".format(fields[0], x, y))
             tile = IOTile(self.ic, x, y)
         else:
-            raise ParseError
+            raise ParseError("Unknown tile type {}".format(fields[0]))
         self.tiles[x, y] = tile
         return tile
 
     def writeout(self):
         if self.ic is None:
-            raise ParseError
+            raise ParseError("iceconfig not set")
 
         # fix up IE/REN bits
         unused_ieren = set()
@@ -792,10 +793,10 @@ clearing:{:<30} - current set  :{}""".format(
             self.read(fields[:3])
             self.read(fields[2:])
         else:
-            raise ParseError
+            raise ParseError("Unknown Tile specification format")
 
     def new_block(self, fields):
-        raise ParseError
+        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
 
 class LogicTile(Tile):
     def __init__(self, ic, x, y):
@@ -819,7 +820,7 @@ class LogicTile(Tile):
             if fields == ['lutff_%d' % i] and self.cells[i] is None:
                 self.cells[i] = LogicCell(self, i)
                 return self.cells[i]
-        raise ParseError
+        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
 
 class LogicCell:
     def __init__(self, tile, index):
@@ -836,7 +837,8 @@ class LogicCell:
             if m:
                 lut_bits = m.group(2)
                 if len(lut_bits) != int(m.group(1)):
-                    raise ParseError
+                    raise ParseError("Number of bits({}) given don't match expected ({})"
+                                     .format(len(lut_bits), int(m.group(1))))
                 m = len(lut_bits)
                 if m < 16:
                     lut_bits = (16-m) * "0" + lut_bits
@@ -894,7 +896,7 @@ class LogicCell:
             self.tile.data[self.index * 2 + 1][46:]
 
     def new_block(self, fields):
-        raise ParseError
+        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
 
 class RAMData:
     def __init__(self, data):
@@ -904,10 +906,10 @@ class RAMData:
         if len(fields) == 1:
             self.data.append(fields[0])
         else:
-            raise ParseError
+            raise ParseError("Unepxected format in {}".format(type(self).__name__))
 
     def new_block(self, fields):
-        raise ParseError
+        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
 
 class RAMBTile(Tile):
     def __init__(self, ic, x, y):
@@ -924,7 +926,7 @@ class RAMBTile(Tile):
         if fields == ['data'] and (self.x, self.y) not in self.ic.ram_data:
             self.ic.ram_data[self.x, self.y] = data = []
             return RAMData(data)
-        raise ParseError
+        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
 
 class RAMTTile(Tile):
     def __init__(self, ic, x, y):
@@ -954,7 +956,7 @@ class IOTile(Tile):
         if fields == ['io_1'] and self.blocks[1] is None:
             self.blocks[1] = IOBlock(self, 1)
             return self.blocks[1]
-        raise ParseError
+        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
 
 class IOBlock:
     def __init__(self, tile, index):
@@ -1008,7 +1010,7 @@ class IOBlock:
                 and fields[2].startswith('glb_netwk_'):
             if GLB_NETWK_EXTERNAL_BLOCKS[int(fields[2][10:])] \
                     != (self.tile.x, self.tile.y, self.index):
-                raise ParseError
+                raise ParseError("GLOBAL_BUFFER_OUTPUT not valid")
             bit = [bit for bit in self.tile.ic.extra_bits_db()
                    if self.tile.ic.extra_bits_db()[bit]
                           == ("padin_glb_netwk", fields[2][10:])]
@@ -1039,10 +1041,11 @@ class IOBlock:
             else:
                 self.tile.read(fields)
         else:
-            raise ParseError
+            raise ParseError("Unknown IOBlock specification format: {}".format(fields))
+
 
     def new_block(self, fields):
-        raise ParseError
+        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
 
 def main1(path):
     f = open(path, 'r')
@@ -1055,7 +1058,7 @@ def main1(path):
             elif fields == ['}']:
                 stack.pop()
                 if not stack:
-                    raise ParseError
+                    raise ParseError("Parsing stack empty before expected")
             elif fields[-1] == '{':
                 stack.append(stack[-1].new_block(fields[:-1]))
             else:
