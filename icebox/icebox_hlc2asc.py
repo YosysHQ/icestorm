@@ -1006,7 +1006,9 @@ class IOBlock:
             self.enable_input = True
         elif fields == ['disable_pull_up'] and not self.disable_pull_up:
             self.disable_pull_up = True
-        elif fields[0] == 'GLOBAL_BUFFER_OUTPUT' and fields[1] == '->' \
+        elif fields[0] in ('GLOBAL_BUFFER_OUTPUT',
+                           'io_%d/GLOBAL_BUFFER_OUTPUT' % self.index) \
+                and fields[1] == '->' \
                 and fields[2].startswith('glb_netwk_'):
             if GLB_NETWK_EXTERNAL_BLOCKS[int(fields[2][10:])] \
                     != (self.tile.x, self.tile.y, self.index):
