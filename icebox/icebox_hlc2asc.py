@@ -293,7 +293,7 @@ def revert_to_fabout(x, y, net):
         for i, xy in enumerate(GLB_NETWK_INTERNAL_TILES):
             if net == 'glb_netwk_%d' % i and (x, y) == xy:
                 return 'fabout'
-        raise ParseError("{} is a global netowrk, but not at an expectd location {} {}".format(net, x, y))
+        raise ParseError("{} is a global network, but not at an expected location {} {}".format(net, x, y))
 
     return net
 
@@ -956,7 +956,7 @@ class IOTile(Tile):
         if fields == ['io_1'] and self.blocks[1] is None:
             self.blocks[1] = IOBlock(self, 1)
             return self.blocks[1]
-        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
+        raise ParseError("Unexpected new block in {}".format(type(self).__name__))
 
 class IOBlock:
     def __init__(self, tile, index):
