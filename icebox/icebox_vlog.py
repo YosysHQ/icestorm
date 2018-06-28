@@ -842,9 +842,9 @@ for lut in luts_queue:
     else:
         always_stmts.append("/* FF %2d %2d %2d */ assign %s = %s;" % (lut[0], lut[1], lut[2], net_out, net_lout))
     if not "1" in lut_bits:
-        const_assigns.append([net_out, "1'b0"])
+        const_assigns.append([net_lout, "1'b0"])
     elif not "0" in lut_bits:
-        const_assigns.append([net_out, "1'b1"])
+        const_assigns.append([net_lout, "1'b1"])
     else:
         def make_lut_expr(bits, sigs):
             if not sigs:
