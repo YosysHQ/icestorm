@@ -345,21 +345,21 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
             else:
                 net_segs.add(s)
 
-    count_drivers = 0
+    count_drivers = []
     for s in segs:
-        if re.match(r"ram/RDATA_", s[2]): count_drivers += 1
-        if re.match(r"io_./D_IN_", s[2]): count_drivers += 1
-        if re.match(r"lutff_./out", s[2]): count_drivers += 1
-        if re.match(r"lutff_./lout", s[2]): count_drivers += 1
+        if re.match(r"ram/RDATA_", s[2]): count_drivers.append(s[2])
+        if re.match(r"io_./D_IN_", s[2]): count_drivers.append(s[2])
+        if re.match(r"lutff_./out", s[2]): count_drivers.append(s[2])
+        if re.match(r"lutff_./lout", s[2]): count_drivers.append(s[2])
 
-    if count_drivers != 1 and check_driver:
-        failed_drivers_check.append(n)
+    if len(count_drivers) != 1 and check_driver:
+        failed_drivers_check.append((n, count_drivers))
 
     if not strip_comments:
         for s in sorted(net_segs):
                 text_wires.append("// %s" % (s,))
         if count_drivers != 1 and check_driver:
-            text_wires.append("// Number of drivers: %d" % count_drivers)
+            text_wires.append("// Number of drivers: %d %s" % (len(count_drivers), count_drivers))
         text_wires.append("")
 
 def seg_to_net(seg, default=None):
@@ -942,6 +942,7 @@ print()
 
 if failed_drivers_check:
     print("// Single-driver-check failed for %d nets:" % len(failed_drivers_check))
-    print("// %s" % " ".join(failed_drivers_check))
+    for net, drivers in failed_drivers_check:
+        print("// %s has %d drivers: %s" % (net, len(drivers), drivers))
     assert False
 
