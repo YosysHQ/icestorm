@@ -941,8 +941,9 @@ print("endmodule")
 print()
 
 if failed_drivers_check:
-    print("// Single-driver-check failed for %d nets:" % len(failed_drivers_check))
+    emsg = ["Single-driver-check failed for %d nets:" % len(failed_drivers_check)]
     for net, drivers in failed_drivers_check:
-        print("// %s has %d drivers: %s" % (net, len(drivers), drivers))
-    assert False
+        emsg.append("%s has %d drivers: %s" % (net, len(drivers), drivers))
+    print("//", "\n//".join(emsg))
+    assert False, "\n  ".join(emsg)
 
