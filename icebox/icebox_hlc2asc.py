@@ -509,6 +509,46 @@ def logic_expression_to_lut(s, args):
                                          for j in range(len(args)))) else '0'
                    for i in range(1 << len(args)))
 
+def parse_verilog_bitvector_to_bits(in_str):
+    #replace x with 0
+    in_str = re.sub('[xX]', '0', in_str)
+
+    m = re.match("([0-9]+)'([hdob])([0-9a-fA-F]+)", in_str)
+    if m:
+        num_bits = int(m.group(1))
+        prefix = m.group(2)
+        val_str = m.group(3)
+
+        if prefix == 'h':
+            val = eval('0x' + val_str)
+        elif prefix == 'd':
+            val = eval(val_str.lstrip('0'))
+        elif prefix == 'o' or prefix =='b':
+            val = eval('0' + prefix + val_str)
+
+        if val.bit_length() > num_bits:
+            raise ParseError("Number of bits({}) given don't match expected ({})"
+                             .format(val.bit_length(), num_bits))
+    else:
+        val = eval('0x' + in_str)
+        num_bits = len(in_str) * 4
+
+    bit_str = bin(val)[2:]
+    # zero pad
+    nz = num_bits - len(bit_str)
+    bit_vec = nz*['0'] + list(bit_str)
+    return bit_vec
+
+def parse_verilog_bitvector_to_hex(in_str):
+    if type(in_str) == str:
+        bits = parse_verilog_bitvector_to_bits(in_str)
+    else:
+        bits = in_str
+    # pad to 4
+    bits = ((4-len(bits)) % 4) * ['0'] + bits
+    res = ''.join([hex(eval('0b' + ''.join(bits[ii:ii+4])))[2:] for ii in range(0, len(bits), 4)])
+    return res
+
 class ParseError(Exception):
     pass
 
@@ -835,13 +875,7 @@ class LogicCell:
         elif fields[0] == 'out' and len(fields) >= 3 and fields[1] == '=':
             m = re.match("([0-9]+)'b([01]+)", fields[2])
             if m:
-                lut_bits = m.group(2)
-                if len(lut_bits) != int(m.group(1)):
-                    raise ParseError("Number of bits({}) given don't match expected ({})"
-                                     .format(len(lut_bits), int(m.group(1))))
-                m = len(lut_bits)
-                if m < 16:
-                    lut_bits = (16-m) * "0" + lut_bits
+                lut_bits = parse_verilog_bitvector_to_bits(fields[2])
                 # Verilog 16'bXXXX is MSB first but the bitstream wants LSB.
                 self.lut_bits = list(lut_bits[::-1])
             else:
@@ -904,7 +938,7 @@ class RAMData:
 
     def read(self, fields):
         if len(fields) == 1:
-            self.data.append(fields[0])
+            self.data.append(parse_verilog_bitvector_to_hex(fields[0]))
         else:
             raise ParseError("Unepxected format in {}".format(type(self).__name__))
 
