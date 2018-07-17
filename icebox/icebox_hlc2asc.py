@@ -16,11 +16,6 @@
 import getopt, os, re, sys
 import icebox
 
-GLB_NETWK_EXTERNAL_BLOCKS = [(13, 8, 1), (0, 8, 1), (7, 17, 0), (7, 0, 0),
-                             (0, 9, 0), (13, 9, 0), (6, 0, 1), (6, 17, 1)]
-GLB_NETWK_INTERNAL_TILES = [(7, 0), (7, 17), (13, 9), (0, 9),
-                            (6, 17), (6, 0), (0, 8), (13, 8)]
-
 
 ## Get the tile-local name of a net.
 #
@@ -288,12 +283,12 @@ def untranslate_netname(x, y, fw, fh, net):
 # \return \c 'fabout' if it is the \c fabout net, otherwise the
 #         unchanged net name
 
-def revert_to_fabout(x, y, net):
+def revert_to_fabout(ic, x, y, net):
     if net.startswith('glb_netwk_'):
-        for i, xy in enumerate(GLB_NETWK_INTERNAL_TILES):
-            if net == 'glb_netwk_%d' % i and (x, y) == xy:
+        for gx, gy, gi in ic.gbufin_db():
+            if net == 'glb_netwk_%d' % gi and (x, y) == (gx, gy):
                 return 'fabout'
-        raise ParseError("{} is a global network, but not at an expected location {} {}".format(net, x, y))
+        raise ParseError("{} is a global network, but not at an expected location {} {}".format(net, gx, gy))
 
     return net
 
@@ -814,7 +809,7 @@ clearing:{:<30} - current set  :{}""".format(
             dst = untranslate_netname(self.x, self.y,
                                       self.ic.max_x - 1,
                                       self.ic.max_y - 1, fields[2])
-            dst = revert_to_fabout(self.x, self.y, dst)
+            dst = revert_to_fabout(self.ic, self.x, self.y, dst)
             if (src, dst) not in self.buffers:
                 self.buffers.append((src, dst))
                 self.apply_directive('buffer', src, dst)
@@ -825,7 +820,7 @@ clearing:{:<30} - current set  :{}""".format(
             dst = untranslate_netname(self.x, self.y,
                                       self.ic.max_x - 1,
                                       self.ic.max_y - 1, fields[2])
-            dst = revert_to_fabout(self.x, self.y, dst)
+            dst = revert_to_fabout(self.ic, self.x, self.y, dst)
             if (src, dst) not in self.routings:
                 self.routings.append((src, dst))
                 self.apply_directive('routing', src, dst)
@@ -1044,9 +1039,16 @@ class IOBlock:
                            'io_%d/GLOBAL_BUFFER_OUTPUT' % self.index) \
                 and fields[1] == '->' \
                 and fields[2].startswith('glb_netwk_'):
-            if GLB_NETWK_EXTERNAL_BLOCKS[int(fields[2][10:])] \
-                    != (self.tile.x, self.tile.y, self.index):
-                raise ParseError("GLOBAL_BUFFER_OUTPUT not valid")
+
+            glb_net = int(fields[2][10:])
+            padin_loc = self.tile.ic.padin_pio_db()[glb_net]
+
+            if padin_loc != (self.tile.x, self.tile.y, self.index):
+                raise ParseError("""\
+GLOBAL_BUFFER_OUTPUT not valid for glb_netwk_{}
+   Driver at io_tile {},{} io{}
+Should be at io_tile {},{} io{}
+""".format(glb_net, self.tile.x, self.tile.y, self.index, *padin_loc))
             bit = [bit for bit in self.tile.ic.extra_bits_db()
                    if self.tile.ic.extra_bits_db()[bit]
                           == ("padin_glb_netwk", fields[2][10:])]
