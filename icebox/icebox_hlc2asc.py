@@ -831,7 +831,7 @@ clearing:{:<30} - current set  :{}""".format(
             raise ParseError("Unknown Tile specification format")
 
     def new_block(self, fields):
-        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
+        raise ParseError("Unexpected new block in {}".format(type(self).__name__))
 
 class LogicTile(Tile):
     def __init__(self, ic, x, y):
@@ -855,7 +855,7 @@ class LogicTile(Tile):
             if fields == ['lutff_%d' % i] and self.cells[i] is None:
                 self.cells[i] = LogicCell(self, i)
                 return self.cells[i]
-        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
+        raise ParseError("Unexpected new block in {}".format(type(self).__name__))
 
 class LogicCell:
     def __init__(self, tile, index):
@@ -925,7 +925,7 @@ class LogicCell:
             self.tile.data[self.index * 2 + 1][46:]
 
     def new_block(self, fields):
-        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
+        raise ParseError("Unexpected new block in {}".format(type(self).__name__))
 
 class RAMData:
     def __init__(self, data):
@@ -935,10 +935,10 @@ class RAMData:
         if len(fields) == 1:
             self.data.append(parse_verilog_bitvector_to_hex(fields[0]))
         else:
-            raise ParseError("Unepxected format in {}".format(type(self).__name__))
+            raise ParseError("Unexpected format in {}".format(type(self).__name__))
 
     def new_block(self, fields):
-        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
+        raise ParseError("Unexpected new block in {}".format(type(self).__name__))
 
 class RAMBTile(Tile):
     def __init__(self, ic, x, y):
@@ -955,7 +955,7 @@ class RAMBTile(Tile):
         if fields == ['data'] and (self.x, self.y) not in self.ic.ram_data:
             self.ic.ram_data[self.x, self.y] = data = []
             return RAMData(data)
-        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
+        raise ParseError("Unexpected new block in {}".format(type(self).__name__))
 
 class RAMTTile(Tile):
     def __init__(self, ic, x, y):
@@ -1083,7 +1083,7 @@ Should be at io_tile {},{} io{}
 
 
     def new_block(self, fields):
-        raise ParseError("Unepxected new block in {}".format(type(self).__name__))
+        raise ParseError("Unexpected new block in {}".format(type(self).__name__))
 
 def main1(path):
     f = open(path, 'r')

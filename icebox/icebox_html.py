@@ -159,7 +159,7 @@ and providing simple tools for analyzing and creating bitstream files. This is w
 A machine-readable form of the database can be downloaded <a href="%s">here</a>.</p>""" % chipdbfile)
 
     print("""<p>The iCE40 FPGA fabric is organized into tiles. The configuration bits
-themself have the same meaning in all tiles of the same type. But the way the tiles
+themselves have the same meaning in all tiles of the same type. But the way the tiles
 are connected to each other depends on the types of neighbouring cells. Furthermore,
 some wire names are different for e.g. an IO tile on the left border and an IO tile on
 the top border.</p>""")
