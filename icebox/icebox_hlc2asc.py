@@ -865,7 +865,7 @@ class LogicCell:
         self.seq_bits = ['0'] * 4
 
     def read(self, fields):
-        if fields[0] == 'lut' and len(fields) == 2 and self.lut_bits is None:
+        if fields[0] == 'lut' and len(fields) == 2:
             self.lut_bits = fields[1]
         elif fields[0] == 'out' and len(fields) >= 3 and fields[1] == '=':
             m = re.match("([0-9]+)'b([01]+)", fields[2])
