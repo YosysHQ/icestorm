@@ -845,6 +845,11 @@ struct TimingAnalysis
 					continue;
 			}
 
+			if (driver_type == "LogicCell40" && driver_port == "ltout") {
+				if (inport == "ce" || inport == "sr")
+					continue;
+			}
+
 			std::string *in_net = &netlist_cell_ports.at(driver_cell).at(inport);
 			while (net_assignments.count(*in_net))
 				in_net = &net_assignments.at(*in_net);
