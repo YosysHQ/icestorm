@@ -704,6 +704,26 @@ class iceconfig:
         #print('\tafter directions', neighbours)
         return neighbours
 
+    def get_net_number(self, segment):
+        if not hasattr(self, 'net_map') or self.net_map is None:
+            self.net_map = {}
+            for netidx, group in enumerate(sorted(self.all_group_segments())):
+                for seg in group:
+                    self.net_map[seg] = netidx
+
+        return self.net_map[segment]
+
+    def all_group_segments(self):
+        if not hasattr(self, 'all_groups') or self.all_groups is None:
+            all_tiles = set()
+            for x in range(self.max_x + 1):
+                for y in range(self.max_y + 1):
+                    if self.tile(x, y) is not None:
+                        all_tiles.add((x, y))
+
+            self.all_groups = self.group_segments(all_tiles, connect_gb=False)
+        return self.all_groups
+
     def group_segments(self, all_from_tiles=set(), extra_connections=list(), extra_segments=list(), connect_gb=True):
         seed_segments = set()
         seen_segments = set()
@@ -957,7 +977,9 @@ class iceconfig:
                     print(line, file=f)
             for extra_bit in sorted(self.extra_bits):
                 print(".extra_bit %d %d %d" % extra_bit, file=f)
-
+            for net in sorted(self.symbols.keys()):
+                for sym_key in self.symbols[net]:
+                    print(".sym %s %s" % (net, sym_key), file=f)
 class tileconfig:
     def __init__(self, tile):
         self.bits = set()

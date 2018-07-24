@@ -739,6 +739,7 @@ class Tile:
                 continue
             add_entry(entry, bits)
 
+        self.symbols = {}
         self.buffers = []
         self.routings = []
         self.bits_set = set()
@@ -827,6 +828,12 @@ clearing:{:<30} - current set  :{}""".format(
         elif len(fields) >= 5 and (fields[1] == '->' or fields[1] == '~>'):
             self.read(fields[:3])
             self.read(fields[2:])
+        elif len(fields) == 3 and fields[1] == '.sym>':
+            nn = untranslate_netname(self.x, self.y,
+                                      self.ic.max_x - 1,
+                                      self.ic.max_y - 1, fields[0])
+            net = self.ic.get_net_number( (self.x, self.y, nn) )
+            self.ic.symbols.setdefault(net, set()).add(fields[2])
         else:
             raise ParseError("Unknown Tile specification format")
 
@@ -904,6 +911,13 @@ class LogicCell:
             else:
                 self.tile.read(fields)
             return
+        elif len(fields) == 3  and fields[1] == '.sym>':
+            nn = untranslate_netname(self.tile.x, self.tile.y,
+                                      self.tile.ic.max_x - 1,
+                                      self.tile.ic.max_y - 1, fields[0])
+            net = self.tile.ic.get_net_number( (self.tile.x, self.tile.y, nn) )
+            self.tile.ic.symbols.setdefault(net, set()).add(fields[2])
+
 
         bits = ''.join([
             self.lut_bits[15], self.lut_bits[12],
@@ -1078,6 +1092,12 @@ Should be at io_tile {},{} io{}
                 self.tile.read(fields[:-1] + [prefix + fields[-1]])
             else:
                 self.tile.read(fields)
+        elif len(fields) == 3  and fields[1] == '.sym>':
+            nn = untranslate_netname(self.tile.x, self.tile.y,
+                                      self.tile.ic.max_x - 1,
+                                      self.tile.ic.max_y - 1, fields[0])
+            net = self.tile.ic.get_net_number( (self.tile.x, self.tile.y, nn) )
+            self.tile.ic.symbols.setdefault(net, set()).add(fields[2])
         else:
             raise ParseError("Unknown IOBlock specification format: {}".format(fields))
 
