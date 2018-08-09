@@ -573,6 +573,9 @@ class Main:
             if self.device.startswith('1k'):
                 self.ic = icebox.iceconfig()
                 self.ic.setup_empty_1k()
+            elif self.device.startswith('5k'):
+                self.ic = icebox.iceconfig()
+                self.ic.setup_empty_5k()
             elif self.device.startswith('8k'):
                 self.ic = icebox.iceconfig()
                 self.ic.setup_empty_8k()
