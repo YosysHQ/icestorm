@@ -2,6 +2,7 @@
  *  iceprog -- simple programming tool for FTDI-based Lattice iCE programmers
  *
  *  Copyright (C) 2015  Clifford Wolf <clifford@clifford.at>
+ *  Copyright (C) 2018  Piotr Esden-Tempski <piotr@esden.net>
  *
  *  Permission to use, copy, modify, and/or distribute this software for any
  *  purpose with or without fee is hereby granted, provided that the above
@@ -19,7 +20,6 @@
  *  -------------------
  *  http://www.latticesemi.com/~/media/Documents/UserManuals/EI/icestickusermanual.pdf
  *  http://www.micron.com/~/media/documents/products/data-sheet/nor-flash/serial-nor/n25q/n25q_32mb_3v_65nm.pdf
- *  http://www.ftdichip.com/Support/Documents/AppNotes/AN_108_Command_Processor_for_MPSSE_and_MCU_Host_Bus_Emulation_Modes.pdf
  */
 
 #define _GNU_SOURCE
@@ -35,6 +35,10 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+// ---------------------------------------------------------
+// MPSSE / FTDI definitions
+// ---------------------------------------------------------
 
 static struct ftdi_context ftdic;
 static bool ftdic_open = false;
@@ -75,6 +79,10 @@ enum mpsse_cmd
 	MC_CPU_WS = 0x92, /* CPUMode write short address */
 	MC_CPU_WE = 0x93, /* CPUMode write extended address */
 };
+
+// ---------------------------------------------------------
+// FLASH definitions
+// ---------------------------------------------------------
 
 /* Transfer Command bits */
 
@@ -146,6 +154,7 @@ enum flash_cmd {
 	FC_GBL = 0x7E, /* Global Block Lock */
 	FC_GBU = 0x98, /* Global Block Unlock */
 	FC_RBL = 0x3D, /* Read Block Lock */
+	FC_RPR = 0x3C, /* Read Sector Protection Registers (adesto) */
 	FC_IBL = 0x36, /* Individual Block Lock */
 	FC_IBU = 0x39, /* Individual Block Unlock */
 	FC_EPS = 0x75, /* Erase / Program Suspend */
@@ -155,6 +164,10 @@ enum flash_cmd {
 	FC_ERESET = 0x66, /* Enable Reset */
 	FC_RESET = 0x99, /* Reset Device */
 };
+
+// ---------------------------------------------------------
+// MPSSE / FTDI function implementations
+// ---------------------------------------------------------
 
 static void check_rx()
 {
@@ -269,6 +282,10 @@ static int get_cdone()
 	// ADBUS6 (GPIOL2)
 	return (data & 0x40) != 0;
 }
+
+// ---------------------------------------------------------
+// FLASH function implementations
+// ---------------------------------------------------------
 
 static void flash_read_id()
 {
@@ -399,7 +416,7 @@ static void flash_disable_protection()
 {
 	fprintf(stderr, "disable flash protection...\n");
 
-  //WRSR 0x00
+	//WRSR 0x00
 	uint8_t data[2] = { 0x01, 0x00 };
 	set_gpio(0, 0);
 	xfer_spi(data, 2);
@@ -419,6 +436,9 @@ static void flash_disable_protection()
 
 }
 
+// ---------------------------------------------------------
+// iceprog implementation
+// ---------------------------------------------------------
 
 static void help(const char *progname)
 {
@@ -519,14 +539,15 @@ int main(int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
+	/* Decode command line parameters */
 	int opt;
 	char *endptr;
 	while ((opt = getopt_long(argc, argv, "d:I:rR:e:o:cbnStvp", long_options, NULL)) != -1) {
 		switch (opt) {
-		case 'd':
+		case 'd': /* device string */
 			devstr = optarg;
 			break;
-		case 'I':
+		case 'I': /* FTDI Chip interface select */
 			if (!strcmp(optarg, "A"))
 				ifnum = INTERFACE_A;
 			else if (!strcmp(optarg, "B"))
@@ -540,10 +561,10 @@ int main(int argc, char **argv)
 				return EXIT_FAILURE;
 			}
 			break;
-		case 'r':
+		case 'r': /* Read 256 bytes to file */
 			read_mode = true;
 			break;
-		case 'R':
+		case 'R': /* Read n bytes to file */
 			read_mode = true;
 			read_size = strtol(optarg, &endptr, 0);
 			if (*endptr == '\0')
@@ -557,7 +578,7 @@ int main(int argc, char **argv)
 				return EXIT_FAILURE;
 			}
 			break;
-		case 'e':
+		case 'e': /* Erase blocks as if we were writing n bytes */
 			erase_mode = true;
 			erase_size = strtol(optarg, &endptr, 0);
 			if (*endptr == '\0')
@@ -571,7 +592,7 @@ int main(int argc, char **argv)
 				return EXIT_FAILURE;
 			}
 			break;
-		case 'o':
+		case 'o': /* set address offset */
 			rw_offset = strtol(optarg, &endptr, 0);
 			if (*endptr == '\0')
 				/* ok */;
@@ -584,25 +605,25 @@ int main(int argc, char **argv)
 				return EXIT_FAILURE;
 			}
 			break;
-		case 'c':
+		case 'c': /* do not write just check */
 			check_mode = true;
 			break;
-		case 'b':
+		case 'b': /* bulk erase before writing */
 			bulk_erase = true;
 			break;
-		case 'n':
+		case 'n': /* do not erase before writing */
 			dont_erase = true;
 			break;
-		case 'S':
+		case 'S': /* write to sram directly */
 			prog_sram = true;
 			break;
-		case 't':
+		case 't': /* just read flash id */
 			test_mode = true;
 			break;
-		case 'v':
+		case 'v': /* provide verbose output */
 			verbose = true;
 			break;
-		case 'p':
+		case 'p': /* disable flash protect before erase/write */
 			disable_protect = true;
 			break;
 		case -2:
@@ -614,6 +635,8 @@ int main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 	}
+
+	/* Make sure that the combination of provided parameters makes sense */
 
 	if (read_mode + erase_mode + check_mode + prog_sram + test_mode > 1) {
 		fprintf(stderr, "%s: options `-r'/`-R', `-e`, `-c', `-S', and `-t' are mutually exclusive\n", my_name);
@@ -877,7 +900,7 @@ int main(int argc, char **argv)
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 	}
-	else
+	else /* program flash */
 	{
 		// ---------------------------------------------------------
 		// Reset
