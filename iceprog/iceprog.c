@@ -40,6 +40,19 @@
 // MPSSE / FTDI definitions
 // ---------------------------------------------------------
 
+/* FTDI bank pinout typically used for iCE dev boards
+ * BUS IO | Signal | Control
+ * -------+--------+--------------
+ * xDBUS0 |    SCK | MPSSE
+ * xDBUS1 |   MOSI | MPSSE
+ * xDBUS2 |   MISO | MPSSE
+ * xDBUS3 |     nc |
+ * xDBUS4 |     CS | GPIO
+ * xDBUS5 |     nc |
+ * xDBUS6 |  CDONE | GPIO
+ * xDBUS7 | CRESET | GPIO
+ */
+
 static struct ftdi_context ftdic;
 static bool ftdic_open = false;
 static bool verbose = false;
