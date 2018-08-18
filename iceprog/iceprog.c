@@ -391,15 +391,79 @@ static void flash_power_down()
 	flash_chip_select(false);
 }
 
+static uint8_t flash_read_status()
+{
+	uint8_t data[2] = { FC_RSR1 };
+
+	flash_chip_select(true);
+	xfer_spi(data, 2);
+	flash_chip_select(false);
+
+	if(verbose) {
+		fprintf(stderr, "SR1: 0x%02X\n", data[1]);
+		fprintf(stderr, " - SPRL: %s\n",
+			((data[1] & (1 << 7)) == 0) ? 
+				"unlocked" : 
+				"locked");
+		fprintf(stderr, " -  SPM: %s\n",
+			((data[1] & (1 << 6)) == 0) ?
+				"Byte/Page Prog Mode" :
+				"Sequential Prog Mode");
+		fprintf(stderr, " -  EPE: %s\n",
+			((data[1] & (1 << 5)) == 0) ?
+				"Erase/Prog success" :
+				"Erase/Prog error");
+		fprintf(stderr, "-  SPM: %s\n",
+			((data[1] & (1 << 4)) == 0) ?
+				"~WP asserted" :
+				"~WP deasserted");
+		fprintf(stderr, " -  SWP: ");
+		switch((data[1] >> 2) & 0x3) {
+			case 0:
+				fprintf(stderr, "All sectors unprotected\n");
+				break;
+			case 1:
+				fprintf(stderr, "Some sectors protected\n");
+				break;
+			case 2:
+				fprintf(stderr, "Reserved (xxxx 10xx)\n");
+				break;
+			case 3:
+				fprintf(stderr, "All sectors protected\n");
+				break;
+		}
+		fprintf(stderr, " -  WEL: %s\n",
+			((data[1] & (1 << 1)) == 0) ?
+				"Not write enabled" :
+				"Write enabled");
+		fprintf(stderr, " - ~RDY: %s\n",
+			((data[1] & (1 << 0)) == 0) ?
+				"Ready" :
+				"Busy");
+	}
+
+	usleep(1000);
+
+	return data[1];
+}
+
 static void flash_write_enable()
 {
-	if (verbose)
-		fprintf(stderr, "write enable..\n");
+	if (verbose) {
+		fprintf(stderr, "status before enable:\n");
+		flash_read_status();
+	}
 
+	if (verbose) fprintf(stderr, "write enable..\n");
 	uint8_t data[1] = { FC_WE };
 	flash_chip_select(true);
 	xfer_spi(data, 1);
 	flash_chip_select(false);
+
+	if (verbose) {
+		fprintf(stderr, "status after enable:\n");
+		flash_read_status();
+	}
 }
 
 static void flash_bulk_erase()
