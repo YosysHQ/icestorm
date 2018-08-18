@@ -527,26 +527,43 @@ static void flash_wait()
 	if (verbose)
 		fprintf(stderr, "waiting..");
 
+	int count = 0;
 	while (1)
 	{
 		uint8_t data[2] = { FC_RSR1 };
 
-		set_gpio(0, 0);
+		flash_chip_select(true);
 		xfer_spi(data, 2);
-		set_gpio(1, 0);
+		flash_chip_select(false);
 
-		if ((data[1] & 0x01) == 0)
-			break;
-
-		if (verbose) {
-			fprintf(stderr, ".");
-			fflush(stdout);
+		if ((data[1] & 0x01) == 0) {
+			if(count < 2) {
+				count++;
+				if (verbose) {
+					fprintf(stderr, "r");
+					fflush(stderr);
+				}
+			} else {
+				if (verbose) {
+					fprintf(stderr, "R");
+					fflush(stderr);
+				}
+				break;
+			}
+		} else {
+			if (verbose) {
+				fprintf(stderr, ".");
+				fflush(stderr);
+			}
+			count = 0;
 		}
+
 		usleep(1000);
 	}
 
 	if (verbose)
 		fprintf(stderr, "\n");
+
 }
 
 static void flash_disable_protection()
@@ -973,7 +990,6 @@ int main(int argc, char **argv)
 	flash_release_reset();
 	usleep(100000);
 
-
 	if (test_mode)
 	{
 		fprintf(stderr, "reset..\n");
@@ -1085,6 +1101,10 @@ int main(int argc, char **argv)
 					for (int addr = begin_addr; addr < end_addr; addr += 0x10000) {
 						flash_write_enable();
 						flash_64kB_sector_erase(addr);
+						if (verbose) {
+							fprintf(stderr, "Status after block erase:\n");
+							flash_read_status();
+						}
 						flash_wait();
 					}
 				}
