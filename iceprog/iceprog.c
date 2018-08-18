@@ -322,16 +322,42 @@ static void sram_chip_select(bool assert)
 
 static void flash_read_id()
 {
-	// fprintf(stderr, "read flash ID..\n");
+	/* JEDEC ID structure:
+	 * Byte No. | Data Type
+	 * ---------+----------
+	 *        0 | FC_JEDECID Request Command
+	 *        1 | MFG ID
+	 *        2 | Dev ID 1
+	 *        3 | Dev ID 2
+	 *        4 | Ext Dev Str Len
+	 */
 
-	uint8_t data[21] = { FC_JEDECID };
+	uint8_t data[260] = { FC_JEDECID };
+	int len = 5; // command + 4 response bytes
+
+	if (verbose) fprintf(stderr, "read flash ID..\n");
 
 	flash_chip_select(true);
-	xfer_spi(data, 21);
+
+	// Write command and read first 4 bytes
+	xfer_spi(data, len);
+
+	if(data[4] == 0xFF)
+		fprintf(stderr, "Extended Device String Length is 0xFF, "
+				"this is likely a read error. Ignorig...\n");
+	else {
+		// Read extended JEDEC ID bytes
+		if(data[4] != 0) {
+			len += data[4];
+			xfer_spi(data + 5, len - 5);
+		}
+	}
+
 	flash_chip_select(false);
 
+	// TODO: Add full decode of the JEDEC ID.
 	fprintf(stderr, "flash ID:");
-	for (int i = 1; i < 21; i++)
+	for (int i = 1; i < len; i++)
 		fprintf(stderr, " 0x%02X", data[i]);
 	fprintf(stderr, "\n");
 }
