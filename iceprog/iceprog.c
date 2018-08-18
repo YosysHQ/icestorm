@@ -450,16 +450,16 @@ static void flash_disable_protection()
 {
 	fprintf(stderr, "disable flash protection...\n");
 
-	//WRSR 0x00
-	uint8_t data[2] = { 0x01, 0x00 };
+	// Write Status Register 1 <- 0x00
+	uint8_t data[2] = { FC_WSR1, 0x00 };
 	flash_chip_select(true);
 	xfer_spi(data, 2);
 	flash_chip_select(false);
 	
 	flash_wait();
 	
-	//RDSR
-	data[0] = 0x5;
+	// Read Status Register 1
+	data[0] = FC_RSR1;
 
 	flash_chip_select(true);
 	xfer_spi(data, 2);
