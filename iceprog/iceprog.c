@@ -308,9 +308,9 @@ static void flash_release_reset()
 
 // FLASH chip select assert/deassert
 // should only happen while FPGA reset is asserted
-static void flash_chip_select(bool assert)
+static void flash_chip_select(bool en)
 {
-	if(assert)
+	if (en)
 		set_gpio(0, 0);
 	else
 		set_gpio(1, 0);
@@ -325,9 +325,9 @@ static void sram_reset()
 }
 
 // When accessing FPGA SRAM the reset should be released
-static void sram_chip_select(bool assert)
+static void sram_chip_select(bool en)
 {
-	if(assert)
+	if (en)
 		set_gpio(0, 1);
 	else
 		set_gpio(1, 1);
@@ -348,19 +348,20 @@ static void flash_read_id()
 	uint8_t data[260] = { FC_JEDECID };
 	int len = 5; // command + 4 response bytes
 
-	if (verbose) fprintf(stderr, "read flash ID..\n");
+	if (verbose)
+		fprintf(stderr, "read flash ID..\n");
 
 	flash_chip_select(true);
 
 	// Write command and read first 4 bytes
 	xfer_spi(data, len);
 
-	if(data[4] == 0xFF)
+	if (data[4] == 0xFF)
 		fprintf(stderr, "Extended Device String Length is 0xFF, "
 				"this is likely a read error. Ignorig...\n");
 	else {
 		// Read extended JEDEC ID bytes
-		if(data[4] != 0) {
+		if (data[4] != 0) {
 			len += data[4];
 			xfer_spi(data + 5, len - 5);
 		}
@@ -399,7 +400,7 @@ static uint8_t flash_read_status()
 	xfer_spi(data, 2);
 	flash_chip_select(false);
 
-	if(verbose) {
+	if (verbose) {
 		fprintf(stderr, "SR1: 0x%02X\n", data[1]);
 		fprintf(stderr, " - SPRL: %s\n",
 			((data[1] & (1 << 7)) == 0) ? 
@@ -454,7 +455,9 @@ static void flash_write_enable()
 		flash_read_status();
 	}
 
-	if (verbose) fprintf(stderr, "write enable..\n");
+	if (verbose)
+		fprintf(stderr, "write enable..\n");
+
 	uint8_t data[1] = { FC_WE };
 	flash_chip_select(true);
 	xfer_spi(data, 1);
@@ -537,7 +540,7 @@ static void flash_wait()
 		flash_chip_select(false);
 
 		if ((data[1] & 0x01) == 0) {
-			if(count < 2) {
+			if (count < 2) {
 				count++;
 				if (verbose) {
 					fprintf(stderr, "r");
@@ -585,7 +588,7 @@ static void flash_disable_protection()
 	xfer_spi(data, 2);
 	flash_chip_select(false);
 
-	if(data[1] != 0x00)
+	if (data[1] != 0x00)
 		fprintf(stderr, "failed to disable protection, SR now equal to 0x%02x (expected 0x00)\n", data[1]);
 
 }
