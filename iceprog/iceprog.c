@@ -20,6 +20,7 @@
  *  -------------------
  *  http://www.latticesemi.com/~/media/Documents/UserManuals/EI/icestickusermanual.pdf
  *  http://www.micron.com/~/media/documents/products/data-sheet/nor-flash/serial-nor/n25q/n25q_32mb_3v_65nm.pdf
+ *  http://www.ftdichip.com/Support/Documents/AppNotes/AN_108_Command_Processor_for_MPSSE_and_MCU_Host_Bus_Emulation_Modes.pdf
  */
 
 #define _GNU_SOURCE
@@ -306,17 +307,20 @@ static void flash_release_reset()
 	set_gpio(1, 1);
 }
 
-// FLASH chip select assert/deassert
+// FLASH chip select assert
 // should only happen while FPGA reset is asserted
-static void flash_chip_select(bool en)
+static void flash_chip_select()
 {
-	if (en)
-		set_gpio(0, 0);
-	else
-		set_gpio(1, 0);
+	set_gpio(0, 0);
 }
 
-// SRAM reset is pretty much the same as flash_chip_select(true)
+// FLASH chip select deassert
+static void flash_chip_deselect()
+{
+	set_gpio(1, 0);
+}
+
+// SRAM reset is the same as flash_chip_select()
 // For ease of code reading we use this function instead
 static void sram_reset()
 {
@@ -324,13 +328,11 @@ static void sram_reset()
 	set_gpio(0, 0);
 }
 
+// SRAM chip select assert
 // When accessing FPGA SRAM the reset should be released
-static void sram_chip_select(bool en)
+static void sram_chip_select()
 {
-	if (en)
-		set_gpio(0, 1);
-	else
-		set_gpio(1, 1);
+	set_gpio(0, 1);
 }
 
 static void flash_read_id()
@@ -351,7 +353,7 @@ static void flash_read_id()
 	if (verbose)
 		fprintf(stderr, "read flash ID..\n");
 
-	flash_chip_select(true);
+	flash_chip_select();
 
 	// Write command and read first 4 bytes
 	xfer_spi(data, len);
@@ -367,7 +369,7 @@ static void flash_read_id()
 		}
 	}
 
-	flash_chip_select(false);
+	flash_chip_deselect();
 
 	// TODO: Add full decode of the JEDEC ID.
 	fprintf(stderr, "flash ID:");
@@ -379,26 +381,26 @@ static void flash_read_id()
 static void flash_power_up()
 {
 	uint8_t data[1] = { FC_RPD };
-	flash_chip_select(true);
+	flash_chip_select();
 	xfer_spi(data, 1);
-	flash_chip_select(false);
+	flash_chip_deselect();
 }
 
 static void flash_power_down()
 {
 	uint8_t data[1] = { FC_PD };
-	flash_chip_select(true);
+	flash_chip_select();
 	xfer_spi(data, 1);
-	flash_chip_select(false);
+	flash_chip_deselect();
 }
 
 static uint8_t flash_read_status()
 {
 	uint8_t data[2] = { FC_RSR1 };
 
-	flash_chip_select(true);
+	flash_chip_select();
 	xfer_spi(data, 2);
-	flash_chip_select(false);
+	flash_chip_deselect();
 
 	if (verbose) {
 		fprintf(stderr, "SR1: 0x%02X\n", data[1]);
@@ -459,9 +461,9 @@ static void flash_write_enable()
 		fprintf(stderr, "write enable..\n");
 
 	uint8_t data[1] = { FC_WE };
-	flash_chip_select(true);
+	flash_chip_select();
 	xfer_spi(data, 1);
-	flash_chip_select(false);
+	flash_chip_deselect();
 
 	if (verbose) {
 		fprintf(stderr, "status after enable:\n");
@@ -474,9 +476,9 @@ static void flash_bulk_erase()
 	fprintf(stderr, "bulk erase..\n");
 
 	uint8_t data[1] = { FC_CE };
-	flash_chip_select(true);
+	flash_chip_select();
 	xfer_spi(data, 1);
-	flash_chip_select(false);
+	flash_chip_deselect();
 }
 
 static void flash_64kB_sector_erase(int addr)
@@ -485,9 +487,9 @@ static void flash_64kB_sector_erase(int addr)
 
 	uint8_t command[4] = { FC_BE64, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 
-	flash_chip_select(true);
+	flash_chip_select();
 	send_spi(command, 4);
-	flash_chip_select(false);
+	flash_chip_deselect();
 }
 
 static void flash_prog(int addr, uint8_t *data, int n)
@@ -497,10 +499,10 @@ static void flash_prog(int addr, uint8_t *data, int n)
 
 	uint8_t command[4] = { FC_PP, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 
-	flash_chip_select(true);
+	flash_chip_select();
 	send_spi(command, 4);
 	send_spi(data, n);
-	flash_chip_select(false);
+	flash_chip_deselect();
 
 	if (verbose)
 		for (int i = 0; i < n; i++)
@@ -514,11 +516,11 @@ static void flash_read(int addr, uint8_t *data, int n)
 
 	uint8_t command[4] = { FC_RD, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 
-	flash_chip_select(true);
+	flash_chip_select();
 	send_spi(command, 4);
 	memset(data, 0, n);
 	xfer_spi(data, n);
-	flash_chip_select(false);
+	flash_chip_deselect();
 
 	if (verbose)
 		for (int i = 0; i < n; i++)
@@ -535,9 +537,9 @@ static void flash_wait()
 	{
 		uint8_t data[2] = { FC_RSR1 };
 
-		flash_chip_select(true);
+		flash_chip_select();
 		xfer_spi(data, 2);
-		flash_chip_select(false);
+		flash_chip_deselect();
 
 		if ((data[1] & 0x01) == 0) {
 			if (count < 2) {
@@ -575,18 +577,18 @@ static void flash_disable_protection()
 
 	// Write Status Register 1 <- 0x00
 	uint8_t data[2] = { FC_WSR1, 0x00 };
-	flash_chip_select(true);
+	flash_chip_select();
 	xfer_spi(data, 2);
-	flash_chip_select(false);
+	flash_chip_deselect();
 	
 	flash_wait();
 	
 	// Read Status Register 1
 	data[0] = FC_RSR1;
 
-	flash_chip_select(true);
+	flash_chip_select();
 	xfer_spi(data, 2);
-	flash_chip_select(false);
+	flash_chip_deselect();
 
 	if (data[1] != 0x00)
 		fprintf(stderr, "failed to disable protection, SR now equal to 0x%02x (expected 0x00)\n", data[1]);
@@ -997,7 +999,7 @@ int main(int argc, char **argv)
 	{
 		fprintf(stderr, "reset..\n");
 
-		flash_chip_select(false);
+		flash_chip_deselect();
 		usleep(250000);
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
@@ -1024,7 +1026,7 @@ int main(int argc, char **argv)
 		sram_reset();
 		usleep(100);
 
-		sram_chip_select(true);
+		sram_chip_select();
 		usleep(2000);
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
@@ -1064,7 +1066,7 @@ int main(int argc, char **argv)
 
 		fprintf(stderr, "reset..\n");
 
-		flash_chip_select(false);
+		flash_chip_deselect();
 		usleep(250000);
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
