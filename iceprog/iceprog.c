@@ -2,6 +2,7 @@
  *  iceprog -- simple programming tool for FTDI-based Lattice iCE programmers
  *
  *  Copyright (C) 2015  Clifford Wolf <clifford@clifford.at>
+ *  Copyright (C) 2018  Piotr Esden-Tempski <piotr@esden.net>
  *
  *  Permission to use, copy, modify, and/or distribute this software for any
  *  purpose with or without fee is hereby granted, provided that the above
@@ -35,6 +36,23 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+// ---------------------------------------------------------
+// MPSSE / FTDI definitions
+// ---------------------------------------------------------
+
+/* FTDI bank pinout typically used for iCE dev boards
+ * BUS IO | Signal | Control
+ * -------+--------+--------------
+ * xDBUS0 |    SCK | MPSSE
+ * xDBUS1 |   MOSI | MPSSE
+ * xDBUS2 |   MISO | MPSSE
+ * xDBUS3 |     nc |
+ * xDBUS4 |     CS | GPIO
+ * xDBUS5 |     nc |
+ * xDBUS6 |  CDONE | GPIO
+ * xDBUS7 | CRESET | GPIO
+ */
 
 static struct ftdi_context ftdic;
 static bool ftdic_open = false;
@@ -75,6 +93,10 @@ enum mpsse_cmd
 	MC_CPU_WS = 0x92, /* CPUMode write short address */
 	MC_CPU_WE = 0x93, /* CPUMode write extended address */
 };
+
+// ---------------------------------------------------------
+// FLASH definitions
+// ---------------------------------------------------------
 
 /* Transfer Command bits */
 
@@ -146,6 +168,7 @@ enum flash_cmd {
 	FC_GBL = 0x7E, /* Global Block Lock */
 	FC_GBU = 0x98, /* Global Block Unlock */
 	FC_RBL = 0x3D, /* Read Block Lock */
+	FC_RPR = 0x3C, /* Read Sector Protection Registers (adesto) */
 	FC_IBL = 0x36, /* Individual Block Lock */
 	FC_IBU = 0x39, /* Individual Block Unlock */
 	FC_EPS = 0x75, /* Erase / Program Suspend */
@@ -155,6 +178,10 @@ enum flash_cmd {
 	FC_ERESET = 0x66, /* Enable Reset */
 	FC_RESET = 0x99, /* Reset Device */
 };
+
+// ---------------------------------------------------------
+// MPSSE / FTDI function implementations
+// ---------------------------------------------------------
 
 static void check_rx()
 {
@@ -270,17 +297,83 @@ static int get_cdone()
 	return (data & 0x40) != 0;
 }
 
+// ---------------------------------------------------------
+// FLASH function implementations
+// ---------------------------------------------------------
+
+// the FPGA reset is released so also FLASH chip select should be deasserted
+static void flash_release_reset()
+{
+	set_gpio(1, 1);
+}
+
+// FLASH chip select assert
+// should only happen while FPGA reset is asserted
+static void flash_chip_select()
+{
+	set_gpio(0, 0);
+}
+
+// FLASH chip select deassert
+static void flash_chip_deselect()
+{
+	set_gpio(1, 0);
+}
+
+// SRAM reset is the same as flash_chip_select()
+// For ease of code reading we use this function instead
+static void sram_reset()
+{
+	// Asserting chip select and reset lines
+	set_gpio(0, 0);
+}
+
+// SRAM chip select assert
+// When accessing FPGA SRAM the reset should be released
+static void sram_chip_select()
+{
+	set_gpio(0, 1);
+}
+
 static void flash_read_id()
 {
-	// fprintf(stderr, "read flash ID..\n");
+	/* JEDEC ID structure:
+	 * Byte No. | Data Type
+	 * ---------+----------
+	 *        0 | FC_JEDECID Request Command
+	 *        1 | MFG ID
+	 *        2 | Dev ID 1
+	 *        3 | Dev ID 2
+	 *        4 | Ext Dev Str Len
+	 */
 
-	uint8_t data[21] = { FC_JEDECID };
-	set_gpio(0, 0);
-	xfer_spi(data, 21);
-	set_gpio(1, 0);
+	uint8_t data[260] = { FC_JEDECID };
+	int len = 5; // command + 4 response bytes
 
+	if (verbose)
+		fprintf(stderr, "read flash ID..\n");
+
+	flash_chip_select();
+
+	// Write command and read first 4 bytes
+	xfer_spi(data, len);
+
+	if (data[4] == 0xFF)
+		fprintf(stderr, "Extended Device String Length is 0xFF, "
+				"this is likely a read error. Ignorig...\n");
+	else {
+		// Read extended JEDEC ID bytes
+		if (data[4] != 0) {
+			len += data[4];
+			xfer_spi(data + 5, len - 5);
+		}
+	}
+
+	flash_chip_deselect();
+
+	// TODO: Add full decode of the JEDEC ID.
 	fprintf(stderr, "flash ID:");
-	for (int i = 1; i < 21; i++)
+	for (int i = 1; i < len; i++)
 		fprintf(stderr, " 0x%02X", data[i]);
 	fprintf(stderr, "\n");
 }
@@ -288,28 +381,94 @@ static void flash_read_id()
 static void flash_power_up()
 {
 	uint8_t data[1] = { FC_RPD };
-	set_gpio(0, 0);
+	flash_chip_select();
 	xfer_spi(data, 1);
-	set_gpio(1, 0);
+	flash_chip_deselect();
 }
 
 static void flash_power_down()
 {
 	uint8_t data[1] = { FC_PD };
-	set_gpio(0, 0);
+	flash_chip_select();
 	xfer_spi(data, 1);
-	set_gpio(1, 0);
+	flash_chip_deselect();
+}
+
+static uint8_t flash_read_status()
+{
+	uint8_t data[2] = { FC_RSR1 };
+
+	flash_chip_select();
+	xfer_spi(data, 2);
+	flash_chip_deselect();
+
+	if (verbose) {
+		fprintf(stderr, "SR1: 0x%02X\n", data[1]);
+		fprintf(stderr, " - SPRL: %s\n",
+			((data[1] & (1 << 7)) == 0) ? 
+				"unlocked" : 
+				"locked");
+		fprintf(stderr, " -  SPM: %s\n",
+			((data[1] & (1 << 6)) == 0) ?
+				"Byte/Page Prog Mode" :
+				"Sequential Prog Mode");
+		fprintf(stderr, " -  EPE: %s\n",
+			((data[1] & (1 << 5)) == 0) ?
+				"Erase/Prog success" :
+				"Erase/Prog error");
+		fprintf(stderr, "-  SPM: %s\n",
+			((data[1] & (1 << 4)) == 0) ?
+				"~WP asserted" :
+				"~WP deasserted");
+		fprintf(stderr, " -  SWP: ");
+		switch((data[1] >> 2) & 0x3) {
+			case 0:
+				fprintf(stderr, "All sectors unprotected\n");
+				break;
+			case 1:
+				fprintf(stderr, "Some sectors protected\n");
+				break;
+			case 2:
+				fprintf(stderr, "Reserved (xxxx 10xx)\n");
+				break;
+			case 3:
+				fprintf(stderr, "All sectors protected\n");
+				break;
+		}
+		fprintf(stderr, " -  WEL: %s\n",
+			((data[1] & (1 << 1)) == 0) ?
+				"Not write enabled" :
+				"Write enabled");
+		fprintf(stderr, " - ~RDY: %s\n",
+			((data[1] & (1 << 0)) == 0) ?
+				"Ready" :
+				"Busy");
+	}
+
+	usleep(1000);
+
+	return data[1];
 }
 
 static void flash_write_enable()
 {
+	if (verbose) {
+		fprintf(stderr, "status before enable:\n");
+		flash_read_status();
+	}
+
 	if (verbose)
 		fprintf(stderr, "write enable..\n");
 
 	uint8_t data[1] = { FC_WE };
-	set_gpio(0, 0);
+	flash_chip_select();
 	xfer_spi(data, 1);
-	set_gpio(1, 0);
+	flash_chip_deselect();
+
+	if (verbose) {
+		fprintf(stderr, "status after enable:\n");
+		flash_read_status();
+	}
 }
 
 static void flash_bulk_erase()
@@ -317,9 +476,9 @@ static void flash_bulk_erase()
 	fprintf(stderr, "bulk erase..\n");
 
 	uint8_t data[1] = { FC_CE };
-	set_gpio(0, 0);
+	flash_chip_select();
 	xfer_spi(data, 1);
-	set_gpio(1, 0);
+	flash_chip_deselect();
 }
 
 static void flash_64kB_sector_erase(int addr)
@@ -328,9 +487,9 @@ static void flash_64kB_sector_erase(int addr)
 
 	uint8_t command[4] = { FC_BE64, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 
-	set_gpio(0, 0);
+	flash_chip_select();
 	send_spi(command, 4);
-	set_gpio(1, 0);
+	flash_chip_deselect();
 }
 
 static void flash_prog(int addr, uint8_t *data, int n)
@@ -340,10 +499,10 @@ static void flash_prog(int addr, uint8_t *data, int n)
 
 	uint8_t command[4] = { FC_PP, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 
-	set_gpio(0, 0);
+	flash_chip_select();
 	send_spi(command, 4);
 	send_spi(data, n);
-	set_gpio(1, 0);
+	flash_chip_deselect();
 
 	if (verbose)
 		for (int i = 0; i < n; i++)
@@ -357,11 +516,11 @@ static void flash_read(int addr, uint8_t *data, int n)
 
 	uint8_t command[4] = { FC_RD, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 
-	set_gpio(0, 0);
+	flash_chip_select();
 	send_spi(command, 4);
 	memset(data, 0, n);
 	xfer_spi(data, n);
-	set_gpio(1, 0);
+	flash_chip_deselect();
 
 	if (verbose)
 		for (int i = 0; i < n; i++)
@@ -373,52 +532,72 @@ static void flash_wait()
 	if (verbose)
 		fprintf(stderr, "waiting..");
 
+	int count = 0;
 	while (1)
 	{
 		uint8_t data[2] = { FC_RSR1 };
 
-		set_gpio(0, 0);
+		flash_chip_select();
 		xfer_spi(data, 2);
-		set_gpio(1, 0);
+		flash_chip_deselect();
 
-		if ((data[1] & 0x01) == 0)
-			break;
-
-		if (verbose) {
-			fprintf(stderr, ".");
-			fflush(stdout);
+		if ((data[1] & 0x01) == 0) {
+			if (count < 2) {
+				count++;
+				if (verbose) {
+					fprintf(stderr, "r");
+					fflush(stderr);
+				}
+			} else {
+				if (verbose) {
+					fprintf(stderr, "R");
+					fflush(stderr);
+				}
+				break;
+			}
+		} else {
+			if (verbose) {
+				fprintf(stderr, ".");
+				fflush(stderr);
+			}
+			count = 0;
 		}
+
 		usleep(1000);
 	}
 
 	if (verbose)
 		fprintf(stderr, "\n");
+
 }
 
 static void flash_disable_protection()
 {
 	fprintf(stderr, "disable flash protection...\n");
 
-  //WRSR 0x00
-	uint8_t data[2] = { 0x01, 0x00 };
-	set_gpio(0, 0);
+	// Write Status Register 1 <- 0x00
+	uint8_t data[2] = { FC_WSR1, 0x00 };
+	flash_chip_select();
 	xfer_spi(data, 2);
-	set_gpio(1, 0);
+	flash_chip_deselect();
 	
 	flash_wait();
 	
-	//RDSR
-	data[0] = 0x5;
+	// Read Status Register 1
+	data[0] = FC_RSR1;
 
-	set_gpio(0, 0);\
+	flash_chip_select();
 	xfer_spi(data, 2);
-	set_gpio(1, 0);
+	flash_chip_deselect();
 
-	if(data[1] != 0x00)
+	if (data[1] != 0x00)
 		fprintf(stderr, "failed to disable protection, SR now equal to 0x%02x (expected 0x00)\n", data[1]);
 
 }
 
+// ---------------------------------------------------------
+// iceprog implementation
+// ---------------------------------------------------------
 
 static void help(const char *progname)
 {
@@ -519,14 +698,15 @@ int main(int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
+	/* Decode command line parameters */
 	int opt;
 	char *endptr;
 	while ((opt = getopt_long(argc, argv, "d:I:rR:e:o:cbnStvp", long_options, NULL)) != -1) {
 		switch (opt) {
-		case 'd':
+		case 'd': /* device string */
 			devstr = optarg;
 			break;
-		case 'I':
+		case 'I': /* FTDI Chip interface select */
 			if (!strcmp(optarg, "A"))
 				ifnum = INTERFACE_A;
 			else if (!strcmp(optarg, "B"))
@@ -540,10 +720,10 @@ int main(int argc, char **argv)
 				return EXIT_FAILURE;
 			}
 			break;
-		case 'r':
+		case 'r': /* Read 256 bytes to file */
 			read_mode = true;
 			break;
-		case 'R':
+		case 'R': /* Read n bytes to file */
 			read_mode = true;
 			read_size = strtol(optarg, &endptr, 0);
 			if (*endptr == '\0')
@@ -557,7 +737,7 @@ int main(int argc, char **argv)
 				return EXIT_FAILURE;
 			}
 			break;
-		case 'e':
+		case 'e': /* Erase blocks as if we were writing n bytes */
 			erase_mode = true;
 			erase_size = strtol(optarg, &endptr, 0);
 			if (*endptr == '\0')
@@ -571,7 +751,7 @@ int main(int argc, char **argv)
 				return EXIT_FAILURE;
 			}
 			break;
-		case 'o':
+		case 'o': /* set address offset */
 			rw_offset = strtol(optarg, &endptr, 0);
 			if (*endptr == '\0')
 				/* ok */;
@@ -584,25 +764,25 @@ int main(int argc, char **argv)
 				return EXIT_FAILURE;
 			}
 			break;
-		case 'c':
+		case 'c': /* do not write just check */
 			check_mode = true;
 			break;
-		case 'b':
+		case 'b': /* bulk erase before writing */
 			bulk_erase = true;
 			break;
-		case 'n':
+		case 'n': /* do not erase before writing */
 			dont_erase = true;
 			break;
-		case 'S':
+		case 'S': /* write to sram directly */
 			prog_sram = true;
 			break;
-		case 't':
+		case 't': /* just read flash id */
 			test_mode = true;
 			break;
-		case 'v':
+		case 'v': /* provide verbose output */
 			verbose = true;
 			break;
-		case 'p':
+		case 'p': /* disable flash protect before erase/write */
 			disable_protect = true;
 			break;
 		case -2:
@@ -614,6 +794,8 @@ int main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 	}
+
+	/* Make sure that the combination of provided parameters makes sense */
 
 	if (read_mode + erase_mode + check_mode + prog_sram + test_mode > 1) {
 		fprintf(stderr, "%s: options `-r'/`-R', `-e`, `-c', `-S', and `-t' are mutually exclusive\n", my_name);
@@ -810,15 +992,14 @@ int main(int argc, char **argv)
 
 	fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
-	set_gpio(1, 1);
+	flash_release_reset();
 	usleep(100000);
-
 
 	if (test_mode)
 	{
 		fprintf(stderr, "reset..\n");
 
-		set_gpio(1, 0);
+		flash_chip_deselect();
 		usleep(250000);
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
@@ -829,7 +1010,7 @@ int main(int argc, char **argv)
 
 		flash_power_down();
 
-		set_gpio(1, 1);
+		flash_release_reset();
 		usleep(250000);
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
@@ -842,10 +1023,10 @@ int main(int argc, char **argv)
 
 		fprintf(stderr, "reset..\n");
 
-		set_gpio(0, 0);
+		sram_reset();
 		usleep(100);
 
-		set_gpio(0, 1);
+		sram_chip_select();
 		usleep(2000);
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
@@ -877,7 +1058,7 @@ int main(int argc, char **argv)
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 	}
-	else
+	else /* program flash */
 	{
 		// ---------------------------------------------------------
 		// Reset
@@ -885,7 +1066,7 @@ int main(int argc, char **argv)
 
 		fprintf(stderr, "reset..\n");
 
-		set_gpio(1, 0);
+		flash_chip_deselect();
 		usleep(250000);
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
@@ -925,6 +1106,10 @@ int main(int argc, char **argv)
 					for (int addr = begin_addr; addr < end_addr; addr += 0x10000) {
 						flash_write_enable();
 						flash_64kB_sector_erase(addr);
+						if (verbose) {
+							fprintf(stderr, "Status after block erase:\n");
+							flash_read_status();
+						}
 						flash_wait();
 					}
 				}
