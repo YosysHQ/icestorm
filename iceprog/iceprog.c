@@ -175,6 +175,7 @@ enum flash_cmd {
 	FC_EPR = 0x7A, /* Erase / Program Resume */
 	FC_PD = 0xB9, /* Power-down */
 	FC_QPI = 0x38, /* Enter QPI mode */
+	FC_EQPI = 0xFF, /* Exit QPI mode */
 	FC_ERESET = 0x66, /* Enable Reset */
 	FC_RESET = 0x99, /* Reset Device */
 };
@@ -271,7 +272,7 @@ static void xfer_spi(uint8_t *data, int n)
 
 static void set_gpio(int slavesel_b, int creset_b)
 {
-	uint8_t gpio = 1;
+	uint8_t gpio = 0;
 
 	if (slavesel_b) {
 		// ADBUS4 (GPIOL0)
@@ -378,11 +379,24 @@ static void flash_read_id()
 	fprintf(stderr, "\n");
 }
 
+static void flash_reset()
+{
+	uint8_t data_eqpi[1] = { FC_EQPI };
+
+	flash_chip_select();
+	xfer_spi(data_eqpi, 1);
+	flash_chip_deselect();
+
+	flash_chip_select();
+	xfer_spi(data_eqpi, 1);
+	flash_chip_deselect();
+}
+
 static void flash_power_up()
 {
-	uint8_t data[1] = { FC_RPD };
+	uint8_t data_rpd[1] = { FC_RPD };
 	flash_chip_select();
-	xfer_spi(data, 1);
+	xfer_spi(data_rpd, 1);
 	flash_chip_deselect();
 }
 
@@ -618,6 +632,7 @@ static void help(const char *progname)
 	fprintf(stderr, "  -o <offset in bytes>  start address for read/write [default: 0]\n");
 	fprintf(stderr, "                          (append 'k' to the argument for size in kilobytes,\n");
 	fprintf(stderr, "                          or 'M' for size in megabytes)\n");
+	fprintf(stderr, "  -s                    slow SPI (50 kHz instead of 6 MHz)\n");
 	fprintf(stderr, "  -v                    verbose output\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "Mode of operation:\n");
@@ -688,6 +703,7 @@ int main(int argc, char **argv)
 	bool dont_erase = false;
 	bool prog_sram = false;
 	bool test_mode = false;
+	bool slow_clock = false;
 	bool disable_protect = false;
 	const char *filename = NULL;
 	const char *devstr = NULL;
@@ -701,7 +717,7 @@ int main(int argc, char **argv)
 	/* Decode command line parameters */
 	int opt;
 	char *endptr;
-	while ((opt = getopt_long(argc, argv, "d:I:rR:e:o:cbnStvp", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "d:I:rR:e:o:cbnStvsp", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'd': /* device string */
 			devstr = optarg;
@@ -781,6 +797,9 @@ int main(int argc, char **argv)
 			break;
 		case 'v': /* provide verbose output */
 			verbose = true;
+			break;
+		case 's': /* use slow SPI clock */
+			slow_clock = true;
 			break;
 		case 'p': /* disable flash protect before erase/write */
 			disable_protect = true;
@@ -985,10 +1004,17 @@ int main(int argc, char **argv)
 	// enable clock divide by 5
 	send_byte(MC_TCK_D5);
 
-	// set 6 MHz clock
-	send_byte(MC_SET_CLK_DIV);
-	send_byte(0x00);
-	send_byte(0x00);
+	if (slow_clock) {
+		// set 50 kHz clock
+		send_byte(MC_SET_CLK_DIV);
+		send_byte(119);
+		send_byte(0x00);
+	} else {
+		// set 6 MHz clock
+		send_byte(MC_SET_CLK_DIV);
+		send_byte(0x00);
+		send_byte(0x00);
+	}
 
 	fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
@@ -1004,6 +1030,7 @@ int main(int argc, char **argv)
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
+		flash_reset();
 		flash_power_up();
 
 		flash_read_id();
@@ -1071,6 +1098,7 @@ int main(int argc, char **argv)
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
+		flash_reset();
 		flash_power_up();
 
 		flash_read_id();
