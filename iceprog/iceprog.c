@@ -175,7 +175,6 @@ enum flash_cmd {
 	FC_EPR = 0x7A, /* Erase / Program Resume */
 	FC_PD = 0xB9, /* Power-down */
 	FC_QPI = 0x38, /* Enter QPI mode */
-	FC_EQPI = 0xFF, /* Exit QPI mode */
 	FC_ERESET = 0x66, /* Enable Reset */
 	FC_RESET = 0x99, /* Reset Device */
 };
@@ -268,6 +267,19 @@ static void xfer_spi(uint8_t *data, int n)
 
 	for (int i = 0; i < n; i++)
 		data[i] = recv_byte();
+}
+
+static uint8_t xfer_spi_bits(uint8_t data, int n)
+{
+	if (n < 1)
+		return 0;
+
+	/* Input and output, update data on negative edge read on positive, bits. */
+	send_byte(MC_DATA_IN | MC_DATA_OUT | MC_DATA_OCN | MC_DATA_BITS);
+	send_byte(n - 1);
+	send_byte(data);
+
+	return recv_byte();
 }
 
 static void set_gpio(int slavesel_b, int creset_b)
@@ -381,14 +393,12 @@ static void flash_read_id()
 
 static void flash_reset()
 {
-	uint8_t data_eqpi[1] = { FC_EQPI };
-
 	flash_chip_select();
-	xfer_spi(data_eqpi, 1);
+	xfer_spi_bits(0xFF, 8);
 	flash_chip_deselect();
 
 	flash_chip_select();
-	xfer_spi(data_eqpi, 1);
+	xfer_spi_bits(0xFF, 2);
 	flash_chip_deselect();
 }
 
