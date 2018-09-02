@@ -175,6 +175,7 @@ enum flash_cmd {
 	FC_EPR = 0x7A, /* Erase / Program Resume */
 	FC_PD = 0xB9, /* Power-down */
 	FC_QPI = 0x38, /* Enter QPI mode */
+	FC_EQPI = 0xFF, /* Exit QPI mode */
 	FC_ERESET = 0x66, /* Enable Reset */
 	FC_RESET = 0x99, /* Reset Device */
 };
@@ -394,11 +395,11 @@ static void flash_read_id()
 static void flash_reset()
 {
 	flash_chip_select();
-	xfer_spi_bits(0xFF, 8);
+	xfer_spi_bits(FC_EQPI, 8);
 	flash_chip_deselect();
 
 	flash_chip_select();
-	xfer_spi_bits(0xFF, 2);
+	xfer_spi_bits(FC_EQPI, 2);
 	flash_chip_deselect();
 }
 
