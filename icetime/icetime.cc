@@ -38,6 +38,8 @@
 #include <emscripten.h>
 #endif
 
+std::string find_chipdb(std::string config_device);
+
 // add this number of ns as estimate for clock distribution mismatch
 #define GLOBAL_CLK_DIST_JITTER 0.1
 
@@ -322,35 +324,18 @@ void read_config()
 void read_chipdb()
 {
 	char buffer[1024];
+	std::string filepath = chipdbfile;
 
-	if (!chipdbfile.empty()) {
-		snprintf(buffer, 1024, "%s", chipdbfile.c_str());
-	} else
-	if (PREFIX[0] == '~' && PREFIX[1] == '/') {
-		std::string homedir;
-#ifdef _WIN32
-		if (getenv("USERPROFILE") != nullptr) {
-			homedir += getenv("USERPROFILE");
-		}
-		else {
-			if (getenv("HOMEDRIVE") != nullptr &&
-			    getenv("HOMEPATH") != nullptr) {
-				homedir += getenv("HOMEDRIVE");
-				homedir += getenv("HOMEPATH");
-			}
-		}
-#else
-		homedir += getenv("HOME");
-#endif
-		snprintf(buffer, 1024, "%s%s/share/" CHIPDB_SUBDIR "/chipdb-%s.txt", homedir.c_str(), PREFIX+1, config_device.c_str());
-	} else {
-		snprintf(buffer, 1024, PREFIX "/share/" CHIPDB_SUBDIR "/chipdb-%s.txt", config_device.c_str());
+	if (filepath.empty())
+		filepath = find_chipdb(config_device);
+	if (filepath.empty()) {
+		fprintf(stderr, "Can't find chipdb file for device %s\n", config_device.c_str());
+		exit(1);
 	}
 
-	FILE *fdb = fopen(buffer, "r");
+	FILE *fdb = fopen(filepath.c_str(), "r");
 	if (fdb == nullptr) {
 		perror("Can't open chipdb file");
-		fprintf(stderr, "  %s\n", buffer);
 		exit(1);
 	}
 
