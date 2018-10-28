@@ -1320,7 +1320,7 @@ std::string ecnetname_to_vlog(std::string ec_name)
 		} else {
 			return ec_name;
 		}
-	} catch(std::invalid_argument e) { // Not numeric and stoi throws exception
+	} catch(std::invalid_argument &e) { // Not numeric and stoi throws exception
 		return ec_name;
 	}
 
