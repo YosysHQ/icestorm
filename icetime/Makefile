@@ -26,10 +26,11 @@ share/$(CHIPDB_SUBDIR)/chipdb-5k.txt: ../icebox/chipdb-5k.txt
 override LDFLAGS += --embed-file share
 endif
 
-icetime$(EXE): icetime.o
+icetime$(EXE): icetime.o iceutil.o
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 icetime.o: icetime.cc timings.inc
+iceutil.o: iceutil.cc
 
 timings.inc: timings.py ../icefuzz/timings_*.txt
 	python3 timings.py > timings.inc.new
