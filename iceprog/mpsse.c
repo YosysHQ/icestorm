@@ -231,34 +231,28 @@ uint8_t mpsse_xfer_spi_bits(uint8_t data, int n)
 	return mpsse_recv_byte();
 }
 
-void mpsse_set_gpio(int slavesel_b, int creset_b)
+void mpsse_set_gpio(uint8_t gpio, uint8_t direction)
 {
-	uint8_t gpio = 0;
-
-	if (slavesel_b) {
-		// ADBUS4 (GPIOL0)
-		gpio |= 0x10;
-	}
-
-	if (creset_b) {
-		// ADBUS7 (GPIOL3)
-		gpio |= 0x80;
-	}
-
 	mpsse_send_byte(MC_SETB_LOW);
 	mpsse_send_byte(gpio); /* Value */
-	mpsse_send_byte(0x93); /* Direction */
+	mpsse_send_byte(direction); /* Direction */
 }
 
-int mpsse_get_cdone()
+int mpsse_readb_low(void)
 {
 	uint8_t data;
 	mpsse_send_byte(MC_READB_LOW);
 	data = mpsse_recv_byte();
-	// ADBUS6 (GPIOL2)
-	return (data & 0x40) != 0;
+	return data;
 }
 
+int mpsse_readb_high(void)
+{
+	uint8_t data;
+	mpsse_send_byte(MC_READB_HIGH);
+	data = mpsse_recv_byte();
+	return data;
+}
 
 void mpsse_send_dummy_bytes(uint8_t n)
 {

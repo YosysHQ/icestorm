@@ -85,26 +85,54 @@ enum flash_cmd {
 };
 
 // ---------------------------------------------------------
+// Hardware specific CS, CReset, CDone functions
+// ---------------------------------------------------------
+
+static void set_cs_creset(int cs_b, int creset_b)
+{
+	uint8_t gpio = 0;
+	uint8_t direction = 0x93;
+
+	if (cs_b) {
+		// ADBUS4 (GPIOL0)
+		gpio |= 0x10;
+	}
+
+	if (creset_b) {
+		// ADBUS7 (GPIOL3)
+		gpio |= 0x80;
+	}
+
+	mpsse_set_gpio(gpio, direction);
+}
+
+static bool get_cdone(void)
+{
+	// ADBUS6 (GPIOL2)
+	return (mpsse_readb_low() & 0x40) != 0;
+}
+
+// ---------------------------------------------------------
 // FLASH function implementations
 // ---------------------------------------------------------
 
 // the FPGA reset is released so also FLASH chip select should be deasserted
 static void flash_release_reset()
 {
-	mpsse_set_gpio(1, 1);
+	set_cs_creset(1, 1);
 }
 
 // FLASH chip select assert
 // should only happen while FPGA reset is asserted
 static void flash_chip_select()
 {
-	mpsse_set_gpio(0, 0);
+	set_cs_creset(0, 0);
 }
 
 // FLASH chip select deassert
 static void flash_chip_deselect()
 {
-	mpsse_set_gpio(1, 0);
+	set_cs_creset(1, 0);
 }
 
 // SRAM reset is the same as flash_chip_select()
@@ -112,14 +140,14 @@ static void flash_chip_deselect()
 static void sram_reset()
 {
 	// Asserting chip select and reset lines
-	mpsse_set_gpio(0, 0);
+	set_cs_creset(0, 0);
 }
 
 // SRAM chip select assert
 // When accessing FPGA SRAM the reset should be released
 static void sram_chip_select()
 {
-	mpsse_set_gpio(0, 1);
+	set_cs_creset(0, 1);
 }
 
 static void flash_read_id()
@@ -741,7 +769,7 @@ int main(int argc, char **argv)
 
 	mpsse_init(ifnum, devstr, slow_clock);
 
-	fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
+	fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
 	flash_release_reset();
 	usleep(100000);
@@ -753,7 +781,7 @@ int main(int argc, char **argv)
 		flash_chip_deselect();
 		usleep(250000);
 
-		fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
 		flash_reset();
 		flash_power_up();
@@ -765,7 +793,7 @@ int main(int argc, char **argv)
 		flash_release_reset();
 		usleep(250000);
 
-		fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 	}
 	else if (prog_sram)
 	{
@@ -781,7 +809,7 @@ int main(int argc, char **argv)
 		sram_chip_select();
 		usleep(2000);
 
-		fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
 
 		// ---------------------------------------------------------
@@ -802,7 +830,7 @@ int main(int argc, char **argv)
 		mpsse_send_dummy_bytes(6);
 		mpsse_send_dummy_bit();
 
-		fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 	}
 	else /* program flash */
 	{
@@ -815,7 +843,7 @@ int main(int argc, char **argv)
 		flash_chip_deselect();
 		usleep(250000);
 
-		fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
 		flash_reset();
 		flash_power_up();
@@ -917,10 +945,10 @@ int main(int argc, char **argv)
 
 		flash_power_down();
 
-		mpsse_set_gpio(1, 1);
+		set_cs_creset(1, 1);
 		usleep(250000);
 
-		fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 	}
 
 	if (f != NULL && f != stdin && f != stdout)
