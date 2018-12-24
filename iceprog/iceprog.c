@@ -20,12 +20,10 @@
  *  -------------------
  *  http://www.latticesemi.com/~/media/Documents/UserManuals/EI/icestickusermanual.pdf
  *  http://www.micron.com/~/media/documents/products/data-sheet/nor-flash/serial-nor/n25q/n25q_32mb_3v_65nm.pdf
- *  http://www.ftdichip.com/Support/Documents/AppNotes/AN_108_Command_Processor_for_MPSSE_and_MCU_Host_Bus_Emulation_Modes.pdf
  */
 
 #define _GNU_SOURCE
 
-#include <ftdi.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -37,106 +35,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-// ---------------------------------------------------------
-// MPSSE / FTDI definitions
-// ---------------------------------------------------------
+#include "mpsse.h"
 
-/* FTDI bank pinout typically used for iCE dev boards
- * BUS IO | Signal | Control
- * -------+--------+--------------
- * xDBUS0 |    SCK | MPSSE
- * xDBUS1 |   MOSI | MPSSE
- * xDBUS2 |   MISO | MPSSE
- * xDBUS3 |     nc |
- * xDBUS4 |     CS | GPIO
- * xDBUS5 |     nc |
- * xDBUS6 |  CDONE | GPIO
- * xDBUS7 | CRESET | GPIO
- */
-
-static struct ftdi_context ftdic;
-static bool ftdic_open = false;
 static bool verbose = false;
-static bool ftdic_latency_set = false;
-static unsigned char ftdi_latency;
-
-/* MPSSE engine command definitions */
-enum mpsse_cmd
-{
-	/* Mode commands */
-	MC_SETB_LOW = 0x80, /* Set Data bits LowByte */
-	MC_READB_LOW = 0x81, /* Read Data bits LowByte */
-	MC_SETB_HIGH = 0x82, /* Set Data bits HighByte */
-	MC_READB_HIGH = 0x83, /* Read data bits HighByte */
-	MC_LOOPBACK_EN = 0x84, /* Enable loopback */
-	MC_LOOPBACK_DIS = 0x85, /* Disable loopback */
-	MC_SET_CLK_DIV = 0x86, /* Set clock divisor */
-	MC_FLUSH = 0x87, /* Flush buffer fifos to the PC. */
-	MC_WAIT_H = 0x88, /* Wait on GPIOL1 to go high. */
-	MC_WAIT_L = 0x89, /* Wait on GPIOL1 to go low. */
-	MC_TCK_X5 = 0x8A, /* Disable /5 div, enables 60MHz master clock */
-	MC_TCK_D5 = 0x8B, /* Enable /5 div, backward compat to FT2232D */
-	MC_EN_3PH_CLK = 0x8C, /* Enable 3 phase clk, DDR I2C */
-	MC_DIS_3PH_CLK = 0x8D, /* Disable 3 phase clk */
-	MC_CLK_N = 0x8E, /* Clock every bit, used for JTAG */
-	MC_CLK_N8 = 0x8F, /* Clock every byte, used for JTAG */
-	MC_CLK_TO_H = 0x94, /* Clock until GPIOL1 goes high */
-	MC_CLK_TO_L = 0x95, /* Clock until GPIOL1 goes low */
-	MC_EN_ADPT_CLK = 0x96, /* Enable adaptive clocking */
-	MC_DIS_ADPT_CLK = 0x97, /* Disable adaptive clocking */
-	MC_CLK8_TO_H = 0x9C, /* Clock until GPIOL1 goes high, count bytes */
-	MC_CLK8_TO_L = 0x9D, /* Clock until GPIOL1 goes low, count bytes */
-	MC_TRI = 0x9E, /* Set IO to only drive on 0 and tristate on 1 */
-	/* CPU mode commands */
-	MC_CPU_RS = 0x90, /* CPUMode read short address */
-	MC_CPU_RE = 0x91, /* CPUMode read extended address */
-	MC_CPU_WS = 0x92, /* CPUMode write short address */
-	MC_CPU_WE = 0x93, /* CPUMode write extended address */
-};
 
 // ---------------------------------------------------------
 // FLASH definitions
 // ---------------------------------------------------------
-
-/* Transfer Command bits */
-
-/* All byte based commands consist of:
- * - Command byte
- * - Length lsb
- * - Length msb
- *
- * If data out is enabled the data follows after the above command bytes,
- * otherwise no additional data is needed.
- * - Data * n
- *
- * All bit based commands consist of:
- * - Command byte
- * - Length
- *
- * If data out is enabled a byte containing bitst to transfer follows.
- * Otherwise no additional data is needed. Only up to 8 bits can be transferred
- * per transaction when in bit mode.
- */
-
-/* b 0000 0000
- *   |||| |||`- Data out negative enable. Update DO on negative clock edge.
- *   |||| ||`-- Bit count enable. When reset count represents bytes.
- *   |||| |`--- Data in negative enable. Latch DI on negative clock edge.
- *   |||| `---- LSB enable. When set clock data out LSB first.
- *   ||||
- *   |||`------ Data out enable
- *   ||`------- Data in enable
- *   |`-------- TMS mode enable
- *   `--------- Special command mode enable. See mpsse_cmd enum.
- */
-
-#define MC_DATA_TMS  (0x40) /* When set use TMS mode */
-#define MC_DATA_IN   (0x20) /* When set read data (Data IN) */
-#define MC_DATA_OUT  (0x10) /* When set write data (Data OUT) */
-#define MC_DATA_LSB  (0x08) /* When set input/output data LSB first. */
-#define MC_DATA_ICN  (0x04) /* When set receive data on negative clock edge */
-#define MC_DATA_BITS (0x02) /* When set count bits not bytes */
-#define MC_DATA_OCN  (0x01) /* When set update data on negative clock edge */
 
 /* Flash command definitions */
 /* This command list is based on the Winbond W25Q128JV Datasheet */
@@ -180,157 +85,26 @@ enum flash_cmd {
 };
 
 // ---------------------------------------------------------
-// MPSSE / FTDI function implementations
-// ---------------------------------------------------------
-
-static void check_rx()
-{
-	while (1) {
-		uint8_t data;
-		int rc = ftdi_read_data(&ftdic, &data, 1);
-		if (rc <= 0)
-			break;
-		fprintf(stderr, "unexpected rx byte: %02X\n", data);
-	}
-}
-
-static void error(int status)
-{
-	check_rx();
-	fprintf(stderr, "ABORT.\n");
-	if (ftdic_open) {
-		if (ftdic_latency_set)
-			ftdi_set_latency_timer(&ftdic, ftdi_latency);
-		ftdi_usb_close(&ftdic);
-	}
-	ftdi_deinit(&ftdic);
-	exit(status);
-}
-
-static uint8_t recv_byte()
-{
-	uint8_t data;
-	while (1) {
-		int rc = ftdi_read_data(&ftdic, &data, 1);
-		if (rc < 0) {
-			fprintf(stderr, "Read error.\n");
-			error(2);
-		}
-		if (rc == 1)
-			break;
-		usleep(100);
-	}
-	return data;
-}
-
-static void send_byte(uint8_t data)
-{
-	int rc = ftdi_write_data(&ftdic, &data, 1);
-	if (rc != 1) {
-		fprintf(stderr, "Write error (single byte, rc=%d, expected %d).\n", rc, 1);
-		error(2);
-	}
-}
-
-static void send_spi(uint8_t *data, int n)
-{
-	if (n < 1)
-		return;
-
-	/* Output only, update data on negative clock edge. */
-	send_byte(MC_DATA_OUT | MC_DATA_OCN);
-	send_byte(n - 1);
-	send_byte((n - 1) >> 8);
-
-	int rc = ftdi_write_data(&ftdic, data, n);
-	if (rc != n) {
-		fprintf(stderr, "Write error (chunk, rc=%d, expected %d).\n", rc, n);
-		error(2);
-	}
-}
-
-static void xfer_spi(uint8_t *data, int n)
-{
-	if (n < 1)
-		return;
-
-	/* Input and output, update data on negative edge read on positive. */
-	send_byte(MC_DATA_IN | MC_DATA_OUT | MC_DATA_OCN);
-	send_byte(n - 1);
-	send_byte((n - 1) >> 8);
-
-	int rc = ftdi_write_data(&ftdic, data, n);
-	if (rc != n) {
-		fprintf(stderr, "Write error (chunk, rc=%d, expected %d).\n", rc, n);
-		error(2);
-	}
-
-	for (int i = 0; i < n; i++)
-		data[i] = recv_byte();
-}
-
-static uint8_t xfer_spi_bits(uint8_t data, int n)
-{
-	if (n < 1)
-		return 0;
-
-	/* Input and output, update data on negative edge read on positive, bits. */
-	send_byte(MC_DATA_IN | MC_DATA_OUT | MC_DATA_OCN | MC_DATA_BITS);
-	send_byte(n - 1);
-	send_byte(data);
-
-	return recv_byte();
-}
-
-static void set_gpio(int slavesel_b, int creset_b)
-{
-	uint8_t gpio = 0;
-
-	if (slavesel_b) {
-		// ADBUS4 (GPIOL0)
-		gpio |= 0x10;
-	}
-
-	if (creset_b) {
-		// ADBUS7 (GPIOL3)
-		gpio |= 0x80;
-	}
-
-	send_byte(MC_SETB_LOW);
-	send_byte(gpio); /* Value */
-	send_byte(0x93); /* Direction */
-}
-
-static int get_cdone()
-{
-	uint8_t data;
-	send_byte(MC_READB_LOW);
-	data = recv_byte();
-	// ADBUS6 (GPIOL2)
-	return (data & 0x40) != 0;
-}
-
-// ---------------------------------------------------------
 // FLASH function implementations
 // ---------------------------------------------------------
 
 // the FPGA reset is released so also FLASH chip select should be deasserted
 static void flash_release_reset()
 {
-	set_gpio(1, 1);
+	mpsse_set_gpio(1, 1);
 }
 
 // FLASH chip select assert
 // should only happen while FPGA reset is asserted
 static void flash_chip_select()
 {
-	set_gpio(0, 0);
+	mpsse_set_gpio(0, 0);
 }
 
 // FLASH chip select deassert
 static void flash_chip_deselect()
 {
-	set_gpio(1, 0);
+	mpsse_set_gpio(1, 0);
 }
 
 // SRAM reset is the same as flash_chip_select()
@@ -338,14 +112,14 @@ static void flash_chip_deselect()
 static void sram_reset()
 {
 	// Asserting chip select and reset lines
-	set_gpio(0, 0);
+	mpsse_set_gpio(0, 0);
 }
 
 // SRAM chip select assert
 // When accessing FPGA SRAM the reset should be released
 static void sram_chip_select()
 {
-	set_gpio(0, 1);
+	mpsse_set_gpio(0, 1);
 }
 
 static void flash_read_id()
@@ -369,7 +143,7 @@ static void flash_read_id()
 	flash_chip_select();
 
 	// Write command and read first 4 bytes
-	xfer_spi(data, len);
+	mpsse_xfer_spi(data, len);
 
 	if (data[4] == 0xFF)
 		fprintf(stderr, "Extended Device String Length is 0xFF, "
@@ -378,7 +152,7 @@ static void flash_read_id()
 		// Read extended JEDEC ID bytes
 		if (data[4] != 0) {
 			len += data[4];
-			xfer_spi(data + 5, len - 5);
+			mpsse_xfer_spi(data + 5, len - 5);
 		}
 	}
 
@@ -394,11 +168,11 @@ static void flash_read_id()
 static void flash_reset()
 {
 	flash_chip_select();
-	xfer_spi_bits(0xFF, 8);
+	mpsse_xfer_spi_bits(0xFF, 8);
 	flash_chip_deselect();
 
 	flash_chip_select();
-	xfer_spi_bits(0xFF, 2);
+	mpsse_xfer_spi_bits(0xFF, 2);
 	flash_chip_deselect();
 }
 
@@ -406,7 +180,7 @@ static void flash_power_up()
 {
 	uint8_t data_rpd[1] = { FC_RPD };
 	flash_chip_select();
-	xfer_spi(data_rpd, 1);
+	mpsse_xfer_spi(data_rpd, 1);
 	flash_chip_deselect();
 }
 
@@ -414,7 +188,7 @@ static void flash_power_down()
 {
 	uint8_t data[1] = { FC_PD };
 	flash_chip_select();
-	xfer_spi(data, 1);
+	mpsse_xfer_spi(data, 1);
 	flash_chip_deselect();
 }
 
@@ -423,7 +197,7 @@ static uint8_t flash_read_status()
 	uint8_t data[2] = { FC_RSR1 };
 
 	flash_chip_select();
-	xfer_spi(data, 2);
+	mpsse_xfer_spi(data, 2);
 	flash_chip_deselect();
 
 	if (verbose) {
@@ -486,7 +260,7 @@ static void flash_write_enable()
 
 	uint8_t data[1] = { FC_WE };
 	flash_chip_select();
-	xfer_spi(data, 1);
+	mpsse_xfer_spi(data, 1);
 	flash_chip_deselect();
 
 	if (verbose) {
@@ -501,7 +275,7 @@ static void flash_bulk_erase()
 
 	uint8_t data[1] = { FC_CE };
 	flash_chip_select();
-	xfer_spi(data, 1);
+	mpsse_xfer_spi(data, 1);
 	flash_chip_deselect();
 }
 
@@ -512,7 +286,7 @@ static void flash_64kB_sector_erase(int addr)
 	uint8_t command[4] = { FC_BE64, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 
 	flash_chip_select();
-	send_spi(command, 4);
+	mpsse_send_spi(command, 4);
 	flash_chip_deselect();
 }
 
@@ -524,8 +298,8 @@ static void flash_prog(int addr, uint8_t *data, int n)
 	uint8_t command[4] = { FC_PP, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 
 	flash_chip_select();
-	send_spi(command, 4);
-	send_spi(data, n);
+	mpsse_send_spi(command, 4);
+	mpsse_send_spi(data, n);
 	flash_chip_deselect();
 
 	if (verbose)
@@ -541,9 +315,9 @@ static void flash_read(int addr, uint8_t *data, int n)
 	uint8_t command[4] = { FC_RD, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
 
 	flash_chip_select();
-	send_spi(command, 4);
+	mpsse_send_spi(command, 4);
 	memset(data, 0, n);
-	xfer_spi(data, n);
+	mpsse_xfer_spi(data, n);
 	flash_chip_deselect();
 
 	if (verbose)
@@ -562,7 +336,7 @@ static void flash_wait()
 		uint8_t data[2] = { FC_RSR1 };
 
 		flash_chip_select();
-		xfer_spi(data, 2);
+		mpsse_xfer_spi(data, 2);
 		flash_chip_deselect();
 
 		if ((data[1] & 0x01) == 0) {
@@ -602,7 +376,7 @@ static void flash_disable_protection()
 	// Write Status Register 1 <- 0x00
 	uint8_t data[2] = { FC_WSR1, 0x00 };
 	flash_chip_select();
-	xfer_spi(data, 2);
+	mpsse_xfer_spi(data, 2);
 	flash_chip_deselect();
 	
 	flash_wait();
@@ -611,7 +385,7 @@ static void flash_disable_protection()
 	data[0] = FC_RSR1;
 
 	flash_chip_select();
-	xfer_spi(data, 2);
+	mpsse_xfer_spi(data, 2);
 	flash_chip_deselect();
 
 	if (data[1] != 0x00)
@@ -717,7 +491,7 @@ int main(int argc, char **argv)
 	bool disable_protect = false;
 	const char *filename = NULL;
 	const char *devstr = NULL;
-	enum ftdi_interface ifnum = INTERFACE_A;
+	int ifnum = 0;
 
 	static struct option long_options[] = {
 		{"help", no_argument, NULL, -2},
@@ -734,13 +508,13 @@ int main(int argc, char **argv)
 			break;
 		case 'I': /* FTDI Chip interface select */
 			if (!strcmp(optarg, "A"))
-				ifnum = INTERFACE_A;
+				ifnum = 0;
 			else if (!strcmp(optarg, "B"))
-				ifnum = INTERFACE_B;
+				ifnum = 1;
 			else if (!strcmp(optarg, "C"))
-				ifnum = INTERFACE_C;
+				ifnum = 2;
 			else if (!strcmp(optarg, "D"))
-				ifnum = INTERFACE_D;
+				ifnum = 3;
 			else {
 				fprintf(stderr, "%s: `%s' is not a valid interface (must be `A', `B', `C', or `D')\n", my_name, optarg);
 				return EXIT_FAILURE;
@@ -965,68 +739,9 @@ int main(int argc, char **argv)
 
 	fprintf(stderr, "init..\n");
 
-	ftdi_init(&ftdic);
-	ftdi_set_interface(&ftdic, ifnum);
+	mpsse_init(ifnum, devstr, slow_clock);
 
-	if (devstr != NULL) {
-		if (ftdi_usb_open_string(&ftdic, devstr)) {
-			fprintf(stderr, "Can't find iCE FTDI USB device (device string %s).\n", devstr);
-			error(2);
-		}
-	} else {
-		if (ftdi_usb_open(&ftdic, 0x0403, 0x6010) && ftdi_usb_open(&ftdic, 0x0403, 0x6014)) {
-			fprintf(stderr, "Can't find iCE FTDI USB device (vendor_id 0x0403, device_id 0x6010 or 0x6014).\n");
-			error(2);
-		}
-	}
-
-	ftdic_open = true;
-
-	if (ftdi_usb_reset(&ftdic)) {
-		fprintf(stderr, "Failed to reset iCE FTDI USB device.\n");
-		error(2);
-	}
-
-	if (ftdi_usb_purge_buffers(&ftdic)) {
-		fprintf(stderr, "Failed to purge buffers on iCE FTDI USB device.\n");
-		error(2);
-	}
-
-	if (ftdi_get_latency_timer(&ftdic, &ftdi_latency) < 0) {
-		fprintf(stderr, "Failed to get latency timer (%s).\n", ftdi_get_error_string(&ftdic));
-		error(2);
-	}
-
-	/* 1 is the fastest polling, it means 1 kHz polling */
-	if (ftdi_set_latency_timer(&ftdic, 1) < 0) {
-		fprintf(stderr, "Failed to set latency timer (%s).\n", ftdi_get_error_string(&ftdic));
-		error(2);
-	}
-
-	ftdic_latency_set = true;
-
-	/* Enter MPSSE (Multi-Protocol Synchronous Serial Engine) mode. Set all pins to output. */
-	if (ftdi_set_bitmode(&ftdic, 0xff, BITMODE_MPSSE) < 0) {
-		fprintf(stderr, "Failed to set BITMODE_MPSSE on iCE FTDI USB device.\n");
-		error(2);
-	}
-
-	// enable clock divide by 5
-	send_byte(MC_TCK_D5);
-
-	if (slow_clock) {
-		// set 50 kHz clock
-		send_byte(MC_SET_CLK_DIV);
-		send_byte(119);
-		send_byte(0x00);
-	} else {
-		// set 6 MHz clock
-		send_byte(MC_SET_CLK_DIV);
-		send_byte(0x00);
-		send_byte(0x00);
-	}
-
-	fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
+	fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
 
 	flash_release_reset();
 	usleep(100000);
@@ -1038,7 +753,7 @@ int main(int argc, char **argv)
 		flash_chip_deselect();
 		usleep(250000);
 
-		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
 
 		flash_reset();
 		flash_power_up();
@@ -1050,7 +765,7 @@ int main(int argc, char **argv)
 		flash_release_reset();
 		usleep(250000);
 
-		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
 	}
 	else if (prog_sram)
 	{
@@ -1066,7 +781,7 @@ int main(int argc, char **argv)
 		sram_chip_select();
 		usleep(2000);
 
-		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
 
 
 		// ---------------------------------------------------------
@@ -1081,19 +796,13 @@ int main(int argc, char **argv)
 				break;
 			if (verbose)
 				fprintf(stderr, "sending %d bytes.\n", rc);
-			send_spi(buffer, rc);
+			mpsse_send_spi(buffer, rc);
 		}
 
-		// add 48 dummy bits (aka 6 bytes)
-		send_byte(MC_CLK_N8);
-		send_byte(0x05);
-		send_byte(0x00);
+		mpsse_send_dummy_bytes(6);
+		mpsse_send_dummy_bit();
 
-		// add 1 more dummy bit
-		send_byte(MC_CLK_N);
-		send_byte(0x00);
-
-		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
 	}
 	else /* program flash */
 	{
@@ -1106,7 +815,7 @@ int main(int argc, char **argv)
 		flash_chip_deselect();
 		usleep(250000);
 
-		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
 
 		flash_reset();
 		flash_power_up();
@@ -1194,7 +903,7 @@ int main(int argc, char **argv)
 				flash_read(rw_offset + addr, buffer_flash, rc);
 				if (memcmp(buffer_file, buffer_flash, rc)) {
 					fprintf(stderr, "Found difference between flash and file!\n");
-					error(3);
+					mpsse_error(3);
 				}
 			}
 
@@ -1208,10 +917,10 @@ int main(int argc, char **argv)
 
 		flash_power_down();
 
-		set_gpio(1, 1);
+		mpsse_set_gpio(1, 1);
 		usleep(250000);
 
-		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
+		fprintf(stderr, "cdone: %s\n", mpsse_get_cdone() ? "high" : "low");
 	}
 
 	if (f != NULL && f != stdin && f != stdout)
@@ -1222,9 +931,6 @@ int main(int argc, char **argv)
 	// ---------------------------------------------------------
 
 	fprintf(stderr, "Bye.\n");
-	ftdi_set_latency_timer(&ftdic, ftdi_latency);
-	ftdi_disable_bitbang(&ftdic);
-	ftdi_usb_close(&ftdic);
-	ftdi_deinit(&ftdic);
+	mpsse_close();
 	return 0;
 }
