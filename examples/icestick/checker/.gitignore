@@ -1,0 +1,7 @@
+checker_tb
+*.asc
+*.bin
+*.blif
+*.rpt
+*.vcd
+*_syntb.v

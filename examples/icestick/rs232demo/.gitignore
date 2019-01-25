@@ -1,0 +1,9 @@
+*.asc
+*.bin
+*.blif
+*.rpt
+*_syntb
+*_syntb.vcd
+*_syn.v
+rs232demo_tb
+rs232demo_syntb
