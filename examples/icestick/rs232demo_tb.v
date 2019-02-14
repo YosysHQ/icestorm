@@ -53,6 +53,11 @@ module testbench;
 
 		repeat (10 * PERIOD) @(posedge clk);
 
+		// turn all LEDs off
+		send_byte("1");
+		send_byte("3");
+		send_byte("5");
+
 		// turn all LEDs on
 		send_byte("1");
 		send_byte("2");

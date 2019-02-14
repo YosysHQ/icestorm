@@ -34,6 +34,10 @@ all: $(PROJ).rpt $(PROJ).bin
 %_syntb.vcd: %_syntb
 	vvp -N $< +vcd=$@
 
+sim: $(PROJ)_tb.vcd
+
+postsim: $(PROJ)_syntb.vcd
+
 prog: $(PROJ).bin
 	iceprog $<
 
