@@ -21,6 +21,7 @@ import getopt, sys, re
 mode_384 = False
 mode_lm4k = False
 mode_5k = False
+mode_u4k = False
 mode_8k = False
 
 def usage():
@@ -38,11 +39,14 @@ Usage: icebox_chipdb [options] [bitmap.asc]
 
     -4
         create chipdb for lm4k device
+
+    -u
+        create chipdb for u4k device
 """)
     sys.exit(0)
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "3584")
+    opts, args = getopt.getopt(sys.argv[1:], "3584u")
 except:
     usage()
 
@@ -55,6 +59,8 @@ for o, a in opts:
         mode_384 = True
     elif o == "-4":
         mode_lm4k = True
+    elif o == "-u":
+        mode_u4k = True
     else:
         usage()
 
@@ -67,6 +73,8 @@ elif mode_384:
     ic.setup_empty_384()
 elif mode_lm4k:
     ic.setup_empty_lm4k()
+elif mode_u4k:
+    ic.setup_empty_u4k()
 else:
     ic.setup_empty_1k()
 
@@ -254,7 +262,7 @@ for dsp_idx in range(4):
     for idx in sorted(ic.dsp_tiles[dsp_idx]):
         x, y = idx
         print(".dsp%d_tile %d %d" % (dsp_idx, x, y))
-    print()    
+    print()
 
 for idx in sorted(ic.ipcon_tiles):
     print(".ipcon_tile %d %d" % idx)
@@ -320,12 +328,12 @@ for dsploc in ic.dsp_tiles[0]:
     nets = ic.get_dsp_nets_db(x, y)
     for key in sorted(nets):
         print("%s %s" % (key, " ".join([str(k) for k in nets[key]])))
-    
+
     cfg = ic.get_dsp_config_db(x, y)
     for key in sorted(cfg):
         print("%s %s" % (key, " ".join([str(k) for k in cfg[key]])))
     print()
-    
+
 if ic.device in icebox.extra_cells_db:
     for cell in sorted(icebox.extra_cells_db[ic.device]):
         name, loc = cell
@@ -335,7 +343,7 @@ if ic.device in icebox.extra_cells_db:
         for key in sorted(cellinfo):
             print("%s %s" % (key, " ".join([str(k) for k in cellinfo[key]])))
         print()
-     
+
 if ic.device in icebox.spram_db:
     for cell in sorted(icebox.spram_db[ic.device]):
         loc = cell
@@ -345,7 +353,7 @@ if ic.device in icebox.spram_db:
         for key in sorted(cellinfo):
             print("%s %s" % (key, " ".join([str(k) for k in cellinfo[key]])))
         print()
-     
+
 print(".extra_bits")
 extra_bits = dict()
 for idx in sorted(ic.extra_bits_db()):

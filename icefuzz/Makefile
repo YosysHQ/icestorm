@@ -13,6 +13,11 @@ ifeq ($(DEVICECLASS), 1k)
 	DEVICE := hx1k-tq144
 endif
 
+ifeq ($(DEVICECLASS), u4k)
+	DEVICE := u4k-sg48
+	RAM_SUFFIX := _8k
+endif
+
 ifeq ($(DEVICECLASS), 5k)
 	DEVICE := up5k-sg48
 	RAM_SUFFIX := _8k
@@ -51,6 +56,10 @@ ifeq ($(DEVICECLASS),5k)
  TESTS += dsp
  TESTS += upip
 endif
+ifeq ($(DEVICECLASS),u4k)
+ TESTS += dsp
+ TESTS += uip
+endif
 database: bitdata_io.txt bitdata_logic.txt bitdata_ramb$(RAM_SUFFIX).txt bitdata_ramt$(RAM_SUFFIX).txt bitdata_dsp0_5k.txt bitdata_dsp1_5k.txt bitdata_dsp2_5k.txt bitdata_dsp3_5k.txt bitdata_ipcon_5k.txt
 ifneq ($(RAM_SUFFIX),)
 	cp cached_ramb.txt bitdata_ramb.txt
@@ -87,6 +96,13 @@ ifeq ($(DEVICECLASS),5k)
 	python3 timings.py -t timings_up5k.txt work_*/*.sdf > timings_up5k.new
 	mv timings_up5k.new timings_up5k.txt
 else
+ifeq ($(DEVICECLASS),u4k)
+	cp tmedges.txt tmedges.tmp
+	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; sed '/defparam/d' < $$f > $$f.fixed;  yosys -q -f verilog -s tmedges.ys $$f.fixed; python3 rename_dsps.py $$f; done
+	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
+	python3 timings.py -t timings_u4k.txt work_*/*.sdf > timings_u4k.new
+	mv timings_u4k.new timings_u4k.txt
+else
 ifeq ($(DEVICECLASS),8k)
 	cp tmedges.txt tmedges.tmp
 	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
@@ -113,6 +129,7 @@ else
  endif
 endif
 endif
+endif
 timings_html:
 	python3 timings.py -h tmedges.txt -t timings_hx1k.txt -l "HX1K with default temp/volt settings" > timings_hx1k.html
 	python3 timings.py -h tmedges.txt -t timings_hx8k.txt -l "HX8K with default temp/volt settings" > timings_hx8k.html
@@ -120,12 +137,13 @@ timings_html:
 	python3 timings.py -h tmedges.txt -t timings_lp8k.txt -l "LP8K with default temp/volt settings" > timings_lp8k.html
 	python3 timings.py -h tmedges.txt -t timings_lp384.txt -l "LP384 with default temp/volt settings" > timings_lp384.html
 	python3 timings.py -h tmedges.txt -t timings_up5k.txt -l "UP5K with default temp/volt settings" > timings_up5k.html
-data_cached.txt: cached_io.txt cached_logic.txt cached_ramb$(RAM_SUFFIX).txt cached_ramt$(RAM_SUFFIX).txt cached_dsp0_5k.txt cached_dsp1_5k.txt cached_dsp2_5k.txt cached_dsp3_5k.txt cached_ipcon_5k.txt 
+	python3 timings.py -h tmedges.txt -t timings_u4k.txt -l "U4K with default temp/volt settings" > timings_u4k.html
+data_cached.txt: cached_io.txt cached_logic.txt cached_ramb$(RAM_SUFFIX).txt cached_ramt$(RAM_SUFFIX).txt cached_dsp0_5k.txt cached_dsp1_5k.txt cached_dsp2_5k.txt cached_dsp3_5k.txt cached_ipcon_5k.txt
 	gawk '{ print "io", $$0; }' cached_io.txt > data_cached.new
 	gawk '{ print "logic", $$0; }' cached_logic.txt >> data_cached.new
 	gawk '{ print "ramb$(RAM_SUFFIX)", $$0; }' cached_ramb$(RAM_SUFFIX).txt >> data_cached.new
 	gawk '{ print "ramt$(RAM_SUFFIX)", $$0; }' cached_ramt$(RAM_SUFFIX).txt >> data_cached.new
-	
+
 	gawk '{ print "dsp0_5k", $$0; }' cached_dsp0_5k.txt >> data_cached.new
 	gawk '{ print "dsp1_5k", $$0; }' cached_dsp1_5k.txt >> data_cached.new
 	gawk '{ print "dsp2_5k", $$0; }' cached_dsp2_5k.txt >> data_cached.new

@@ -103,6 +103,39 @@ class iceconfig:
             self.io_tiles[(0, y)] = ["0" * 18 for i in range(16)]
             self.io_tiles[(self.max_x, y)] = ["0" * 18 for i in range(16)]
 
+    def setup_empty_u4k(self):
+        self.clear()
+        self.device = "u4k"
+        self.max_x = 25
+        self.max_y = 21
+
+        for x in range(1, self.max_x):
+            for y in range(1, self.max_y):
+                if x in (6, 19):
+                    if y % 2 == 1:
+                        self.ramb_tiles[(x, y)] = ["0" * 42 for i in range(16)]
+                    else:
+                        self.ramt_tiles[(x, y)] = ["0" * 42 for i in range(16)]
+                else:
+                    self.logic_tiles[(x, y)] = ["0" * 54 for i in range(16)]
+
+        for x in range(1, self.max_x):
+            self.io_tiles[(x, 0)] = ["0" * 18 for i in range(16)]
+            self.io_tiles[(x, self.max_y)] = ["0" * 18 for i in range(16)]
+
+        for x in [0, self.max_x]:
+            for y in range(1, self.max_y):
+                if y in [5, 13]:
+                    self.dsp_tiles[0][(x, y)] = ["0" * 54 for i in range(16)]
+                elif y in [6, 14]:
+                    self.dsp_tiles[1][(x, y)] = ["0" * 54 for i in range(16)]
+                elif y in [7, 15]:
+                    self.dsp_tiles[2][(x, y)] = ["0" * 54 for i in range(16)]
+                elif y in [8, 16]:
+                    self.dsp_tiles[3][(x, y)] = ["0" * 54 for i in range(16)]
+                else:
+                    self.ipcon_tiles[(x, y)] = ["0" * 54 for i in range(16)]
+
     def setup_empty_5k(self):
         self.clear()
         self.device = "5k"
@@ -179,6 +212,7 @@ class iceconfig:
             if self.device == "384": return pinloc_db["384-qn32"]
             if self.device == "1k": return pinloc_db["1k-tq144"]
             if self.device == "lm4k": return pinloc_db["lm4k-cm49"]
+            if self.device == "u4k": return pinloc_db["u4k-sg48"]
             if self.device == "5k": return pinloc_db["5k-sg48"]
             if self.device == "8k": return pinloc_db["8k-ct256"]
         else:
@@ -205,6 +239,8 @@ class iceconfig:
             return ["1k"]
         if self.device == "lm4k":
             return ["lm4k"]
+        if self.device == "u4k":
+            return ["u4k"]
         if self.device == "5k":
             return ["5k"]
         if self.device == "8k":
@@ -212,12 +248,12 @@ class iceconfig:
         if self.device == "384":
             return [ ]
         assert False
-    
+
     # Return true if device is Ultra/UltraPlus series, i.e. has
     # IpConnect/DSP at the sides instead of IO
     def is_ultra(self):
-        return self.device in ["5k"]
-    
+        return self.device in ["5k", "u4k"]
+
     def colbuf_db(self):
         if self.device == "1k":
             entries = list()
@@ -241,8 +277,20 @@ class iceconfig:
                     src_y = None
                     if  0 <= y <=  4: src_y =  4
                     if  5 <= y <= 10: src_y =  5
-                    if 11 <= y <= 16: src_y = 16 
-                    if 17 <= y <= 21: src_y = 17 
+                    if 11 <= y <= 16: src_y = 16
+                    if 17 <= y <= 21: src_y = 17
+                    entries.append((x, src_y, x, y))
+            return entries
+
+        if self.device == "u4k":
+            entries = list()
+            for x in range(self.max_x+1):
+                for y in range(self.max_y+1):
+                    src_y = None
+                    if  0 <= y <=  4: src_y =  4
+                    if  5 <= y <= 10: src_y =  5
+                    if 11 <= y <= 16: src_y = 16
+                    if 17 <= y <= 21: src_y = 17
                     entries.append((x, src_y, x, y))
             return entries
 
@@ -349,9 +397,9 @@ class iceconfig:
           if x == 0: return iotile_l_db
           if x == self.max_x: return iotile_r_db
         # The 5k needs an IO db including the extra bits
-        if self.device == "5k":
+        if self.device == "5k" or self.device == "u4k":
             if y == 0: return iotile_b_5k_db
-            if y == self.max_y: return iotile_t_5k_db            
+            if y == self.max_y: return iotile_t_5k_db
         else:
             if y == 0: return iotile_b_db
             if y == self.max_y: return iotile_t_db
@@ -359,7 +407,7 @@ class iceconfig:
             if (x, y) in self.logic_tiles: return logictile_db
             if (x, y) in self.ramb_tiles: return rambtile_db
             if (x, y) in self.ramt_tiles: return ramttile_db
-        elif self.device == "5k":
+        elif self.device == "5k" or self.device == "u4k":
             if (x, y) in self.logic_tiles: return logictile_5k_db
             if (x, y) in self.ramb_tiles: return rambtile_8k_db
             if (x, y) in self.ramt_tiles: return ramttile_8k_db
@@ -388,16 +436,11 @@ class iceconfig:
         if (x, y) in self.ramt_tiles: return "RAMT"
         if (x, y) in self.logic_tiles: return "LOGIC"
         if (x == 0 or x == self.max_x) and self.is_ultra():
-            if y in [5, 10, 15, 23]:
-                return "DSP0"
-            elif y in [6, 11, 16, 24]:
-                return "DSP1"
-            elif y in [7, 12, 17, 25]:
-                return "DSP2"
-            elif y in [8, 13, 18, 26]:
-                return "DSP3"
-            else:
-                return "IPCON"
+            if (x, y) in self.dsp_tiles[0]: return "DSP0"
+            elif (x, y) in self.dsp_tiles[1]: return "DSP1"
+            elif (x, y) in self.dsp_tiles[2]: return "DSP2"
+            elif (x, y) in self.dsp_tiles[3]: return "DSP3"
+            else: return "IPCON"
         assert False
 
     def tile_pos(self, x, y):
@@ -490,7 +533,7 @@ class iceconfig:
                 if (nx, ny) in self.ramb_tiles:
                     if self.device == "1k":
                         return (nx, ny, "ram/RDATA_%d" % func)
-                    elif self.device == "5k":
+                    elif self.device == "5k" or self.device == "u4k":
                         return (nx, ny, "ram/RDATA_%d" % (15-func))
                     elif self.device == "8k" or self.device == "lm4k":
                         return (nx, ny, "ram/RDATA_%d" % (15-func))
@@ -499,7 +542,7 @@ class iceconfig:
                 if (nx, ny) in self.ramt_tiles:
                     if self.device == "1k":
                         return (nx, ny, "ram/RDATA_%d" % (8+func))
-                    elif self.device == "5k":
+                    elif self.device == "5k" or self.device == "u4k":
                         return (nx, ny, "ram/RDATA_%d" % (7-func))
                     elif self.device == "8k" or self.device == "lm4k":
                         return (nx, ny, "ram/RDATA_%d" % (7-func))
@@ -541,7 +584,7 @@ class iceconfig:
         if match:
             if self.device == "1k":
                 funcnets |= self.follow_funcnet(x, y, int(match.group(1)) % 8)
-            elif self.device == "5k":
+            elif self.device == "5k" or self.device == "u4k":
                 funcnets |= self.follow_funcnet(x, y, 7 - int(match.group(1)) % 8)
             elif self.device == "8k" or self.device == "lm4k":
                 funcnets |= self.follow_funcnet(x, y, 7 - int(match.group(1)) % 8)
@@ -775,7 +818,7 @@ class iceconfig:
                 seed_segments.add((idx[0], idx[1], "lutff_7/cout"))
             if self.device == "1k":
                 add_seed_segments(idx, tile, logictile_db)
-            elif self.device == "5k":
+            elif self.device == "5k" or self.device == "u4k":
                 add_seed_segments(idx, tile, logictile_5k_db)
             elif self.device == "8k" or self.device == "lm4k":
                 add_seed_segments(idx, tile, logictile_8k_db)
@@ -787,7 +830,7 @@ class iceconfig:
         for idx, tile in self.ramb_tiles.items():
             if self.device == "1k":
                 add_seed_segments(idx, tile, rambtile_db)
-            elif self.device == "5k":
+            elif self.device == "5k" or self.device == "u4k":
                 add_seed_segments(idx, tile, rambtile_8k_db)
             elif self.device == "8k" or self.device == "lm4k":
                 add_seed_segments(idx, tile, rambtile_8k_db)
@@ -797,28 +840,28 @@ class iceconfig:
         for idx, tile in self.ramt_tiles.items():
             if self.device == "1k":
                 add_seed_segments(idx, tile, ramttile_db)
-            elif self.device == "5k":
+            elif self.device == "5k" or self.device == "u4k":
                 add_seed_segments(idx, tile, ramttile_8k_db)
             elif self.device == "8k" or self.device == "lm4k":
                 add_seed_segments(idx, tile, ramttile_8k_db)
             else:
                 assert False
-        
+
         for idx, tile in self.dsp_tiles[0].items():
-            if self.device == "5k":
+            if self.device == "5k" or self.device == "u4k":
                 add_seed_segments(idx, tile, dsp0_5k_db)
         for idx, tile in self.dsp_tiles[1].items():
-            if self.device == "5k":
-                add_seed_segments(idx, tile, dsp1_5k_db)        
+            if self.device == "5k" or self.device == "u4k":
+                add_seed_segments(idx, tile, dsp1_5k_db)
         for idx, tile in self.dsp_tiles[2].items():
-            if self.device == "5k":
-                add_seed_segments(idx, tile, dsp2_5k_db)    
+            if self.device == "5k" or self.device == "u4k":
+                add_seed_segments(idx, tile, dsp2_5k_db)
         for idx, tile in self.dsp_tiles[3].items():
-            if self.device == "5k":
-                add_seed_segments(idx, tile, dsp3_5k_db)    
+            if self.device == "5k" or self.device == "u4k":
+                add_seed_segments(idx, tile, dsp3_5k_db)
         for idx, tile in self.ipcon_tiles.items():
-            if self.device == "5k":
-                add_seed_segments(idx, tile, ipcon_5k_db)                            
+            if self.device == "5k" or self.device == "u4k":
+                add_seed_segments(idx, tile, ipcon_5k_db)
         for padin, pio in enumerate(self.padin_pio_db()):
             s1 = (pio[0], pio[1], "padin_%d" % pio[2])
             s2 = (pio[0], pio[1], "glb_netwk_%d" % padin)
@@ -944,7 +987,7 @@ class iceconfig:
                     self.extra_bits.add((int(line[1]), int(line[2]), int(line[3])))
                     continue
                 if line[0] == ".device":
-                    assert line[1] in ["1k", "lm4k", "5k", "8k", "384"]
+                    assert line[1] in ["1k", "lm4k", "u4k", "5k", "8k", "384"]
                     self.device = line[1]
                     continue
                 if line[0] == ".warmboot":
@@ -1368,8 +1411,9 @@ def run_checks_neigh():
     print("Running consistency checks on neighbour finder..")
     ic = iceconfig()
     # ic.setup_empty_1k()
-    ic.setup_empty_lm4k()
-    # ic.setup_empty_5k()
+    #ic.setup_empty_lm4k()
+    ic.setup_empty_u4k()
+    #ic.setup_empty_5k()
     # ic.setup_empty_8k()
     # ic.setup_empty_384()
 
@@ -1419,8 +1463,8 @@ def parse_db(text, device="1k"):
                 continue
             line = line_1k
         elif line_8k != line:
-            # global network is the same for 8k, 5k, and lm4k
-            if device != "8k" and device != "5k" and device != "lm4k": 
+            # global network is the same for 8k, 5k, lm4k, and u4k
+            if device != "8k" and device != "5k" and device != "lm4k" and device != "u4k":
                 continue
             line = line_8k
         elif line_384 != line:
@@ -1465,6 +1509,16 @@ extra_bits_db = {
         (0, 690, 335): ("padin_glb_netwk", "6"), # check
         (0, 691, 335): ("padin_glb_netwk", "7"), # good
     },
+    "u4k": {
+        (0, 691, 175): ("padin_glb_netwk", "0"),   # good
+        (1, 690, 175): ("padin_glb_netwk", "1"),   # good
+        (0, 690, 175): ("padin_glb_netwk", "2"),   # made up
+        (0, 690, 174): ("padin_glb_netwk", "3"),   # good
+        (1, 690, 174): ("padin_glb_netwk", "4"),   # HFOSC, good
+        (1, 691, 174): ("padin_glb_netwk", "5"),   # LFOSC, good
+        (0, 691, 174): ("padin_glb_netwk", "6"),   # good
+        (1, 691, 175): ("padin_glb_netwk", "7"),   # made up
+        },
     "8k": {
         (0, 870, 270): ("padin_glb_netwk", "0"),
         (0, 871, 270): ("padin_glb_netwk", "1"),
@@ -1507,6 +1561,16 @@ gbufin_db = {
         (12, 31,  4), #checked
         (13, 31,  1), #checked
         (19, 31,  2), #checked
+    ],
+    "u4k": [
+        (13,  0,  0), # 0 ok
+        (13, 21,  1), # 1 ok
+        (19, 21,  2), # 2 ok
+        ( 6, 21,  3), # 3 ok
+        (12, 21,  4), # 4 ok
+        (12,  0,  5), # 5 ok
+        ( 6,  0,  6), # 6 ok
+        (19,  0,  7), # 7 ok
     ],
     "lm4k": [
         ( 6,  0,  6),
@@ -1563,6 +1627,10 @@ iolatch_db = {
         (14, 0),
         (14, 31),
     ],
+    "u4k": [
+        (14, 0),
+        (14, 21),
+    ],
     "8k": [
         ( 0, 15),
         (33, 18),
@@ -1591,6 +1659,12 @@ warmbootinfo_db = {
         "S0":   ( 23, 0, "fabout" ),
         "S1":   ( 24, 0, "fabout" ),
     },
+    "u4k": {
+        # These are the right locations but may be the wrong order.
+        "BOOT": ( 22, 0, "fabout" ),
+        "S0":   ( 23, 0, "fabout" ),
+        "S1":   ( 24, 0, "fabout" ),
+        },
     "lm4k": {
         # These are the right locations but may be the wrong order.
         "BOOT": ( 23, 0, "fabout" ),
@@ -1901,6 +1975,70 @@ pllinfo_db = {
         "SDI":                  ( 18, 31, "fabout"),
         "SCLK":                 ( 17, 31, "fabout"),
     },
+    "u4k": {
+        "LOC" : (12, 21),
+
+        "PLLTYPE_1":            (14, 21, "PLLCONFIG_1"),
+        "PLLTYPE_2":            (14, 21, "PLLCONFIG_3"),
+        "PLLTYPE_0":            (12, 21, "PLLCONFIG_5"),
+        "FEEDBACK_PATH_0":      (14, 21, "PLLCONFIG_5"),
+        "FEEDBACK_PATH_1":      (11, 21, "PLLCONFIG_9"),
+        "FEEDBACK_PATH_2":      (12, 21, "PLLCONFIG_1"),
+        "PLLOUT_SELECT_A_0":    (12, 21, "PLLCONFIG_6"),
+        "PLLOUT_SELECT_A_1":    (12, 21, "PLLCONFIG_7"),
+        "PLLOUT_SELECT_B_0":    (12, 21, "PLLCONFIG_2"),
+        "PLLOUT_SELECT_B_1":    (12, 21, "PLLCONFIG_3"),
+        "SHIFTREG_DIV_MODE":    (12, 21, "PLLCONFIG_4"),
+        "FDA_FEEDBACK_0":       (12, 21, "PLLCONFIG_9"),
+        "FDA_FEEDBACK_1":       (13, 21, "PLLCONFIG_1"),
+        "FDA_FEEDBACK_2":       (13, 21, "PLLCONFIG_2"),
+        "FDA_FEEDBACK_3":       (13, 21, "PLLCONFIG_3"),
+        "FDA_RELATIVE_0":       (13, 21, "PLLCONFIG_5"),
+        "FDA_RELATIVE_1":       (13, 21, "PLLCONFIG_6"),
+        "FDA_RELATIVE_2":       (13, 21, "PLLCONFIG_7"),
+        "FDA_RELATIVE_3":       (13, 21, "PLLCONFIG_8"),
+        "DIVR_0":               (10, 21, "PLLCONFIG_1"),
+        "DIVR_1":               (10, 21, "PLLCONFIG_2"),
+        "DIVR_2":               (10, 21, "PLLCONFIG_3"),
+        "DIVR_3":               (10, 21, "PLLCONFIG_4"),
+        "DIVF_0":               (10, 21, "PLLCONFIG_5"),
+        "DIVF_1":               (10, 21, "PLLCONFIG_6"),
+        "DIVF_2":               (10, 21, "PLLCONFIG_7"),
+        "DIVF_3":               (10, 21, "PLLCONFIG_8"),
+        "DIVF_4":               (10, 21, "PLLCONFIG_9"),
+        "DIVF_5":               (11, 21, "PLLCONFIG_1"),
+        "DIVF_6":               (11, 21, "PLLCONFIG_2"),
+        "DIVQ_0":               (11, 21, "PLLCONFIG_3"),
+        "DIVQ_1":               (11, 21, "PLLCONFIG_4"),
+        "DIVQ_2":               (11, 21, "PLLCONFIG_5"),
+        "FILTER_RANGE_0":       (11, 21, "PLLCONFIG_6"),
+        "FILTER_RANGE_1":       (11, 21, "PLLCONFIG_7"),
+        "FILTER_RANGE_2":       (11, 21, "PLLCONFIG_8"),
+        "TEST_MODE":            (12, 21, "PLLCONFIG_8"),
+        "DELAY_ADJMODE_FB":     (13, 21, "PLLCONFIG_4"),
+        "DELAY_ADJMODE_REL":    (13, 21, "PLLCONFIG_9"),
+
+        # PLL Ports
+        "PLLOUT_A":             ( 12, 21, 1),
+        "PLLOUT_B":             ( 13, 21, 0),
+        "REFERENCECLK":         ( 10, 21, "fabout"),
+        "EXTFEEDBACK":          ( 11, 21, "fabout"),
+        "DYNAMICDELAY_0":       (  1, 21, "fabout"),
+        "DYNAMICDELAY_1":       (  2, 21, "fabout"),
+        "DYNAMICDELAY_2":       (  3, 21, "fabout"),
+        "DYNAMICDELAY_3":       (  4, 21, "fabout"),
+        "DYNAMICDELAY_4":       (  5, 21, "fabout"),
+        "DYNAMICDELAY_5":       (  7, 21, "fabout"),
+        "DYNAMICDELAY_6":       (  8, 21, "fabout"),
+        "DYNAMICDELAY_7":       (  9, 21, "fabout"),
+        "LOCK":                 (  1, 20, "neigh_op_tnl_1"), #check?
+        "BYPASS":               ( 15, 21, "fabout"),
+        "RESETB":               ( 16, 21, "fabout"),
+        "LATCHINPUTVALUE":      ( 14, 21, "fabout"),
+        "SDO":                  ( 24, 20, "neigh_op_tnr_1"), #check?
+        "SDI":                  ( 18, 21, "fabout"),
+        "SCLK":                 ( 17, 21, "fabout"),
+    },
     "8k_0": {
         "LOC" : (16, 0),
 
@@ -2123,6 +2261,17 @@ padin_pio_db = {
 
         (12,  0, 1), #6 fixed
         (12, 31, 1), #7 fixed
+    ],
+    "u4k": [
+        (19,  0, 1), # 0 ok
+        ( 6,  0, 1), # 1 ok
+
+        (13, 21, 0), # 2 ok
+        (13,  0, 0), # 3 unclear
+        (19, 21, 0), # 4 HFOSC unclear
+        ( 6, 21, 0), # 5 LFOSC unclear
+        (12,  0, 1), # 6 unclear
+        (12, 21, 1), # 7 ok
     ],
     "8k": [
         (33, 16, 1),
@@ -2597,6 +2746,47 @@ ieren_db = {
         (12,  0,  0, 12,  0,  1),
         (13,  0,  0, 13,  0,  1),
         (12,  0,  1, 12,  0,  0)
+    ],
+    "u4k": [
+        ( 4, 21, 0,  4, 21, 1),
+        ( 5,  0, 0,  5,  0, 1),
+        ( 5, 21, 0,  5, 21, 1),
+        ( 6,  0, 0,  6,  0, 1),
+        ( 6,  0, 1,  6,  0, 0),
+        ( 6, 21, 0,  6, 21, 1),
+        ( 7,  0, 0,  7,  0, 1),
+        ( 7,  0, 1,  7,  0, 0),
+        ( 8,  0, 0,  8,  0, 1),
+        ( 8, 21, 0,  8, 21, 1),
+        ( 8, 21, 1,  8, 21, 0),
+        ( 9,  0, 0,  9,  0, 1),
+        ( 9,  0, 1,  9,  0, 0),
+        ( 9, 21, 0,  9, 21, 1),
+        ( 9, 21, 1,  9, 21, 0),
+        (12, 21, 1, 12, 21, 0),
+        (13,  0, 1, 13,  0, 0),
+        (13, 21, 0, 13, 21, 1),
+        (13, 21, 1, 13, 21, 0),
+        (15,  0, 0, 15,  0, 1),
+        (16,  0, 0, 16,  0, 1),
+        (16, 21, 0, 16, 21, 1),
+        (16, 21, 1, 16, 21, 0),
+        (17,  0, 0, 17,  0, 1),
+        (17, 21, 0, 17, 21, 1),
+        (18,  0, 0, 18,  0, 1),
+        (18,  0, 1, 18,  0, 0),
+        (18, 21, 0, 18, 21, 1),
+        (18, 21, 1, 18, 21, 0),
+        (19,  0, 0, 19,  0, 1),
+        (19,  0, 1, 19,  0, 0),
+        (19, 21, 0, 19, 21, 1),
+        (19, 21, 1, 19, 21, 0),
+        (21,  0, 1, 21,  0, 0),
+        (22,  0, 1, 22,  0, 0),
+        (23,  0, 0, 23,  0, 1),
+        (23,  0, 1, 23,  0, 0),
+        (24,  0, 0, 24,  0, 1),
+        (24,  0, 1, 24,  0, 0)
     ]
 }
 
@@ -4838,6 +5028,47 @@ pinloc_db = {
         ( "47",  6,  0, 0),
         ( "48",  7,  0, 0),
     ],
+    "u4k-sg48": [
+        (  "2",  8,  0, 0),
+        (  "3",  9,  0, 1),
+        (  "4",  9,  0, 0),
+        (  "6", 13,  0, 1),
+        (  "9", 15,  0, 0),
+        ( "10", 16,  0, 0),
+        ( "11", 17,  0, 0),
+        ( "12", 18,  0, 0),
+        ( "13", 19,  0, 0),
+        ( "14", 23,  0, 0),
+        ( "15", 24,  0, 0),
+        ( "16", 24,  0, 1),
+        ( "17", 23,  0, 1),
+        ( "18", 22,  0, 1),
+        ( "19", 21,  0, 1),
+        ( "20", 19,  0, 1),
+        ( "21", 18,  0, 1),
+        ( "23", 19, 21, 0),
+        ( "25", 19, 21, 1),
+        ( "26", 18, 21, 0),
+        ( "27", 18, 21, 1),
+        ( "28", 17, 21, 0),
+        ( "31", 16, 21, 1),
+        ( "32", 16, 21, 0),
+        ( "34", 13, 21, 1),
+        ( "35", 12, 21, 1),
+        ( "36",  9, 21, 1),
+        ( "37", 13, 21, 0),
+        ( "38",  8, 21, 1),
+        ( "39",  6, 21, 0),
+        ( "40",  5, 21, 0),
+        ( "41",  4, 21, 0),
+        ( "42",  8, 21, 0),
+        ( "43",  9, 21, 0),
+        ( "44",  6,  0, 1),
+        ( "45",  7,  0, 1),
+        ( "46",  5,  0, 0),
+        ( "47",  6,  0, 0),
+        ( "48",  7,  0, 0),
+    ],
     "5k-uwg30": [
         ( "A1", 19, 31, 1),
         ( "A2", 19, 31, 0),
@@ -5522,6 +5753,23 @@ extra_cells_db = {
             "WEAK_PU_ENB":           (25, 27, "lutff_5/in_0"),
             "PACKAGE_PIN":           (19, 31, 1)
         }
+    },
+
+    "u4k" : {
+        ("HFOSC", (0, 21, 1)) : {
+            "CLKHFPU":                      (0, 19, "lutff_0/in_1"),
+            "CLKHFEN":                      (0, 19, "lutff_7/in_3"),
+            "CLKHF":                        (0, 19, "glb_netwk_4"),
+            "CLKLF_FABRIC":                 (0, 18, "slf_op_7"),
+            "CLKHF_DIV_1":                  (0, 16, "CBIT_4"),
+            "CLKHF_DIV_0":                  (0, 16, "CBIT_3")
+        },
+        ("LFOSC", (25, 21, 1)) : {
+            "CLKLFPU":                      (25, 19, "lutff_0/in_1"),
+            "CLKLFEN":                      (25, 19, "lutff_7/in_3"),
+            "CLKLF":                        (25, 19, "glb_netwk_5"),
+            "CLKLF_FABRIC":                 (25, 19, "slf_op_0")
+        },
     }
 }
 
@@ -5546,6 +5794,10 @@ dsp1_5k_db.append([["B4[7]"], "IpConfig", "CBIT_5"])
 
 dsp2_5k_db = parse_db(iceboxdb.database_dsp2_5k_txt, "5k")
 dsp3_5k_db = parse_db(iceboxdb.database_dsp3_5k_txt, "5k")
+
+dsp3_5k_db.append([["B2[7]"], "IpConfig", "CBIT_3"])   # for u4k HFOSC.CLKHF_DIV
+dsp3_5k_db.append([["B5[7]"], "IpConfig", "CBIT_4"])
+
 
 #Add missing LC_ bits to DSP and IPCon databases
 for db_to_fix in [ipcon_5k_db, dsp0_5k_db, dsp1_5k_db, dsp2_5k_db, dsp3_5k_db]:
