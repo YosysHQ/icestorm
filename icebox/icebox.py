@@ -5770,6 +5770,9 @@ extra_cells_db = {
             "CLKLF":                        (25, 19, "glb_netwk_5"),
             "CLKLF_FABRIC":                 (25, 19, "slf_op_0")
         },
+        ("SMCCLK", (25, 3, 0)) : {
+            "CLK":                          (25, 3, "slf_op_5")
+        },
     }
 }
 
