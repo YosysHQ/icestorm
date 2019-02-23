@@ -6,7 +6,7 @@ import os
 
 device_class = os.getenv("ICEDEVICE")
 
-assert device_class == "5k"
+assert device_class in ["5k", "u4k"]
 
 working_dir = "work_%s_dsp" % (device_class, )
 

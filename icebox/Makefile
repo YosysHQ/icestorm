@@ -1,6 +1,6 @@
 include ../config.mk
 
-all: chipdb-384.txt chipdb-1k.txt chipdb-8k.txt chipdb-5k.txt chipdb-lm4k.txt
+all: chipdb-384.txt chipdb-1k.txt chipdb-8k.txt chipdb-5k.txt chipdb-lm4k.txt chipdb-u4k.txt
 
 chipdb-384.txt: icebox.py iceboxdb.py icebox_chipdb.py
 	python3 icebox_chipdb.py -3 > chipdb-384.new
@@ -13,6 +13,10 @@ chipdb-1k.txt: icebox.py iceboxdb.py icebox_chipdb.py
 chipdb-5k.txt: icebox.py iceboxdb.py icebox_chipdb.py
 	python3 icebox_chipdb.py -5 > chipdb-5k.new
 	mv chipdb-5k.new chipdb-5k.txt
+
+chipdb-u4k.txt: icebox.py iceboxdb.py icebox_chipdb.py
+	python3 icebox_chipdb.py -u > chipdb-u4k.new
+	mv chipdb-u4k.new chipdb-u4k.txt
 
 chipdb-lm4k.txt: icebox.py iceboxdb.py icebox_chipdb.py
 	python3 icebox_chipdb.py -4 > chipdb-lm4k.new
@@ -28,7 +32,7 @@ check: all
 	python3 tc_logic_xpr.py
 
 clean:
-	rm -f chipdb-1k.txt chipdb-8k.txt chipdb-384.txt chipdb-5k.txt chipdb-lm4k.txt
+	rm -f chipdb-1k.txt chipdb-8k.txt chipdb-384.txt chipdb-5k.txt chipdb-lm4k.txt chipdb-u4k.txt
 	rm -f icebox.pyc iceboxdb.pyc
 
 install: all
@@ -38,6 +42,7 @@ install: all
 	cp chipdb-1k.txt     $(DESTDIR)$(PREFIX)/share/icebox/
 	cp chipdb-8k.txt     $(DESTDIR)$(PREFIX)/share/icebox/
 	cp chipdb-5k.txt     $(DESTDIR)$(PREFIX)/share/icebox/
+	cp chipdb-u4k.txt    $(DESTDIR)$(PREFIX)/share/icebox/
 	cp chipdb-lm4k.txt   $(DESTDIR)$(PREFIX)/share/icebox/
 	cp icebox.py         $(DESTDIR)$(PREFIX)/bin/icebox.py
 	cp iceboxdb.py       $(DESTDIR)$(PREFIX)/bin/iceboxdb.py
@@ -69,6 +74,7 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-1k.txt
 	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-8k.txt
 	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-lm4k.txt
+	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-u4k.txt
 	-rmdir $(DESTDIR)$(PREFIX)/share/icebox
 
 .PHONY: all check clean install uninstall

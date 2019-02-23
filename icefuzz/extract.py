@@ -40,6 +40,9 @@ for filename in sys.argv[1:]:
             elif device_class == "5k" and line.startswith("IpCon"):
                 cur_text_db = text_db.setdefault("ipcon_5k", set())
                 ignore = False
+            elif device_class == "u4k" and line.startswith("IpCon"):
+                cur_text_db = text_db.setdefault("ipcon_u4k", set())
+                ignore = False
             elif device_class == "5k" and line.startswith("DSP"):
                 match = re.match(r"DSP_Tile_\d+_(\d+)", line)
                 ypos = int(match.group(1))
@@ -55,9 +58,24 @@ for filename in sys.argv[1:]:
                 assert dsp_idx != None
                 cur_text_db = text_db.setdefault("dsp%d_5k" % dsp_idx, set())
                 ignore = False
+            elif device_class == "u4k" and line.startswith("DSP"):
+                match = re.match(r"DSP_Tile_\d+_(\d+)", line)
+                ypos = int(match.group(1))
+                dsp_idx = None
+                if ypos in [5, 13]:
+                    dsp_idx = 0
+                if ypos in [6, 14]:
+                    dsp_idx = 1
+                if ypos in [7, 15]:
+                    dsp_idx = 2
+                if ypos in [8, 16]:
+                    dsp_idx = 3
+                assert dsp_idx != None
+                cur_text_db = text_db.setdefault("dsp%d_u4k" % dsp_idx, set())
+                ignore = False
             elif not ignore:
                 print("'" + line + "'")
-                assert line.startswith(" ")
+                assert line.startswith(" "), line
                 cur_text_db.add(line)
 
 def logic_op_prefix(match):

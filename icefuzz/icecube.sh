@@ -61,6 +61,11 @@ if [ "$1" == "-lm4k" ]; then
 	shift
 fi
 
+if [ "$1" == "-u4k" ]; then
+	ICEDEV=u4k-sg48
+	shift
+fi
+
 set -ex
 set -- ${1%.v}
 icecubedir="${ICECUBEDIR:-/opt/lscc/iCEcube2.2015.08}"
@@ -228,6 +233,14 @@ case "${ICEDEV:-hx1k-tq144}" in
 		iCEPACKAGE="SWG25TR"
 		iCE40DEV="iCE40LM1K"
 		;;
+        u1k-sg48)
+                iCEPACKAGE="SG48"
+                iCE40DEV="iCE5LP1K"
+                ;;
+        u4k-sg48)
+                iCEPACKAGE="SG48"
+                iCE40DEV="iCE5LP4K"
+                ;;
 	*)
 		echo "ERROR: Invalid \$ICEDEV device config '$ICEDEV'."
 		exit 1
@@ -294,6 +307,16 @@ case "$iCE40DEV" in
 		libfile="ice40LM4K.lib"
 		devfile="ICE40R04.dev"
 		;;
+        iCE5LP1K)
+                icetech="SBTiCE5LP"
+                libfile="ice40TH4K.lib"
+                devfile="ICE40T04.dev"
+                ;;
+        iCE5LP4K)
+                icetech="SBTiCE5LP"
+                libfile="ice40TH4K.lib"
+                devfile="ICE40T04.dev"
+                ;;
 esac
 
 (
@@ -439,8 +462,8 @@ cat > foobar_sbt.project << EOT
 Implementations=foobar_Implmnt
 
 [foobar_Implmnt]
-DeviceFamily=$( echo $iCE40DEV | sed -re 's,(HX|5K).*,,'; )
-Device=$( echo $iCE40DEV | sed -re 's,iCE40(UP)?,,'; )
+DeviceFamily=$( echo $iCE40DEV | sed -re 's,(HX|5K|(iCE5LP)).*,\2,'; )
+Device=$( echo $iCE40DEV | sed -re 's,(iCE40(UP|LP)?|iCE5LP),,'; )
 DevicePackage=$iCEPACKAGE
 Devicevoltage=1.14
 DevicevoltagePerformance=+/-5%(datasheet default)

@@ -28,5 +28,7 @@ hierarchy -generate INV i:I o:O
 hierarchy -generate gio2CtrlBuf i:I o:O
 hierarchy -generate CascadeBuf i:I o:O
 
+hierarchy -generate SMCCLK o:CLK
+
 hierarchy -check
 tee -o tmedges_unrenamed.tmp edgetypes
