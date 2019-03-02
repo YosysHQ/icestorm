@@ -20,6 +20,8 @@
 #ifndef MPSSE_H
 #define MPSSE_H
 
+#include <stdint.h>
+
 void mpsse_check_rx(void);
 void mpsse_error(int status);
 uint8_t mpsse_recv_byte(void);
