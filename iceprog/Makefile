@@ -18,7 +18,7 @@ endif
 
 all: iceprog$(EXE)
 
-iceprog$(EXE): iceprog.o
+iceprog$(EXE): iceprog.o mpsse.o
 	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 install: all
