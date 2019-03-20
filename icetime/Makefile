@@ -8,6 +8,8 @@ endif
 
 all: icetime$(EXE)
 
+CHIPS=lp384 lp1k lp8k hx1k hx8k up5k
+
 ifeq ($(EXE),.js)
 icetime$(EXE): | share/$(CHIPDB_SUBDIR)/chipdb-384.txt share/$(CHIPDB_SUBDIR)/chipdb-1k.txt share/$(CHIPDB_SUBDIR)/chipdb-8k.txt share/$(CHIPDB_SUBDIR)/chipdb-5k.txt
 
@@ -26,15 +28,11 @@ share/$(CHIPDB_SUBDIR)/chipdb-5k.txt: ../icebox/chipdb-5k.txt
 override LDFLAGS += --embed-file share
 endif
 
-icetime$(EXE): icetime.o iceutil.o
+icetime$(EXE): icetime.o iceutil.o $(addsuffix .o, $(addprefix timings-, $(CHIPS)))
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
-icetime.o: icetime.cc timings.inc
-iceutil.o: iceutil.cc
-
-timings.inc: timings.py ../icefuzz/timings_*.txt
-	python3 timings.py > timings.inc.new
-	mv timings.inc.new timings.inc
+timings-%.cc: timings.py ../icefuzz/timings_%.txt
+	python3 timings.py $* > $@
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
@@ -67,7 +65,7 @@ test: test0 test1 test2 test3 test4 test5 test6 test7 test8 test9
 show: show0 show1 show2 show3 show4 show5 show6 show7 show8 show9
 
 clean:
-	rm -f icetime$(EXE) icetime.exe timings.inc *.o *.d
+	rm -f icetime$(EXE) icetime.exe *.o *.d
 	rm -rf test[0-9]*
 
 -include *.d
