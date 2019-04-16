@@ -746,7 +746,12 @@ const std::set<std::string> &get_inports(std::string cell_type)
 	return inports_map.at(cell_type);
 }
 
-#include "timings.inc"
+double get_delay_lp384(std::string cell_type, std::string in_port, std::string out_port);
+double get_delay_lp1k(std::string cell_type, std::string in_port, std::string out_port);
+double get_delay_lp8k(std::string cell_type, std::string in_port, std::string out_port);
+double get_delay_hx1k(std::string cell_type, std::string in_port, std::string out_port);
+double get_delay_hx8k(std::string cell_type, std::string in_port, std::string out_port);
+double get_delay_up5k(std::string cell_type, std::string in_port, std::string out_port);
 
 double get_delay(std::string cell_type, std::string in_port, std::string out_port)
 {
