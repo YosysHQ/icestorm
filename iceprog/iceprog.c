@@ -449,6 +449,7 @@ static void help(const char *progname)
 	fprintf(stderr, "\n");
 	fprintf(stderr, "Mode of operation:\n");
 	fprintf(stderr, "  [default]             write file contents to flash, then verify\n");
+	fprintf(stderr, "  -X                    write file contents to flash only\n");	
 	fprintf(stderr, "  -r                    read first 256 kB from flash and write to file\n");
 	fprintf(stderr, "  -R <size in bytes>    read the specified number of bytes from flash\n");
 	fprintf(stderr, "                          (append 'k' to the argument for size in kilobytes,\n");
@@ -517,6 +518,7 @@ int main(int argc, char **argv)
 	bool test_mode = false;
 	bool slow_clock = false;
 	bool disable_protect = false;
+	bool disable_verify = false;
 	const char *filename = NULL;
 	const char *devstr = NULL;
 	int ifnum = 0;
@@ -529,7 +531,7 @@ int main(int argc, char **argv)
 	/* Decode command line parameters */
 	int opt;
 	char *endptr;
-	while ((opt = getopt_long(argc, argv, "d:I:rR:e:o:cbnStvsp", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "d:I:rR:e:o:cbnStvspX", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'd': /* device string */
 			devstr = optarg;
@@ -615,6 +617,9 @@ int main(int argc, char **argv)
 			break;
 		case 'p': /* disable flash protect before erase/write */
 			disable_protect = true;
+			break;
+		case 'X': /* disable verification */
+			disable_verify = true;
 			break;
 		case -2:
 			help(argv[0]);
@@ -921,7 +926,7 @@ int main(int argc, char **argv)
 				flash_read(rw_offset + addr, buffer, 256);
 				fwrite(buffer, read_size - addr > 256 ? 256 : read_size - addr, 1, f);
 			}
-		} else if (!erase_mode) {
+		} else if (!erase_mode && !disable_verify) {
 			fprintf(stderr, "reading..\n");
 			for (int addr = 0; true; addr += 256) {
 				uint8_t buffer_flash[256], buffer_file[256];
