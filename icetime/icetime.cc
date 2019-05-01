@@ -1087,7 +1087,7 @@ struct TimingAnalysis
 				fprintf(frpt, "Resolvable net names on path:\n");
 
 				std::string last_net;
-				double first_time, last_time;
+				double first_time = 0.0, last_time = 0.0;
 
 				for (int i = int(sym_list.size())-1; i >= 0; i--) {
 					if (last_net != sym_list[i].second) {
