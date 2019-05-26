@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
@@ -243,6 +244,12 @@ int main(int argc, char **argv)
 		// open file for writing
 		FILE *f;
 		f = fopen(filename, "w");
+		if (f == NULL)
+		{
+			fprintf(stderr, "Error: Failed to open output file '%s': %s\n",
+				filename, strerror(errno));
+			exit(1);
+		}
 
 		if (save_as_module)
 		{
