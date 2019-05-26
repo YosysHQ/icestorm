@@ -314,7 +314,8 @@ int main(int argc, char **argv)
 
 		fclose(f);
 
-		printf("PLL configuration written to: %s\n", filename);
+		if (!quiet)
+			printf("PLL configuration written to: %s\n", filename);
 	}
 
 	return 0;
