@@ -16,7 +16,7 @@
 #
 
 import iceboxdb
-import re, sys
+import re, sys, functools
 
 class iceconfig:
     def __init__(self):
@@ -36,6 +36,7 @@ class iceconfig:
         self.ram_data = dict()
         self.extra_bits = set()
         self.symbols = dict()
+        self.tile_has_net.cache_clear()
 
     def setup_empty_384(self):
         self.clear()
@@ -456,6 +457,7 @@ class iceconfig:
             return self.tile_has_net(x, y, entry[2]) and self.tile_has_net(x, y, entry[3])
         return True
 
+    @functools.lru_cache(maxsize=2**16)
     def tile_has_net(self, x, y, netname):
         if netname.startswith("logic_op_"):
             if netname.startswith("logic_op_bot_"):
