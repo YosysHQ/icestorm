@@ -18,6 +18,32 @@
 import iceboxdb
 import re, sys, functools
 
+
+if True:
+    # icebox uses lots of regular expressions.
+    # Supply cached versions of common re functions
+    # to avoid re-calculating regular expression results
+    # over and over again.
+    re_cache_sizes = 2**14
+
+    @functools.lru_cache(maxsize=re_cache_sizes)
+    def re_match_cached(*args):
+        return re.match(*args)
+
+    @functools.lru_cache(maxsize=re_cache_sizes)
+    def re_sub_cached(*args):
+        return re.sub(*args)
+
+    @functools.lru_cache(maxsize=re_cache_sizes)
+    def re_search_cached(*args):
+        return re.search(*args)
+else:
+    # Disable regular expression caching.
+    re_match_cached = re.match
+    re_sub_cached = re.sub
+    re_search_cached = re.search
+
+
 class iceconfig:
     def __init__(self):
         self.clear()
