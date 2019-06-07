@@ -16,6 +16,7 @@
 #
 
 import icebox
+from icebox import re_match_cached, re_search_cached
 import getopt, sys, re
 
 print_bits = False
@@ -82,14 +83,14 @@ def print_tile(stmt, ic, x, y, tile, db):
             else:
                 bits.add("!B%d[%d]" % (k, i))
 
-    if re.search(r"logic_tile", stmt):
+    if re_search_cached(r"logic_tile", stmt):
         active_luts = set([i for i in range(8) if "1" in icebox.get_lutff_bits(tile, i)])
 
     text = set()
     used_lc = set()
     text_default_mask = 0
     for entry in db:
-        if re.match(r"LC_", entry[1]):
+        if re_match_cached(r"LC_", entry[1]):
             continue
         if entry[1] in ("routing", "buffer"):
             if not ic.tile_has_net(x, y, entry[2]): continue
@@ -117,7 +118,7 @@ def print_tile(stmt, ic, x, y, tile, db):
         bitinfo.append("")
         extra_text = ""
         for i in range(len(line)):
-            if 36 <= i <= 45 and re.search(r"(logic_tile|dsp\d_tile|ipcon_tile)", stmt):
+            if 36 <= i <= 45 and re_search_cached(r"(logic_tile|dsp\d_tile|ipcon_tile)", stmt):
                 lutff_idx = k // 2
                 lutff_bitnum = (i-36) + 10*(k%2)
                 if line[i] == "1":
