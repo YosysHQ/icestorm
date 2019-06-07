@@ -16,6 +16,7 @@
 #
 
 import icebox
+from icebox import re_match_cached
 import getopt, sys, re
 
 mode = None
@@ -58,7 +59,7 @@ def get_bit_group(x, y, db):
                 funcs.add("r")
             elif entry[1] == "buffer":
                 funcs.add("b")
-            elif re.match("LC_", entry[1]):
+            elif re_match_cached("LC_", entry[1]):
                 funcs.add("l")
             elif entry[1] == "NegClk":
                 funcs.add("N")
@@ -94,7 +95,7 @@ def print_db_nets(stmt, db, pos):
             if icebox.pos_has_net(pos[0], entry[3]): netnames.add(entry[3])
     last_prefix = ""
     for net in sorted(netnames, key=icebox.key_netname):
-        match = re.match(r"(.*?)(\d+)$", net)
+        match = re_match_cached(r"(.*?)(\d+)$", net)
         if match:
             if last_prefix == match.group(1):
                 print(",%s" % match.group(2), end="")
