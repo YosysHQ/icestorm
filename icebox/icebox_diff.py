@@ -16,6 +16,7 @@
 #
 
 import icebox
+from icebox import re_match_cached
 import sys
 import re
 
@@ -54,7 +55,7 @@ def explained_bits(db, tile):
                 bits.add("!B%d[%d]" % (k, i))
     text = set()
     for entry in db:
-        if re.match(r"LC_", entry[1]):
+        if re_match_cached(r"LC_", entry[1]):
             continue
         if entry[1] in ("routing", "buffer"):
             continue
