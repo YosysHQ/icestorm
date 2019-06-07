@@ -16,6 +16,7 @@
 #
 
 import icebox
+from icebox import re_match_cached
 import getopt, sys, re
 
 check_mode = False
@@ -70,7 +71,7 @@ def make_cache(stmt, raw_db):
                 if bit.startswith("!"):
                     value = "0"
                     bit = bit[1:]
-                match = re.match("B([0-9]+)\[([0-9]+)\]", bit)
+                match = re_match_cached("B([0-9]+)\[([0-9]+)\]", bit)
                 cache_entry[1].append((int(match.group(1)), int(match.group(2)), value))
             cache.append(cache_entry)
     return cache
@@ -120,7 +121,7 @@ def set_colbuf(ic, tile, bit, value):
     tile_db = ic.tile_db(tile[0], tile[1])
     for entry in tile_db:
         if entry[1] == "ColBufCtrl" and entry[2] == "glb_netwk_%d" % bit:
-            match = re.match("B([0-9]+)\[([0-9]+)\]", entry[0][0])
+            match = re_match_cached("B([0-9]+)\[([0-9]+)\]", entry[0][0])
             l = tile_dat[int(match.group(1))]
             n = int(match.group(2))
             l = l[:n] + value + l[n+1:]
