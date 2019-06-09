@@ -16,6 +16,7 @@
 #
 
 import icebox
+from icebox import re_match_cached, re_sub_cached, re_search_cached
 import getopt, sys, re
 
 strip_comments = False
@@ -93,22 +94,22 @@ for o, a in opts:
     elif o in ("-p", "-P"):
         with open(a, "r") as f:
             for line in f:
-                if o == "-P" and not re.search(" # ICE_(GB_)?IO", line):
+                if o == "-P" and not re_search_cached(" # ICE_(GB_)?IO", line):
                     continue
-                line = re.sub(r"#.*", "", line.strip()).split()
+                line = re_sub_cached(r"#.*", "", line.strip()).split()
                 if "--warn-no-port" in line:
                     line.remove("--warn-no-port")
                 if len(line) and line[0] == "set_io":
                     p = line[1]
                     if o == "-P":
                         p = p.lower()
-                        p = re.sub(r"_ibuf$", "", p)
-                        p = re.sub(r"_obuft$", "", p)
-                        p = re.sub(r"_obuf$", "", p)
-                        p = re.sub(r"_gb_io$", "", p)
-                        p = re.sub(r"_pad(_[0-9]+|)$", r"\1", p)
+                        p = re_sub_cached(r"_ibuf$", "", p)
+                        p = re_sub_cached(r"_obuft$", "", p)
+                        p = re_sub_cached(r"_obuf$", "", p)
+                        p = re_sub_cached(r"_gb_io$", "", p)
+                        p = re_sub_cached(r"_pad(_[0-9]+|)$", r"\1", p)
                     portnames.add(p)
-                    if not re.match(r"[a-zA-Z_][a-zA-Z0-9_]*$", p):
+                    if not re_match_cached(r"[a-zA-Z_][a-zA-Z0-9_]*$", p):
                         p = "\\%s " % p
                     unmatched_ports.add(p)
                     if len(line) > 3:
@@ -177,7 +178,7 @@ pll_gbuf = dict()
 
 for entry in icebox.iotile_l_db:
     if entry[1] == "PLL":
-        match = re.match(r"B(\d+)\[(\d+)\]", entry[0][0]);
+        match = re_match_cached(r"B(\d+)\[(\d+)\]", entry[0][0]);
         assert match
         pll_config_bitidx[entry[2]] = (int(match.group(1)), int(match.group(2)))
 
@@ -234,8 +235,8 @@ for idx, tile in list(ic.io_tiles.items()):
             iocells_negclk.add((idx[0], idx[1], 0))
             iocells_negclk.add((idx[0], idx[1], 1))
         if entry[1].startswith("IOB_") and entry[2].startswith("PINTYPE_") and tc.match(entry[0]):
-            match1 = re.match("IOB_(\d+)", entry[1])
-            match2 = re.match("PINTYPE_(\d+)", entry[2])
+            match1 = re_match_cached("IOB_(\d+)", entry[1])
+            match2 = re_match_cached("PINTYPE_(\d+)", entry[2])
             assert match1 and match2
             iocells_type[(idx[0], idx[1], int(match1.group(1)))][int(match2.group(1))] = "1"
     iocells_type[(idx[0], idx[1], 0)] = "".join(iocells_type[(idx[0], idx[1], 0)])
@@ -244,7 +245,7 @@ for idx, tile in list(ic.io_tiles.items()):
 for segs in sorted(ic.group_segments()):
     for seg in segs:
         if ic.tile_type(seg[0], seg[1]) == "IO":
-            match = re.match("io_(\d+)/D_(IN|OUT)_(\d+)", seg[2])
+            match = re_match_cached("io_(\d+)/D_(IN|OUT)_(\d+)", seg[2])
             if match:
                 cell = (seg[0], seg[1], int(match.group(1)))
                 if cell in iocells_skip:
@@ -287,7 +288,7 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
     renamed_net_to_port = False
 
     for s in segs:
-        match =  re.match("io_(\d+)/PAD", s[2])
+        match =  re_match_cached("io_(\d+)/PAD", s[2])
         if match:
             idx = (s[0], s[1], int(match.group(1)))
             p = "io_%d_%d_%d" % idx
@@ -322,7 +323,7 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
                 text_ports.append("inout %s" % p)
                 text_wires.append("assign %s = %s;" % (p, n))
 
-        match =  re.match("lutff_(\d+)/", s[2])
+        match =  re_match_cached("lutff_(\d+)/", s[2])
         if match:
             #IpCon and DSP tiles look like logic tiles, but aren't.
             if ic.device in ["5k", "u4k"] and (s[0] == 0 or s[0] == ic.max_x):
@@ -347,10 +348,10 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
 
     count_drivers = []
     for s in segs:
-        if re.match(r"ram/RDATA_", s[2]): count_drivers.append(s[2])
-        if re.match(r"io_./D_IN_", s[2]): count_drivers.append(s[2])
-        if re.match(r"lutff_./out", s[2]): count_drivers.append(s[2])
-        if re.match(r"lutff_./lout", s[2]): count_drivers.append(s[2])
+        if re_match_cached(r"ram/RDATA_", s[2]): count_drivers.append(s[2])
+        if re_match_cached(r"io_./D_IN_", s[2]): count_drivers.append(s[2])
+        if re_match_cached(r"lutff_./out", s[2]): count_drivers.append(s[2])
+        if re_match_cached(r"lutff_./lout", s[2]): count_drivers.append(s[2])
 
     if len(count_drivers) != 1 and check_driver:
         failed_drivers_check.append((n, count_drivers))
@@ -870,7 +871,7 @@ if do_collect:
     vec_ports_max = dict()
     vec_ports_dir = dict()
     for port in text_ports:
-        match = re.match(r"(input|output|inout) (.*)\[(\d+)\] ?$", port);
+        match = re_match_cached(r"(input|output|inout) (.*)\[(\d+)\] ?$", port);
         if match:
             vec_ports_min[match.group(2)] = min(vec_ports_min.setdefault(match.group(2), int(match.group(3))), int(match.group(3)))
             vec_ports_max[match.group(2)] = max(vec_ports_max.setdefault(match.group(2), int(match.group(3))), int(match.group(3)))
@@ -889,7 +890,7 @@ new_text_wires = list()
 new_text_regs = list()
 new_text_raw = list()
 for line in text_wires:
-    match = re.match(r"wire ([^ ;]+)(.*)", line)
+    match = re_match_cached(r"wire ([^ ;]+)(.*)", line)
     if match:
         if strip_comments:
             name = match.group(1)

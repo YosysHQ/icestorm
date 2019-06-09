@@ -16,6 +16,7 @@
 #
 
 import icebox
+from icebox import re_match_cached, re_sub_cached
 import getopt, sys, os, re
 
 chipname = "iCE40 HX1K"
@@ -252,7 +253,7 @@ configuration bits it has and how it is connected to its neighbourhood.</p>""" %
         if not ic.tile_has_entry(tx, ty, entry):
             continue
         for bit in [bit.replace("!", "") for bit in entry[0]]:
-            match = re.match(r"B(\d+)\[(\d+)\]$", bit)
+            match = re_match_cached(r"B(\d+)\[(\d+)\]$", bit)
             idx1 = int(match.group(1))
             idx2 = int(match.group(2))
             if entry[1] == "routing":
@@ -324,7 +325,7 @@ nets are connected with nets from cells in its neighbourhood.</p>""")
         for s in segs:
             if s[0] == tx and s[1] == ty:
                 this_segs.append(s[2])
-                match = re.match(r"(.*?_)(\d+)(.*)", s[2])
+                match = re_match_cached(r"(.*?_)(\d+)(.*)", s[2])
                 if match:
                     this_tile_nets.setdefault(match.group(1) + "*" + match.group(3), set()).add(int(match.group(2)))
                 else:
@@ -444,7 +445,7 @@ in the all-zeros configuration.</p>""")
         for cfggrp in sorted(grpgrp[cat]):
             grp = config_groups[cfggrp]
             for bit in cfggrp.split(",")[1:]:
-                match = re.match(r"B(\d+)\[(\d+)\]", bit)
+                match = re_match_cached(r"B(\d+)\[(\d+)\]", bit)
                 bits_in_cat.add((int(match.group(1)), int(match.group(2))))
 
         print('<table style="font-size:x-small">')
@@ -520,7 +521,7 @@ in the all-zeros configuration.</p>""")
             bits = cfggrp.split(",")[1:]
             print('<p><table style="font-size:small" border><tr>')
             for bit in bits:
-                print('<th style="width:5em"><a name="%s">%s</a></th>' % (re.sub(r"B(\d+)\[(\d+)\]", r"B.\1.\2", bit), bit))
+                print('<th style="width:5em"><a name="%s">%s</a></th>' % (re_sub_cached(r"B(\d+)\[(\d+)\]", r"B.\1.\2", bit), bit))
             group_lines = list()
             is_buffer = True
             for entry in grp:
@@ -569,7 +570,7 @@ in the all-zeros configuration.</p>""")
 
     print('<p><table style="font-size:small" border><tr><th>Function</th><th>Bits</th></tr>')
     for cfggrp in sorted(other_config_groups):
-        bits = " ".join(['<a name="%s">%s</a>' % (re.sub(r"B(\d+)\[(\d+)\]", r"B.\1.\2", bit), bit) for bit in sorted(other_config_groups[cfggrp])])
+        bits = " ".join(['<a name="%s">%s</a>' % (re_sub_cached(r"B(\d+)\[(\d+)\]", r"B.\1.\2", bit), bit) for bit in sorted(other_config_groups[cfggrp])])
         cfggrp = cfggrp.replace("&nbsp;" + list(other_config_groups[cfggrp])[0], "")
         print('<tr><td>%s</td><td>%s</td></tr>' % (cfggrp, bits))
     print('</table></p>')

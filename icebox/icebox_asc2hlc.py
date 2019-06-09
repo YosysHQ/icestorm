@@ -15,6 +15,7 @@
 
 import getopt, os, re, sys
 import icebox
+from icebox import re_match_cached
 
 GLB_NETWK_EXTERNAL_BLOCKS = [(13, 8, 1), (0, 8, 1), (7, 17, 0), (7, 0, 0),
                              (0, 9, 0), (13, 9, 0), (6, 0, 1), (6, 17, 1)]
@@ -63,24 +64,24 @@ def translate_netname(x, y, fw, fh, net):
 
     # logic and RAM tiles
 
-    match = re.match(r'sp4_h_r_(\d+)$', net)
+    match = re_match_cached(r'sp4_h_r_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 12)
         return 'span4_y%d_g%d_%d' % (y, x - g + 4, i)
-    match = re.match(r'sp4_h_l_(\d+)$', net)
+    match = re_match_cached(r'sp4_h_l_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 12)
         return 'span4_y%d_g%d_%d' % (y, x - g + 3, i)
 
-    match = re.match(r'sp4_v_b_(\d+)$', net)
+    match = re_match_cached(r'sp4_v_b_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 12)
         return 'span4_x%d_g%d_%d' % (x, y + g, i)
-    match = re.match(r'sp4_v_t_(\d+)$', net)
+    match = re_match_cached(r'sp4_v_t_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 12)
         return 'span4_x%d_g%d_%d' % (x, y + g + 1, i)
-    match = re.match(r'sp4_r_v_b_(\d+)$', net)
+    match = re_match_cached(r'sp4_r_v_b_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 12)
         if x == fw:
@@ -89,27 +90,27 @@ def translate_netname(x, y, fw, fh, net):
         else:
             return 'span4_x%d_g%d_%d' % (x + 1, y + g, i)
 
-    match = re.match(r'sp12_h_r_(\d+)$', net)
+    match = re_match_cached(r'sp12_h_r_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 2)
         return 'span12_y%d_g%d_%d' % (y, x - g + 12, i)
-    match = re.match(r'sp12_h_l_(\d+)$', net)
+    match = re_match_cached(r'sp12_h_l_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 2)
         return 'span12_y%d_g%d_%d' % (y, x - g + 11, i)
 
-    match = re.match(r'sp12_v_b_(\d+)$', net)
+    match = re_match_cached(r'sp12_v_b_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 2)
         return 'span12_x%d_g%d_%d' % (x, y + g, i)
-    match = re.match(r'sp12_v_t_(\d+)$', net)
+    match = re_match_cached(r'sp12_v_t_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 2)
         return 'span12_x%d_g%d_%d' % (x, y + g + 1, i)
 
     # I/O tiles
 
-    match = re.match(r'span4_horz_(\d+)$', net)
+    match = re_match_cached(r'span4_horz_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 12)
         if x == 0:
@@ -117,7 +118,7 @@ def translate_netname(x, y, fw, fh, net):
         else:
             return 'span4_y%d_g%d_%d' % (y, x - g + 3, i)
 
-    match = re.match(r'span4_vert_(\d+)$', net)
+    match = re_match_cached(r'span4_vert_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 12)
         if y == 0:
@@ -125,7 +126,7 @@ def translate_netname(x, y, fw, fh, net):
         else:
             return 'span4_x%d_g%d_%d' % (x, y + g, i)
 
-    match = re.match(r'span12_horz_(\d+)$', net)
+    match = re_match_cached(r'span12_horz_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 2)
         if x == 0:
@@ -133,7 +134,7 @@ def translate_netname(x, y, fw, fh, net):
         else:
             return 'span12_y%d_g%d_%d' % (y, x - g + 11, i)
 
-    match = re.match(r'span12_vert_(\d+)$', net)
+    match = re_match_cached(r'span12_vert_(\d+)$', net)
     if match is not None:
         g, i = group_and_index(match.group(1), 2)
         if y == 0:
@@ -143,7 +144,7 @@ def translate_netname(x, y, fw, fh, net):
 
     # I/O tiles - peripheral wires
 
-    match = re.match(r'span4_horz_r_(\d+)$', net)
+    match = re_match_cached(r'span4_horz_r_(\d+)$', net)
     if match is not None:
         n = int(match.group(1)); g = n // 4; i = n % 4
         if y == 0:
@@ -161,7 +162,7 @@ def translate_netname(x, y, fw, fh, net):
             else:
                 return 'span4_top_g%d_%d' % (x + 4 - g, i)
 
-    match = re.match(r'span4_horz_l_(\d+)$', net)
+    match = re_match_cached(r'span4_horz_l_(\d+)$', net)
     if match is not None:
         n = int(match.group(1)); g = n // 4; i = n % 4
         if y == 0:
@@ -175,7 +176,7 @@ def translate_netname(x, y, fw, fh, net):
             else:
                 return 'span4_top_g%d_%d' % (x + 3 - g, i)
 
-    match = re.match(r'span4_vert_b_(\d+)$', net)
+    match = re_match_cached(r'span4_vert_b_(\d+)$', net)
     if match is not None:
         n = int(match.group(1)); g = n // 4; i = n % 4
         if x == 0:
@@ -193,7 +194,7 @@ def translate_netname(x, y, fw, fh, net):
             else:
                 return 'span4_right_g%d_%d' % (y + g, i)
 
-    match = re.match(r'span4_vert_t_(\d+)$', net)
+    match = re_match_cached(r'span4_vert_t_(\d+)$', net)
     if match is not None:
         n = int(match.group(1)); g = n // 4; i = n % 4
         if x == 0:
@@ -740,7 +741,7 @@ class Tile:
         for entry in db:
             # LC bits don't have a useful entry in the database; skip them
             # for now
-            if re.match(r'LC_', entry[1]):
+            if re_match_cached(r'LC_', entry[1]):
                 continue
 
             # some nets have different names depending on the tile; filter

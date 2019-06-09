@@ -15,6 +15,7 @@
 
 import getopt, os, re, sys
 import icebox
+from icebox import re_match_cached, re_sub_cached
 
 
 ## Get the tile-local name of a net.
@@ -32,7 +33,7 @@ def untranslate_netname(x, y, fw, fh, net):
             i = i + 1 - (i % 2) * 2
         return g * group_size + i
 
-    match = re.match(r'span4_y(\d+)_g(\d+)_(\d+)$', net)
+    match = re_match_cached(r'span4_y(\d+)_g(\d+)_(\d+)$', net)
     if match is not None:
         my = int(match.group(1))
         mw = int(match.group(2))
@@ -53,7 +54,7 @@ def untranslate_netname(x, y, fw, fh, net):
         else:
             return 'sp4_h_r_%d' % index(mg, mi, 12)
 
-    match = re.match(r'span4_x(\d+)_g(\d+)_(\d+)$', net)
+    match = re_match_cached(r'span4_x(\d+)_g(\d+)_(\d+)$', net)
     if match is not None:
         mx = int(match.group(1))
         mw = int(match.group(2))
@@ -77,7 +78,7 @@ def untranslate_netname(x, y, fw, fh, net):
         else:
             return 'sp4_v_b_%d' % index(mg, mi, 12)
 
-    match = re.match(r'dummy_y(\d+)_g(\d+)_(\d+)$', net)
+    match = re_match_cached(r'dummy_y(\d+)_g(\d+)_(\d+)$', net)
     if match is not None:
         my = int(match.group(1))
         mw = int(match.group(2))
@@ -89,7 +90,7 @@ def untranslate_netname(x, y, fw, fh, net):
 
         return 'sp4_r_v_b_%d' % index(mg, mi, 12)
 
-    match = re.match(r'span12_y(\d+)_g(\d+)_(\d+)$', net)
+    match = re_match_cached(r'span12_y(\d+)_g(\d+)_(\d+)$', net)
     if match is not None:
         my = int(match.group(1))
         mw = int(match.group(2))
@@ -110,7 +111,7 @@ def untranslate_netname(x, y, fw, fh, net):
         else:
             return 'sp12_h_r_%d' % index(mg, mi, 2)
 
-    match = re.match(r'span12_x(\d+)_g(\d+)_(\d+)$', net)
+    match = re_match_cached(r'span12_x(\d+)_g(\d+)_(\d+)$', net)
     if match is not None:
         mx = int(match.group(1))
         mw = int(match.group(2))
@@ -131,7 +132,7 @@ def untranslate_netname(x, y, fw, fh, net):
         else:
             return 'sp12_v_b_%d' % index(mg, mi, 2)
 
-    match = re.match(r'span4_bottom_g(\d+)_(\d+)$', net)
+    match = re_match_cached(r'span4_bottom_g(\d+)_(\d+)$', net)
     if match is not None:
         mw = int(match.group(1))
         mi = int(match.group(2))
@@ -153,7 +154,7 @@ def untranslate_netname(x, y, fw, fh, net):
                 assert fw - x + mg - 4 >= 0
                 return 'span4_horz_r_%d' % (mg * 4 + mi)
 
-    match = re.match(r'span4_left_g(\d+)_(\d+)$', net)
+    match = re_match_cached(r'span4_left_g(\d+)_(\d+)$', net)
     if match is not None:
         mw = int(match.group(1))
         mi = int(match.group(2))
@@ -181,7 +182,7 @@ def untranslate_netname(x, y, fw, fh, net):
                 assert y + mg - 3 >= 0
                 return 'span4_vert_b_%d' % (mg * 4 + mi)
 
-    match = re.match(r'span4_right_g(\d+)_(\d+)$', net)
+    match = re_match_cached(r'span4_right_g(\d+)_(\d+)$', net)
     if match is not None:
         mw = int(match.group(1))
         mi = int(match.group(2))
@@ -204,7 +205,7 @@ def untranslate_netname(x, y, fw, fh, net):
             assert y + mg < fh + 3
             return 'span4_vert_b_%d' % (mg * 4 + mi)
 
-    match = re.match(r'span4_top_g(\d+)_(\d+)$', net)
+    match = re_match_cached(r'span4_top_g(\d+)_(\d+)$', net)
     if match is not None:
         mw = int(match.group(1))
         mi = int(match.group(2))
@@ -231,7 +232,7 @@ def untranslate_netname(x, y, fw, fh, net):
             assert x - mg + 1 < fw
             return 'span4_horz_r_%d' % (mg * 4 + mi)
 
-    match = re.match(r'span4_bottomright(\d+)_(\d+)$', net)
+    match = re_match_cached(r'span4_bottomright(\d+)_(\d+)$', net)
     if match is not None:
         mw = int(match.group(1))
         mi = int(match.group(2))
@@ -249,7 +250,7 @@ def untranslate_netname(x, y, fw, fh, net):
             assert y + mg - 5 < 0
             return 'span4_vert_b_%d' % (mg * 4 + mi)
 
-    match = re.match(r'span4_topleft(\d+)_(\d+)$', net)
+    match = re_match_cached(r'span4_topleft(\d+)_(\d+)$', net)
     if match is not None:
         mw = int(match.group(1))
         mi = int(match.group(2))
@@ -506,9 +507,9 @@ def logic_expression_to_lut(s, args):
 
 def parse_verilog_bitvector_to_bits(in_str):
     #replace x with 0
-    in_str = re.sub('[xX]', '0', in_str)
+    in_str = re_sub_cached('[xX]', '0', in_str)
 
-    m = re.match("([0-9]+)'([hdob])([0-9a-fA-F]+)", in_str)
+    m = re_match_cached("([0-9]+)'([hdob])([0-9a-fA-F]+)", in_str)
     if m:
         num_bits = int(m.group(1))
         prefix = m.group(2)
@@ -773,7 +774,7 @@ class Tile:
         bits_clear = set()
 
         for bit in bits:
-            match = re.match(r'(!?)B(\d+)\[(\d+)\]$', bit)
+            match = re_match_cached(r'(!?)B(\d+)\[(\d+)\]$', bit)
             if not match:
                 raise ValueError("invalid bit description: %s" % bit)
             if match.group(1):
@@ -878,7 +879,7 @@ class LogicCell:
         if fields[0] == 'lut' and len(fields) == 2:
             self.lut_bits = fields[1]
         elif fields[0] == 'out' and len(fields) >= 3 and fields[1] == '=':
-            m = re.match("([0-9]+)'b([01]+)", fields[2])
+            m = re_match_cached("([0-9]+)'b([01]+)", fields[2])
             if m:
                 lut_bits = parse_verilog_bitvector_to_bits(fields[2])
                 # Verilog 16'bXXXX is MSB first but the bitstream wants LSB.
