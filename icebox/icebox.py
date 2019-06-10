@@ -5801,6 +5801,38 @@ extra_cells_db = {
         ("SMCCLK", (25, 3, 0)) : {
             "CLK":                          (25, 3, "slf_op_5")
         },
+        ("LED_DRV_CUR", (25, 21, 2)) : {
+            "LED_DRV_CUR_EN":               (25, 19, "CBIT_5"),
+            "EN":                           (25, 19, "lutff_6/in_3"),
+        },
+        ("RGB_DRV", (0, 21, 3)) : {
+            "RGB_DRV_EN":                   (0, 18, "CBIT_5"),
+            "RGB0_CURRENT_0":               (0, 18, "CBIT_6"),
+            "RGB0_CURRENT_1":               (0, 18, "CBIT_7"),
+            "RGB0_CURRENT_2":               (0, 19, "CBIT_0"),
+            "RGB0_CURRENT_3":               (0, 19, "CBIT_1"),
+            "RGB0_CURRENT_4":               (0, 19, "CBIT_2"),
+            "RGB0_CURRENT_5":               (0, 19, "CBIT_3"),
+            "RGB1_CURRENT_0":               (0, 19, "CBIT_4"),
+            "RGB1_CURRENT_1":               (0, 19, "CBIT_5"),
+            "RGB1_CURRENT_2":               (0, 19, "CBIT_6"),
+            "RGB1_CURRENT_3":               (0, 19, "CBIT_7"),
+            "RGB1_CURRENT_4":               (0, 20, "CBIT_0"),
+            "RGB1_CURRENT_5":               (0, 20, "CBIT_1"),
+            "RGB2_CURRENT_0":               (0, 20, "CBIT_2"),
+            "RGB2_CURRENT_1":               (0, 20, "CBIT_3"),
+            "RGB2_CURRENT_2":               (0, 20, "CBIT_4"),
+            "RGB2_CURRENT_3":               (0, 20, "CBIT_5"),
+            "RGB2_CURRENT_4":               (0, 20, "CBIT_6"),
+            "RGB2_CURRENT_5":               (0, 20, "CBIT_7"),
+            "RGBLEDEN":                     (0, 20, "lutff_1/in_1"),
+            "RGB0PWM":                      (0, 20, "lutff_2/in_1"),
+            "RGB1PWM":                      (0, 20, "lutff_3/in_1"),
+            "RGB2PWM":                      (0, 20, "lutff_4/in_1"),
+            "RGB0":                         (13, 21, 0),
+            "RGB1":                         (12, 21, 0),
+            "RGB2":                         (8, 21, 0)
+        },
     }
 }
 

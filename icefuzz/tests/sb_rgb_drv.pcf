@@ -1,0 +1,8 @@
+set_io r_led 39
+set_io g_led 40
+set_io b_led 41
+set_io r_in 25
+set_io g_in 26
+set_io b_in 27
+set_io en 28
+set_io rgbleden 31

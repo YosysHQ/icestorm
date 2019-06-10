@@ -22,7 +22,7 @@ for idx in range(num):
             module top (
                 input  [%d:0] glb_pins,
                 input  [%d:0] in_pins,
-                output [15:0] out_pins,
+                input   [2:0] led_data,
                 output [%d:0] led_pins
             );
             wire [%d:0] glb, glb_pins;
@@ -92,39 +92,39 @@ for idx in range(num):
         # bits.append("pwm_out[1]")
         # bits.append("pwm_out[2]")
 
-        # current_choices = ["0b000000", "0b000001", "0b000011", "0b000111", "0b001111", "0b011111", "0b111111"]
+        current_choices = ["0b000000", "0b000001", "0b000011", "0b000111", "0b001111", "0b011111", "0b111111"]
 
-        # currents = [np.random.choice(current_choices) for i in range(3)]
+        currents = [np.random.choice(current_choices) for i in range(3)]
 
-        # bit_curren = np.random.choice(bits)
-        # bit_rgbleden = np.random.choice(bits)
-        # bits_pwm = [np.random.choice([np.random.choice(bits), "pwm_out[%d]" % i]) for i in range(3)]
+        bit_curren = np.random.choice(bits)
+        bit_rgbleden = np.random.choice(bits)
+        bits_pwm = [np.random.choice([np.random.choice(bits), "led_data[%d]" % i]) for i in range(3)]
 
-        # print("""
-		# 	wire rgbpu;
-		# 	SB_LED_DRV_CUR led_drv_cur (
-		# 		.EN(%s),
-		# 		.LEDPU(rgbpu)
-		# 	);
+        print("""
+			wire rgbpu;
+			SB_LED_DRV_CUR led_drv_cur (
+				.EN(%s),
+				.LEDPU(rgbpu)
+			);
 
-        #     SB_RGB_DRV #(
-        #         .RGB0_CURRENT(\"%s\"),
-        #         .RGB1_CURRENT(\"%s\"),
-        #         .RGB2_CURRENT(\"%s\")
-        #     ) rgb_drv (
-        #         .RGBLEDEN(%s),
-        #         .RGBPU(rgbpu),
-        #         .RGB0PWM(%s),
-        #         .RGB1PWM(%s),
-        #         .RGB2PWM(%s),
-        #         .RGB0(led_pins[0]),
-        #         .RGB1(led_pins[1]),
-        #         .RGB2(led_pins[2])
-        #     );
-        # """ % (
-        #     bit_curren, currents[0], currents[1], currents[2],
-        #     bit_rgbleden, bits_pwm[0], bits_pwm[1], bits_pwm[2]
-        # ), file = f)
+            SB_RGB_DRV #(
+                .RGB0_CURRENT(\"%s\"),
+                .RGB1_CURRENT(\"%s\"),
+                .RGB2_CURRENT(\"%s\")
+            ) rgb_drv (
+                .RGBLEDEN(%s),
+                .RGBPU(rgbpu),
+                .RGB0PWM(%s),
+                .RGB1PWM(%s),
+                .RGB2PWM(%s),
+                .RGB0(led_pins[0]),
+                .RGB1(led_pins[1]),
+                .RGB2(led_pins[2])
+            );
+        """ % (
+            bit_curren, currents[0], currents[1], currents[2],
+            bit_rgbleden, bits_pwm[0], bits_pwm[1], bits_pwm[2]
+        ), file = f)
 
         # TODO: I2C and SPI
 
@@ -133,9 +133,7 @@ for idx in range(num):
         p = list(np.random.permutation(pins))
         for i in range(len(pins) - len(glbs) - 16):
             print("set_io in_pins[%d] %s" % (i, p.pop()), file=f)
-        for i in range(16):
-            print("set_io out_pins[%d] %s" % (i, p.pop()), file=f)
-        # for i in range(len(led_pins)):
-        #     print("set_io led_pins[%d] %s" % (i, led_pins[i]), file=f)
+        for i in range(len(led_pins)):
+            print("set_io led_pins[%d] %s" % (i, led_pins[i]), file=f)
 
 output_makefile(working_dir, "uip")
