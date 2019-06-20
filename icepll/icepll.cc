@@ -53,15 +53,16 @@ void help(const char *cmd)
 	printf("\n");
 	printf("    -f <filename>\n");
 	printf("        Save PLL configuration as Verilog to file\n");
+	printf("        If <filename> is - then the Verilog is written to stdout.\n");
 	printf("\n");
 	printf("    -m\n");
-	printf("        Save PLL configuration as Verilog module (use with -f)\n");
+	printf("        Save PLL configuration as Verilog module (May use with -f)\n");
 	printf("\n");
 	printf("    -n <module name>\n");
 	printf("        Specify different Verilog module name than the default 'pll'\n");
 	printf("\n");
 	printf("    -q\n");
-	printf("        Do not print PLL configuration to stdout\n");
+	printf("        Do not print information about the PLL configuration to stdout\n");
 	printf("\n");
 	exit(1);
 }
@@ -83,8 +84,9 @@ int main(int argc, char **argv)
 	double f_pllin = 12;
 	double f_pllout = 60;
 	bool simple_feedback = true;
-	char* filename = NULL;
-	char* module_name = NULL;
+	const char* filename = NULL;
+	bool file_stdout = false;
+	const char* module_name = NULL;
 	bool save_as_module = false;
 	bool quiet = false;
 
@@ -122,9 +124,18 @@ int main(int argc, char **argv)
 	if (optind != argc)
 		help(argv[0]);
 
-	// error: shall save as module, but no filename was given
+	// Shall save as module, but no filename was given.
+	// Write to stdout.
 	if (save_as_module && filename == NULL)
-		help(argv[0]);
+		filename = "-";
+
+	// If filename is "-", then use stdout as output stream.
+	// That implies quiet mode.
+	if (filename != NULL && strcmp(filename, "-") == 0)
+	{
+		file_stdout = true;
+		quiet = true;
+	}
 
 	bool found_something = false;
 	double best_fout = 0;
@@ -238,17 +249,26 @@ int main(int argc, char **argv)
 		printf("\n");
 	}
 
-	// save PLL configuration as file
-	if (filename != NULL)
+	// save PLL configuration as file/stdout.
+	if (filename != NULL || file_stdout)
 	{
-		// open file for writing
 		FILE *f;
-		f = fopen(filename, "w");
-		if (f == NULL)
+
+		if (file_stdout)
 		{
-			fprintf(stderr, "Error: Failed to open output file '%s': %s\n",
-				filename, strerror(errno));
-			exit(1);
+			// use stdout as output stream.
+			f = stdout;
+		}
+		else
+		{
+			// open file for writing
+			f = fopen(filename, "w");
+			if (f == NULL)
+			{
+				fprintf(stderr, "Error: Failed to open output file '%s': %s\n",
+					filename, strerror(errno));
+				exit(1);
+			}
 		}
 
 		if (save_as_module)
