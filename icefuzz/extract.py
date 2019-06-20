@@ -41,7 +41,7 @@ for filename in sys.argv[1:]:
                 cur_text_db = text_db.setdefault("ipcon_5k", set())
                 ignore = False
             elif device_class == "u4k" and line.startswith("IpCon"):
-                cur_text_db = text_db.setdefault("ipcon_u4k", set())
+                cur_text_db = text_db.setdefault("ipcon_5k", set())
                 ignore = False
             elif device_class == "5k" and line.startswith("DSP"):
                 match = re.match(r"DSP_Tile_\d+_(\d+)", line)
@@ -71,7 +71,7 @@ for filename in sys.argv[1:]:
                 if ypos in [8, 16]:
                     dsp_idx = 3
                 assert dsp_idx != None
-                cur_text_db = text_db.setdefault("dsp%d_u4k" % dsp_idx, set())
+                cur_text_db = text_db.setdefault("dsp%d_5k" % dsp_idx, set())
                 ignore = False
             elif not ignore:
                 print("'" + line + "'")
