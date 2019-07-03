@@ -5248,7 +5248,8 @@ dsp_config_db = {
             "TOPOUTPUT_SELECT_1":           (0, 4, "CBIT_3"),
             "TOPADDSUB_LOWERINPUT_0":       (0, 4, "CBIT_4"),
             "TOPADDSUB_LOWERINPUT_1":       (0, 4, "CBIT_5"),
-            "TOPADDSUB_UPPERINPUT":         (0, 4, "CBIT_6")
+            "TOPADDSUB_UPPERINPUT":         (0, 4, "CBIT_6"),
+            "TOPADDSUB_CARRYSELECT_0":      (0, 4, "CBIT_7")
         }
 }
 
