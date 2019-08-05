@@ -195,12 +195,10 @@ static void flash_read_id()
 
 static void flash_reset()
 {
-	flash_chip_select();
-	mpsse_xfer_spi_bits(0xFF, 8);
-	flash_chip_deselect();
+	uint8_t data[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
 	flash_chip_select();
-	mpsse_xfer_spi_bits(0xFF, 2);
+	mpsse_xfer_spi(data, 8);
 	flash_chip_deselect();
 }
 
