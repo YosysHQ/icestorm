@@ -912,7 +912,7 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 			ofs << '\n';
 		}
 
-		if (cic.tile_type == "ramb")
+		if (cic.tile_type == "ramb" && !this->bram.empty())
 		{
 			BramIndexConverter bic(this, x, y);
 			ofs << stringf(".ram_data %d %d\n", x, y);
