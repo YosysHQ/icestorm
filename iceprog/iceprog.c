@@ -35,6 +35,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#ifdef _WIN32
+#include <io.h> /* _setmode() */
+#include <fcntl.h> /* _O_BINARY */
+#endif
+
 #include "mpsse.h"
 
 static bool verbose = false;
@@ -522,6 +527,11 @@ int main(int argc, char **argv)
 	const char *filename = NULL;
 	const char *devstr = NULL;
 	int ifnum = 0;
+
+#ifdef _WIN32
+	_setmode(_fileno(stdin), _O_BINARY);
+	_setmode(_fileno(stdout), _O_BINARY);
+#endif
 
 	static struct option long_options[] = {
 		{"help", no_argument, NULL, -2},
