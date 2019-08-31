@@ -1,6 +1,9 @@
-SUBDIRS = icebox icepack iceprog icemulti icepll icetime icebram
-
 include config.mk
+
+SUBDIRS := icebox icepack icemulti icepll icebram icetime
+ifeq ($(ICEPROG),1)
+SUBDIRS += iceprog
+endif
 
 all: $(addsuffix .all,$(SUBDIRS))
 $(addsuffix .all,$(SUBDIRS)):
