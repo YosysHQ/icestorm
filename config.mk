@@ -1,5 +1,6 @@
 PREFIX ?= /usr/local
 DEBUG ?= 0
+ICEPROG ?= 1
 
 CXX ?= clang++
 CC ?= clang
