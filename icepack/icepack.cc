@@ -325,7 +325,7 @@ void FpgaConfig::read_bits(std::istream &ifs)
 				end_token = read_byte(ifs, crc_value, file_offset);
 				end_token = (end_token << 8) | read_byte(ifs, crc_value, file_offset);
 				if (end_token)
-					error("Expeded 0x0000 after BRAM data, got 0x%04x\n", end_token);
+					error("Expected 0x0000 after BRAM data, got 0x%04x\n", end_token);
 				break;
 
 			case 0x05:
