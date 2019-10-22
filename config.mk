@@ -39,3 +39,5 @@ PREFIX = /
 LDFLAGS = -O2 --memory-init-file 0 -s TOTAL_MEMORY=64*1024*1024
 SUBDIRS = icebox icepack icemulti icepll icetime icebram
 endif
+
+PYTHON ?= python3
