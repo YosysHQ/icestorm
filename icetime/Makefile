@@ -32,7 +32,7 @@ icetime$(EXE): icetime.o iceutil.o $(addsuffix .o, $(addprefix timings-, $(CHIPS
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 timings-%.cc: timings.py ../icefuzz/timings_%.txt
-	python3 timings.py $* > $@
+	$(PYTHON) timings.py $* > $@
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
