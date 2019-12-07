@@ -32,7 +32,7 @@ Note that Mac Ports installs to /opt instead of /usr, so change the first two li
 
 <pre style="padding-left: 3em">
 LDLIBS = -L/usr/local/lib -L/opt/local/lib -lftdi -lm
-CFLAGS = -MD -O0 -ggdb -Wall -std=c99 -I/usr/local/include -I/opt/local/include/
+CFLAGS = -MMD -O0 -ggdb -Wall -std=c99 -I/usr/local/include -I/opt/local/include/
 </pre>
 
 <p>
