@@ -448,6 +448,7 @@ static void help(const char *progname)
 	fprintf(stderr, "                          (append 'k' to the argument for size in kilobytes,\n");
 	fprintf(stderr, "                          or 'M' for size in megabytes)\n");
 	fprintf(stderr, "  -s                    slow SPI (50 kHz instead of 6 MHz)\n");
+	fprintf(stderr, "  -k                    keep flash in powered up state (i.e. skip power down command)\n");
 	fprintf(stderr, "  -v                    verbose output\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "Mode of operation:\n");
@@ -522,6 +523,7 @@ int main(int argc, char **argv)
 	bool slow_clock = false;
 	bool disable_protect = false;
 	bool disable_verify = false;
+	bool disable_powerdown = false;
 	const char *filename = NULL;
 	const char *devstr = NULL;
 	int ifnum = 0;
@@ -539,7 +541,7 @@ int main(int argc, char **argv)
 	/* Decode command line parameters */
 	int opt;
 	char *endptr;
-	while ((opt = getopt_long(argc, argv, "d:I:rR:e:o:cbnStvspX", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "d:I:rR:e:o:cbnStvspXk", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'd': /* device string */
 			devstr = optarg;
@@ -628,6 +630,9 @@ int main(int argc, char **argv)
 			break;
 		case 'X': /* disable verification */
 			disable_verify = true;
+			break;
+		case 'k': /* disable power down command */
+			disable_powerdown = true;
 			break;
 		case -2:
 			help(argv[0]);
@@ -956,7 +961,8 @@ int main(int argc, char **argv)
 		// Reset
 		// ---------------------------------------------------------
 
-		flash_power_down();
+		if (!disable_powerdown)
+			flash_power_down();
 
 		set_cs_creset(1, 1);
 		usleep(250000);
