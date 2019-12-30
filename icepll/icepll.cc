@@ -51,6 +51,14 @@ void help(const char *cmd)
 	printf("    -S\n");
 	printf("        Disable SIMPLE feedback path mode\n");
 	printf("\n");
+	printf("    -b\n");
+	printf("        Find best input frequency for desired PLL Output frequency\n");
+	printf("        using the normally stocked oscillators at Mouser\n");
+	printf("\n");
+	printf("    -B <filename>\n");
+	printf("        Find best input frequency for desired PLL Output frequency\n");
+	printf("        using frequencies read from <filename>\n");
+	printf("\n");
 	printf("    -f <filename>\n");
 	printf("        Save PLL configuration as Verilog to file\n");
 	printf("        If <filename> is - then the Verilog is written to stdout.\n");
@@ -67,86 +75,21 @@ void help(const char *cmd)
 	exit(1);
 }
 
-int main(int argc, char **argv)
+bool analyze(
+		bool simple_feedback, double f_pllin, double f_pllout,
+		double *best_fout, int *best_divr, int *best_divf, int *best_divq
+		) 
 {
-#ifdef __EMSCRIPTEN__
-	EM_ASM(
-		if (ENVIRONMENT_IS_NODE)
-		{
-			FS.mkdir('/hostcwd');
-			FS.mount(NODEFS, { root: '.' }, '/hostcwd');
-			FS.mkdir('/hostfs');
-			FS.mount(NODEFS, { root: '/' }, '/hostfs');
-		}
-	);
-#endif
-
-	double f_pllin = 12;
-	double f_pllout = 60;
-	bool simple_feedback = true;
-	const char* filename = NULL;
-	bool file_stdout = false;
-	const char* module_name = NULL;
-	bool save_as_module = false;
-	bool quiet = false;
-
-	int opt;
-	while ((opt = getopt(argc, argv, "i:o:Smf:n:q")) != -1)
-	{
-		switch (opt)
-		{
-		case 'i':
-			f_pllin = atof(optarg);
-			break;
-		case 'o':
-			f_pllout = atof(optarg);
-			break;
-		case 'S':
-			simple_feedback = false;
-			break;
-		case 'm':
-			save_as_module = true;
-			break;
-		case 'f':
-			filename = optarg;
-			break;
-		case 'n':
-			module_name = optarg;
-			break;
-		case 'q':
-			quiet = true;
-			break;
-		default:
-			help(argv[0]);
-		}
-	}
-
-	if (optind != argc)
-		help(argv[0]);
-
-	// Shall save as module, but no filename was given.
-	// Write to stdout.
-	if (save_as_module && filename == NULL)
-		filename = "-";
-
-	// If filename is "-", then use stdout as output stream.
-	// That implies quiet mode.
-	if (filename != NULL && strcmp(filename, "-") == 0)
-	{
-		file_stdout = true;
-		quiet = true;
-	}
-
 	bool found_something = false;
-	double best_fout = 0;
-	int best_divr = 0;
-	int best_divf = 0;
-	int best_divq = 0;
+	*best_fout = 0;
+	*best_divr = 0;
+	*best_divf = 0;
+	*best_divq = 0;
 
+	int divf_max = simple_feedback ? 127 : 63;
 	// The documentation in the iCE40 PLL Usage Guide incorrectly lists the
 	// maximum value of DIVF as 63, when it is only limited to 63 when using
 	// feedback modes other that SIMPLE.
-	int divf_max = simple_feedback ? 127 : 63;
 
 	if (f_pllin < 10 || f_pllin > 133) {
 		fprintf(stderr, "Error: PLL input frequency %.3f MHz is outside range 10 MHz - 133 MHz!\n", f_pllin);
@@ -174,11 +117,11 @@ int main(int argc, char **argv)
 				{
 					double fout = f_vco * exp2(-divq);
 
-					if (fabs(fout - f_pllout) < fabs(best_fout - f_pllout) || !found_something) {
-						best_fout = fout;
-						best_divr = divr;
-						best_divf = divf;
-						best_divq = divq;
+					if (fabs(fout - f_pllout) < fabs(*best_fout - f_pllout) || !found_something) {
+						*best_fout = fout;
+						*best_divr = divr;
+						*best_divf = divf;
+						*best_divq = divq;
 						found_something = true;
 					}
 				}
@@ -192,13 +135,169 @@ int main(int argc, char **argv)
 
 					double fout = f_vco * exp2(-divq);
 
-					if (fabs(fout - f_pllout) < fabs(best_fout - f_pllout) || !found_something) {
-						best_fout = fout;
-						best_divr = divr;
-						best_divf = divf;
-						best_divq = divq;
+					if (fabs(fout - f_pllout) < fabs(*best_fout - f_pllout) || !found_something) {
+						*best_fout = fout;
+						*best_divr = divr;
+						*best_divf = divf;
+						*best_divq = divq;
 						found_something = true;
 					}
+				}
+			}
+		}
+	}
+
+	return found_something;
+}
+
+	// Table of frequencies to test in "best" mode defaults to ABRACOM Crystal 
+	// oscillators "Normally stocked" at Mouser
+	double freq_table[100] = 
+	{
+		10, 11.0592, 11.2896, 11.7846, 12, 12.288, 12.352, 12.5, 13, 13.5, 13.6, 14.31818, 14.7456, 15, 16, 16.384, 17.2032, 18.432, 19.2, 19.44, 19.6608, 
+		20, 24, 24.576, 25, 26, 27, 27.12, 28.63636, 28.9, 29.4912, 
+		30, 32, 32.768, 33, 33.206, 33.333, 35.328, 36, 37.03, 37.4, 38.4, 38.88, 
+		40, 40.95, 40.97, 44, 44.736, 48, 
+		50, 54, 57.692, 
+		60, 64, 65, 66, 66.666, 68, 
+		70, 72, 75, 76.8, 
+		80, 80.92, 
+		92.16, 96, 98.304, 
+		100, 104, 106.25, 108, 
+		114.285, 
+		120, 122.88, 125,
+		0
+	};
+
+void readfreqfile(const char *filename) {
+	FILE *f;
+	f = fopen(filename, "r");
+	if (f == NULL) {
+		fprintf(stderr, "Error: Can't open file %s!\n",filename);
+		exit(1);
+	}
+
+	// Clear and overwrite the default values in the table
+	memset(freq_table, 0, sizeof(freq_table));
+	int i = 0;
+	double freq=0;
+	while((i < sizeof(freq_table)/sizeof(double)) && (fscanf(f, "%lf", &freq) > 0))
+	{
+		freq_table[i++] = freq;
+	}
+	fclose(f);
+}
+
+int main(int argc, char **argv)
+{
+#ifdef __EMSCRIPTEN__
+	EM_ASM(
+		if (ENVIRONMENT_IS_NODE)
+		{
+			FS.mkdir('/hostcwd');
+			FS.mount(NODEFS, { root: '.' }, '/hostcwd');
+			FS.mkdir('/hostfs');
+			FS.mount(NODEFS, { root: '/' }, '/hostfs');
+		}
+	);
+#endif
+
+	double f_pllin = 12;
+	double f_pllout = 60;
+	bool simple_feedback = true;
+	const char* filename = NULL;
+	bool file_stdout = false;
+	const char* module_name = NULL;
+	bool save_as_module = false;
+	bool best_mode = false;
+	const char* freqfile = NULL;
+	bool quiet = false;
+
+	int opt;
+	while ((opt = getopt(argc, argv, "i:o:Smf:n:bB:q")) != -1)
+	{
+		switch (opt)
+		{
+		case 'i':
+			f_pllin = atof(optarg);
+			break;
+		case 'o':
+			f_pllout = atof(optarg);
+			break;
+		case 'S':
+			simple_feedback = false;
+			break;
+		case 'm':
+			save_as_module = true;
+			break;
+		case 'f':
+			filename = optarg;
+			break;
+		case 'n':
+			module_name = optarg;
+			break;
+		case 'b':
+			best_mode = true;
+			break;
+		case 'B':
+			best_mode = true;
+			freqfile = optarg;
+			break;
+		case 'q':
+			quiet = true;
+			break;
+		default:
+			help(argv[0]);
+		}
+	}
+
+	if (optind != argc)
+		help(argv[0]);
+
+	// Shall save as module, but no filename was given.
+	// Write to stdout.
+	if (save_as_module && filename == NULL)
+		filename = "-";
+
+	// If filename is "-", then use stdout as output stream.
+	// That implies quiet mode.
+	if (filename != NULL && strcmp(filename, "-") == 0)
+	{
+		file_stdout = true;
+		quiet = true;
+	}
+
+	if (freqfile) {
+		readfreqfile(freqfile);
+	}
+
+	bool found_something = false;
+	double best_fout = 0;
+	int best_divr = 0;
+	int best_divf = 0;
+	int best_divq = 0;
+
+	if (!best_mode) {
+		// Use only specified input frequency
+		found_something = analyze(simple_feedback, f_pllin, f_pllout, &best_fout, &best_divr, &best_divf, &best_divq);
+	} else {
+		// Iterate over all standard crystal frequencies and select the best
+		for (int i = 0; freq_table[i]>0.0 ; i++) 
+		{
+			double fout = 0;
+			int divr = 0;
+			int divf = 0;
+			int divq = 0;
+			if (analyze(simple_feedback, freq_table[i], f_pllout, &fout, &divr, &divf, &divq))
+			{
+				found_something = true;
+				if (abs(fout - f_pllout) < abs(best_fout - f_pllout)) 
+				{
+					f_pllin = freq_table[i];
+					best_fout = fout;
+					best_divr = divr;
+					best_divf = divf;
+					best_divq = divq;
 				}
 			}
 		}
