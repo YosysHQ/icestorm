@@ -446,6 +446,34 @@ static void flash_disable_protection()
 
 }
 
+static void flash_enable_quad()
+{
+	fprintf(stderr, "Enabling Quad operation...\n");
+
+	// Allow write
+	flash_write_enable();
+
+	// Write Status Register 2 <- 0x02
+	uint8_t data[2] = { FC_WSR2, 0x02 };
+	flash_chip_select();
+	mpsse_xfer_spi(data, 2);
+	flash_chip_deselect();
+
+	flash_wait();
+
+	// Read Status Register 1
+	data[0] = FC_RSR2;
+
+	flash_chip_select();
+	mpsse_xfer_spi(data, 2);
+	flash_chip_deselect();
+
+	if ((data[1] & 0x02) != 0x02)
+		fprintf(stderr, "failed to set QE=1, SR2 now equal to 0x%02x (expected 0x%02x)\n", data[1], data[1] | 0x02);
+
+	fprintf(stderr, "SR2: %08x\n", data[1]);
+}
+
 // ---------------------------------------------------------
 // iceprog implementation
 // ---------------------------------------------------------
@@ -484,6 +512,7 @@ static void help(const char *progname)
 	fprintf(stderr, "  -c                    do not write flash, only verify (`check')\n");
 	fprintf(stderr, "  -S                    perform SRAM programming\n");
 	fprintf(stderr, "  -t                    just read the flash ID sequence\n");
+	fprintf(stderr, "  -Q                    just set the flash QE=1 bit\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "Erase mode (only meaningful in default mode):\n");
 	fprintf(stderr, "  [default]             erase aligned chunks of 64kB in write mode\n");
@@ -543,7 +572,7 @@ int main(int argc, char **argv)
 	bool bulk_erase = false;
 	bool dont_erase = false;
 	bool prog_sram = false;
-	bool test_mode = false;
+	int  test_mode = 0;
 	bool slow_clock = false;
 	bool disable_protect = false;
 	bool disable_verify = false;
@@ -565,7 +594,7 @@ int main(int argc, char **argv)
 	/* Decode command line parameters */
 	int opt;
 	char *endptr;
-	while ((opt = getopt_long(argc, argv, "d:i:I:rR:e:o:cbnStvspXk", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "d:i:I:rR:e:o:cbnStQvspXk", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'd': /* device string */
 			devstr = optarg;
@@ -653,7 +682,10 @@ int main(int argc, char **argv)
 			prog_sram = true;
 			break;
 		case 't': /* just read flash id */
-			test_mode = true;
+			test_mode = 1;
+			break;
+		case 'Q': /* just read flash id */
+			test_mode = 2;
 			break;
 		case 'v': /* provide verbose output */
 			verbose = true;
@@ -682,7 +714,7 @@ int main(int argc, char **argv)
 
 	/* Make sure that the combination of provided parameters makes sense */
 
-	if (read_mode + erase_mode + check_mode + prog_sram + test_mode > 1) {
+	if (read_mode + erase_mode + check_mode + prog_sram + !!test_mode > 1) {
 		fprintf(stderr, "%s: options `-r'/`-R', `-e`, `-c', `-S', and `-t' are mutually exclusive\n", my_name);
 		return EXIT_FAILURE;
 	}
@@ -840,7 +872,10 @@ int main(int argc, char **argv)
 		flash_reset();
 		flash_power_up();
 
-		flash_read_id();
+		if (test_mode == 1)
+			flash_read_id();
+		else
+			flash_enable_quad();
 
 		flash_power_down();
 
