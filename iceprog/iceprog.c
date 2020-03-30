@@ -310,6 +310,28 @@ static void flash_bulk_erase()
 	flash_chip_deselect();
 }
 
+static void flash_4kB_sector_erase(int addr)
+{
+	fprintf(stderr, "erase 4kB sector at 0x%06X..\n", addr);
+
+	uint8_t command[4] = { FC_SE, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
+
+	flash_chip_select();
+	mpsse_send_spi(command, 4);
+	flash_chip_deselect();
+}
+
+static void flash_32kB_sector_erase(int addr)
+{
+	fprintf(stderr, "erase 64kB sector at 0x%06X..\n", addr);
+
+	uint8_t command[4] = { FC_BE32, (uint8_t)(addr >> 16), (uint8_t)(addr >> 8), (uint8_t)addr };
+
+	flash_chip_select();
+	mpsse_send_spi(command, 4);
+	flash_chip_deselect();
+}
+
 static void flash_64kB_sector_erase(int addr)
 {
 	fprintf(stderr, "erase 64kB sector at 0x%06X..\n", addr);
@@ -449,6 +471,7 @@ static void help(const char *progname)
 	fprintf(stderr, "                          or 'M' for size in megabytes)\n");
 	fprintf(stderr, "  -s                    slow SPI (50 kHz instead of 6 MHz)\n");
 	fprintf(stderr, "  -v                    verbose output\n");
+	fprintf(stderr, "  -i [4,32,64]          select erase block size [default: 64k]\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "Mode of operation:\n");
 	fprintf(stderr, "  [default]             write file contents to flash, then verify\n");
@@ -509,6 +532,7 @@ int main(int argc, char **argv)
 			my_name = argv[0] + i + 1;
 
 	int read_size = 256 * 1024;
+	int erase_block_size = 64;
 	int erase_size = 0;
 	int rw_offset = 0;
 
@@ -539,10 +563,22 @@ int main(int argc, char **argv)
 	/* Decode command line parameters */
 	int opt;
 	char *endptr;
-	while ((opt = getopt_long(argc, argv, "d:I:rR:e:o:cbnStvspX", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "d:i:I:rR:e:o:cbnStvspX", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'd': /* device string */
 			devstr = optarg;
+			break;
+		case 'i': /* block erase size */
+			if (!strcmp(optarg, "4"))
+				erase_block_size = 4;
+			else if (!strcmp(optarg, "32"))
+				erase_block_size = 32;
+			else if (!strcmp(optarg, "64"))
+				erase_block_size = 64;
+			else {
+				fprintf(stderr, "%s: `%s' is not a valid erase block size (must be `4', `32' or `64')\n", my_name, optarg);
+				return EXIT_FAILURE;
+			}
 			break;
 		case 'I': /* FTDI Chip interface select */
 			if (!strcmp(optarg, "A"))
@@ -888,12 +924,24 @@ int main(int argc, char **argv)
 				{
 					fprintf(stderr, "file size: %ld\n", file_size);
 
-					int begin_addr = rw_offset & ~0xffff;
-					int end_addr = (rw_offset + file_size + 0xffff) & ~0xffff;
+					int block_size = erase_block_size << 10;
+					int block_mask = block_size - 1;
+					int begin_addr = rw_offset & ~block_mask;
+					int end_addr = (rw_offset + file_size + block_mask) & ~block_mask;
 
-					for (int addr = begin_addr; addr < end_addr; addr += 0x10000) {
+					for (int addr = begin_addr; addr < end_addr; addr += block_size) {
 						flash_write_enable();
-						flash_64kB_sector_erase(addr);
+						switch(erase_block_size) {
+							case 4:
+								flash_4kB_sector_erase(addr);
+								break;
+							case 32:
+								flash_32kB_sector_erase(addr);
+								break;
+							case 64:
+								flash_64kB_sector_erase(addr);
+								break;
+						}
 						if (verbose) {
 							fprintf(stderr, "Status after block erase:\n");
 							flash_read_status();
