@@ -17,7 +17,7 @@
 
 import icebox
 from icebox import re_match_cached, re_search_cached
-import getopt, sys, re
+import getopt, sys, re, os
 
 print_bits = False
 print_map = False
@@ -26,7 +26,7 @@ print_all = False
 
 def usage():
     print("""
-Usage: icebox_explain [options] [bitmap.asc]
+Usage: %s [options] [bitmap.asc]
 
     -b
         print config bit names for each config statement
@@ -39,7 +39,7 @@ Usage: icebox_explain [options] [bitmap.asc]
 
     -t '<x-coordinate> <y-coordinate>'
         print only the specified tile
-""")
+""" % os.path.basename(sys.argv[0]))
     sys.exit(0)
 
 try:

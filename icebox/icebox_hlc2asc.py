@@ -1147,7 +1147,7 @@ def main():
     except getopt.GetoptError as e:
         sys.stderr.write("%s: %s\n" % (program_short_name, e.msg))
         sys.stderr.write("Try `%s --help' for more information.\n"
-                         % sys.argv[0])
+                         % program_short_name)
         sys.exit(1)
 
     for opt, arg in opts:
@@ -1161,7 +1161,7 @@ Usage: %s [OPTION]... FILE
 
 If you have a bug report, please file an issue on github:
   https://github.com/rlutz/icestorm/issues
-""" % sys.argv[0])
+""" % program_short_name)
             sys.exit(0)
 
         if opt == '--version':
@@ -1184,13 +1184,13 @@ GNU General Public License for more details.
     if not args:
         sys.stderr.write("%s: missing argument\n" % (program_short_name))
         sys.stderr.write("Try `%s --help' for more information.\n"
-                         % sys.argv[0])
+                         % program_short_name)
         sys.exit(1)
 
     if len(args) != 1:
         sys.stderr.write("%s: too many arguments\n" % (program_short_name))
         sys.stderr.write("Try `%s --help' for more information.\n"
-                         % sys.argv[0])
+                         % program_short_name)
         sys.exit(1)
 
     if args[0] == '-':

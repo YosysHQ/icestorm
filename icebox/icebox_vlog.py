@@ -17,7 +17,7 @@
 
 import icebox
 from icebox import re_match_cached, re_sub_cached, re_search_cached
-import getopt, sys, re
+import getopt, sys, re, os
 
 strip_comments = False
 strip_interconn = False
@@ -34,7 +34,7 @@ modname = "chip"
 
 def usage():
     print("""
-Usage: icebox_vlog [options] [bitmap.asc]
+Usage: %s [options] [bitmap.asc]
 
     -s
         strip comments from output
@@ -70,7 +70,7 @@ Usage: icebox_vlog [options] [bitmap.asc]
 
     -D
         enable exactly-one-driver checks
-""")
+""" % os.path.basename(sys.argv[0]))
     sys.exit(0)
 
 try:

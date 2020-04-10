@@ -27,7 +27,7 @@ mode384 = False
 tx, ty = 0, 0
 
 def usage():
-    print("Usage: %s [options]" % sys.argv[0])
+    print("Usage: %s [options]" % os.path.basename(sys.argv[0]))
     print("  -x tile_x_coordinate")
     print("  -y tile_y_coordinate")
     print("  -d outdir")

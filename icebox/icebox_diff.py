@@ -17,13 +17,13 @@
 
 import icebox
 from icebox import re_match_cached
-import sys
+import sys, os
 import re
 
 if len(sys.argv) != 3:
     print("""
-Usage: icebox_diff bitmap1.asc bitmap2.asc
-""")
+Usage: %s bitmap1.asc bitmap2.asc
+""" % os.path.basename(sys.argv[0]))
     sys.exit(0)
 
 print("Reading file '%s'.." % sys.argv[1])

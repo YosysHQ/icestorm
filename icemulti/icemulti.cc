@@ -157,10 +157,10 @@ static void write_header(std::ostream &ofs, uint32_t &file_offset,
         write_byte(ofs, file_offset, 0x00);
 }
 
-void usage()
+void usage(const char *cmd)
 {
     log("\n");
-    log("Usage: icemulti [options] input-files\n");
+    log("Usage: %s [options] input-files\n", cmd);
     log("\n");
     log(" -c\n");
     log(" coldboot mode, power on reset image is selected by CBSEL0/CBSEL1\n");
@@ -252,12 +252,12 @@ int main(int argc, char **argv)
                 print_offsets = true;
                 break;
             default:
-                usage();
+                usage(argv[0]);
         }
 
     if (optind == argc) {
         fprintf(stderr, "%s: missing argument\n", program_short_name);
-        usage();
+        usage(argv[0]);
     }
 
     while (optind != argc) {

@@ -17,18 +17,18 @@
 
 import icebox
 from icebox import re_match_cached
-import getopt, sys, re
+import getopt, sys, re, os
 
 verbose = False
 
 def usage():
     print("""
-Usage: icebox_stat [options] [bitmap.asc]
+Usage: %s [options] [bitmap.asc]
 
     -v
         verbose output
 
-""")
+""" % os.path.basename(sys.argv[0]))
     sys.exit(0)
 
 try:

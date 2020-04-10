@@ -36,45 +36,66 @@ clean:
 	rm -f icebox.pyc iceboxdb.pyc
 
 install: all
-	mkdir -p $(DESTDIR)$(PREFIX)/share/icebox
+	mkdir -p $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp chipdb-384.txt    $(DESTDIR)$(PREFIX)/share/icebox/
-	cp chipdb-1k.txt     $(DESTDIR)$(PREFIX)/share/icebox/
-	cp chipdb-8k.txt     $(DESTDIR)$(PREFIX)/share/icebox/
-	cp chipdb-5k.txt     $(DESTDIR)$(PREFIX)/share/icebox/
-	cp chipdb-u4k.txt    $(DESTDIR)$(PREFIX)/share/icebox/
-	cp chipdb-lm4k.txt   $(DESTDIR)$(PREFIX)/share/icebox/
-	cp icebox.py         $(DESTDIR)$(PREFIX)/bin/icebox.py
-	cp iceboxdb.py       $(DESTDIR)$(PREFIX)/bin/iceboxdb.py
-	cp icebox_chipdb.py  $(DESTDIR)$(PREFIX)/bin/icebox_chipdb$(PY_EXE)
-	cp icebox_diff.py    $(DESTDIR)$(PREFIX)/bin/icebox_diff$(PY_EXE)
-	cp icebox_explain.py $(DESTDIR)$(PREFIX)/bin/icebox_explain$(PY_EXE)
-	cp icebox_asc2hlc.py $(DESTDIR)$(PREFIX)/bin/icebox_asc2hlc$(PY_EXE)
-	cp icebox_hlc2asc.py $(DESTDIR)$(PREFIX)/bin/icebox_hlc2asc$(PY_EXE)
-	cp icebox_colbuf.py  $(DESTDIR)$(PREFIX)/bin/icebox_colbuf$(PY_EXE)
-	cp icebox_html.py    $(DESTDIR)$(PREFIX)/bin/icebox_html$(PY_EXE)
-	cp icebox_maps.py    $(DESTDIR)$(PREFIX)/bin/icebox_maps$(PY_EXE)
-	cp icebox_vlog.py    $(DESTDIR)$(PREFIX)/bin/icebox_vlog$(PY_EXE)
-	cp icebox_stat.py    $(DESTDIR)$(PREFIX)/bin/icebox_stat$(PY_EXE)
+	cp chipdb-384.txt    $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/
+	cp chipdb-1k.txt     $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/
+	cp chipdb-8k.txt     $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/
+	cp chipdb-5k.txt     $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/
+	cp chipdb-u4k.txt    $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/
+	cp chipdb-lm4k.txt   $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/
+	cp icebox.py         $(DESTDIR)$(PREFIX)/bin/$(subst -,_,$(PROGRAM_PREFIX))icebox.py
+	cp iceboxdb.py       $(DESTDIR)$(PREFIX)/bin/$(subst -,_,$(PROGRAM_PREFIX))iceboxdb.py
+	cp icebox_chipdb.py  $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_chipdb$(PY_EXE)
+	cp icebox_diff.py    $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_diff$(PY_EXE)
+	cp icebox_explain.py $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_explain$(PY_EXE)
+	cp icebox_asc2hlc.py $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_asc2hlc$(PY_EXE)
+	cp icebox_hlc2asc.py $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_hlc2asc$(PY_EXE)
+	cp icebox_colbuf.py  $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_colbuf$(PY_EXE)
+	cp icebox_html.py    $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_html$(PY_EXE)
+	cp icebox_maps.py    $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_maps$(PY_EXE)
+	cp icebox_vlog.py    $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_vlog$(PY_EXE)
+	cp icebox_stat.py    $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_stat$(PY_EXE)
+	sed -i 's+import iceboxdb+import $(subst -,_,$(PROGRAM_PREFIX))iceboxdb as iceboxdb+g' $(DESTDIR)$(PREFIX)/bin/$(subst -,_,$(PROGRAM_PREFIX))icebox.py
+	sed -i 's+import icebox+import $(subst -,_,$(PROGRAM_PREFIX))icebox as icebox+g' $(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_chipdb$(PY_EXE)
+	sed -i 's+import icebox+import $(subst -,_,$(PROGRAM_PREFIX))icebox as icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_diff$(PY_EXE)
+	sed -i 's+from icebox+from $(subst -,_,$(PROGRAM_PREFIX))icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_diff$(PY_EXE)
+	sed -i 's+import icebox+import $(subst -,_,$(PROGRAM_PREFIX))icebox as icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_explain$(PY_EXE)
+	sed -i 's+from icebox+from $(subst -,_,$(PROGRAM_PREFIX))icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_explain$(PY_EXE)
+	sed -i 's+import icebox+import $(subst -,_,$(PROGRAM_PREFIX))icebox as icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_asc2hlc$(PY_EXE)
+	sed -i 's+from icebox+from $(subst -,_,$(PROGRAM_PREFIX))icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_asc2hlc$(PY_EXE)
+	sed -i 's+import icebox+import $(subst -,_,$(PROGRAM_PREFIX))icebox as icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_hlc2asc$(PY_EXE)
+	sed -i 's+from icebox+from $(subst -,_,$(PROGRAM_PREFIX))icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_hlc2asc$(PY_EXE)
+	sed -i 's+import icebox+import $(subst -,_,$(PROGRAM_PREFIX))icebox as icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_colbuf$(PY_EXE)
+	sed -i 's+from icebox+from $(subst -,_,$(PROGRAM_PREFIX))icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_colbuf$(PY_EXE)	
+	sed -i 's+import icebox+import $(subst -,_,$(PROGRAM_PREFIX))icebox as icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_html$(PY_EXE)
+	sed -i 's+from icebox+from $(subst -,_,$(PROGRAM_PREFIX))icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_html$(PY_EXE)	
+	sed -i 's+import icebox+import $(subst -,_,$(PROGRAM_PREFIX))icebox as icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_maps$(PY_EXE)
+	sed -i 's+from icebox+from $(subst -,_,$(PROGRAM_PREFIX))icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_maps$(PY_EXE)	
+	sed -i 's+import icebox+import $(subst -,_,$(PROGRAM_PREFIX))icebox as icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_vlog$(PY_EXE)
+	sed -i 's+from icebox+from $(subst -,_,$(PROGRAM_PREFIX))icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_vlog$(PY_EXE)	
+	sed -i 's+/usr/local/share/icebox+$(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_vlog$(PY_EXE)
+	sed -i 's+import icebox+import $(subst -,_,$(PROGRAM_PREFIX))icebox as icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_stat$(PY_EXE)
+	sed -i 's+from icebox+from $(subst -,_,$(PROGRAM_PREFIX))icebox+g' $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_stat$(PY_EXE)	
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox.py
-	rm -f $(DESTDIR)$(PREFIX)/bin/iceboxdb.py
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_chipdb$(PY_EXE)
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_diff$(PY_EXE)
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_explain$(PY_EXE)
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_asc2hlc$(PY_EXE)
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_hlc2asc$(PY_EXE)
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_colbuf$(PY_EXE)
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_html$(PY_EXE)
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_maps$(PY_EXE)
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_vlog$(PY_EXE)
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebox_stat$(PY_EXE)
-	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-384.txt
-	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-1k.txt
-	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-8k.txt
-	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-lm4k.txt
-	rm -f $(DESTDIR)$(PREFIX)/share/icebox/chipdb-u4k.txt
-	-rmdir $(DESTDIR)$(PREFIX)/share/icebox
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(subst -,_,$(PROGRAM_PREFIX))cebox.py
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(subst -,_,$(PROGRAM_PREFIX))iceboxdb.py
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_chipdb$(PY_EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_diff$(PY_EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_explain$(PY_EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_asc2hlc$(PY_EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_hlc2asc$(PY_EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_colbuf$(PY_EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_html$(PY_EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_maps$(PY_EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_vlog$(PY_EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebox_stat$(PY_EXE)
+	rm -f $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/chipdb-384.txt
+	rm -f $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/chipdb-1k.txt
+	rm -f $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/chipdb-8k.txt
+	rm -f $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/chipdb-lm4k.txt
+	rm -f $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/chipdb-u4k.txt
+	-rmdir $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox
 
 .PHONY: all check clean install uninstall
