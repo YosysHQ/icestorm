@@ -16,21 +16,21 @@ LDLIBS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors
 CFLAGS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --cflags $$pkg && exit; done; )
 endif
 
-all: iceprog$(EXE)
+all: $(PROGRAM_PREFIX)iceprog$(EXE)
 
-iceprog$(EXE): iceprog.o mpsse.o
+$(PROGRAM_PREFIX)iceprog$(EXE): iceprog.o mpsse.o
 	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp iceprog$(EXE) $(DESTDIR)$(PREFIX)/bin/iceprog$(EXE)
+	cp $(PROGRAM_PREFIX)iceprog$(EXE) $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)iceprog$(EXE)
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/iceprog$(EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)iceprog$(EXE)
 
 clean:
-	rm -f iceprog
-	rm -f iceprog.exe
+	rm -f $(PROGRAM_PREFIX)iceprog
+	rm -f $(PROGRAM_PREFIX)iceprog.exe
 	rm -f *.o *.d
 
 -include *.d

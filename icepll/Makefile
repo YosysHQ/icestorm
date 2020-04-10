@@ -4,21 +4,21 @@ ifeq ($(STATIC),1)
 LDFLAGS += -static
 endif
 
-all: icepll$(EXE)
+all: $(PROGRAM_PREFIX)icepll$(EXE)
 
-icepll$(EXE): icepll.o
+$(PROGRAM_PREFIX)icepll$(EXE): icepll.o
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp icepll$(EXE) $(DESTDIR)$(PREFIX)/bin/icepll$(EXE)
+	cp $(PROGRAM_PREFIX)icepll$(EXE) $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icepll$(EXE)
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/icepll$(EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icepll$(EXE)
 
 clean:
-	rm -f icepll$(EXE)
-	rm -f icepll.exe
+	rm -f $(PROGRAM_PREFIX)icepll$(EXE)
+	rm -f $(PROGRAM_PREFIX)icepll.exe
 	rm -f *.o *.d
 
 -include *.d

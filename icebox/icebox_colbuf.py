@@ -17,21 +17,21 @@
 
 import icebox
 from icebox import re_match_cached
-import getopt, sys, re
+import getopt, sys, re, os
 
 check_mode = False
 fixup_mode = False
 
 def usage():
     print("""
-Usage: icebox_colbuf [options] [input.asc [output.asc]]
+Usage: %s [options] [input.asc [output.asc]]
 
     -c
         check colbuf bits
 
     -f
         fix colbuf bits
-""")
+""" % os.path.basename(sys.argv[0]))
     sys.exit(1)
 
 try:

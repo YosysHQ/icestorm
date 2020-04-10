@@ -4,24 +4,24 @@ ifeq ($(STATIC),1)
 LDFLAGS += -static
 endif
 
-all: icebram$(EXE)
+all: $(PROGRAM_PREFIX)icebram$(EXE)
 
-icebram$(EXE): icebram.o
+$(PROGRAM_PREFIX)icebram$(EXE): icebram.o
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
-test: icebram
+test: $(PROGRAM_PREFIX)icebram
 	bash rundemo.sh
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp icebram$(EXE) $(DESTDIR)$(PREFIX)/bin/icebram$(EXE)
+	cp $(PROGRAM_PREFIX)icebram$(EXE) $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebram$(EXE)
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/icebram$(EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebram$(EXE)
 
 clean:
-	rm -f icebram$(EXE)
-	rm -f icebram.exe
+	rm -f $(PROGRAM_PREFIX)icebram$(EXE)
+	rm -f $(PROGRAM_PREFIX)icebram.exe
 	rm -f demo.* demo_*.*
 	rm -f *.o *.d
 

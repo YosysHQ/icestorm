@@ -6,12 +6,12 @@ ifeq ($(STATIC),1)
 LDFLAGS += -static
 endif
 
-all: icetime$(EXE)
+all: $(PROGRAM_PREFIX)icetime$(EXE)
 
 CHIPS=lp384 lp1k lp8k hx1k hx8k up5k
 
 ifeq ($(EXE),.js)
-icetime$(EXE): | share/$(CHIPDB_SUBDIR)/chipdb-384.txt share/$(CHIPDB_SUBDIR)/chipdb-1k.txt share/$(CHIPDB_SUBDIR)/chipdb-8k.txt share/$(CHIPDB_SUBDIR)/chipdb-5k.txt
+$(PROGRAM_PREFIX)icetime$(EXE): | share/$(CHIPDB_SUBDIR)/chipdb-384.txt share/$(CHIPDB_SUBDIR)/chipdb-1k.txt share/$(CHIPDB_SUBDIR)/chipdb-8k.txt share/$(CHIPDB_SUBDIR)/chipdb-5k.txt
 
 share/$(CHIPDB_SUBDIR)/chipdb-384.txt: ../icebox/chipdb-384.txt
 	mkdir -p share/$(CHIPDB_SUBDIR)
@@ -28,7 +28,7 @@ share/$(CHIPDB_SUBDIR)/chipdb-5k.txt: ../icebox/chipdb-5k.txt
 override LDFLAGS += --embed-file share
 endif
 
-icetime$(EXE): icetime.o iceutil.o $(addsuffix .o, $(addprefix timings-, $(CHIPS)))
+$(PROGRAM_PREFIX)icetime$(EXE): icetime.o iceutil.o $(addsuffix .o, $(addprefix timings-, $(CHIPS)))
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 timings-%.cc: timings.py ../icefuzz/timings_%.txt
@@ -36,12 +36,12 @@ timings-%.cc: timings.py ../icefuzz/timings_%.txt
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	mkdir -p $(DESTDIR)$(PREFIX)/share/icebox
-	cp icetime$(EXE) $(DESTDIR)$(PREFIX)/bin/icetime$(EXE)
-	cp ../icefuzz/timings_*.txt $(DESTDIR)$(PREFIX)/share/icebox/
+	mkdir -p $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox
+	cp $(PROGRAM_PREFIX)icetime$(EXE) $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icetime$(EXE)
+	cp ../icefuzz/timings_*.txt $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/icetime$(EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icetime$(EXE)
 
 
 # View timing netlist:
@@ -65,7 +65,7 @@ test: test0 test1 test2 test3 test4 test5 test6 test7 test8 test9
 show: show0 show1 show2 show3 show4 show5 show6 show7 show8 show9
 
 clean:
-	rm -f icetime$(EXE) icetime.exe *.o *.d timings-*.cc
+	rm -f $(PROGRAM_PREFIX)icetime$(EXE) $(PROGRAM_PREFIX)icetime.exe *.o *.d timings-*.cc
 	rm -rf test[0-9]*
 
 -include *.d

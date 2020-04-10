@@ -16,7 +16,7 @@
 #
 
 import icebox
-import getopt, sys, re
+import getopt, sys, re, os
 
 mode_384 = False
 mode_lm4k = False
@@ -26,7 +26,7 @@ mode_8k = False
 
 def usage():
     print("""
-Usage: icebox_chipdb [options] [bitmap.asc]
+Usage: %s [options] [bitmap.asc]
 
     -3
         create chipdb for 384 device
@@ -42,7 +42,7 @@ Usage: icebox_chipdb [options] [bitmap.asc]
 
     -u
         create chipdb for u4k device
-""")
+""" % os.path.basename(sys.argv[0]))
     sys.exit(0)
 
 try:

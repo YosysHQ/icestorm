@@ -17,20 +17,21 @@
 
 import icebox
 from icebox import re_match_cached
-import getopt, sys, re
+import getopt, sys, re, os
 
 mode = None
 
 def usage():
+    program_short_name = os.path.basename(sys.argv[0])
     print("Usage:")
-    print("  icebox_maps -m bitmaps")
-    print("  icebox_maps -m io_tile_nets_l")
-    print("  icebox_maps -m io_tile_nets_r")
-    print("  icebox_maps -m io_tile_nets_t")
-    print("  icebox_maps -m io_tile_nets_b")
-    print("  icebox_maps -m logic_tile_nets")
-    print("  icebox_maps -m ramb_tile_nets")
-    print("  icebox_maps -m ramt_tile_nets")
+    print("  %s -m bitmaps" % program_short_name)
+    print("  %s -m io_tile_nets_l" % program_short_name)
+    print("  %s -m io_tile_nets_r" % program_short_name)
+    print("  %s -m io_tile_nets_t" % program_short_name)
+    print("  %s -m io_tile_nets_b" % program_short_name)
+    print("  %s -m logic_tile_nets" % program_short_name)
+    print("  %s -m ramb_tile_nets" % program_short_name)
+    print("  %s -m ramt_tile_nets" % program_short_name)
     sys.exit(0)
 
 try:

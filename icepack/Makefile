@@ -5,30 +5,30 @@ ifeq ($(STATIC),1)
 LDFLAGS += -static
 endif
 
-all: icepack$(EXE) iceunpack$(EXE)
+all: $(PROGRAM_PREFIX)icepack$(EXE) $(PROGRAM_PREFIX)iceunpack$(EXE)
 
-icepack$(EXE): icepack.o
+$(PROGRAM_PREFIX)icepack$(EXE): icepack.o
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
-iceunpack$(EXE): icepack$(EXE)
-	ln -sf icepack$(EXE) iceunpack$(EXE)
+$(PROGRAM_PREFIX)iceunpack$(EXE): $(PROGRAM_PREFIX)icepack$(EXE)
+	ln -sf $(PROGRAM_PREFIX)icepack$(EXE) $(PROGRAM_PREFIX)iceunpack$(EXE)
 
-iceunpack.exe:
+$(PROGRAM_PREFIX)iceunpack.exe:
 	# no iceunpack.exe, use icepack -u
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp icepack$(EXE) $(DESTDIR)$(PREFIX)/bin/icepack$(EXE)
-	ln -sf icepack$(EXE) $(DESTDIR)$(PREFIX)/bin/iceunpack$(EXE)
+	cp $(PROGRAM_PREFIX)icepack$(EXE) $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icepack$(EXE)
+	ln -sf $(PROGRAM_PREFIX)icepack$(EXE) $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)iceunpack$(EXE)
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/icepack$(EXE)
-	rm -f $(DESTDIR)$(PREFIX)/bin/iceunpack$(EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icepack$(EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)iceunpack$(EXE)
 
 clean:
-	rm -f icepack$(EXE)
-	rm -f iceunpack$(EXE)
-	rm -f icepack.exe
+	rm -f $(PROGRAM_PREFIX)icepack$(EXE)
+	rm -f $(PROGRAM_PREFIX)iceunpack$(EXE)
+	rm -f $(PROGRAM_PREFIX)icepack.exe
 	rm -f *.o *.d
 
 -include *.d
