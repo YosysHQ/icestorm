@@ -30,6 +30,7 @@
 #include <functional>
 #include <map>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <vector>
