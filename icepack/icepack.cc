@@ -974,17 +974,9 @@ void FpgaConfig::write_cram_pbm(std::ostream &ofs, int bank_num) const
 	// We require random access to tile_type, so ensure that each column of each
 	// bank is initialised so that all possible indices are valid
 	for (int bank = 0; bank < 4; bank++) {
-		tile_type[bank].reserve(this->cram_width);
-
-		for (int x = 0; x < this->cram_width; x++) {
-			tile_type[bank].push_back(vector<uint32_t>(this->cram_height));
-
-			for (int y = 0; y < this->cram_height; y++) {
-				// Initialisation value unimportant - will be overwritten during
-				// image generation
-				tile_type[bank][x].push_back(0);
-			}
-		}
+		tile_type[bank].resize(this->cram_width);
+		for (int x = 0; x < this->cram_width; x++)
+			tile_type[bank][x].resize(this->cram_height);
 	}
 
 	for (int y = 0; y <= this->chip_height()+1; y++)
