@@ -181,7 +181,7 @@ void readfreqfile(const char *filename) {
 	memset(freq_table, 0, sizeof(freq_table));
 	int i = 0;
 	double freq=0;
-	while((i < sizeof(freq_table)/sizeof(double)) && (fscanf(f, "%lf", &freq) > 0))
+	while((i < int(sizeof(freq_table)/sizeof(double))) && (fscanf(f, "%lf", &freq) > 0))
 	{
 		freq_table[i++] = freq;
 	}
