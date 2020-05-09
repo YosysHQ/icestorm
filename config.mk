@@ -19,8 +19,8 @@ endif
 WARN_LEVEL ?= all
 
 LDLIBS = -lm -lstdc++
-CFLAGS += -MD -O$(OPT_LEVEL) $(DBG_LEVEL) -W$(WARN_LEVEL) -std=$(C_STD) -I$(PREFIX)/include
-CXXFLAGS += -MD -O$(OPT_LEVEL) $(DBG_LEVEL) -W$(WARN_LEVEL) -std=$(CXX_STD) -I$(PREFIX)/include
+CFLAGS += -MD -MP -O$(OPT_LEVEL) $(DBG_LEVEL) -W$(WARN_LEVEL) -std=$(C_STD) -I$(PREFIX)/include
+CXXFLAGS += -MD -MP -O$(OPT_LEVEL) $(DBG_LEVEL) -W$(WARN_LEVEL) -std=$(CXX_STD) -I$(PREFIX)/include
 
 DESTDIR ?=
 CHIPDB_SUBDIR ?= $(PROGRAM_PREFIX)icebox
