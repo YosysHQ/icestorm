@@ -202,8 +202,14 @@ static void flash_reset()
 {
 	uint8_t data[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
+	// This disables CRM is if it was enabled
 	flash_chip_select();
 	mpsse_xfer_spi(data, 8);
+	flash_chip_deselect();
+
+	// This disables QPI if it was enable
+	flash_chip_select();
+	mpsse_xfer_spi_bits(0xFF, 2);
 	flash_chip_deselect();
 }
 
