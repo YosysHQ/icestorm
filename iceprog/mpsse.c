@@ -338,8 +338,11 @@ void mpsse_init(int ifnum, const char *devstr, bool slow_clock)
 		mpsse_error(2);
 	}
 
-	// enable clock divide by 5
-	mpsse_send_byte(MC_TCK_D5);
+	// enable clock divide by 5 for USB-HS chips
+	if (mpsse_ftdic.type == TYPE_2232H ||
+	    mpsse_ftdic.type == TYPE_4232H ||
+	    mpsse_ftdic.type == TYPE_232H)
+		mpsse_send_byte(MC_TCK_D5);
 
 	if (slow_clock) {
 		// set 50 kHz clock
