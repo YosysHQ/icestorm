@@ -872,6 +872,28 @@ int main(int argc, char **argv)
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
+		sram_chip_deselect();
+		usleep(100);
+		sram_chip_select();
+
+		uint8_t sig[] = { 0x7e, 0xaa, 0x99, 0x7e, // key
+				  0x01, 0x09,		  // command
+				  0, 0, 0, 0 };		  // room for result
+		mpsse_xfer_spi(sig, sizeof sig);
+		fprintf(stderr, "Signature read: ");
+		for (int i = 0; i < 4; i++)
+			fprintf(stderr, "0x%02x ", sig[i + 6]);
+		fprintf(stderr, "\n");
+
+		if (sig[6] == 0xff && sig[7] == 0xff &&
+		    sig[8] == 0xff && sig[9] == 0xff)
+			fprintf(stderr,
+				"WARNING: Signature is 0xFFFFFFFF. "
+				"Are CRAM jumpers set correctly?\n");
+
+		sram_chip_deselect();
+		usleep(100);
+		sram_chip_select();
 
 		// ---------------------------------------------------------
 		// Program
