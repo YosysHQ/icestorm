@@ -155,6 +155,13 @@ static void sram_chip_select()
 	set_cs_creset(0, 1);
 }
 
+// SRAM chip deselect assert
+// Same as flash_release_reset()
+static void sram_chip_deselect()
+{
+	set_cs_creset(1, 1);
+}
+
 static void flash_read_id()
 {
 	/* JEDEC ID structure:
@@ -881,10 +888,18 @@ int main(int argc, char **argv)
 			mpsse_send_spi(buffer, rc);
 		}
 
-		mpsse_send_dummy_bytes(6);
-		mpsse_send_dummy_bit();
-
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
+
+		sram_chip_deselect();
+
+		// "Issue at least 49 dummy bits after CDONE went
+		// high."
+		// mpsse_send_dummy_{bits,bytes} is only available on
+		// USB-HS FTDI chips, not on FT2232D. Just send 56
+		// zero instead.
+		uint8_t dummy[7] = { 0 };
+		mpsse_send_spi(dummy, 7);
+
 	}
 	else /* program flash */
 	{
