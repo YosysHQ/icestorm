@@ -106,7 +106,7 @@ void help(const char *cmd)
 	printf("        use the same file as <from_hexfile> later.\n");
 	printf("\n");
 	printf("    -s <seed>\n");
-	printf("        seed random generator with fixed value.\n");
+	printf("        seed random generator with the given value.\n");
 	printf("\n");
 	printf("    -v\n");
 	printf("        verbose output\n");
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 	bool verbose = false;
 	bool generate = false;
 	bool seed = false;
-	uint32_t seed_nr = getpid();
+	uint32_t seed_nr = 0;
 
 	int opt;
 	while ((opt = getopt(argc, argv, "vgs:")) != -1)
