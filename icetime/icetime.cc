@@ -62,16 +62,16 @@ std::map<int, std::string> net_symbols;
 
 bool get_config_bit(int tile_x, int tile_y, int bit_row, int bit_col)
 {
-	if (int(config_bits.size()) < tile_x)
+	if (int(config_bits.size()) <= tile_x)
 		return false;
 
-	if (int(config_bits[tile_x].size()) < tile_y)
+	if (int(config_bits[tile_x].size()) <= tile_y)
 		return false;
 
-	if (int(config_bits[tile_x][tile_y].size()) < bit_row)
+	if (int(config_bits[tile_x][tile_y].size()) <= bit_row)
 		return false;
 
-	if (int(config_bits[tile_x][tile_y][bit_row].size()) < bit_col)
+	if (int(config_bits[tile_x][tile_y][bit_row].size()) <= bit_col)
 		return false;
 
 	return config_bits[tile_x][tile_y][bit_row][bit_col];
