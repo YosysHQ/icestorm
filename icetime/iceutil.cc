@@ -155,7 +155,7 @@ std::string find_chipdb(std::string config_device)
 #else
 		homepath += getenv("HOME");
 #endif
-		homepath += std::string(PREFIX + 1) + "/" CHIPDB_SUBDIR "/chipdb-" + config_device + ".txt";
+		homepath += std::string(&PREFIX[1]) + "/" CHIPDB_SUBDIR "/chipdb-" + config_device + ".txt";
 		if (verbose)
 			fprintf(stderr, "Looking for chipdb '%s' at %s\n", config_device.c_str(), homepath.c_str());
 		if (file_test_open(homepath))
