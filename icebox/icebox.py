@@ -1954,7 +1954,8 @@ pllinfo_db = {
         "PLLOUT_SELECT_B_1":    (12, 31, "PLLCONFIG_3"),
 
         # Numeric Parameters
-        "SHIFTREG_DIV_MODE":    (12, 31, "PLLCONFIG_4"),
+        "SHIFTREG_DIV_MODE_0":  (12, 31, "PLLCONFIG_4"),
+        "SHIFTREG_DIV_MODE_1":  (14, 31, "PLLCONFIG_6"),
         "FDA_FEEDBACK_0":       (12, 31, "PLLCONFIG_9"),
         "FDA_FEEDBACK_1":       (13, 31, "PLLCONFIG_1"),
         "FDA_FEEDBACK_2":       (13, 31, "PLLCONFIG_2"),
