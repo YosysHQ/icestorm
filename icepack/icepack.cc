@@ -1331,10 +1331,10 @@ void BramIndexConverter::get_bram_index(int bit_x, int bit_y, int &bram_bank, in
 // ==================================================================
 // Main program
 
-void usage()
+void usage(const char *cmd)
 {
 	log("\n");
-	log("Usage: icepack [options] [input-file [output-file]]\n");
+	log("Usage: %s [options] [input-file [output-file]]\n", cmd);
 	log("\n");
 	log("    -u\n");
 	log("        unpack mode (implied when called as 'iceunpack')\n");
@@ -1426,7 +1426,7 @@ int main(int argc, char **argv)
 				} else if (arg[i] == 'n') {
 					skip_bram_initialization = true;
 				} else
-					usage();
+					usage(argv[0]);
 			continue;
 		}
 
@@ -1458,7 +1458,7 @@ int main(int argc, char **argv)
 	}
 
 	if (parameters.size() > 2)
-		usage();
+		usage(argv[0]);
 
 	FpgaConfig fpga_config;
         
