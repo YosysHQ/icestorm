@@ -179,7 +179,11 @@ int main(int argc, char **argv)
 		// to repeat simultaneously.
 		uint32_t seed_nr;
 		if (!seed) {
+#if defined(__wasm)
+			seed_nr = 0;
+#else
 			seed_nr = getpid();
+#endif
 		} else {
 			seed_nr = seed_opt;
 		}
