@@ -106,7 +106,7 @@ void help(const char *cmd)
 	printf("        use the same file as <from_hexfile> later.\n");
 	printf("\n");
 	printf("    -s <seed>\n");
-	printf("        seed random generator with the given value.\n");
+	printf("        seed random generator with fixed value.\n");
 	printf("\n");
 	printf("    -v\n");
 	printf("        verbose output\n");
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 	bool verbose = false;
 	bool generate = false;
 	bool seed = false;
-	uint32_t seed_nr = 0;
+	uint32_t seed_opt = 0;
 
 	int opt;
 	while ((opt = getopt(argc, argv, "vgs:")) != -1)
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			seed = true;
-			seed_nr = atoi(optarg);
+			seed_opt = atoi(optarg);
 			break;
 		default:
 			help(argv[0]);
@@ -172,7 +172,21 @@ int main(int argc, char **argv)
 		}
 
 		if (verbose && seed)
-			fprintf(stderr, "Seed: %d\n", seed_nr);
+			fprintf(stderr, "Seed: %d\n", seed_opt);
+		
+		// If -s is provided: seed with the given value.
+		// If -s is not provided: seed with the PID and current time, which are unlikely 
+		// to repeat simultaneously.
+		uint32_t seed_nr;
+		if (!seed) {
+#if defined(__wasm)
+			seed_nr = 0;
+#else
+			seed_nr = getpid();
+#endif
+		} else {
+			seed_nr = seed_opt;
+		}
 
 		x =  uint64_t(seed_nr) << 32;
 		x ^= uint64_t(depth) << 16;
@@ -182,15 +196,11 @@ int main(int argc, char **argv)
 		xorshift64star();
 		xorshift64star();
 
-		if (!seed){
+		if (!seed) {
 			struct timeval tv;
 			gettimeofday(&tv, NULL);
 			x ^= uint64_t(tv.tv_sec) << 20;
 			x ^= uint64_t(tv.tv_usec);
-		}
-		else {
-			x ^= uint64_t(seed) << 20;
-			x ^= uint64_t(seed);
 		}
 
 		xorshift64star();
