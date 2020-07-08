@@ -753,6 +753,7 @@ double get_delay_lp8k(std::string cell_type, std::string in_port, std::string ou
 double get_delay_hx1k(std::string cell_type, std::string in_port, std::string out_port);
 double get_delay_hx8k(std::string cell_type, std::string in_port, std::string out_port);
 double get_delay_up5k(std::string cell_type, std::string in_port, std::string out_port);
+double get_delay_u4k(std::string cell_type, std::string in_port, std::string out_port);
 
 double get_delay(std::string cell_type, std::string in_port, std::string out_port)
 {
@@ -765,17 +766,20 @@ double get_delay(std::string cell_type, std::string in_port, std::string out_por
 	if (device_type == "lp1k")
 		return get_delay_lp1k(cell_type, in_port, out_port);
 
-	if (device_type == "lp8k")
+	if (device_type == "lp8k" || device_type == "lp4k")
 		return get_delay_lp8k(cell_type, in_port, out_port);
 
 	if (device_type == "hx1k")
 		return get_delay_hx1k(cell_type, in_port, out_port);
 
-	if (device_type == "hx8k")
+	if (device_type == "hx8k" || device_type == "hx4k")
 		return get_delay_hx8k(cell_type, in_port, out_port);
 
-	if (device_type == "up5k")
+	if (device_type == "up5k" || device_type == "up3k")
 		return get_delay_up5k(cell_type, in_port, out_port);
+
+	if (device_type == "u4k" || device_type == "u1k" || device_type == "u2k")
+		return get_delay_u4k(cell_type, in_port, out_port);
 	fprintf(stderr, "No built-in timing database for '%s' devices!\n", device_type.c_str());
 	exit(1);
 }
@@ -1594,7 +1598,7 @@ void make_seg_cell(int net, const net_segment_t &seg)
 
 	if (sscanf(seg.name.c_str(), "lutff_%d/in_%d", &a, &b) == 2) {
 		//"logic" wires at the side of the device are actually IP or DSP
-		if(device_type == "up5k" && ((seg.x == 0) || (seg.x == int(config_tile_type.size()) - 1))) {
+		if((device_type == "up5k" || device_type == "up3k") && ((seg.x == 0) || (seg.x == int(config_tile_type.size()) - 1))) {
 			std::string primnet;
 			auto cell = make_dsp_ip(seg.x, seg.y, seg.name, primnet);
 			if(cell != "") {
@@ -2210,7 +2214,7 @@ void help(const char *cmd)
 	printf("    -j <output_file>\n");
 	printf("        write timing report in json format to the file\n");
 	printf("\n");
-	printf("    -d lp384|lp1k|hx1k|lp8k|hx8k|up5k\n");
+	printf("    -d lp384|lp1k|hx1k|lp4k|hx4k|lp8k|hx8k|up3k|up5k|u1k|u2k|u4k\n");
 	printf("        select the device type (default = lp variant)\n");
 	printf("\n");
 	printf("    -C <chipdb-file>\n");
@@ -2367,12 +2371,16 @@ int main(int argc, char **argv)
 		if (config_device != "1k")
 			goto device_chip_mismatch;
 	} else
-	if (device_type == "lp8k" || device_type == "hx8k") {
+	if (device_type == "lp8k" || device_type == "hx8k" || device_type == "lp4k" || device_type == "hx4k") {
 		if (config_device != "8k")
 			goto device_chip_mismatch;
 	} else
-	if (device_type == "up5k") {
+	if (device_type == "up5k" || device_type == "up3k") {
 		if (config_device != "5k")
+			goto device_chip_mismatch;
+	} else
+	if (device_type == "u4k" || device_type == "u1k" || device_type == "u2k") {
+		if (config_device != "u4k")
 			goto device_chip_mismatch;
 	} else {
 		fprintf(stderr, "Error: Invalid device type '%s'.\n", device_type.c_str());
