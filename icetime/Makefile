@@ -8,7 +8,7 @@ endif
 
 all: $(PROGRAM_PREFIX)icetime$(EXE)
 
-CHIPS=lp384 lp1k lp8k hx1k hx8k up5k
+CHIPS=lp384 lp1k lp8k hx1k hx8k up5k u4k
 
 ifeq ($(EXE),.js)
 $(PROGRAM_PREFIX)icetime$(EXE): | share/$(CHIPDB_SUBDIR)/chipdb-384.txt share/$(CHIPDB_SUBDIR)/chipdb-1k.txt share/$(CHIPDB_SUBDIR)/chipdb-8k.txt share/$(CHIPDB_SUBDIR)/chipdb-5k.txt
@@ -33,6 +33,8 @@ $(PROGRAM_PREFIX)icetime$(EXE): icetime.o iceutil.o $(addsuffix .o, $(addprefix 
 
 timings-%.cc: timings.py ../icefuzz/timings_%.txt
 	python3 timings.py $* > $@
+
+.PRECIOUS: timings-%.cc
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
