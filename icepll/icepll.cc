@@ -66,8 +66,11 @@ void help(const char *cmd)
 	printf("    -m\n");
 	printf("        Save PLL configuration as Verilog module (May use with -f)\n");
 	printf("\n");
+	printf("    -D\n");
+	printf("        Save PLL configuration as VHDL instead of Verilog (May use with -f and -m)\n");
+	printf("\n");
 	printf("    -n <module name>\n");
-	printf("        Specify different Verilog module name than the default 'pll'\n");
+	printf("        Specify different Verilog module (or VHDL entity) name than the default 'pll'\n");
 	printf("\n");
 	printf("    -q\n");
 	printf("        Do not print information about the PLL configuration to stdout\n");
@@ -212,9 +215,10 @@ int main(int argc, char **argv)
 	bool best_mode = false;
 	const char* freqfile = NULL;
 	bool quiet = false;
+	bool save_as_vhdl = false;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "i:o:Smf:n:bB:q")) != -1)
+	while ((opt = getopt(argc, argv, "i:o:Smf:Dn:bB:q")) != -1)
 	{
 		switch (opt)
 		{
@@ -232,6 +236,9 @@ int main(int argc, char **argv)
 			break;
 		case 'f':
 			filename = optarg;
+			break;
+		case 'D':
+			save_as_vhdl = true;
 			break;
 		case 'n':
 			module_name = optarg;
@@ -372,45 +379,110 @@ int main(int argc, char **argv)
 
 		if (save_as_module)
 		{
-			// save PLL configuration as Verilog module
+			if(save_as_vhdl)
+			{
+				// save PLL configuration as VHDL entity
 
-			// header
-			fprintf(f, "/**\n * PLL configuration\n *\n"
-						" * This Verilog module was generated automatically\n"
-						" * using the icepll tool from the IceStorm project.\n"
-						" * Use at your own risk.\n"
-						" *\n"
-						" * Given input frequency:      %8.3f MHz\n"
-						" * Requested output frequency: %8.3f MHz\n"
-						" * Achieved output frequency:  %8.3f MHz\n"
-						" */\n\n",
-						f_pllin, f_pllout, best_fout);
+				// header
+				fprintf(f,  "-- \n-- PLL configuration\n-- \n"
+							"-- This VHDL entity was generated automatically\n"
+							"-- using the icepll tool from the IceStorm project.\n"
+							"-- Use at your own risk.\n"
+							"-- \n"
+							"-- Given input frequency:      %8.3f MHz\n"
+							"-- Requested output frequency: %8.3f MHz\n"
+							"-- Achieved output frequency:  %8.3f MHz\n-- \n\n",
+							f_pllin, f_pllout, best_fout);
 
-			// generate Verilog module
-			fprintf(f,  "module %s(\n"
-						"\tinput  clock_in,\n"
-						"\toutput clock_out,\n"
-						"\toutput locked\n"
-						"\t);\n\n", (module_name ? module_name : "pll")
-					);
+				// load libraries
+				fprintf(f,  "library IEEE;\n"
+							"use IEEE.std_logic_1164.all;\n"
+							"use IEEE.numeric_std.all;\n\n"
+						);
 
-			// save iCE40 PLL tile configuration
-			fprintf(f, "SB_PLL40_CORE #(\n");
-			fprintf(f, "\t\t.FEEDBACK_PATH(\"%s\"),\n", (simple_feedback ? "SIMPLE" : "NON_SIMPLE"));
-			fprintf(f, "\t\t.DIVR(4'b%s),\t\t"      "// DIVR = %2d\n", binstr(best_divr, 4), best_divr);
-			fprintf(f, "\t\t.DIVF(7'b%s),\t"        "// DIVF = %2d\n", binstr(best_divf, 7), best_divf);
-			fprintf(f, "\t\t.DIVQ(3'b%s),\t\t"      "// DIVQ = %2d\n", binstr(best_divq, 3), best_divq);
-			fprintf(f, "\t\t.FILTER_RANGE(3'b%s)\t" "// FILTER_RANGE = %d\n", binstr(filter_range, 3), filter_range);
-			fprintf(f, "\t) uut (\n"
-						"\t\t.LOCK(locked),\n"
-						"\t\t.RESETB(1'b1),\n"
-						"\t\t.BYPASS(1'b0),\n"
-						"\t\t.REFERENCECLK(clock_in),\n"
-						"\t\t.PLLOUTCORE(clock_out)\n"
-						"\t\t);\n\n"
-					);
+				// set entity ports
+				fprintf(f,  "entity %s is\n"
+							"\tport (\n"
+							"\t\tclk_in  :  in std_logic;\n"
+							"\t\tclk_out : out std_logic;\n"
+							"\t\tlocked  : out std_logic\n"
+							"\t);\n"
+							"end %s;\n\n",
+							(module_name ? module_name : "pll"),
+							(module_name ? module_name : "pll")
+						);
 
-			fprintf(f, "endmodule\n");
+				// save iCE40 PLL tile configuration
+				fprintf(f, "architecture synth of %s is\n\n", (module_name ? module_name : "pll"));
+				fprintf(f, "\tcomponent SB_PLL40_CORE is\n");
+				fprintf(f, "\t\tgeneric (\n");
+				fprintf(f, "\t\t\tFEEDBACK_PATH : String := \"%s\";\n", (simple_feedback ? "SIMPLE" : "NON_SIMPLE"));
+				fprintf(f, "\t\t\tDIVR : unsigned(3 downto 0) := \"%s\";\n", binstr(best_divr, 4));
+				fprintf(f, "\t\t\tDIVF : unsigned(6 downto 0) := \"%s\";\n", binstr(best_divf, 7));
+				fprintf(f, "\t\t\tDIVQ : unsigned(2 downto 0) := \"%s\";\n", binstr(best_divq, 3));
+				fprintf(f, "\t\t\tFILTER_RANGE : unsigned(2 downto 0) := \"%s\"\n", binstr(filter_range, 3));
+				fprintf(f, "\t\t);\n");
+				fprintf(f, "\t\tport (\n"
+							"\t\t\tLOCK : out std_logic;\n"
+							"\t\t\tRESETB : in std_logic;\n"
+							"\t\t\tBYPASS : in std_logic;\n"
+							"\t\t\tREFERENCECLK : in std_logic;\n"
+							"\t\t\tPLLOUTGLOBAL : out std_logic\n"
+							"\t\t);\n"
+							"\tend component;\n\n"
+						);
+
+				fprintf(f, "begin\n\n"
+							"\tPLL1 : SB_PLL40_CORE port map (\n"
+							"\t\tLOCK => locked,\n"
+							"\t\tRESETB => '1',\n"
+							"\t\tBYPASS => '0',\n"
+							"\t\tREFERENCECLK => clk_in,\n"
+							"\t\tPLLOUTGLOBAL => clk_out\n"
+							"\t);\n\nend;\n"
+						);
+			} else
+			{
+				// save PLL configuration as Verilog module
+
+				// header
+				fprintf(f, "/**\n * PLL configuration\n *\n"
+							" * This Verilog module was generated automatically\n"
+							" * using the icepll tool from the IceStorm project.\n"
+							" * Use at your own risk.\n"
+							" *\n"
+							" * Given input frequency:      %8.3f MHz\n"
+							" * Requested output frequency: %8.3f MHz\n"
+							" * Achieved output frequency:  %8.3f MHz\n"
+							" */\n\n",
+							f_pllin, f_pllout, best_fout);
+
+				// generate Verilog module
+				fprintf(f,  "module %s(\n"
+							"\tinput  clock_in,\n"
+							"\toutput clock_out,\n"
+							"\toutput locked\n"
+							"\t);\n\n", (module_name ? module_name : "pll")
+						);
+
+				// save iCE40 PLL tile configuration
+				fprintf(f, "SB_PLL40_CORE #(\n");
+				fprintf(f, "\t\t.FEEDBACK_PATH(\"%s\"),\n", (simple_feedback ? "SIMPLE" : "NON_SIMPLE"));
+				fprintf(f, "\t\t.DIVR(4'b%s),\t\t"      "// DIVR = %2d\n", binstr(best_divr, 4), best_divr);
+				fprintf(f, "\t\t.DIVF(7'b%s),\t"        "// DIVF = %2d\n", binstr(best_divf, 7), best_divf);
+				fprintf(f, "\t\t.DIVQ(3'b%s),\t\t"      "// DIVQ = %2d\n", binstr(best_divq, 3), best_divq);
+				fprintf(f, "\t\t.FILTER_RANGE(3'b%s)\t" "// FILTER_RANGE = %d\n", binstr(filter_range, 3), filter_range);
+				fprintf(f, "\t) uut (\n"
+							"\t\t.LOCK(locked),\n"
+							"\t\t.RESETB(1'b1),\n"
+							"\t\t.BYPASS(1'b0),\n"
+							"\t\t.REFERENCECLK(clock_in),\n"
+							"\t\t.PLLOUTCORE(clock_out)\n"
+							"\t\t);\n\n"
+						);
+
+				fprintf(f, "endmodule\n");
+			};
 		}
 		else
 		{
