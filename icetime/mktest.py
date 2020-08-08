@@ -202,7 +202,7 @@ with open("%s_ref.v" % sys.argv[1], "w") as f:
         f.write(line)
 
 assert os.system("yosys -qp 'select -write %s.lc t:LogicCell40' %s_ref.v" % (sys.argv[1], sys.argv[1])) == 0
-assert os.system(r"sed -i -r 's,.*/(.*)LC_(.*),equiv_add -try -cell \1LC_\2_gold lc40_\2_gate,' %s.lc" % sys.argv[1]) == 0
+assert os.system(r"perl -i -pe 's,.*/(.*)LC_(.*),equiv_add -try -cell \1LC_\2_gold lc40_\2_gate,' %s.lc" % sys.argv[1]) == 0
 
 os.remove("%s.bin" % sys.argv[1])
 os.remove("%s.vsb" % sys.argv[1])
