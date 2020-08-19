@@ -20,9 +20,9 @@
 <b>2017-03-13:</b> Released support for LP384 chips (in all package variants).<br/>
 <b>2016-02-07:</b> Support for all package variants of LP1K, LP4K, LP8K and HX1K, HX4K, and HX8K.<br/>
 <b>2016-01-17:</b> First release of IceTime timing analysis. Video: <a href="https://youtu.be/IG5CpFJRnOk">https://youtu.be/IG5CpFJRnOk</a><br/>
-<b>2015-12-27:</b> <a href="http://www.clifford.at/papers/2015/icestorm-flow/">Presentation</a> of the IceStorm flow at 32C3 (<a href="https://www.youtube.com/watch?v=SOn0g3k0FlE">Video on Youtube</a>).<br/>
+<b>2015-12-27:</b> <a href="http://bygone.clairexen.net/papers/2015/icestorm-flow/">Presentation</a> of the IceStorm flow at 32C3 (<a href="https://www.youtube.com/watch?v=SOn0g3k0FlE">Video on Youtube</a>).<br/>
 <b>2015-07-19:</b> Released support for 8k chips. Moved IceStorm source code to GitHub.<br/>
-<b>2015-05-27:</b> We have a working fully Open Source flow with <a href="http://www.clifford.at/yosys/">Yosys</a> and <a href="https://github.com/cseed/arachne-pnr">Arachne-pnr</a>! Video: <a href="http://youtu.be/yUiNlmvVOq8">http://youtu.be/yUiNlmvVOq8</a><br/>
+<b>2015-05-27:</b> We have a working fully Open Source flow with <a href="http://bygone.clairexen.net/yosys/">Yosys</a> and <a href="https://github.com/cseed/arachne-pnr">Arachne-pnr</a>! Video: <a href="http://youtu.be/yUiNlmvVOq8">http://youtu.be/yUiNlmvVOq8</a><br/>
 <b>2015-04-13:</b> Complete rewrite of IceUnpack, added IcePack, some major documentation updates<br/>
 <b>2015-03-22:</b> First public release and short YouTube video demonstrating our work: <a href="http://youtu.be/u1ZHcSNDQMM">http://youtu.be/u1ZHcSNDQMM</a>
 </p>
@@ -33,7 +33,7 @@
 Project IceStorm aims at documenting the bitstream
 format of Lattice iCE40 FPGAs and providing simple tools for analyzing and
 creating bitstream files. The IceStorm flow (<a
-href="http://www.clifford.at/yosys/">Yosys</a>, <a
+href="http://bygone.clairexen.net/yosys/">Yosys</a>, <a
 href="https://github.com/cseed/arachne-pnr">Arachne-pnr</a>, and IceStorm) is a
 fully open source Verilog-to-Bitstream flow for iCE40 FPGAs.
 </p>
@@ -115,7 +115,7 @@ Current work focuses on further improving our timing analysis flow.
 <h2>How do I use the Fully Open Source iCE40 Flow?</h2>
 
 <p>
-Synthesis for iCE40 FPGAs can be done with <a href="http://www.clifford.at/yosys/">Yosys</a>.
+Synthesis for iCE40 FPGAs can be done with <a href="http://bygone.clairexen.net/yosys/">Yosys</a>.
 Place-and-route can be done with <a href="https://github.com/cseed/arachne-pnr">arachne-pnr</a>.
 Here is an example script for implementing and programming the <a
 href="https://github.com/cseed/arachne-pnr/tree/master/examples/rot">rot example from
@@ -190,7 +190,7 @@ make -j$(nproc)
 sudo make install</pre>
 
 <p>
-Installing <a href="http://www.clifford.at/yosys/">Yosys</a> (Verilog synthesis):
+Installing <a href="http://bygone.clairexen.net/yosys/">Yosys</a> (Verilog synthesis):
 </p>
 
 <pre style="padding-left: 3em">git clone https://github.com/YosysHQ/yosys.git yosys
@@ -231,7 +231,7 @@ The IceStorm Tools are a couple of small programs for working with iCE40 bitstre
 ASCII representation of it. The complete Open Source iCE40 Flow consists of the <a
 href="https://github.com/YosysHQ/icestorm">IceStorm Tools</a>, <a
 href="https://github.com/cseed/arachne-pnr">Arachne-PNR</a>, and <a
-href="http://www.clifford.at/yosys/">Yosys</a>.
+href="http://bygone.clairexen.net/yosys/">Yosys</a>.
 </p>
 
 <h3>IcePack/IceUnpack</h3>
@@ -521,7 +521,7 @@ endmodule</pre>
 <h2>Links</h2>
 
 <p>
-Links to related projects. Contact me at clifford@clifford.at if you have an interesting and relevant link.
+Links to related projects. Contact me at claire@clairexen.net if you have an interesting and relevant link.
 </p>
 
 <ul>
@@ -570,20 +570,20 @@ Links to related projects. Contact me at clifford@clifford.at if you have an int
 <hr>
 
 <p>
-In papers and reports, please refer to Project IceStorm as follows: Claire Wolf, Mathias Lasser. Project IceStorm. http://www.clifford.at/icestorm/,
+In papers and reports, please refer to Project IceStorm as follows: Claire Wolf, Mathias Lasser. Project IceStorm. http://bygone.clairexen.net/icestorm/,
 e.g. using the following BibTeX code:
 </p>
 
 <pre>@MISC{IceStorm,
 	author = {Claire Wolf and Mathias Lasser},
 	title = {Project IceStorm},
-	howpublished = "\url{http://www.clifford.at/icestorm/}"
+	howpublished = "\url{http://bygone.clairexen.net/icestorm/}"
 }</pre>
 
 <hr>
 
 <p>
-<i>Documentation mostly by Claire Wolf &lt;clifford@clifford.at&gt; in 2015. Based on research by Mathias Lasser and Claire Wolf.<br/>
+<i>Documentation mostly by Claire Wolf &lt;claire@clairexen.net&gt; in 2015. Based on research by Mathias Lasser and Claire Wolf.<br/>
 Buy an <a href="http://www.latticesemi.com/icestick">iCEstick</a> or <a href="http://www.latticesemi.com/en/Products/DevelopmentBoardsAndKits/iCE40HX8KBreakoutBoard.aspx">iCE40-HX8K Breakout Board</a> from Lattice and see what you can do with the tools and information provided here.</i>
 </p>
 
