@@ -117,7 +117,7 @@ bool analyze(
 				{
 					double fout = f_vco * exp2(-divq);
 
-					if (fabs(fout - f_pllout) < fabs(*best_fout - f_pllout) || !found_something) {
+					if (((fabs(fout - f_pllout) < fabs(*best_fout - f_pllout)) && (fout >= 16.0)) || !found_something) {
 						*best_fout = fout;
 						*best_divr = divr;
 						*best_divf = divf;
