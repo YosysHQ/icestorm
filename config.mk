@@ -6,6 +6,7 @@ PROGRAM_PREFIX ?=
 CXX ?= clang++
 CC ?= clang
 PKG_CONFIG ?= pkg-config
+SED ?= sed
 
 C_STD ?= c99
 CXX_STD ?= c++11
