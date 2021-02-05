@@ -48,6 +48,9 @@ void help(const char *cmd)
 	printf("    -o <output_freq_mhz>\n");
 	printf("        PLL Output Frequency (default: 60 MHz)\n");
 	printf("\n");
+	printf("    -p\n");
+	printf("        Clock source is an input pad rather than FPGA routing\n");
+	printf("\n");
 	printf("    -S\n");
 	printf("        Disable SIMPLE feedback path mode\n");
 	printf("\n");
@@ -204,6 +207,7 @@ int main(int argc, char **argv)
 
 	double f_pllin = 12;
 	double f_pllout = 60;
+	bool pad = false;
 	bool simple_feedback = true;
 	const char* filename = NULL;
 	bool file_stdout = false;
@@ -214,7 +218,7 @@ int main(int argc, char **argv)
 	bool quiet = false;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "i:o:Smf:n:bB:q")) != -1)
+	while ((opt = getopt(argc, argv, "i:o:pSmf:n:bB:q")) != -1)
 	{
 		switch (opt)
 		{
@@ -223,6 +227,9 @@ int main(int argc, char **argv)
 			break;
 		case 'o':
 			f_pllout = atof(optarg);
+			break;
+		case 'p':
+			pad = true;
 			break;
 		case 'S':
 			simple_feedback = false;
@@ -395,7 +402,7 @@ int main(int argc, char **argv)
 					);
 
 			// save iCE40 PLL tile configuration
-			fprintf(f, "SB_PLL40_CORE #(\n");
+			fprintf(f, "%s #(\n", (pad ? "SB_PLL40_PAD" : "SB_PLL40_CORE"));
 			fprintf(f, "\t\t.FEEDBACK_PATH(\"%s\"),\n", (simple_feedback ? "SIMPLE" : "NON_SIMPLE"));
 			fprintf(f, "\t\t.DIVR(4'b%s),\t\t"      "// DIVR = %2d\n", binstr(best_divr, 4), best_divr);
 			fprintf(f, "\t\t.DIVF(7'b%s),\t"        "// DIVF = %2d\n", binstr(best_divf, 7), best_divf);
@@ -405,9 +412,9 @@ int main(int argc, char **argv)
 						"\t\t.LOCK(locked),\n"
 						"\t\t.RESETB(1'b1),\n"
 						"\t\t.BYPASS(1'b0),\n"
-						"\t\t.REFERENCECLK(clock_in),\n"
+						"\t\t.%s(clock_in),\n"
 						"\t\t.PLLOUTCORE(clock_out)\n"
-						"\t\t);\n\n"
+						"\t\t);\n\n", (pad ? "PACKAGEPIN":"REFERENCECLK")
 					);
 
 			fprintf(f, "endmodule\n");
