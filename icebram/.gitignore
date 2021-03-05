@@ -11,3 +11,5 @@ demo_tb.v
 icebram
 icebram.d
 icebram.o
+icebram.exe
+icebram.wasm

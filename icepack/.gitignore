@@ -1,5 +1,8 @@
 icepack
 icepack.exe
+icepack.wasm
 iceunpack
+iceunpack.exe
+iceunpack.wasm
 icepack.o
 icepack.d
