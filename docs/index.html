@@ -183,7 +183,7 @@ sudo make install</pre>
 Installing <a href="https://github.com/YosysHQ/nextpnr">NextPNR</a> (place&amp;route tool, Arachne-PNR replacement):
 </p>
 
-<pre style="padding-left: 3em">git clone https://github.com/YosysHQ/nextpnr nextpnr
+<pre style="padding-left: 3em">git clone --recursive https://github.com/YosysHQ/nextpnr nextpnr
 cd nextpnr
 cmake -DARCH=ice40 -DCMAKE_INSTALL_PREFIX=/usr/local .
 make -j$(nproc)
