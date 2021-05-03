@@ -180,7 +180,7 @@ static void flash_read_id()
 
 	if (data[4] == 0xFF)
 		fprintf(stderr, "Extended Device String Length is 0xFF, "
-				"this is likely a read error. Ignorig...\n");
+				"this is likely a read error. Ignoring...\n");
 	else {
 		// Read extended JEDEC ID bytes
 		if (data[4] != 0) {
