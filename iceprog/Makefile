@@ -4,7 +4,8 @@ ifneq ($(shell uname -s),Darwin)
   LDLIBS = -L/usr/local/lib -lm
 else
   LIBFTDI_NAME = $(shell $(PKG_CONFIG) --exists libftdi1 && echo ftdi1 || echo ftdi)
-  LDLIBS = -L/usr/local/lib -l$(LIBFTDI_NAME) -lm
+  LDLIBS = -L/usr/local/lib -L/opt/homebrew/lib -l$(LIBFTDI_NAME) -lm
+  CFLAGS += -I/opt/homebrew/include/
 endif
 
 ifeq ($(STATIC),1)
