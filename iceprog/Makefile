@@ -1,12 +1,5 @@
 include ../config.mk
 
-ifneq ($(shell uname -s),Darwin)
-  LDLIBS = -L/usr/local/lib -lm
-else
-  LIBFTDI_NAME = $(shell $(PKG_CONFIG) --exists libftdi1 && echo ftdi1 || echo ftdi)
-  LDLIBS = -L/usr/local/lib -l$(LIBFTDI_NAME) -lm
-endif
-
 ifeq ($(STATIC),1)
 LDFLAGS += -static
 LDLIBS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --static --libs $$pkg && exit; done; echo -lftdi; )
