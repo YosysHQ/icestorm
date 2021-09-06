@@ -9,33 +9,33 @@ endif
 all: chipdb-384.txt chipdb-1k.txt chipdb-8k.txt chipdb-5k.txt chipdb-lm4k.txt chipdb-u4k.txt
 
 chipdb-384.txt: icebox.py iceboxdb.py icebox_chipdb.py
-	python3 icebox_chipdb.py -3 > chipdb-384.new
+	$(PYTHON) icebox_chipdb.py -3 > chipdb-384.new
 	mv chipdb-384.new chipdb-384.txt
 
 chipdb-1k.txt: icebox.py iceboxdb.py icebox_chipdb.py
-	python3 icebox_chipdb.py > chipdb-1k.new
+	$(PYTHON) icebox_chipdb.py > chipdb-1k.new
 	mv chipdb-1k.new chipdb-1k.txt
 
 chipdb-5k.txt: icebox.py iceboxdb.py icebox_chipdb.py
-	python3 icebox_chipdb.py -5 > chipdb-5k.new
+	$(PYTHON) icebox_chipdb.py -5 > chipdb-5k.new
 	mv chipdb-5k.new chipdb-5k.txt
 
 chipdb-u4k.txt: icebox.py iceboxdb.py icebox_chipdb.py
-	python3 icebox_chipdb.py -u > chipdb-u4k.new
+	$(PYTHON) icebox_chipdb.py -u > chipdb-u4k.new
 	mv chipdb-u4k.new chipdb-u4k.txt
 
 chipdb-lm4k.txt: icebox.py iceboxdb.py icebox_chipdb.py
-	python3 icebox_chipdb.py -4 > chipdb-lm4k.new
+	$(PYTHON) icebox_chipdb.py -4 > chipdb-lm4k.new
 	mv chipdb-lm4k.new chipdb-lm4k.txt
 
 chipdb-8k.txt: icebox.py iceboxdb.py icebox_chipdb.py
-	python3 icebox_chipdb.py -8 > chipdb-8k.new
+	$(PYTHON) icebox_chipdb.py -8 > chipdb-8k.new
 	mv chipdb-8k.new chipdb-8k.txt
 
 check: all
-	python3 tc_xlat_netnames.py
-	python3 tc_rxlat_netnames.py
-	python3 tc_logic_xpr.py
+	$(PYTHON) tc_xlat_netnames.py
+	$(PYTHON) tc_rxlat_netnames.py
+	$(PYTHON) tc_logic_xpr.py
 
 clean:
 	rm -f chipdb-1k.txt chipdb-8k.txt chipdb-384.txt chipdb-5k.txt chipdb-lm4k.txt chipdb-u4k.txt

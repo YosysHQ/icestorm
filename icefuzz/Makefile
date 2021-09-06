@@ -76,8 +76,8 @@ ifneq ($(RAM_SUFFIX),_5k)
 	cp cached_dsp3_5k.txt bitdata_dsp3_5k.txt
 	cp cached_ipcon_5k.txt bitdata_ipcon_5k.txt
 endif
-	ICEDEVICE=$(DEVICECLASS) python3 database.py
-	python3 export.py
+	ICEDEVICE=$(DEVICECLASS) $(PYTHON) database.py
+	$(PYTHON) export.py
 	diff -U0 cached_io.txt bitdata_io.txt || cp -v bitdata_io.txt cached_io.txt
 	diff -U0 cached_logic.txt bitdata_logic.txt || cp -v bitdata_logic.txt cached_logic.txt
 	diff -U0 cached_ramb$(RAM_SUFFIX).txt bitdata_ramb$(RAM_SUFFIX).txt || cp -v bitdata_ramb$(RAM_SUFFIX).txt cached_ramb$(RAM_SUFFIX).txt
@@ -91,53 +91,53 @@ endif
 timings:
 ifeq ($(DEVICECLASS),5k)
 	cp tmedges.txt tmedges.tmp
-	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; sed '/defparam/d' < $$f > $$f.fixed;  yosys -q -f verilog -s tmedges.ys $$f.fixed; python3 rename_dsps.py $$f; done
+	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; sed '/defparam/d' < $$f > $$f.fixed;  yosys -q -f verilog -s tmedges.ys $$f.fixed; $(PYTHON) rename_dsps.py $$f; done
 	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
-	python3 timings.py -t timings_up5k.txt work_*/*.sdf > timings_up5k.new
+	$(PYTHON) timings.py -t timings_up5k.txt work_*/*.sdf > timings_up5k.new
 	mv timings_up5k.new timings_up5k.txt
 else
 ifeq ($(DEVICECLASS),u4k)
 	cp tmedges.txt tmedges.tmp
-	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; sed '/defparam/d' < $$f > $$f.fixed;  yosys -q -f verilog -s tmedges.ys $$f.fixed; python3 rename_dsps.py $$f; done
+	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; sed '/defparam/d' < $$f > $$f.fixed;  yosys -q -f verilog -s tmedges.ys $$f.fixed; $(PYTHON) rename_dsps.py $$f; done
 	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
-	python3 timings.py -t timings_u4k.txt work_*/*.sdf > timings_u4k.new
+	$(PYTHON) timings.py -t timings_u4k.txt work_*/*.sdf > timings_u4k.new
 	mv timings_u4k.new timings_u4k.txt
 else
 ifeq ($(DEVICECLASS),8k)
 	cp tmedges.txt tmedges.tmp
 	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
 	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
-	python3 timings.py -t timings_hx8k.txt work_*/*.sdf > timings_hx8k.new
+	$(PYTHON) timings.py -t timings_hx8k.txt work_*/*.sdf > timings_hx8k.new
 	mv timings_hx8k.new timings_hx8k.txt
-	python3 timings.py -t timings_lp8k.txt work_*/*.slp > timings_lp8k.new
+	$(PYTHON) timings.py -t timings_lp8k.txt work_*/*.slp > timings_lp8k.new
 	mv timings_lp8k.new timings_lp8k.txt
 else
  ifeq ($(DEVICECLASS),384)
 	cp tmedges.txt tmedges.tmp
 	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
 	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
-	python3 timings.py -t timings_lp384.txt work_*/*.slp > timings_lp384.new
+	$(PYTHON) timings.py -t timings_lp384.txt work_*/*.slp > timings_lp384.new
 	mv timings_lp384.new timings_lp384.txt
  else
 	cp tmedges.txt tmedges.tmp
 	set -e; for f in work_$(DEVICECLASS)_*/*.vsb; do echo $$f; yosys -q -f verilog -s tmedges.ys $$f; done
 	sort -u tmedges.tmp > tmedges.txt && rm -f tmedges.tmp
-	python3 timings.py -t timings_hx1k.txt work_*/*.sdf > timings_hx1k.new
+	$(PYTHON) timings.py -t timings_hx1k.txt work_*/*.sdf > timings_hx1k.new
 	mv timings_hx1k.new timings_hx1k.txt
-	python3 timings.py -t timings_lp1k.txt work_*/*.slp > timings_lp1k.new
+	$(PYTHON) timings.py -t timings_lp1k.txt work_*/*.slp > timings_lp1k.new
 	mv timings_lp1k.new timings_lp1k.txt
  endif
 endif
 endif
 endif
 timings_html:
-	python3 timings.py -h tmedges.txt -t timings_hx1k.txt -l "HX1K with default temp/volt settings" > timings_hx1k.html
-	python3 timings.py -h tmedges.txt -t timings_hx8k.txt -l "HX8K with default temp/volt settings" > timings_hx8k.html
-	python3 timings.py -h tmedges.txt -t timings_lp1k.txt -l "LP1K with default temp/volt settings" > timings_lp1k.html
-	python3 timings.py -h tmedges.txt -t timings_lp8k.txt -l "LP8K with default temp/volt settings" > timings_lp8k.html
-	python3 timings.py -h tmedges.txt -t timings_lp384.txt -l "LP384 with default temp/volt settings" > timings_lp384.html
-	python3 timings.py -h tmedges.txt -t timings_up5k.txt -l "UP5K with default temp/volt settings" > timings_up5k.html
-	python3 timings.py -h tmedges.txt -t timings_u4k.txt -l "U4K with default temp/volt settings" > timings_u4k.html
+	$(PYTHON) timings.py -h tmedges.txt -t timings_hx1k.txt -l "HX1K with default temp/volt settings" > timings_hx1k.html
+	$(PYTHON) timings.py -h tmedges.txt -t timings_hx8k.txt -l "HX8K with default temp/volt settings" > timings_hx8k.html
+	$(PYTHON) timings.py -h tmedges.txt -t timings_lp1k.txt -l "LP1K with default temp/volt settings" > timings_lp1k.html
+	$(PYTHON) timings.py -h tmedges.txt -t timings_lp8k.txt -l "LP8K with default temp/volt settings" > timings_lp8k.html
+	$(PYTHON) timings.py -h tmedges.txt -t timings_lp384.txt -l "LP384 with default temp/volt settings" > timings_lp384.html
+	$(PYTHON) timings.py -h tmedges.txt -t timings_up5k.txt -l "UP5K with default temp/volt settings" > timings_up5k.html
+	$(PYTHON) timings.py -h tmedges.txt -t timings_u4k.txt -l "U4K with default temp/volt settings" > timings_u4k.html
 data_cached.txt: cached_io.txt cached_logic.txt cached_ramb$(RAM_SUFFIX).txt cached_ramt$(RAM_SUFFIX).txt cached_dsp0_5k.txt cached_dsp1_5k.txt cached_dsp2_5k.txt cached_dsp3_5k.txt cached_ipcon_5k.txt
 	gawk '{ print "io", $$0; }' cached_io.txt > data_cached.new
 	gawk '{ print "logic", $$0; }' cached_logic.txt >> data_cached.new
@@ -186,9 +186,9 @@ datafiles: $(addprefix data_,$(addsuffix .txt,$(TESTS)))
 
 define data_template
 data_$(DEVICECLASS)_$(1).txt: make_$(1).py ../icepack/icepack
-	ICEDEVICE=$(DEVICECLASS) python3 make_$(1).py
+	ICEDEVICE=$(DEVICECLASS) $(PYTHON) make_$(1).py
 	+ICEDEV=$(DEVICE) $(MAKE) -C work_$(DEVICECLASS)_$(1)
-	ICEDEVICE=$(DEVICECLASS) python3 extract.py work_$(DEVICECLASS)_$(1)/*.glb > $$@
+	ICEDEVICE=$(DEVICECLASS) $(PYTHON) extract.py work_$(DEVICECLASS)_$(1)/*.glb > $$@
 endef
 
 $(foreach test,$(TESTS),$(eval $(call data_template,$(test))))
