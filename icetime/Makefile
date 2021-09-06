@@ -32,7 +32,7 @@ $(PROGRAM_PREFIX)icetime$(EXE): icetime.o iceutil.o $(addsuffix .o, $(addprefix 
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 timings-%.cc: timings.py ../icefuzz/timings_%.txt
-	$(PYTHON) timings.py $* > $@
+	$(PYTHON3) timings.py $* > $@
 
 .PRECIOUS: timings-%.cc
 
@@ -51,7 +51,7 @@ uninstall:
 #  yosys -qp 'read_verilog -lib cells.v; prep; show' test0_out.v
 
 test0 test1 test2 test3 test4 test5 test6 test7 test8 test9: icetime
-	test -f $@_ref.v || python3 mktest.py $@
+	test -f $@_ref.v || $(PYTHON3) mktest.py $@
 	./icetime -m -d hx1k -P tq144 -p $@.pcf -o $@_out.v $@.asc
 	yosys $@.ys
 
