@@ -59,6 +59,7 @@ std::set<std::tuple<int, int, int>> extra_bits;
 std::set<std::string> io_names;
 
 std::map<int, std::string> net_symbols;
+std::map<std::string, unsigned> lc_lut_in_mask;
 
 bool get_config_bit(int tile_x, int tile_y, int bit_row, int bit_col)
 {
@@ -836,6 +837,15 @@ struct TimingAnalysis
 			}
 
 			if (driver_type == "LogicCell40" && (driver_port == "ltout" || driver_port == "lcout")) {
+				unsigned mask = lc_lut_in_mask.at(driver_cell);
+				if (inport == "in0" && ((mask & 0x1) == 0))
+					continue;
+				if (inport == "in1" && ((mask & 0x2) == 0))
+					continue;
+				if (inport == "in2" && ((mask & 0x4) == 0))
+					continue;
+				if (inport == "in3" && ((mask & 0x8) == 0))
+					continue;
 				if (inport == "carryin")
 					continue;
 			}
@@ -1221,14 +1231,37 @@ std::string make_lc40(int x, int y, int z)
 	for (int i = 0; i < 20; i++)
 		lcbits[i] = get_config_bit(x, y, lcbits_pos[i].first, lcbits_pos[i].second) ? '1' : '0';
 
+	static const std::vector<int> lut_perm = {
+		4, 14, 15, 5, 6, 16, 17, 7, 3, 13, 12, 2, 1, 11, 10, 0,
+	};
+
+	unsigned lut_init = 0;
+		for (unsigned i = 0; i < lut_perm.size(); i++)
+			if (lcbits[lut_perm[i]] == '1')
+			lut_init |= (1U << i);
+
 	// FIXME: fill in the '0'
 	netlist_cell_params[cell]["C_ON"] = stringf("1'b%c", lcbits[8]);
 	netlist_cell_params[cell]["SEQ_MODE"] = stringf("4'b%c%c%c%c", lcbits[9], '0', '0', '0');
-	netlist_cell_params[cell]["LUT_INIT"] = stringf("16'b%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",
-			lcbits[0], lcbits[10], lcbits[11], lcbits[1],
-			lcbits[2], lcbits[12], lcbits[13], lcbits[3],
-			lcbits[7], lcbits[17], lcbits[16], lcbits[6],
-			lcbits[5], lcbits[15], lcbits[14], lcbits[4]);
+
+	std::string init = "16'b";
+	for (int i = 15; i >= 0; i--)
+		init += ((lut_init >> i) & 0x1) ? '1' : '0';
+
+	netlist_cell_params[cell]["LUT_INIT"] = init;
+
+	// Find which LUT inputs are "don't care" in the function, to avoid false paths for bits
+	// only affecting the carry.
+	lc_lut_in_mask[cell] = 0;
+	for (unsigned k = 0; k < 4; k++) {
+		for (unsigned i = 0; i < 16; i++) {
+			// If toggling the LUT input makes a difference it's not a don't care
+			if (((lut_init >> i) & 0x1U) != ((lut_init >> (i ^ (1U << k))) & 0x1U)) {
+				lc_lut_in_mask[cell] |= (1 << k);
+				break;
+			}
+		}
+	}
 
 	if (lcbits[8] == '1')
 	{
