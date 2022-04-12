@@ -967,7 +967,7 @@ int main(int argc, char **argv)
 					if (rc <= 0)
 						break;
 					fprintf(stderr, "                      \r");
-					fprintf(stderr, "addr 0x%06X %3ld%%\r", rw_offset + addr, addr / (file_size / 100));
+					fprintf(stderr, "addr 0x%06X %3ld%%\r", rw_offset + addr, 100 * addr / file_size);
 					flash_write_enable();
 					flash_prog(rw_offset + addr, buffer, rc);
 					flash_wait();
@@ -989,7 +989,7 @@ int main(int argc, char **argv)
 			for (int addr = 0; addr < read_size; addr += 256) {
 				uint8_t buffer[256];
 				fprintf(stderr, "                      \r");
-				fprintf(stderr, "addr 0x%06X %3d%%\r", rw_offset + addr, addr / (read_size / 100));
+				fprintf(stderr, "addr 0x%06X %3d%%\r", rw_offset + addr, 100 * addr / read_size);
 				flash_read(rw_offset + addr, buffer, 256);
 				fwrite(buffer, read_size - addr > 256 ? 256 : read_size - addr, 1, f);
 			}
@@ -1003,7 +1003,7 @@ int main(int argc, char **argv)
 				if (rc <= 0)
 					break;
 				fprintf(stderr, "                      \r");
-				fprintf(stderr, "addr 0x%06X %3ld%%\r", rw_offset + addr, addr / (file_size / 100));
+				fprintf(stderr, "addr 0x%06X %3ld%%\r", rw_offset + addr, 100 * addr / file_size);
 				flash_read(rw_offset + addr, buffer_flash, rc);
 				if (memcmp(buffer_file, buffer_flash, rc)) {
 					fprintf(stderr, "Found difference between flash and file!\n");
