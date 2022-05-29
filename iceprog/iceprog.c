@@ -155,6 +155,13 @@ static void sram_chip_select()
 	set_cs_creset(0, 1);
 }
 
+// SRAM chip deselect assert
+// Same as flash_release_reset()
+static void sram_chip_deselect()
+{
+	set_cs_creset(1, 1);
+}
+
 static void flash_read_id()
 {
 	/* JEDEC ID structure:
@@ -445,6 +452,37 @@ static void flash_disable_protection()
 		fprintf(stderr, "failed to disable protection, SR now equal to 0x%02x (expected 0x00)\n", data[1]);
 
 }
+
+/*
+ * Reading the SRAM / FPGA signature is not documented, but tracing
+ * shows the Radiant programmer just does it prior to programming.
+ *
+ * It's a good indication to verify the board is jumpered correctly
+ * for SRAM (as opposed to flash) access.
+ */
+static void sram_read_signature()
+{
+	uint8_t sig[] = { 0x7e, 0xaa, 0x99, 0x7e, // key
+			  0x01, 0x09,		  // command
+			  0, 0, 0, 0 };		  // room for result
+
+	sram_chip_select();
+
+	mpsse_xfer_spi(sig, sizeof sig);
+	fprintf(stderr, "Signature read: ");
+	for (int i = 0; i < 4; i++)
+		fprintf(stderr, "0x%02x ", sig[i + 6]);
+	fprintf(stderr, "\n");
+
+	if (sig[6] == 0xff && sig[7] == 0xff &&
+	    sig[8] == 0xff && sig[9] == 0xff)
+		fprintf(stderr,
+			"WARNING: Signature is 0xFFFFFFFF. "
+			"Are CRAM jumpers set correctly?\n");
+
+	sram_chip_deselect();
+}
+
 
 // ---------------------------------------------------------
 // iceprog implementation
@@ -865,6 +903,13 @@ int main(int argc, char **argv)
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
 
+		sram_chip_deselect();
+		usleep(100);
+
+		sram_read_signature();
+
+		usleep(100);
+		sram_chip_select();
 
 		// ---------------------------------------------------------
 		// Program
@@ -881,10 +926,18 @@ int main(int argc, char **argv)
 			mpsse_send_spi(buffer, rc);
 		}
 
-		mpsse_send_dummy_bytes(6);
-		mpsse_send_dummy_bit();
-
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
+
+		sram_chip_deselect();
+
+		// "Issue at least 49 dummy bits after CDONE went
+		// high."
+		// mpsse_send_dummy_{bits,bytes} is only available on
+		// USB-HS FTDI chips, not on FT2232D. Just send 56
+		// zero instead.
+		uint8_t dummy[7] = { 0 };
+		mpsse_send_spi(dummy, 7);
+
 	}
 	else /* program flash */
 	{
