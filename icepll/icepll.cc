@@ -49,7 +49,7 @@ void help(const char *cmd)
 	printf("        PLL Output Frequency (default: 60 MHz)\n");
 	printf("\n");
 	printf("    -p\n");
-	printf("        Clock source is an input pad rather than FPGA routing\n");
+	printf("        Use SB_PLL40_PAD primitive instead of SB_PLL40_CORE\n");
 	printf("\n");
 	printf("    -S\n");
 	printf("        Disable SIMPLE feedback path mode\n");
