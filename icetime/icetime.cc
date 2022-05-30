@@ -222,10 +222,20 @@ void read_pcf(const char *filename)
 		if (tok == nullptr || strcmp(tok, "set_io"))
 			continue;
 
+		bool skip_next = false;
 		std::vector<std::string> args;
 		while ((tok = strtok(nullptr, " \t\r\n")) != nullptr) {
+			if(skip_next) {
+				skip_next = false;
+				continue;
+			}
 			if (!strcmp(tok, "--warn-no-port"))
 				continue;
+			if (!strcmp(tok, "-pullup") || !strcmp(tok, "-pullup_resistor")) {
+				skip_next = true; // skip argument
+				continue;
+			}
+
 			args.push_back(tok);
 		}
 
