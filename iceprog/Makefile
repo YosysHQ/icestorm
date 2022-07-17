@@ -11,7 +11,7 @@ endif
 
 all: $(PROGRAM_PREFIX)iceprog$(EXE)
 
-$(PROGRAM_PREFIX)iceprog$(EXE): iceprog.o mpsse.o
+$(PROGRAM_PREFIX)iceprog$(EXE): iceprog.o mpsse.o ftdi_interface.o
 	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 install: all
