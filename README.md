@@ -3,7 +3,7 @@
 
 
 This Project aims at documenting the bitstream format of Lattice iCE40
-FPGA family as well as providing simple to use tools for analyzing and creating bitstream files.
+FPGAs as well as providing simple to use tools for analyzing and creating bitstream files.
 
 Click <a href=http://bygone.clairexen.net/icestorm/>here</a> for more information about the project.
 
