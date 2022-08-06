@@ -1,16 +1,16 @@
- Project IceStorm
+ # <b>Project IceStorm</b>
 
------------------------------------------------------------------------------
+
 
 This Project aims at documenting the bitstream format of Lattice iCE40
 FPGA Family as well as providing simple to use tools for analyzing and creating bitstream files.
 
 Click <a href=http://bygone.clairexen.net/icestorm/>here</a> for more information about the project.
 
+-------------------------------
+-------------------------------
 
-
-
-**Most of Project IceStorm is licensed under the ISC license:**
+**Most of Project IceStorm is licensed under the <a href=https://github.com/YosysHQ/icestorm/blob/master/COPYING>ISC license:</a>**
 
   **Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
