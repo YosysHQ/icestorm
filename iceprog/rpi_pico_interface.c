@@ -115,7 +115,7 @@ static bool pin_read(uint8_t pin) {
     return (pins & (1<<pin));
 }
 
-#define MAX_BYTES_PER_TRANSFER 50
+#define MAX_BYTES_PER_TRANSFER (64-9)
 
 static void bitbang_spi(
     uint8_t sck_pin,
