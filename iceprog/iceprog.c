@@ -43,6 +43,7 @@
 #include "mpsse.h"
 #include "interface.h"
 #include "ftdi_interface.h"
+#include "rpi_pico_interface.h"
 
 static bool verbose = false;
 
@@ -835,8 +836,11 @@ int main(int argc, char **argv)
 
 	fprintf(stderr, "init..\n");
 
-	ftdi_interface_init(ifnum, devstr, slow_clock);
-	interface = &ftdi_interface;
+//	ftdi_interface_init(ifnum, devstr, slow_clock);
+//	interface = &ftdi_interface;
+
+	rpi_pico_interface_init();
+	interface = &rpi_pico_interface;
 
 	fprintf(stderr, "cdone: %s\n", interface->get_cdone() ? "high" : "low");
 

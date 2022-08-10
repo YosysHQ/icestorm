@@ -7,11 +7,14 @@ CFLAGS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors
 else
 LDLIBS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --libs $$pkg && exit; done; echo -lftdi; )
 CFLAGS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --cflags $$pkg && exit; done; )
+
+CFLAGS += -lhidapi-libusb
+LDLIBS += -lhidapi-libusb
 endif
 
 all: $(PROGRAM_PREFIX)iceprog$(EXE)
 
-$(PROGRAM_PREFIX)iceprog$(EXE): iceprog.o mpsse.o ftdi_interface.o
+$(PROGRAM_PREFIX)iceprog$(EXE): iceprog.o mpsse.o ftdi_interface.o rpi_pico_interface.o
 	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 install: all
