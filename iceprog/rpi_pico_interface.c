@@ -115,7 +115,7 @@ static bool pin_read(uint8_t pin) {
     return (pins & (1<<pin));
 }
 
-#define MAX_BYTES_PER_TRANSFER (64-9)
+#define MAX_BYTES_PER_TRANSFER (64-8)
 
 static void bitbang_spi(
     uint8_t sck_pin,
@@ -184,7 +184,14 @@ static void bitbang_spi(
 
 // TODO
 static void close() {
-//    pin_write(PIN_POWER, false);
+//    pin_set_direction(PIN_POWER, true);
+    pin_set_direction(PIN_SCK, false);
+    pin_set_direction(PIN_MOSI, false);
+    pin_set_direction(PIN_SS, false);
+    pin_set_direction(PIN_MISO, false);
+    pin_set_direction(PIN_CRESET, false);
+    pin_set_direction(PIN_CDONE, false);
+
     led_set(false);
     printf("closing\n");
 
