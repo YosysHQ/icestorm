@@ -2,14 +2,15 @@ PROJ = example
 
 PIN_DEF = icebreaker.pcf
 DEVICE = up5k
+PACKAGE = sg48
 
 all: $(PROJ).rpt $(PROJ).bin
 
-%.blif: %.v
-	yosys -p 'synth_ice40 -top top -blif $@' $<
+%.json: %.v
+	yosys -p 'synth_ice40 -top top -json $@' $<
 
-%.asc: $(PIN_DEF) %.blif
-	arachne-pnr -d $(subst up,,$(subst hx,,$(subst lp,,$(DEVICE)))) -o $@ -p $^
+%.asc: $(PIN_DEF) %.json
+		nextpnr-ice40 --$(DEVICE) --package $(PACKAGE) --asc $@ --pcf $< --json $*.json
 
 %.bin: %.asc
 	icepack $< $@
@@ -23,8 +24,8 @@ all: $(PROJ).rpt $(PROJ).bin
 %_tb.vcd: %_tb
 	vvp -N $< +vcd=$@
 
-%_syn.v: %.blif
-	yosys -p 'read_blif -wideports $^; write_verilog $@'
+%_syn.v: %.json
+	yosys -p 'read_json $^; write_verilog $@'
 
 %_syntb: %_tb.v %_syn.v
 	iverilog -o $@ $^ `yosys-config --datdir/ice40/cells_sim.v`
@@ -40,7 +41,7 @@ sudo-prog: $(PROJ).bin
 	sudo iceprog $<
 
 clean:
-	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).rpt $(PROJ).bin
+	rm -f $(PROJ).json $(PROJ).asc $(PROJ).rpt $(PROJ).bin
 
 .SECONDARY:
 .PHONY: all prog clean

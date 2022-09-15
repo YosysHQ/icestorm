@@ -1,14 +1,15 @@
 PROJ = example
 PIN_DEF = iceblink.pcf
 DEVICE = hx1k
+PACKAGE = vq100
 
 all: $(PROJ).rpt $(PROJ).bin
 
-%.blif: %.v
-	yosys -p 'synth_ice40 -top top -blif $@' $<
+%.json: %.v
+	yosys -p 'synth_ice40 -top top -json $@' $<
 
-%.asc: $(PIN_DEF) %.blif
-	arachne-pnr -d $(subst hx,,$(subst lp,,$(DEVICE))) -o $@ -p $^ -P vq100
+%.asc: $(PIN_DEF) %.json
+	nextpnr-ice40 --$(DEVICE) --package $(PACKAGE) --asc $@ --pcf $< --json $*.json
 
 %.bin: %.asc
 	icepack $< $@
@@ -24,6 +25,6 @@ sudo-prog: $(PROJ).bin
 	iCEburn.py  -e -v -w  $<
 
 clean:
-	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).rpt $(PROJ).bin
+	rm -f $(PROJ).json $(PROJ).asc $(PROJ).rpt $(PROJ).bin
 
 .PHONY: all prog clean

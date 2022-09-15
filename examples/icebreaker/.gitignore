@@ -1,4 +1,6 @@
-example.asc
-example.bin
-example.blif
-example.rpt
+*
+!.gitignore
+!example.v
+!icebreaker.pcf
+!Makefile
+!README

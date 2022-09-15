@@ -1,4 +1,6 @@
-/app?.asc
-/app?.bin
-/app?.blif
-/config.bin
+*
+!.gitignore
+!app?.v
+!icestick.pcf
+!Makefile
+!README
