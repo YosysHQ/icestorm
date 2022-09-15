@@ -2,8 +2,8 @@
 set -ex
 
 python3 makedemo.py
-yosys -p 'synth_ice40 -blif demo.blif' demo.v
-arachne-pnr -d 8k -w demo.pcf -o demo.asc demo.blif
+yosys -p 'synth_ice40 -json demo.json' demo.v
+nextpnr-ice40 --hx8k --package bg121 --pcf-allow-unconstrained --asc demo.asc --json demo.json
 
 ./icebram -v demo_dat0.hex demo_dat1.hex < demo.asc > demo_new.asc
 

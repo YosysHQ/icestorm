@@ -1,20 +1,19 @@
 PROJ = rgb
 PIN_DEF = rgb.pcf
 DEVICE = up5k
+PACKAGE = sg48
 
-ARACHNE = arachne-pnr 
-ARACHNE_ARGS = 
 ICEPACK = icepack
 ICETIME = icetime
 ICEPROG = iceprog
 
 all: $(PROJ).bin
 
-%.blif: %.v
-	yosys -p 'synth_ice40 -top top -blif $@' $<
+%.json: %.v
+	yosys -p 'synth_ice40 -top top -json $@' $<
 
-%.asc: $(PIN_DEF) %.blif
-	$(ARACHNE) $(ARACHNE_ARGS) -d $(subst up,,$(subst hx,,$(subst lp,,$(DEVICE)))) -o $@ -p $^
+%.asc: $(PIN_DEF) %.json
+	nextpnr-ice40 --$(DEVICE) --package $(PACKAGE) --asc $@ --pcf $< --json $*.json
 
 %.bin: %.asc
 	$(ICEPACK) $< $@
@@ -30,7 +29,7 @@ sudo-prog: $(PROJ).bin
 	sudo $(ICEPROG) -S $<
 
 clean:
-	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).rpt $(PROJ).bin
+	rm -f $(PROJ).json $(PROJ).asc $(PROJ).rpt $(PROJ).bin
 
 .SECONDARY:
 .PHONY: all prog clean
