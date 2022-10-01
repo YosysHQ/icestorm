@@ -25,6 +25,20 @@
 #include <emscripten.h>
 #endif
 
+enum feedback_mode
+{
+	FEEDBACK_SIMPLE,
+	FEEDBACK_NON_SIMPLE,
+	FEEDBACK_PHASE_AND_DELAY,
+};
+
+struct freq_constraint {
+	double min, max;
+}	limit_in	= { 10.0,	133.0 },
+	limit_pfd	= { 10.0,	133.0 },
+	limit_vco	= { 533.0,	1066.0 },
+	limit_out	= { 16.0,	275.0 };
+
 const char *binstr(int v, int n)
 {
 	static char buffer[16];
@@ -35,6 +49,48 @@ const char *binstr(int v, int n)
 	*(p++) = 0;
 
 	return buffer;
+}
+
+const char *feedback_name(enum feedback_mode m)
+{
+	switch (m) {
+		case FEEDBACK_SIMPLE:
+			return "SIMPLE";
+		case FEEDBACK_NON_SIMPLE:
+			return "NON_SIMPLE";
+		case FEEDBACK_PHASE_AND_DELAY:
+			return "PHASE_AND_DELAY";
+		default:
+			return "???";
+	}
+}
+
+void parse_relax(char *relax)
+{
+	char *elem;
+	while ((elem = strsep(&relax, ",")) != NULL) {
+		char *constraint = strsep(&elem, "=");
+		double cmin = -1, cmax = -1;
+		int n = sscanf(elem, "%lf:%lf", &cmin, &cmax);
+		if (n < 1) {
+			fprintf(stderr, "Error: invalid constraint override\n");
+			exit(1);
+		}
+		struct freq_constraint *fc = NULL;
+		if (!strcmp(constraint, "in")) {
+			fc = &limit_in;
+		} else if (!strcmp(constraint, "pfd")) {
+			fc = &limit_pfd;
+		} else if (!strcmp(constraint, "vco")) {
+			fc = &limit_vco;
+		} else if (!strcmp(constraint, "out")) {
+			fc = &limit_out;
+		} else {
+			fprintf(stderr, "Error: cannot override unknown constraint '%s'\n", constraint);
+		}
+		if (cmin >= 0) fc->min = cmin;
+		if (cmax >= 0) fc->max = cmax;
+	}
 }
 
 void help(const char *cmd)
@@ -53,6 +109,9 @@ void help(const char *cmd)
 	printf("\n");
 	printf("    -S\n");
 	printf("        Disable SIMPLE feedback path mode\n");
+	printf("\n");
+	printf("    -P\n");
+	printf("        Use PHASE_AND_DELAY feedback with SHIFTREG outputs\n");
 	printf("\n");
 	printf("    -b\n");
 	printf("        Find best input frequency for desired PLL Output frequency\n");
@@ -75,11 +134,14 @@ void help(const char *cmd)
 	printf("    -q\n");
 	printf("        Do not print information about the PLL configuration to stdout\n");
 	printf("\n");
+	printf("    -X <clock>=<min>[:<max>][,<clock>=<min>[:<max>]...]\n");
+	printf("        Modify one or more internal clock constraints (in, pfd, vco, out)\n");
+	printf("\n");
 	exit(1);
 }
 
 bool analyze(
-		bool simple_feedback, double f_pllin, double f_pllout,
+		enum feedback_mode fb, double f_pllin, double f_pllout,
 		double *best_fout, int *best_divr, int *best_divf, int *best_divq
 		) 
 {
@@ -89,32 +151,36 @@ bool analyze(
 	*best_divf = 0;
 	*best_divq = 0;
 
-	int divf_max = simple_feedback ? 127 : 63;
+	int divf_max = (fb == FEEDBACK_SIMPLE) ? 127 : 63;
 	// The documentation in the iCE40 PLL Usage Guide incorrectly lists the
 	// maximum value of DIVF as 63, when it is only limited to 63 when using
 	// feedback modes other that SIMPLE.
 
-	if (f_pllin < 10 || f_pllin > 133) {
-		fprintf(stderr, "Error: PLL input frequency %.3f MHz is outside range 10 MHz - 133 MHz!\n", f_pllin);
+	if (f_pllin < limit_in.min || f_pllin > limit_in.max) {
+		fprintf(stderr, "Error: PLL input frequency %.3f MHz is outside range %.1f MHz - %.1f MHz!\n",
+				f_pllin, limit_in.min, limit_in.max
+			   );
 		exit(1);
 	}
 
-	if (f_pllout < 16 || f_pllout > 275) {
-		fprintf(stderr, "Error: PLL output frequency %.3f MHz is outside range 16 MHz - 275 MHz!\n", f_pllout);
+	if (f_pllout < limit_out.min || f_pllout > limit_out.max) {
+		fprintf(stderr, "Error: PLL output frequency %.3f MHz is outside range %.1f MHz - %.1f MHz!\n",
+				f_pllin, limit_out.min, limit_out.max
+			   );
 		exit(1);
 	}
 
 	for (int divr = 0; divr <= 15; divr++)
 	{
 		double f_pfd = f_pllin / (divr + 1);
-		if (f_pfd < 10 || f_pfd > 133) continue;
+		if (f_pfd < limit_pfd.min || f_pfd > limit_pfd.max) continue;
 
 		for (int divf = 0; divf <= divf_max; divf++)
 		{
-			if (simple_feedback)
+			if (fb == FEEDBACK_SIMPLE)
 			{
 				double f_vco = f_pfd * (divf + 1);
-				if (f_vco < 533 || f_vco > 1066) continue;
+				if (f_vco < limit_vco.min || f_vco > limit_vco.max) continue;
 
 				for (int divq = 1; divq <= 6; divq++)
 				{
@@ -134,9 +200,11 @@ bool analyze(
 				for (int divq = 1; divq <= 6; divq++)
 				{
 					double f_vco = f_pfd * (divf + 1) * exp2(divq);
-					if (f_vco < 533 || f_vco > 1066) continue;
+					if (fb == FEEDBACK_PHASE_AND_DELAY) f_vco *= 4.0;
+					if (f_vco < limit_vco.min || f_vco > limit_vco.max) continue;
 
 					double fout = f_vco * exp2(-divq);
+					if (fb == FEEDBACK_PHASE_AND_DELAY) fout /= 4.0;
 
 					if (fabs(fout - f_pllout) < fabs(*best_fout - f_pllout) || !found_something) {
 						*best_fout = fout;
@@ -208,7 +276,7 @@ int main(int argc, char **argv)
 	double f_pllin = 12;
 	double f_pllout = 60;
 	bool pad = false;
-	bool simple_feedback = true;
+	enum feedback_mode fb = FEEDBACK_SIMPLE;
 	const char* filename = NULL;
 	bool file_stdout = false;
 	const char* module_name = NULL;
@@ -218,7 +286,7 @@ int main(int argc, char **argv)
 	bool quiet = false;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "i:o:pSmf:n:bB:q")) != -1)
+	while ((opt = getopt(argc, argv, "i:o:pSPmf:n:bB:qX:")) != -1)
 	{
 		switch (opt)
 		{
@@ -232,7 +300,10 @@ int main(int argc, char **argv)
 			pad = true;
 			break;
 		case 'S':
-			simple_feedback = false;
+			fb = FEEDBACK_NON_SIMPLE;
+			break;
+		case 'P':
+			fb = FEEDBACK_PHASE_AND_DELAY;
 			break;
 		case 'm':
 			save_as_module = true;
@@ -252,6 +323,9 @@ int main(int argc, char **argv)
 			break;
 		case 'q':
 			quiet = true;
+			break;
+		case 'X':
+			parse_relax(optarg);
 			break;
 		default:
 			help(argv[0]);
@@ -286,7 +360,7 @@ int main(int argc, char **argv)
 
 	if (!best_mode) {
 		// Use only specified input frequency
-		found_something = analyze(simple_feedback, f_pllin, f_pllout, &best_fout, &best_divr, &best_divf, &best_divq);
+		found_something = analyze(fb, f_pllin, f_pllout, &best_fout, &best_divr, &best_divf, &best_divq);
 	} else {
 		// Iterate over all standard crystal frequencies and select the best
 		for (int i = 0; freq_table[i]>0.0 ; i++) 
@@ -295,7 +369,7 @@ int main(int argc, char **argv)
 			int divr = 0;
 			int divf = 0;
 			int divq = 0;
-			if (analyze(simple_feedback, freq_table[i], f_pllout, &fout, &divr, &divf, &divq))
+			if (analyze(fb, freq_table[i], f_pllout, &fout, &divr, &divf, &divq))
 			{
 				found_something = true;
 				if (abs(fout - f_pllout) < abs(best_fout - f_pllout)) 
@@ -320,7 +394,7 @@ int main(int argc, char **argv)
 			f_pfd < 66 ? 4 :
 			f_pfd < 101 ? 5 : 6;
 
-	if (!simple_feedback)
+	if (fb != FEEDBACK_SIMPLE)
 		f_vco *= exp2(best_divq);
 
 	if (!found_something) {
@@ -338,7 +412,7 @@ int main(int argc, char **argv)
 
 		printf("\n");
 
-		printf("FEEDBACK: %s\n", simple_feedback ? "SIMPLE" : "NON_SIMPLE");
+		printf("FEEDBACK: %s\n", feedback_name(fb));
 		printf("F_PFD: %8.3f MHz\n", f_pfd);
 		printf("F_VCO: %8.3f MHz\n", f_vco);
 
@@ -403,7 +477,10 @@ int main(int argc, char **argv)
 
 			// save iCE40 PLL tile configuration
 			fprintf(f, "%s #(\n", (pad ? "SB_PLL40_PAD" : "SB_PLL40_CORE"));
-			fprintf(f, "\t\t.FEEDBACK_PATH(\"%s\"),\n", (simple_feedback ? "SIMPLE" : "NON_SIMPLE"));
+			fprintf(f, "\t\t.FEEDBACK_PATH(\"%s\"),\n", feedback_name(fb));
+			if (fb == FEEDBACK_PHASE_AND_DELAY) {
+				fprintf(f, "\t\t.PLLOUT_SELECT(\"SHIFTREG_0deg\"),\n");
+			}
 			fprintf(f, "\t\t.DIVR(4'b%s),\t\t"      "// DIVR = %2d\n", binstr(best_divr, 4), best_divr);
 			fprintf(f, "\t\t.DIVF(7'b%s),\t"        "// DIVF = %2d\n", binstr(best_divf, 7), best_divf);
 			fprintf(f, "\t\t.DIVQ(3'b%s),\t\t"      "// DIVQ = %2d\n", binstr(best_divq, 3), best_divq);
@@ -438,7 +515,10 @@ int main(int argc, char **argv)
 						f_pllin, f_pllout, best_fout);
 
 			// PLL configuration
-			fprintf(f, ".FEEDBACK_PATH(\"%s\"),\n", (simple_feedback ? "SIMPLE" : "NON_SIMPLE"));
+			fprintf(f, ".FEEDBACK_PATH(\"%s\"),\n", feedback_name(fb));
+			if (fb == FEEDBACK_PHASE_AND_DELAY) {
+				fprintf(f, ".PLLOUT_SELECT(\"SHIFTREG_0deg\"),\n");
+			}
 			fprintf(f, ".DIVR(4'b%s),\t\t"      "// DIVR = %2d\n", binstr(best_divr, 4), best_divr);
 			fprintf(f, ".DIVF(7'b%s),\t"        "// DIVF = %2d\n", binstr(best_divf, 7), best_divf);
 			fprintf(f, ".DIVQ(3'b%s),\t\t"      "// DIVQ = %2d\n", binstr(best_divq, 3), best_divq);
