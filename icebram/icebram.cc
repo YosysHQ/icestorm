@@ -384,6 +384,10 @@ int main(int argc, char **argv)
 	if (verbose)
 		fprintf(stderr, "Found and replaced %d instances of the memory.\n", max_replace_cnt);
 
+	if (max_replace_cnt == 0) {
+		fprintf(stderr, "No memory instances were replaced.\n");
+		exit(2);
+	}
 
 	// -------------------------------------------------------
 	// Write ascfile to stdout
