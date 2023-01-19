@@ -376,7 +376,9 @@ static void flash_wait()
 		flash_chip_deselect();
 
 		if ((data[1] & 0x01) == 0) {
-			if (count < 2) {
+// TODO: Why check the return flag multiple times?
+//			if (count < 2) {
+			if (false) {
 				count++;
 				if (verbose) {
 					fprintf(stderr, "r");

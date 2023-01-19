@@ -8,8 +8,8 @@ else
 LDLIBS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --libs $$pkg && exit; done; echo -lftdi; )
 CFLAGS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --cflags $$pkg && exit; done; )
 
-CFLAGS += -lhidapi-libusb
-LDLIBS += -lhidapi-libusb
+CFLAGS += -llibusb-1.0
+LDLIBS += -lusb-1.0
 endif
 
 all: $(PROGRAM_PREFIX)iceprog$(EXE)
