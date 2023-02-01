@@ -428,6 +428,9 @@ follows (bits listed from LSB to MSB):
 
 <tr><td>0 3</td><td><span style="font-family:monospace">PLLCONFIG_8</span></td><td rowspan="1"><span style="font-family:monospace">TEST_MODE</span></td></tr>
 
+<tr><td>0 5</td><td><span style="font-family:monospace">PLLCONFIG_2</span></td><td rowspan="1">Enable ICEGATE for <span style="font-family:monospace">PLLOUTGLOBALA</span></td></tr>
+<tr><td>0 5</td><td><span style="font-family:monospace">PLLCONFIG_4</span></td><td rowspan="1">Enable ICEGATE for <span style="font-family:monospace">PLLOUTGLOBALB</span></td></tr>
+
 </table></td><td>
 
 <table class="ctab">
@@ -500,6 +503,14 @@ In case of the 1k chip the PORTA clock is fed into PIO 1 of IO Tile (6 0) and
 the PORTB clock is fed into PIO 0 of IO Tile (7 0). Because of this, those two
 PIOs can only be used as output Pins by the FPGA fabric when the PLL ports
 are being used.
+</p>
+
+<p>
+The input path that are stolen are also used to implement the ICEGATE function.
+If the input pin type of the input path being stolen is set to
+<span style="font-family:monospace">PIN_INPUT_LATCH</span>, then the ICEGATE
+function is enabled for the corresponding <span style="font-family:monospace">CORE</span>
+output of the PLL.
 </p>
 
 </body></html>
