@@ -1795,6 +1795,8 @@ pllinfo_db = {
         "FILTER_RANGE_1":       ( 0,  2, "PLLCONFIG_7"),
         "FILTER_RANGE_2":       ( 0,  2, "PLLCONFIG_8"),
         "TEST_MODE":            ( 0,  3, "PLLCONFIG_8"),
+        "ENABLE_ICEGATE_PORTA": ( 0,  5, "PLLCONFIG_2"), # Controls global output only !
+        "ENABLE_ICEGATE_PORTB": ( 0,  5, "PLLCONFIG_4"), # Controls global output only !
 
         # PLL Ports
         "PLLOUT_A":             ( 6,  0, 1),
@@ -1887,6 +1889,8 @@ pllinfo_db = {
         "FILTER_RANGE_1":       (11,  0, "PLLCONFIG_7"),
         "FILTER_RANGE_2":       (11,  0, "PLLCONFIG_8"),
         "TEST_MODE":            (12,  0, "PLLCONFIG_8"),
+        "ENABLE_ICEGATE_PORTA": (14,  0, "PLLCONFIG_2"), # Controls global output only !
+        "ENABLE_ICEGATE_PORTB": (14,  0, "PLLCONFIG_4"), # Controls global output only !
 
         # PLL Ports
         # TODO(awygle) confirm these
@@ -1981,6 +1985,8 @@ pllinfo_db = {
         "FILTER_RANGE_1":       (11, 31, "PLLCONFIG_7"),
         "FILTER_RANGE_2":       (11, 31, "PLLCONFIG_8"),
         "TEST_MODE":            (12, 31, "PLLCONFIG_8"),
+        "ENABLE_ICEGATE_PORTA": (14, 31, "PLLCONFIG_2"), # Controls global output only !
+        "ENABLE_ICEGATE_PORTB": (14, 31, "PLLCONFIG_4"), # Controls global output only !
 
         # PLL Ports
         "PLLOUT_A":             ( 12, 31, 1), 
@@ -2045,6 +2051,8 @@ pllinfo_db = {
         "TEST_MODE":            (12, 21, "PLLCONFIG_8"),
         "DELAY_ADJMODE_FB":     (13, 21, "PLLCONFIG_4"),
         "DELAY_ADJMODE_REL":    (13, 21, "PLLCONFIG_9"),
+        "ENABLE_ICEGATE_PORTA": (14, 21, "PLLCONFIG_2"), # Controls global output only !
+        "ENABLE_ICEGATE_PORTB": (14, 21, "PLLCONFIG_4"), # Controls global output only !
 
         # PLL Ports
         "PLLOUT_A":             ( 12, 21, 1),
@@ -2138,6 +2146,8 @@ pllinfo_db = {
         "FILTER_RANGE_1":       ( 15, 0, "PLLCONFIG_7"),
         "FILTER_RANGE_2":       ( 15, 0, "PLLCONFIG_8"),
         "TEST_MODE":            ( 16, 0, "PLLCONFIG_8"),
+        "ENABLE_ICEGATE_PORTA": ( 18, 0, "PLLCONFIG_2"), # Controls global output only !
+        "ENABLE_ICEGATE_PORTB": ( 18, 0, "PLLCONFIG_4"), # Controls global output only !
 
         # PLL Ports
         "PLLOUT_A":             ( 16, 0, 1),
@@ -2231,6 +2241,8 @@ pllinfo_db = {
         "FILTER_RANGE_1":       ( 15, 33, "PLLCONFIG_7"),
         "FILTER_RANGE_2":       ( 15, 33, "PLLCONFIG_8"),
         "TEST_MODE":            ( 16, 33, "PLLCONFIG_8"),
+        "ENABLE_ICEGATE_PORTA": ( 18, 33, "PLLCONFIG_2"), # Controls global output only !
+        "ENABLE_ICEGATE_PORTB": ( 18, 33, "PLLCONFIG_4"), # Controls global output only !
 
         # PLL Ports
         "PLLOUT_A":             ( 16, 33, 1),
