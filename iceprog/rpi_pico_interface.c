@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/time.h>
 #include <libusb-1.0/libusb.h>
 
 #define VENDOR_ID 0xCAFE
@@ -12,6 +13,27 @@
 libusb_context *ctx=NULL;
 struct libusb_device_handle *devhaccess;
 
+int read_calls = 0;
+int write_calls = 0;
+float read_time = 0;
+float write_time = 0;
+
+typedef struct {
+    struct timeval start_time;
+    struct timeval stop_time;
+} time_event_t;
+
+void time_event_start(struct timeval* start_time) {
+    gettimeofday(start_time, NULL);
+}
+
+float time_event_finish(struct timeval* start_time) {
+    struct timeval stop_time;
+    gettimeofday(&stop_time, NULL);
+
+    return stop_time.tv_sec + stop_time.tv_usec/1000000.0 - start_time->tv_sec - start_time->tv_usec/1000000.0;
+}
+
 // https://github.com/jerome-labidurie/avr/blob/master/fpusb/host-libusb/fpusb.c
 void usb_exit ( int sig )
 {
@@ -19,10 +41,14 @@ void usb_exit ( int sig )
    libusb_close (devhaccess);
    libusb_exit (ctx);
    exit(sig);
+
 }
 
 int usb_write(uint8_t request, uint8_t* data, int length) {
-   return libusb_control_transfer ( devhaccess,
+    struct timeval start_time;
+    time_event_start(&start_time);
+
+   int ret = libusb_control_transfer ( devhaccess,
                                    0x40,
                                    request,
                                    0,
@@ -31,10 +57,16 @@ int usb_write(uint8_t request, uint8_t* data, int length) {
                                    length,
                                    1000);
 
+    write_calls++;
+    write_time += time_event_finish(&start_time);
+    return ret;
 }
 
 int usb_read(uint8_t request, uint8_t* data, int length) {
-   return libusb_control_transfer ( devhaccess,
+    struct timeval start_time;
+    time_event_start(&start_time);
+
+   int ret = libusb_control_transfer ( devhaccess,
                                    0xC0,
                                    request,
                                    0,
@@ -42,6 +74,10 @@ int usb_read(uint8_t request, uint8_t* data, int length) {
                                    data,
                                    length,
                                    1000);
+
+    read_calls++;
+    read_time += time_event_finish(&start_time);
+    return ret;
 }
 
 static void led_set(bool value) {
@@ -186,6 +222,8 @@ static void close() {
    libusb_release_interface (devhaccess, 0);
    libusb_close (devhaccess);
    libusb_exit (ctx);
+
+    printf("Done\n  read time:%f\n  write time:%f\n  read calls:%i\n  write calls:%i\n", read_time, write_time, read_calls, write_calls);
 }
 
 // TODO
