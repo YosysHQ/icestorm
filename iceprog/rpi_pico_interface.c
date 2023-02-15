@@ -286,13 +286,14 @@ void rpi_pico_interface_init() {
         exit(-1);
     }
 
-   if (libusb_claim_interface (devhaccess, 0) != 0) {
-      perror ("libusb_claim_interface error");
-      usb_exit(-1);
-   }
+    if (libusb_claim_interface (devhaccess, 0) != 0) {
+        perror ("libusb_claim_interface error");
+        usb_exit(-1);
+    }
+
+    printf("This iceprog has raw power!\n");
 
     led_set(true);
-
 
     pin_set_direction(PIN_POWER, true);
     pin_set_direction(PIN_SCK, true);
