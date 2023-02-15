@@ -255,6 +255,18 @@ const interface_t rpi_pico_interface = {
 	.send_dummy_bit = send_dummy_bit,
 };
 
+bool check_for_old_firmware() {
+    const int vendor_id_old = 0xCAFE;
+    const int product_id_old = 0x4004;
+
+    if ( (devhaccess = libusb_open_device_with_vid_pid (ctx, vendor_id_old, product_id_old)) == 0) {
+        return false;
+    }
+
+    libusb_close (devhaccess);
+    return true;
+}
+
 void rpi_pico_interface_init() {
     if (libusb_init(&ctx) != 0) {
         printf("failure!\n");
@@ -263,7 +275,13 @@ void rpi_pico_interface_init() {
     }
 
     if ( (devhaccess = libusb_open_device_with_vid_pid (ctx, VENDOR_ID, PRODUCT_ID)) == 0) {
-        printf("libusb_open_device_with_vid_pid error\n");
+        if(check_for_old_firmware()) {
+            printf("Programmer with incompatible firmware detected- please update to the latest version!\n");
+            printf("See: https://github.com/tillitis/tillitis-key1/blob/main/doc/toolchain_setup.md#fw-update-of-programmer-board\n");
+        }
+        else {
+            printf("libusb_open_device_with_vid_pid error\n");
+        }
         libusb_exit(ctx);
         exit(-1);
     }
@@ -272,18 +290,6 @@ void rpi_pico_interface_init() {
       perror ("libusb_claim_interface error");
       usb_exit(-1);
    }
-
-    
-
-//    hid_init();
-    
-//    handle = hid_open( VENDOR_ID, PRODUCT_ID, NULL);
-//    if(handle == NULL) {
-//        printf("failure!\n");
-//
-//        hid_exit();
-//        exit(-1);
-//    }
 
     led_set(true);
 
