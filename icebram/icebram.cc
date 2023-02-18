@@ -19,9 +19,9 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <unistd.h>
 #include <sys/time.h>
-#include <bits/stdc++.h>
 
 #include <cstring>
 #include <fstream>
