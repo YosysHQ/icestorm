@@ -67,7 +67,7 @@ private:
 	size_t m_word_size;
 
 	std::vector<bool> parse_digits(std::vector<int> &digits) const;
-	void              parse_line(std::string &line);
+	bool              parse_line(std::string &line);
 public:
 	HexFile(const char *filename, bool pad_words);
 	virtual ~HexFile() { };
@@ -87,17 +87,15 @@ HexFile::HexFile(const char *filename, bool pad_words=false)
 
 	if (!stream.is_open()) {
 		fprintf(stderr, "Failed to open file %s\n", filename);
-		throw std::runtime_error("Unable to open input file");
+		exit(1);
 	}
 
 	// Parse file
 	std::string line;
 	for (int i=1; std::getline(stream, line); i++)
-		try {
-			this->parse_line(line);
-		} catch (std::exception &e) {
+		if (!this->parse_line(line)) {
 			fprintf(stderr, "Can't parse line %d of %s: %s\n", i, filename, line.c_str());
-			throw std::runtime_error("Invalid input file");
+			exit(1);
 		}
 
 	// Check word size
@@ -107,7 +105,7 @@ HexFile::HexFile(const char *filename, bool pad_words=false)
 	{
 		if ((w.size() != this->m_word_size) && !pad_words) {
 			fprintf(stderr, "Inconsistent word sizes in %s\n", filename);
-			throw std::runtime_error("Invalid input file");
+			exit(1);
 		}
 		if (w.size() > this->m_word_size)
 			this->m_word_size = w.size();
@@ -129,7 +127,7 @@ HexFile::parse_digits(std::vector<int> &digits) const
 	return line_data;
 }
 
-void
+bool
 HexFile::parse_line(std::string &line)
 {
 	std::vector<int> digits;
@@ -152,12 +150,14 @@ HexFile::parse_line(std::string &line)
 				digits.clear();
 			}
 		} else {
-			throw std::runtime_error("Invalid char");
+			return false;
 		}
 	}
 
 	if (digits.size())
 		this->m_data.push_back(this->parse_digits(digits));
+	
+	return true;
 }
 
 void
@@ -197,7 +197,7 @@ HexFile::generate_pattern(HexFile &to) const
 			if (pattern_from.size() == 256) {
 				if (pattern.count(pattern_from)) {
 					fprintf(stderr, "Conflicting from pattern for bit slice from_hexfile[%d:%d][%d]!\n", j, j-255, i);
-					throw std::runtime_error("Non-unique source pattern");
+					exit(1);
 				}
 				pattern[pattern_from] = std::make_pair(pattern_to, 0);
 				pattern_from.clear(), pattern_to.clear();
@@ -283,8 +283,10 @@ EBRData::load_data()
 				digit = 10 + c - 'a';
 			else if ('A' <= c && c <= 'F')
 				digit = 10 + c - 'A';
-			else
-				throw std::runtime_error("Invalid char");
+			else {
+				fprintf(stderr, "Invalid char in BRAM data\n");
+				exit(1);
+			}
 
 			idx -= 4;
 
