@@ -80,21 +80,18 @@ int usb_read(uint8_t request, uint8_t* data, int length) {
     return ret;
 }
 
-static void led_set(bool value) {
-    
-//    uint8_t buf[3];
-//    buf[0] = 0;
-//    buf[1] = 0x00;
-//    buf[2] = (value ? 1:0);
-
-//    printf("led_set [");
-//    for(int i = 0; i < sizeof(buf); i++) {
-//        printf("%02x, ", buf[i]);
-//    }
-//    printf("]\n");
-
-//    hid_write(handle, buf, sizeof(buf));
-}
+typedef enum
+{
+    FLASHER_REQUEST_PIN_DIRECTION_SET = 0x10,       // Configurure GPIO pin directions
+    FLASHER_REQUEST_PULLUPS_SET = 0x12,             // Configure GPIO pullups
+    FLASHER_REQUEST_PIN_VALUES_SET = 0x20,          // Set GPIO output values
+    FLASHER_REQUEST_PIN_VALUES_GET = 0x30,          // Get GPIO input values
+    FLASHER_REQUEST_SPI_BITBANG_CS = 0x41,          // SPI transaction with CS pin
+    FLASHER_REQUEST_SPI_BITBANG_NO_CS = 0x42,       // SPI transaction without CS pin
+    FLASHER_REQUEST_SPI_PINS_SET = 0x43,            // Configure SPI pins
+    FLASHER_REQUEST_ADC_READ = 0x50,                // Read ADC inputs
+    FLASHER_REQUEST_BOOTLOADER = 0xFF               // Jump to bootloader mode
+} flasher_request_t;
 
 static void pin_set_direction(uint8_t pin, bool direction) {
     const uint32_t mask = (1<<pin);
@@ -110,7 +107,7 @@ static void pin_set_direction(uint8_t pin, bool direction) {
     buf[6] = (val >> 8) & 0xff;
     buf[7] = (val >> 0) & 0xff;
 
-    usb_write(0x10, buf, sizeof(buf));
+    usb_write(FLASHER_REQUEST_PIN_DIRECTION_SET, buf, sizeof(buf));
 }
 
 static void pinmask_write(uint32_t mask, uint32_t val) {
@@ -130,7 +127,7 @@ static void pinmask_write(uint32_t mask, uint32_t val) {
 //    }
 //    printf("]\n");
 
-    usb_write(0x20, buf, sizeof(buf));
+    usb_write(FLASHER_REQUEST_PIN_VALUES_SET, buf, sizeof(buf));
 }
 
 static void pin_write(uint8_t pin, bool value) {
@@ -142,7 +139,7 @@ static void pin_write(uint8_t pin, bool value) {
 
 static bool pin_read(uint8_t pin) {
     uint8_t ret_buf[4];
-    usb_read(0x30, ret_buf, sizeof(ret_buf));
+    usb_read(FLASHER_REQUEST_PIN_VALUES_GET, ret_buf, sizeof(ret_buf));
 
 //    printf("  ret=[");
 //    for(int i = 0; i < sizeof(ret_buf); i++) {
@@ -159,13 +156,26 @@ static bool pin_read(uint8_t pin) {
     return (pins & (1<<pin));
 }
 
+static void set_spi_pins(
+    uint8_t sck_pin,
+    uint8_t cs_pin,
+    uint8_t mosi_pin,
+    uint8_t miso_pin) {
+
+    uint8_t buf[4];
+    buf[0] = sck_pin;
+    buf[1] = cs_pin;
+    buf[2] = mosi_pin;
+    buf[3] = miso_pin;
+
+    usb_write(FLASHER_REQUEST_SPI_PINS_SET, buf, sizeof(buf));
+}
+
 //#define MAX_BYTES_PER_TRANSFER (256-7)
 #define MAX_BYTES_PER_TRANSFER (1024-8)
 
-static void bitbang_spi(
-    uint8_t sck_pin,
-    uint8_t mosi_pin,
-    uint8_t miso_pin,
+
+static void bitbang_spi_no_cs(
     uint32_t bit_count,
     uint8_t* buf_out,
     uint8_t* buf_in) {
@@ -176,23 +186,20 @@ static void bitbang_spi(
         exit(1);
     }
 
-    uint8_t buf[7+MAX_BYTES_PER_TRANSFER];
+    uint8_t buf[4+MAX_BYTES_PER_TRANSFER];
     memset(buf, 0xFF, sizeof(buf));
 
-    buf[0] = sck_pin;
-    buf[1] = mosi_pin;
-    buf[2] = miso_pin;
-    buf[3] = (bit_count >> 24) & 0xff;
-    buf[4] = (bit_count >> 16) & 0xff;
-    buf[5] = (bit_count >> 8) & 0xff;
-    buf[6] = (bit_count >> 0) & 0xff;
+    buf[0] = (bit_count >> 24) & 0xff;
+    buf[1] = (bit_count >> 16) & 0xff;
+    buf[2] = (bit_count >> 8) & 0xff;
+    buf[3] = (bit_count >> 0) & 0xff;
 
-    memcpy(&buf[7], buf_out, byte_count);
+    memcpy(&buf[4], buf_out, byte_count);
 
-    usb_write(0x40, buf, byte_count+7);
+    usb_write(FLASHER_REQUEST_SPI_BITBANG_NO_CS, buf, byte_count+4);
 
     if(buf_in != NULL) {
-        usb_read(0x40, buf_in, byte_count);
+        usb_read(FLASHER_REQUEST_SPI_BITBANG_NO_CS, buf_in, byte_count);
     }
 }
 
@@ -216,7 +223,6 @@ static void close() {
     pin_set_direction(PIN_CRESET, false);
     pin_set_direction(PIN_CDONE, false);
 
-    led_set(false);
     printf("closing\n");
 
    libusb_release_interface (devhaccess, 0);
@@ -248,19 +254,19 @@ static bool get_cdone(void) {
 // TODO
 static uint8_t xfer_spi_bits(uint8_t data, int n) {
     uint8_t buf = data;
-    bitbang_spi(PIN_SCK, PIN_MOSI, PIN_MISO, n, &buf, &buf);
+    bitbang_spi_no_cs(n, &buf, &buf);
 
     return buf;
 }
 
 // TODO
 static void xfer_spi(uint8_t *data, int n) {
-    bitbang_spi(PIN_SCK, PIN_MOSI, PIN_MISO, n*8, data, data);
+    bitbang_spi_no_cs(n*8, data, data);
 }
 
 // TODO
 static void send_spi(uint8_t *data, int n) {
-    bitbang_spi(PIN_SCK, PIN_MOSI, PIN_MISO, n*8, data, NULL);
+    bitbang_spi_no_cs(n*8, data, NULL);
 }
 
 // TODO
@@ -274,7 +280,7 @@ static void send_dummy_bytes(uint8_t n) {
 // TODO
 static void send_dummy_bit(void) {
     uint8_t buf = 0;
-    bitbang_spi(PIN_SCK, PIN_MOSI, PIN_MISO, 1, &buf, NULL);
+    bitbang_spi_no_cs(1, &buf, NULL);
 }
 
 
@@ -331,8 +337,6 @@ void rpi_pico_interface_init() {
 
     printf("This iceprog has raw power!\n");
 
-    led_set(true);
-
     pin_set_direction(PIN_POWER, true);
     pin_set_direction(PIN_SCK, true);
     pin_set_direction(PIN_MOSI, true);
@@ -342,6 +346,8 @@ void rpi_pico_interface_init() {
     pin_set_direction(PIN_CDONE, false);
 
     pin_write(PIN_POWER, true);
+
+    set_spi_pins(PIN_SCK, PIN_SS, PIN_MOSI, PIN_MISO);
 }
 
 // ********* API ****************
