@@ -160,13 +160,15 @@ static void set_spi_pins(
     uint8_t sck_pin,
     uint8_t cs_pin,
     uint8_t mosi_pin,
-    uint8_t miso_pin) {
+    uint8_t miso_pin,
+    uint8_t speed_mhz) {
 
-    uint8_t buf[4];
+    uint8_t buf[5];
     buf[0] = sck_pin;
     buf[1] = cs_pin;
     buf[2] = mosi_pin;
     buf[3] = miso_pin;
+    buf[4] = speed_mhz;
 
     usb_write(FLASHER_REQUEST_SPI_PINS_SET, buf, sizeof(buf));
 }
@@ -347,7 +349,7 @@ void rpi_pico_interface_init() {
 
     pin_write(PIN_POWER, true);
 
-    set_spi_pins(PIN_SCK, PIN_SS, PIN_MOSI, PIN_MISO);
+    set_spi_pins(PIN_SCK, PIN_SS, PIN_MOSI, PIN_MISO, 15);
 }
 
 // ********* API ****************
