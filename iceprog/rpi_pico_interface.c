@@ -173,16 +173,14 @@ static void set_spi_pins(
     usb_write(FLASHER_REQUEST_SPI_PINS_SET, buf, sizeof(buf));
 }
 
-//#define MAX_BYTES_PER_TRANSFER (256-7)
-#define MAX_BYTES_PER_TRANSFER (1024-8)
+#define MAX_BYTES_PER_TRANSFER (2048-8)
 
 
 static void bitbang_spi_no_cs(
-    uint32_t bit_count,
+    uint32_t byte_count,
     uint8_t* buf_out,
     uint8_t* buf_in) {
 
-    const uint32_t byte_count = ((bit_count + 7) / 8);
     if(byte_count > MAX_BYTES_PER_TRANSFER) {
         printf("bit count too high\n");
         exit(1);
@@ -191,10 +189,10 @@ static void bitbang_spi_no_cs(
     uint8_t buf[4+MAX_BYTES_PER_TRANSFER];
     memset(buf, 0xFF, sizeof(buf));
 
-    buf[0] = (bit_count >> 24) & 0xff;
-    buf[1] = (bit_count >> 16) & 0xff;
-    buf[2] = (bit_count >> 8) & 0xff;
-    buf[3] = (bit_count >> 0) & 0xff;
+    buf[0] = (byte_count >> 24) & 0xff;
+    buf[1] = (byte_count >> 16) & 0xff;
+    buf[2] = (byte_count >> 8) & 0xff;
+    buf[3] = (byte_count >> 0) & 0xff;
 
     memcpy(&buf[4], buf_out, byte_count);
 
@@ -215,7 +213,6 @@ static void bitbang_spi_no_cs(
 
 // ********* iceprog API ****************
 
-// TODO
 static void close() {
 //    pin_set_direction(PIN_POWER, true);
     pin_set_direction(PIN_SCK, false);
@@ -234,13 +231,11 @@ static void close() {
     printf("Done\n  read time:%f\n  write time:%f\n  read calls:%i\n  write calls:%i\n", read_time, write_time, read_calls, write_calls);
 }
 
-// TODO
 static void error(int status) {
     close();
     exit(status);
 }
 
-// TODO
 static void set_cs_creset(int cs_b, int creset_b) {
     pinmask_write(
         (1<<PIN_SS) | (1<PIN_CRESET),
@@ -248,30 +243,29 @@ static void set_cs_creset(int cs_b, int creset_b) {
     );
 }
 
-// TODO
 static bool get_cdone(void) { 
     return pin_read(PIN_CDONE);
 }
 
-// TODO
+// TODO: actually transfers a whole byte
 static uint8_t xfer_spi_bits(uint8_t data, int n) {
     uint8_t buf = data;
-    bitbang_spi_no_cs(n, &buf, &buf);
+
+    const uint8_t bytes = ((n+7)/8);
+
+    bitbang_spi_no_cs(bytes, &buf, &buf);
 
     return buf;
 }
 
-// TODO
 static void xfer_spi(uint8_t *data, int n) {
-    bitbang_spi_no_cs(n*8, data, data);
+    bitbang_spi_no_cs(n, data, data);
 }
 
-// TODO
 static void send_spi(uint8_t *data, int n) {
-    bitbang_spi_no_cs(n*8, data, NULL);
+    bitbang_spi_no_cs(n, data, NULL);
 }
 
-// TODO
 static void send_dummy_bytes(uint8_t n) {
     uint8_t buf[n];
     memset(buf, 0, sizeof(buf));
@@ -279,10 +273,9 @@ static void send_dummy_bytes(uint8_t n) {
 }
 
 
-// TODO
 static void send_dummy_bit(void) {
     uint8_t buf = 0;
-    bitbang_spi_no_cs(1, &buf, NULL);
+    xfer_spi_bits(buf, 1);
 }
 
 
