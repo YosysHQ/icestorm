@@ -5,8 +5,8 @@
 #include <sys/time.h>
 #include <libusb-1.0/libusb.h>
 
-#define VENDOR_ID 0xCAFE
-#define PRODUCT_ID 0x4010
+#define VENDOR_ID 0x1209
+#define PRODUCT_ID 0x8886
 
 //static hid_device * handle;
 
@@ -286,15 +286,31 @@ const interface_t rpi_pico_interface = {
 };
 
 bool check_for_old_firmware() {
-    const int vendor_id_old = 0xCAFE;
-    const int product_id_old = 0x4004;
+    // From: https://libusb.sourceforge.io/api-1.0/group__libusb__dev.html#details
+    libusb_device **list;
+    ssize_t cnt = libusb_get_device_list(NULL, &list);
 
-    if ( (devhaccess = libusb_open_device_with_vid_pid (ctx, vendor_id_old, product_id_old)) == 0) {
+    if (cnt < 0) {
         return false;
     }
 
-    libusb_close (devhaccess);
-    return true;
+    bool found = false;
+    for (ssize_t i = 0; i < cnt; i++) {
+        libusb_device *device = list[i];
+        struct libusb_device_descriptor device_descriptor;
+
+        if(libusb_get_device_descriptor(device, &device_descriptor) != 0)
+            continue;
+
+        // Previous programmer firmware used 0xCAFE and either 0x4004 or 0x4010
+        if((device_descriptor.idVendor == 0xCAFE) &&
+            ((device_descriptor.idProduct == 0x4004) || (device_descriptor.idProduct == 0x4010))) {
+            found = true;
+        }
+    }
+
+    libusb_free_device_list(list, 1);
+    return found;
 }
 
 bool check_firmware_version() {
