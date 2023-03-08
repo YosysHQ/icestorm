@@ -82,16 +82,18 @@ int usb_read(uint8_t request, uint8_t* data, int length) {
 
 typedef enum
 {
-    FLASHER_REQUEST_PIN_DIRECTION_SET = 0x10,       // Configurure GPIO pin directions
-    FLASHER_REQUEST_PULLUPS_SET = 0x12,             // Configure GPIO pullups
-    FLASHER_REQUEST_PIN_VALUES_SET = 0x20,          // Set GPIO output values
-    FLASHER_REQUEST_PIN_VALUES_GET = 0x30,          // Get GPIO input values
-    FLASHER_REQUEST_SPI_BITBANG_CS = 0x41,          // SPI transaction with CS pin
-    FLASHER_REQUEST_SPI_BITBANG_NO_CS = 0x42,       // SPI transaction without CS pin
-    FLASHER_REQUEST_SPI_PINS_SET = 0x43,            // Configure SPI pins
-    FLASHER_REQUEST_ADC_READ = 0x50,                // Read ADC inputs
-    FLASHER_REQUEST_BOOTLOADER = 0xFF               // Jump to bootloader mode
-} flasher_request_t;
+    COMMAND_PIN_DIRECTION = 0x30,           // Configurure GPIO pin directions
+    COMMAND_PULLUPS = 0x31,                 // Configure GPIO pullups
+    COMMAND_PIN_VALUES = 0x32,              // Set GPIO output values
+
+    COMMAND_SPI_CONFIGURE = 0x40,           // Configure SPI pins
+    COMMAND_SPI_XFER = 0x41,                // SPI transaction with CS pin
+    COMMAND_SPI_CLKOUT = 0x42,              // Just toggle the clock
+
+    COMMAND_ADC_READ = 0x50,                // Read ADC inputs
+
+    COMMAND_BOOTLOADER = 0xE0               // Jump to bootloader mode
+} command_t;
 
 static void pin_set_direction(uint8_t pin, bool direction) {
     const uint32_t mask = (1<<pin);
@@ -107,7 +109,7 @@ static void pin_set_direction(uint8_t pin, bool direction) {
     buf[6] = (val >> 8) & 0xff;
     buf[7] = (val >> 0) & 0xff;
 
-    usb_write(FLASHER_REQUEST_PIN_DIRECTION_SET, buf, sizeof(buf));
+    usb_write(COMMAND_PIN_DIRECTION, buf, sizeof(buf));
 }
 
 static void pinmask_write(uint32_t mask, uint32_t val) {
@@ -121,13 +123,7 @@ static void pinmask_write(uint32_t mask, uint32_t val) {
     buf[6] = (val >> 8) & 0xff;
     buf[7] = (val >> 0) & 0xff;
 
-//    printf("pin_write [");
-//    for(int i = 0; i < sizeof(buf); i++) {
-//        printf("%02x, ", buf[i]);
-//    }
-//    printf("]\n");
-
-    usb_write(FLASHER_REQUEST_PIN_VALUES_SET, buf, sizeof(buf));
+    usb_write(COMMAND_PIN_VALUES, buf, sizeof(buf));
 }
 
 static void pin_write(uint8_t pin, bool value) {
@@ -139,13 +135,7 @@ static void pin_write(uint8_t pin, bool value) {
 
 static bool pin_read(uint8_t pin) {
     uint8_t ret_buf[4];
-    usb_read(FLASHER_REQUEST_PIN_VALUES_GET, ret_buf, sizeof(ret_buf));
-
-//    printf("  ret=[");
-//    for(int i = 0; i < sizeof(ret_buf); i++) {
-//        printf("%02x, ", ret_buf[i]);
-//    }
-//    printf("]\n");
+    usb_read(COMMAND_PIN_VALUES, ret_buf, sizeof(ret_buf));
 
     uint32_t pins =
         (ret_buf[0] << 24)
@@ -170,7 +160,7 @@ static void set_spi_pins(
     buf[3] = miso_pin;
     buf[4] = speed_mhz;
 
-    usb_write(FLASHER_REQUEST_SPI_PINS_SET, buf, sizeof(buf));
+    usb_write(COMMAND_SPI_CONFIGURE, buf, sizeof(buf));
 }
 
 #define MAX_BYTES_PER_TRANSFER (2048-8)
@@ -189,17 +179,18 @@ static void bitbang_spi_no_cs(
     uint8_t buf[4+MAX_BYTES_PER_TRANSFER];
     memset(buf, 0xFF, sizeof(buf));
 
-    buf[0] = (byte_count >> 24) & 0xff;
-    buf[1] = (byte_count >> 16) & 0xff;
-    buf[2] = (byte_count >> 8) & 0xff;
-    buf[3] = (byte_count >> 0) & 0xff;
+    buf[0] = 0; // Do not toggle CS
+    buf[1] = (byte_count >> 24) & 0xff;
+    buf[2] = (byte_count >> 16) & 0xff;
+    buf[3] = (byte_count >> 8) & 0xff;
+    buf[4] = (byte_count >> 0) & 0xff;
 
-    memcpy(&buf[4], buf_out, byte_count);
+    memcpy(&buf[5], buf_out, byte_count);
 
-    usb_write(FLASHER_REQUEST_SPI_BITBANG_NO_CS, buf, byte_count+4);
+    usb_write(COMMAND_SPI_XFER, buf, byte_count+5);
 
     if(buf_in != NULL) {
-        usb_read(FLASHER_REQUEST_SPI_BITBANG_NO_CS, buf_in, byte_count);
+        usb_read(COMMAND_SPI_XFER, buf_in, byte_count);
     }
 }
 
@@ -306,6 +297,22 @@ bool check_for_old_firmware() {
     return true;
 }
 
+bool check_firmware_version() {
+    const uint16_t bcd_device = 0x0200;
+
+    struct libusb_device_descriptor device_descriptor;
+
+    if(libusb_get_device_descriptor(libusb_get_device(devhaccess), &device_descriptor) != 0) {
+        return false;
+    }
+
+    if(device_descriptor.bcdDevice != bcd_device) {
+        return false;
+    }
+
+    return true;
+}
+
 void rpi_pico_interface_init() {
     if (libusb_init(&ctx) != 0) {
         printf("failure!\n");
@@ -314,13 +321,21 @@ void rpi_pico_interface_init() {
     }
 
     if ( (devhaccess = libusb_open_device_with_vid_pid (ctx, VENDOR_ID, PRODUCT_ID)) == 0) {
+        // If a matching device isn't found, check for earlier versions and give a hint if found
         if(check_for_old_firmware()) {
             printf("Programmer with incompatible firmware detected- please update to the latest version!\n");
             printf("See: https://github.com/tillitis/tillitis-key1/blob/main/doc/toolchain_setup.md#fw-update-of-programmer-board\n");
         }
         else {
-            printf("libusb_open_device_with_vid_pid error\n");
+            perror("libusb_open_device_with_vid_pid error\n");
         }
+        libusb_exit(ctx);
+        exit(-1);
+    }
+
+    // Check that the firmware version matches
+    if (!check_firmware_version()) {
+        perror ("programmer found, but firmware version is out of date. Please update and try again");
         libusb_exit(ctx);
         exit(-1);
     }
