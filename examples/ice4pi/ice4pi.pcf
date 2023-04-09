@@ -1,0 +1,27 @@
+#12 MHz oscillator
+set_io clk 21
+
+#Raspberry Pi 40 pin connector
+set_io spi_miso 68 # 115
+set_io spi_mosi 67 # 114
+set_io spi_clk 70 # 112
+set_io spi_cs_n  113 # 128 # /ce1
+
+
+#LEDs
+set_io led[0] 99
+set_io led[1] 98
+set_io led[2] 97
+set_io led[3] 96
+set_io led[4] 95
+
+
+#PMOD
+set_io pmod[0] 78
+set_io pmod[1] 79
+set_io pmod[2] 80
+set_io pmod[3] 81
+set_io pmod[4] 87
+set_io pmod[5] 88
+set_io pmod[6] 90
+set_io pmod[7] 91
