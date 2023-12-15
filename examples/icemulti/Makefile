@@ -1,3 +1,5 @@
+all: config.bin
+
 prog: config.bin
 	sudo iceprog config.bin
 
