@@ -60,7 +60,7 @@ def get_bit_group(x, y, db):
                 funcs.add("r")
             elif entry[1] == "buffer":
                 funcs.add("b")
-            elif re_match_cached("LC_", entry[1]):
+            elif re_match_cached(r"LC_", entry[1]):
                 funcs.add("l")
             elif entry[1] == "NegClk":
                 funcs.add("N")
