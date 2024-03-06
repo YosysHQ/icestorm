@@ -73,23 +73,23 @@ if verbose:
 for segs in connections:
     for seg in segs:
         if ic.tile_type(seg[0], seg[1]) == "IO" and seg[2].startswith("io_"):
-            match = re_match_cached("io_(\d+)/D_(IN|OUT)_(\d+)", seg[2])
+            match = re_match_cached(r"io_(\d+)/D_(IN|OUT)_(\d+)", seg[2])
             if match:
                 loc = (seg[0], seg[1], int(match.group(1)))
                 io_locations.add(loc)
 
         if ic.tile_type(seg[0], seg[1]) == "LOGIC" and seg[2].startswith("lutff_"):
-            match = re_match_cached("lutff_(\d)/in_\d", seg[2])
+            match = re_match_cached(r"lutff_(\d)/in_\d", seg[2])
             if match:
                 loc = (seg[0], seg[1], int(match.group(1)))
                 lut_locations.add(loc)
 
-            match = re_match_cached("lutff_(\d)/cout", seg[2])
+            match = re_match_cached(r"lutff_(\d)/cout", seg[2])
             if match:
                 loc = (seg[0], seg[1], int(match.group(1)))
                 carry_locations.add(loc)
 
-            match = re_match_cached("lutff_(\d)/out", seg[2])
+            match = re_match_cached(r"lutff_(\d)/out", seg[2])
             if match:
                 loc = (seg[0], seg[1], int(match.group(1)))
                 seq_bits = icebox.get_lutff_seq_bits(ic.tile(loc[0], loc[1]), loc[2])
@@ -101,7 +101,7 @@ for segs in connections:
             bram_locations.add(loc)
 
         if seg[2].startswith("glb_netwk_"):
-            match = re_match_cached("glb_netwk_(\d)", seg[2])
+            match = re_match_cached(r"glb_netwk_(\d)", seg[2])
             if match:
                 global_nets.add(int(match.group(1)))
 
