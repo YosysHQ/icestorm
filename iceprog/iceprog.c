@@ -1048,6 +1048,10 @@ int main(int argc, char **argv)
 				flash_read(rw_offset + addr, buffer_flash, rc);
 				if (memcmp(buffer_file, buffer_flash, rc)) {
 					fprintf(stderr, "Found difference between flash and file!\n");
+					if (!disable_powerdown)
+					  flash_power_down();
+					flash_release_reset();
+					usleep(250000);
 					mpsse_error(3);
 				}
 			}
@@ -1064,7 +1068,7 @@ int main(int argc, char **argv)
 		if (!disable_powerdown)
 			flash_power_down();
 
-		set_cs_creset(1, 1);
+		flash_release_reset();
 		usleep(250000);
 
 		fprintf(stderr, "cdone: %s\n", get_cdone() ? "high" : "low");
