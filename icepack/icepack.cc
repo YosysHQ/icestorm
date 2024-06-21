@@ -902,10 +902,10 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 				cic.get_cram_index(bit_x, bit_y, cram_bank, cram_x, cram_y);
 				tile_bits.insert(tile_bit_t(cram_bank, cram_x, cram_y));
 				if (cram_x > int(this->cram[cram_bank].size())) {
-					error("cram_x %d (bit %d, %d) larger than bank size %lu\n", cram_x, bit_x, bit_y, this->cram[cram_bank].size());
+					error("cram_x %d (bit %d, %d) larger than bank size %zu\n", cram_x, bit_x, bit_y, this->cram[cram_bank].size());
 				}
 				if (cram_y > int(this->cram[cram_bank][cram_x].size())) {
-					error("cram_y %d (bit %d, %d) larger than bank %d size %lu\n", cram_y, bit_x, bit_y, cram_bank, this->cram[cram_bank][cram_x].size());
+					error("cram_y %d (bit %d, %d) larger than bank %d size %zu\n", cram_y, bit_x, bit_y, cram_bank, this->cram[cram_bank][cram_x].size());
 				}
 				ofs << (this->cram[cram_bank][cram_x][cram_y] ? '1' : '0');
 			}
@@ -924,11 +924,11 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 						int bram_bank, bram_x, bram_y;
 						bic.get_bram_index(bit_x+i, bit_y, bram_bank, bram_x, bram_y);
 						if (bram_x >= int(this->bram[bram_bank].size())) {
-							error("%d %d bram_x %d higher than loaded bram size %lu\n",bit_x+i, bit_y, bram_x,  this->bram[bram_bank].size());
+							error("%d %d bram_x %d higher than loaded bram size %zu\n",bit_x+i, bit_y, bram_x,  this->bram[bram_bank].size());
 							break;
 						}
 						if (bram_y >= int(this->bram[bram_bank][bram_x].size())) {
-							error("bram_y %d higher than loaded bram size %lu\n", bram_y,  this->bram[bram_bank][bram_x].size());
+							error("bram_y %d higher than loaded bram size %zu\n", bram_y,  this->bram[bram_bank][bram_x].size());
 							break;
 						}
 						if (this->bram[bram_bank][bram_x][bram_y])
