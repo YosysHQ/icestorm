@@ -1,0 +1,9 @@
+# From nextpnr:ice40/examples/blinky
+# Original file due to David Shah
+
+set_io led[0] 99
+set_io led[1] 98
+set_io led[2] 97
+set_io led[3] 96
+set_io led[4] 95
+set_io clki 21

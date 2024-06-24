@@ -26,6 +26,7 @@ check_ieren = False
 check_driver = False
 lookup_symbols = False
 do_collect = False
+v95_compatibility = False
 package = None
 pcf_data = dict()
 portnames = set()
@@ -70,11 +71,14 @@ Usage: %s [options] [bitmap.asc]
 
     -D
         enable exactly-one-driver checks
+
+    -C
+        use old Verilog-1995 module declarations (for compatibility)
 """ % os.path.basename(sys.argv[0]))
     sys.exit(0)
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "sSlLap:P:n:d:cRD")
+    opts, args = getopt.getopt(sys.argv[1:], "sSlLap:P:n:d:cRDC")
 except:
     usage()
 
@@ -125,6 +129,8 @@ for o, a in opts:
         check_ieren = True
     elif o == "-D":
         check_driver = True
+    elif o == "-C":
+        v95_compatibility = True
     else:
         usage()
 
@@ -140,8 +146,11 @@ ic = icebox.iceconfig()
 ic.read_file(args[0])
 print()
 
-text_wires = list()
-text_ports = list()
+# these variables store text representations that will end up printed to the
+# output to create the body of the verilog file
+text_wires = list() # all wires in the body of the module
+text_ports = list() # all ports in the module declaration
+v95_module_text_ports = list() # port signal declarations without decoration
 
 luts_queue = set()
 special_5k_queue = set()
@@ -870,58 +879,118 @@ for a in const_assigns + lut_assigns + carry_assigns:
     text_func.append("assign %-*s = %s;" % (max_net_len, a[0], a[1]))
 
 if do_collect:
-    new_text_ports = set()
+    new_text_ports = list()
     vec_ports_min = dict()
     vec_ports_max = dict()
     vec_ports_dir = dict()
     for port in text_ports:
+        # find ports with [x] subscripts to combine into [a:b] style busses
         match = re_match_cached(r"(input|output|inout) (.*)\[(\d+)\] ?$", port);
         if match:
             vec_ports_min[match.group(2)] = min(vec_ports_min.setdefault(match.group(2), int(match.group(3))), int(match.group(3)))
             vec_ports_max[match.group(2)] = max(vec_ports_max.setdefault(match.group(2), int(match.group(3))), int(match.group(3)))
             vec_ports_dir[match.group(2)] = match.group(1)
         else:
-            new_text_ports.add(port)
+            new_text_ports.append(port)
+            if v95_compatibility:
+                # strip direction from text used in module declaration
+                port=str(port.split()[-1:][0])
+                v95_module_text_ports.append("%s%s" % (port, ' ' if port.startswith("\\") else ''))
     for port, direct in list(vec_ports_dir.items()):
         min_idx = vec_ports_min[port]
         max_idx = vec_ports_max[port]
-        new_text_ports.add("%s [%d:%d] %s " % (direct, max_idx, min_idx, port))
-    text_ports = list(new_text_ports)
+        new_text_ports.append("%s wire [%d:%d] %s " % (direct, max_idx, min_idx, port))
+        if v95_compatibility:
+            # strip direction and dimensions from text used in module declaration
+            v95_module_text_ports.append("%s%s" % (port, ' ' if port.startswith("\\") else ''))
+    text_ports = new_text_ports
 
-print("module %s (%s);\n" % (modname, ", ".join(text_ports)))
+if not do_collect:
+    if v95_compatibility:
+        # strip direction from from text used in module declaration
+        for port in text_ports:
+            port=str(port.split()[-1:][0])
+            v95_module_text_ports.append("%s%s" % (port, ' ' if port.startswith("\\") else ''))
 
-new_text_wires = list()
-new_text_regs = list()
-new_text_raw = list()
-for line in text_wires:
+# these variables used to normalize/filter the output
+new_text_wires = list() # list of wire names to declare at top of module
+new_text_regs = list() # list of reg names to declare at top of module
+new_text_raw = list() # remaining content not moved to previous 2 variables
+vec_ports_type = dict() # track which ports should be reg vs wire
+temp_flat_ports = " ".join(text_ports) # temp variable
+
+for line in text_wires: #note - continue in loop body (twice)
+    # match wire declarations (not comments, assigns, etc)
     match = re_match_cached(r"wire ([^ ;]+)(.*)", line)
     if match:
+        name = match.group(1)
+        lineend = match.group(2)
+        isreg = (name in wire_to_reg)
+        isport = (name in temp_flat_ports)
+        if not v95_compatibility and isport:
+            # find the port declration and store off its type
+            for port in text_ports: #note - break in loop body
+                if name in port:
+                    vec_ports_type[port] = "reg" if isreg else "wire"
+                    break # break inner loop when any match found
+            continue # continue outer loop
         if strip_comments:
-            name = match.group(1)
+            # strip_comments will also compact reg and wire declarations
+            # 10 per line with comma separation
+            # names starting with \ can't immediately have a comma after them
+            # so insert a space in the name
+            proper_name = name
             if name.startswith("\\"):
-                name += " "
-            if match.group(1) in wire_to_reg:
-                new_text_regs.append(name)
+                proper_name += " "
+            if isreg:
+                new_text_regs.append(proper_name)
             else:
-                new_text_wires.append(name)
-            continue
+                new_text_wires.append(proper_name)
+            continue # continue outer loop
         else:
-            if match.group(1) in wire_to_reg:
-                line = "reg " + match.group(1) + " = 0" + match.group(2)
-    if strip_comments:
-        new_text_raw.append(line)
-    else:
-        print(line)
-for names in [new_text_wires[x:x+10] for x in range(0, len(new_text_wires), 10)]:
-    print("wire %s;" % ", ".join(names))
-for names in [new_text_regs[x:x+10] for x in range(0, len(new_text_regs), 10)]:
-    print("reg %s = 0;" % " = 0, ".join(names))
+            if isreg:
+                line = "reg " + name + " = 0" + lineend
+    new_text_raw.append(line)
+
+# BEGIN PRINTING THE VERILOG OUTPUT
+# print the module declaration
+if not v95_compatibility:
+    print("module %s (" % modname, end='');
+    separator = ""
+    for port in text_ports:
+        iotype = vec_ports_type.get(port)
+        if iotype:
+            # insert the reg/wire designator after the port direction
+            port = port.replace(" ", " %s " % iotype, 1)
+        print("%s%s%s" % (separator, port, " = 0" if "reg"==iotype else ""), end='')
+        separator=", "
+    print(");\n")
+else:
+    # use v95_module_text_ports with stripped metadata
+    print("module %s (%s);" % (modname, ", ".join(v95_module_text_ports)))
+    # print verbose port declaration on lines after the module declaration
+    for line in text_ports:
+        print(line, end=";\n")
+    print()
+
+# print module body
 if strip_comments:
+    for names in [new_text_wires[x:x+10] for x in range(0, len(new_text_wires), 10)]:
+        print("wire %s;" % ", ".join(names))
+    for names in [new_text_regs[x:x+10] for x in range(0, len(new_text_regs), 10)]:
+        print("reg %s = 0;" % " = 0, ".join(names))
     for line in new_text_raw:
         print(line)
     print()
+else:
+    for line in new_text_raw:
+        print(line)
 
 if do_collect:
+    # when collecing ports into busses, the module declaration is changed to
+    # create a bus interface as a wire
+    # individual component signals may be wire or reg, so assign the signals
+    # to the bus port here
     for port, direct in list(vec_ports_dir.items()):
         min_idx = vec_ports_min[port]
         max_idx = vec_ports_max[port]
