@@ -457,32 +457,32 @@ update(struct app_opts *opts)
 	// Perform checks
 	if ((hf_to.word_size() > 0) && (hf_from.word_size() > hf_to.word_size())) {
 		if (opts->verbose)
-			fprintf(stderr, "Padding to_hexfile words from %lu bits to %lu bits\n",
+			fprintf(stderr, "Padding to_hexfile words from %zu bits to %zu bits\n",
 				hf_to.word_size(), hf_from.word_size());
 		hf_to.pad_words_to(hf_from.word_size());
 	}
 
 	if (hf_to.word_size() != hf_from.word_size()) {
-		fprintf(stderr, "Hexfiles have different word sizes! (%lu bits vs. %lu bits)\n",
+		fprintf(stderr, "Hexfiles have different word sizes! (%zu bits vs. %zu bits)\n",
 			hf_from.word_size(), hf_to.word_size());
 		return 1;
 	}
 
 	if ((hf_to.size() > 0) && (hf_from.size() > hf_to.size())) {
 		if (opts->verbose)
-			fprintf(stderr, "Padding to_hexfile from %lu words to %lu\n",
+			fprintf(stderr, "Padding to_hexfile from %zu words to %zu\n",
 				hf_to.size(), hf_from.size());
 		hf_to.pad_to(hf_from.size());
 	}
 
 	if (hf_to.size() != hf_from.size()) {
-		fprintf(stderr, "Hexfiles have different number of words! (%lu vs. %lu)\n",
+		fprintf(stderr, "Hexfiles have different number of words! (%zu vs. %zu)\n",
 			hf_from.size(), hf_to.size());
 		return 1;
 	}
 
 	if (hf_from.size() % 256 != 0) {
-		fprintf(stderr, "Hexfile number of words (%lu) is not divisible by 256!\n",
+		fprintf(stderr, "Hexfile number of words (%zu) is not divisible by 256!\n",
 			hf_from.size());
 		return 1;
 	}
@@ -494,20 +494,20 @@ update(struct app_opts *opts)
 
 	// Debug
 	if (opts->verbose)
-		fprintf(stderr, "Loaded pattern for %lu bits wide and %lu words deep memory.\n",
+		fprintf(stderr, "Loaded pattern for %zu bits wide and %zu words deep memory.\n",
 			hf_from.word_size(), hf_from.size());
 
 	// Generate mapping for slices
 	std::map<std::vector<bool>, std::pair<std::vector<bool>, int>> pattern = hf_from.generate_pattern(hf_to);
 	if (opts->verbose)
-		fprintf(stderr, "Extracted %lu bit slices from from/to hexfile data.\n", pattern.size());
+		fprintf(stderr, "Extracted %zu bit slices from from/to hexfile data.\n", pattern.size());
 
 	// Load FPGA config from stdin
 	AscFile bitstream;
 	bitstream.load_config(std::cin);
 
 	if (opts->verbose)
-		fprintf(stderr, "Found %lu initialized bram cells in asc file.\n", bitstream.n_ebrs());
+		fprintf(stderr, "Found %zu initialized bram cells in asc file.\n", bitstream.n_ebrs());
 
 	// Apply pattern
 	bitstream.apply_pattern(pattern);
