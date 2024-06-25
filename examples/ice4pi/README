@@ -1,0 +1,26 @@
+Assuming you are running on a Raspberry Pi 2-4 or Zero (tested with bullseye):
+
+1. Install all necessary packages to synthesize rot.v and build bit image (rot.bin) for the ice4pi:
+
+ sudo apt-get install yosys fpga-icestorm arachne-pnr flashrom
+ sudo apt-get install spi-tools
+ make
+
+2. Make sure your Pi has SPI enabled (e.g. use raspi-config)
+
+3. Load the example.bin file to the shield:
+
+ sudo make load
+
+---
+
+4. Validate spi loopback:
+
+
+echo -n 0123456789ABCDEF | spi-pipe -d /dev/spidev0.1 -s 10000000
+
+You should get back 
+F0123456789ABCDE
+
+(F may be NUL if this is your first call)
+
