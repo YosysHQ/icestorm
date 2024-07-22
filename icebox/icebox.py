@@ -622,7 +622,7 @@ class iceconfig:
         return funcnets
     
     def ultraplus_follow_corner(self, corner, direction, netname):
-        m = re_match_cached("span4_(horz|vert)_([lrtb])_(\d+)$", netname)
+        m = re_match_cached(r"span4_(horz|vert)_([lrtb])_(\d+)$", netname)
         if not m:
             return None
         cur_edge = m.group(2)
@@ -744,8 +744,8 @@ class iceconfig:
                         s = self.ultraplus_follow_corner(self.get_corner(s[0], s[1]), direction, n)
                         if s is None:
                             continue
-                    elif re_match_cached("span4_(vert|horz)_[lrtb]_\d+$", n) and not self.is_ultra():
-                        m = re_match_cached("span4_(vert|horz)_([lrtb])_\d+$", n)
+                    elif re_match_cached(r"span4_(vert|horz)_[lrtb]_\d+$", n) and not self.is_ultra():
+                        m = re_match_cached(r"span4_(vert|horz)_([lrtb])_\d+$", n)
 
                         vert_net = n.replace("_l_", "_t_").replace("_r_", "_b_").replace("_horz_", "_vert_")
                         horz_net = n.replace("_t_", "_l_").replace("_b_", "_r_").replace("_vert_", "_horz_")
@@ -1097,7 +1097,7 @@ else:
     valid_sp12_v_b = set(range(24))
 
 def sp4h_normalize(netname, edge=""):
-    m = re_match_cached("sp4_h_([lr])_(\d+)$", netname)
+    m = re_match_cached(r"sp4_h_([lr])_(\d+)$", netname)
     assert m
     if not m: return None
     cur_edge = m.group(1)
@@ -1120,7 +1120,7 @@ def sp4h_normalize(netname, edge=""):
 # "Normalization" of span4 (not just sp4) is needed during Ultra/UltraPlus
 # corner tracing
 def ultra_span4_horz_normalize(netname, edge=""):
-    m = re_match_cached("span4_horz_([rl])_(\d+)$", netname)
+    m = re_match_cached(r"span4_horz_([rl])_(\d+)$", netname)
     assert m
     if not m: return None
     cur_edge = m.group(1)
@@ -1146,7 +1146,7 @@ def ultra_span4_horz_normalize(netname, edge=""):
     assert False
     
 def sp4v_normalize(netname, edge=""):
-    m = re_match_cached("sp4_v_([bt])_(\d+)$", netname)
+    m = re_match_cached(r"sp4_v_([bt])_(\d+)$", netname)
     assert m
     if not m: return None
     cur_edge = m.group(1)
@@ -1168,7 +1168,7 @@ def sp4v_normalize(netname, edge=""):
     return netname
 
 def sp12h_normalize(netname, edge=""):
-    m = re_match_cached("sp12_h_([lr])_(\d+)$", netname)
+    m = re_match_cached(r"sp12_h_([lr])_(\d+)$", netname)
     assert m
     if not m: return None
     cur_edge = m.group(1)
@@ -1190,7 +1190,7 @@ def sp12h_normalize(netname, edge=""):
     return netname
 
 def sp12v_normalize(netname, edge=""):
-    m = re_match_cached("sp12_v_([bt])_(\d+)$", netname)
+    m = re_match_cached(r"sp12_v_([bt])_(\d+)$", netname)
     assert m
     if not m: return None
     cur_edge = m.group(1)
@@ -1253,7 +1253,7 @@ def pos_has_net(pos, netname):
 
 def pos_follow_net(pos, direction, netname, is_ultra):
     if pos == "x" or ((pos in ("l", "r")) and is_ultra):
-            m = re_match_cached("sp4_h_[lr]_(\d+)$", netname)
+            m = re_match_cached(r"sp4_h_[lr]_(\d+)$", netname)
             if m and direction in ("l", "L"):
                 n = sp4h_normalize(netname, "l")
                 if n is not None:
@@ -1275,7 +1275,7 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                         n = re_sub_cached("sp4_h_", "span4_horz_", n)
                     return n
 
-            m = re_match_cached("sp4_v_[tb]_(\d+)$", netname)
+            m = re_match_cached(r"sp4_v_[tb]_(\d+)$", netname)
             if m and direction in ("t", "T"):
                 n = sp4v_normalize(netname, "t")
                 if n is not None:
@@ -1301,7 +1301,7 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                         n = re_sub_cached("sp4_v_", "span4_vert_", n)
                     return n
 
-            m = re_match_cached("sp12_h_[lr]_(\d+)$", netname)
+            m = re_match_cached(r"sp12_h_[lr]_(\d+)$", netname)
             if m and direction in ("l", "L"):
                 n = sp12h_normalize(netname, "l")
                 if n is not None:
@@ -1323,7 +1323,7 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                         n = re_sub_cached("sp12_h_", "span12_horz_", n)
                     return n
 
-            m = re_match_cached("sp12_v_[tb]_(\d+)$", netname)
+            m = re_match_cached(r"sp12_v_[tb]_(\d+)$", netname)
             if m and direction in ("t", "T"):
                 n = sp12v_normalize(netname, "t")
                 if n is not None:
@@ -1350,7 +1350,7 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                     return n
 
     if (pos in ("l", "r" )) and (not is_ultra):
-        m = re_match_cached("span4_vert_([bt])_(\d+)$", netname)
+        m = re_match_cached(r"span4_vert_([bt])_(\d+)$", netname)
         if m:
             case, idx = direction + m.group(1), int(m.group(2))
             if case == "tt":
@@ -1363,7 +1363,7 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                 return "span4_vert_t_%d" % idx
 
     if pos in ("t", "b" ):
-        m = re_match_cached("span4_horz_([rl])_(\d+)$", netname)
+        m = re_match_cached(r"span4_horz_([rl])_(\d+)$", netname)
         if m:
             case, idx = direction + m.group(1), int(m.group(2))
             if direction == "L":
@@ -1380,27 +1380,27 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                 return "span4_horz_l_%d" % idx
 
     if pos == "l" and direction == "r" and (not is_ultra):
-            m = re_match_cached("span4_horz_(\d+)$", netname)
+            m = re_match_cached(r"span4_horz_(\d+)$", netname)
             if m: return sp4h_normalize("sp4_h_l_%s" % m.group(1))
-            m = re_match_cached("span12_horz_(\d+)$", netname)
+            m = re_match_cached(r"span12_horz_(\d+)$", netname)
             if m: return sp12h_normalize("sp12_h_l_%s" % m.group(1))
 
     if pos == "r" and direction == "l" and (not is_ultra):
-            m = re_match_cached("span4_horz_(\d+)$", netname)
+            m = re_match_cached(r"span4_horz_(\d+)$", netname)
             if m: return sp4h_normalize("sp4_h_r_%s" % m.group(1))
-            m = re_match_cached("span12_horz_(\d+)$", netname)
+            m = re_match_cached(r"span12_horz_(\d+)$", netname)
             if m: return sp12h_normalize("sp12_h_r_%s" % m.group(1))
 
     if pos == "t" and direction == "b":
-            m = re_match_cached("span4_vert_(\d+)$", netname)
+            m = re_match_cached(r"span4_vert_(\d+)$", netname)
             if m: return sp4v_normalize("sp4_v_t_%s" % m.group(1))
-            m = re_match_cached("span12_vert_(\d+)$", netname)
+            m = re_match_cached(r"span12_vert_(\d+)$", netname)
             if m: return sp12v_normalize("sp12_v_t_%s" % m.group(1))
 
     if pos == "b" and direction == "t":
-            m = re_match_cached("span4_vert_(\d+)$", netname)
+            m = re_match_cached(r"span4_vert_(\d+)$", netname)
             if m: return sp4v_normalize("sp4_v_b_%s" % m.group(1))
-            m = re_match_cached("span12_vert_(\d+)$", netname)
+            m = re_match_cached(r"span12_vert_(\d+)$", netname)
             if m: return sp12v_normalize("sp12_v_b_%s" % m.group(1))
 
     return None
