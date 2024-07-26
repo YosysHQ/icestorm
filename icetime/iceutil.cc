@@ -32,6 +32,10 @@
 #  include <unistd.h>
 #endif
 
+#ifdef __HAIKU__
+#  include <image.h>
+#endif
+
 #if defined(__FreeBSD__) || defined(__NetBSD__)
 #  include <sys/sysctl.h>
 #endif
@@ -50,6 +54,22 @@ std::string proc_self_dirname()
 	while (buflen > 0 && path[buflen-1] != '/')
 		buflen--;
 	return std::string(path, buflen);
+}
+#elif defined(__HAIKU__)
+std::string proc_self_dirname()
+{
+	std::string path;
+
+	int32 cookie = 0;
+	image_info info;
+	while (get_next_image_info(B_CURRENT_TEAM, &cookie, &info) == B_OK) {
+		if (info.type == B_APP_IMAGE) {
+			path.assign(info.name);
+			return path;
+		}
+	}
+	fprintf(stderr, "fatal error: unable to get self dirname!");
+	exit(EXIT_FAILURE);
 }
 #elif defined(__FreeBSD__) || defined(__NetBSD__)
 std::string proc_self_dirname()
