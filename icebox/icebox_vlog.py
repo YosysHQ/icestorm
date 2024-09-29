@@ -534,7 +534,10 @@ for pllid in ic.pll_list():
         else:
             text_func.append("  .PLLOUT_SELECT_PORTA(\"%s\")," % get_pll_outsel(pllinfo, "PLLOUT_SELECT_A"))
             text_func.append("  .PLLOUT_SELECT_PORTB(\"%s\")," % get_pll_outsel(pllinfo, "PLLOUT_SELECT_B"))
-        text_func.append("  .SHIFTREG_DIV_MODE(1'b%s)," % get_pll_bit(pllinfo, "SHIFTREG_DIV_MODE"))
+            if ic.device == "5k":
+                text_func.append("  .SHIFTREG_DIV_MODE(2'b%s)," % get_pll_bits(pllinfo, "SHIFTREG_DIV_MODE", 2))
+            else:
+                text_func.append("  .SHIFTREG_DIV_MODE(1'b%s)," % get_pll_bit(pllinfo, "SHIFTREG_DIV_MODE"))
         text_func.append("  .FDA_FEEDBACK(4'b%s)," % get_pll_bits(pllinfo, "FDA_FEEDBACK", 4))
         text_func.append("  .FDA_RELATIVE(4'b%s)," % get_pll_bits(pllinfo, "FDA_RELATIVE", 4))
         text_func.append("  .DIVR(4'b%s)," % get_pll_bits(pllinfo, "DIVR", 4))
