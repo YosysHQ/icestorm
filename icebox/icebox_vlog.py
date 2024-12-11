@@ -235,8 +235,8 @@ for idx, tile in list(ic.io_tiles.items()):
             iocells_negclk.add((idx[0], idx[1], 0))
             iocells_negclk.add((idx[0], idx[1], 1))
         if entry[1].startswith("IOB_") and entry[2].startswith("PINTYPE_") and tc.match(entry[0]):
-            match1 = re_match_cached("IOB_(\d+)", entry[1])
-            match2 = re_match_cached("PINTYPE_(\d+)", entry[2])
+            match1 = re_match_cached(r"IOB_(\d+)", entry[1])
+            match2 = re_match_cached(r"PINTYPE_(\d+)", entry[2])
             assert match1 and match2
             iocells_type[(idx[0], idx[1], int(match1.group(1)))][int(match2.group(1))] = "1"
     iocells_type[(idx[0], idx[1], 0)] = "".join(iocells_type[(idx[0], idx[1], 0)])
@@ -245,7 +245,7 @@ for idx, tile in list(ic.io_tiles.items()):
 for segs in sorted(ic.group_segments()):
     for seg in segs:
         if ic.tile_type(seg[0], seg[1]) == "IO":
-            match = re_match_cached("io_(\d+)/D_(IN|OUT)_(\d+)", seg[2])
+            match = re_match_cached(r"io_(\d+)/D_(IN|OUT)_(\d+)", seg[2])
             if match:
                 cell = (seg[0], seg[1], int(match.group(1)))
                 if cell in iocells_skip:
@@ -288,7 +288,7 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
     renamed_net_to_port = False
 
     for s in segs:
-        match =  re_match_cached("io_(\d+)/PAD", s[2])
+        match =  re_match_cached(r"io_(\d+)/PAD", s[2])
         if match:
             idx = (s[0], s[1], int(match.group(1)))
             p = "io_%d_%d_%d" % idx
@@ -323,7 +323,7 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
                 text_ports.append("inout %s" % p)
                 text_wires.append("assign %s = %s;" % (p, n))
 
-        match =  re_match_cached("lutff_(\d+)/", s[2])
+        match =  re_match_cached(r"lutff_(\d+)/", s[2])
         if match:
             #IpCon and DSP tiles look like logic tiles, but aren't.
             if ic.device in ["5k", "u4k"] and (s[0] == 0 or s[0] == ic.max_x):
