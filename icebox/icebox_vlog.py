@@ -282,6 +282,7 @@ def next_netname():
         if n not in portnames:
             return n
 
+port_wire_names = set()
 for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_segments=extra_segments)):
     n = next_netname()
     net_segs = set()
@@ -312,6 +313,7 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
                 else:
                     text_ports.append("inout %s" % p)
                 text_wires.append("wire %s;" % n)
+                port_wire_names.add(p)
                 renamed_net_to_port = True
             elif idx in iocells_in and idx not in iocells_out:
                 text_ports.append("input %s" % p)
@@ -908,6 +910,9 @@ for line in text_wires:
         else:
             if match.group(1) in wire_to_reg:
                 line = "reg " + match.group(1) + " = 0" + match.group(2)
+            else:
+                if match.group(1) in port_wire_names:
+                    continue
     if strip_comments:
         new_text_raw.append(line)
     else:
