@@ -33,3 +33,5 @@ html_theme_options = {
     "titles_only": False
 }
 html_static_path = ['_static']
+
+latex_engine = 'lualatex'
