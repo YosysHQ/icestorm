@@ -162,4 +162,4 @@ padding is performed.
 
 .. |Mapping of tile config bits to 2D CRAM| image:: _static/images/checkerboard.png
    :height: 200px
-   :target: checkerboard.png
+   :target: _static/images/checkerboard.png
