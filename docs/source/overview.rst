@@ -471,8 +471,9 @@ tiles.
 -  `IO Tile Documentation <io_tile.html>`__
 -  `RAM Tile Documentation <ram_tile.html>`__
 -  `The Bitstream File Format <format.html>`__
--  `The iCE40 HX1K Bit Docs <bitdocs-1k/>`__
--  `The iCE40 HX8K Bit Docs <bitdocs-8k/>`__
+-  `The iCE40 LP384 Bit Docs <_static/bitdocs-384/index.html>`__
+-  `The iCE40 HX1K Bit Docs <_static/bitdocs-1k/index.html>`__
+-  `The iCE40 HX8K Bit Docs <_static/bitdocs-8k/index.html>`__
 -  `Notes on UltraPlus features <ultraplus.html>`__
 
 The iceunpack program can be used to convert the bitstream into an ASCII
