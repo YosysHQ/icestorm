@@ -1,7 +1,7 @@
 Project IceStorm aims at documenting the bitstream format of Lattice iCE40
 FPGAs and providing simple tools for analyzing and creating bitstream files.
 
-See http://bygone.clairexen.net/icestorm/ for more information.
+See https://prjicestorm.readthedocs.io/ for more information.
 
 Most of Project IceStorm is licensed under the ISC license:
 
