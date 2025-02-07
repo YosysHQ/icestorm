@@ -480,7 +480,7 @@ corresponding CORE output of the PLL.
 
 .. |IO Tile Span-Wires| image:: _static/images/iosp.svg
    :height: 200px
-   :target: iosp.svg
+   :target: _static/images/iosp.svg
 .. |Column Buffers| image:: _static/images/colbuf.svg
    :height: 200px
-   :target: colbuf.svg
+   :target: _static/images/colbuf.svg

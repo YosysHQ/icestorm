@@ -321,7 +321,7 @@ unconnected.
 
 .. |Span-4 Horizontal| image:: _static/images/sp4h.svg
    :height: 200px
-   :target: sp4h.svg
+   :target: _static/images/sp4h.svg
 .. |Span-4 Vertical| image:: _static/images/sp4v.svg
    :height: 200px
-   :target: sp4v.svg
+   :target: _static/images/sp4v.svg
