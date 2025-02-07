@@ -15,8 +15,8 @@ Project IceStorm
 | **2015-07-19:** Released support for 8k chips. Moved IceStorm source
   code to GitHub.
 | **2015-05-27:** We have a working fully Open Source flow with
-  `Yosys <http://bygone.clairexen.net/yosys/>`__ and
-  `Arachne-pnr <https://github.com/cseed/arachne-pnr>`__! Video:
+  `Yosys <https://github.com/YosysHQ/yosys>`__ and
+  `Arachne-pnr <https://github.com/YosysHQ/arachne-pnr>`__! Video:
   http://youtu.be/yUiNlmvVOq8
 | **2015-04-13:** Complete rewrite of IceUnpack, added IcePack, some
   major documentation updates
@@ -29,8 +29,8 @@ What is Project IceStorm?
 Project IceStorm aims at documenting the bitstream format of Lattice
 iCE40 FPGAs and providing simple tools for analyzing and creating
 bitstream files. The IceStorm flow
-(`Yosys <http://bygone.clairexen.net/yosys/>`__,
-`Arachne-pnr <https://github.com/cseed/arachne-pnr>`__, and IceStorm) is
+(`Yosys <https://github.com/YosysHQ/yosys>`__,
+`Arachne-pnr <https://github.com/YosysHQ/arachne-pnr>`__, and IceStorm) is
 a fully open source Verilog-to-Bitstream flow for iCE40 FPGAs.
 
 The focus of the project is on the iCE40 LP/HX 1K/4K/8K chips. (Most of
@@ -245,11 +245,11 @@ How do I use the Fully Open Source iCE40 Flow?
 ----------------------------------------------
 
 Synthesis for iCE40 FPGAs can be done with
-`Yosys <http://bygone.clairexen.net/yosys/>`__. Place-and-route can be
-done with `arachne-pnr <https://github.com/cseed/arachne-pnr>`__. Here
+`Yosys <https://github.com/YosysHQ/yosys>`__. Place-and-route can be
+done with `arachne-pnr <https://github.com/YosysHQ/arachne-pnr>`__. Here
 is an example script for implementing and programming the `rot example
 from
-arachne-pnr <https://github.com/cseed/arachne-pnr/tree/master/examples/rot>`__
+arachne-pnr <https://github.com/YosysHQ/arachne-pnr/tree/master/examples/rot>`__
 (this example targets the iCEstick development board):
 
 ::
@@ -301,12 +301,12 @@ Installing the `IceStorm Tools <https://github.com/YosysHQ/icestorm>`__
    make -j$(nproc)
    sudo make install
 
-Installing `Arachne-PNR <https://github.com/cseed/arachne-pnr>`__
+Installing `Arachne-PNR <https://github.com/YosysHQ/arachne-pnr>`__
 (place&route tool, predecessor to NextPNR):
 
 ::
 
-   git clone https://github.com/cseed/arachne-pnr.git arachne-pnr
+   git clone https://github.com/YosysHQ/arachne-pnr.git arachne-pnr
    cd arachne-pnr
    make -j$(nproc)
    sudo make install
@@ -322,7 +322,7 @@ tool, Arachne-PNR replacement):
    make -j$(nproc)
    sudo make install
 
-Installing `Yosys <http://bygone.clairexen.net/yosys/>`__ (Verilog
+Installing `Yosys <https://github.com/YosysHQ/yosys>`__ (Verilog
 synthesis):
 
 ::
@@ -368,8 +368,8 @@ The IceStorm Tools are a couple of small programs for working with iCE40
 bitstream files and our ASCII representation of it. The complete Open
 Source iCE40 Flow consists of the `IceStorm
 Tools <https://github.com/YosysHQ/icestorm>`__,
-`Arachne-PNR <https://github.com/cseed/arachne-pnr>`__, and
-`Yosys <http://bygone.clairexen.net/yosys/>`__.
+`Arachne-PNR <https://github.com/YosysHQ/arachne-pnr>`__, and
+`Yosys <https://github.com/YosysHQ/yosys>`__.
 
 IcePack/IceUnpack
 ~~~~~~~~~~~~~~~~~
@@ -449,7 +449,7 @@ IRC <http://webchat.freenode.net/?channels=yosys>`__.
 If you have a bug report please file an issue on github. (`IceStorm
 Issue Tracker <https://github.com/YosysHQ/icestorm/issues>`__, `Yosys
 Issue Tracker <https://github.com/YosysHQ/yosys/issues>`__, `Arachne-PNR
-Issue Tracker <https://github.com/cseed/arachne-pnr/issues>`__)
+Issue Tracker <https://github.com/YosysHQ/arachne-pnr/issues>`__)
 
 .. _docs:
 
@@ -718,7 +718,7 @@ Other FPGA bitstream documentation projects
 
 In papers and reports, please refer to Project IceStorm as follows:
 Claire Wolf, Mathias Lasser. Project IceStorm.
-http://bygone.clairexen.net/icestorm/, e.g. using the following BibTeX
+https://prjicestorm.readthedocs.io/, e.g. using the following BibTeX
 code:
 
 ::
@@ -726,7 +726,7 @@ code:
    @MISC{IceStorm,
        author = {Claire Wolf and Mathias Lasser},
        title = {Project IceStorm},
-       howpublished = "\url{http://bygone.clairexen.net/icestorm/}"
+       howpublished = "\url{https://prjicestorm.readthedocs.io/}"
    }
 
 --------------
