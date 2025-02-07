@@ -9,7 +9,7 @@ Project IceStorm
 | **2016-01-17:** First release of IceTime timing analysis. Video:
   https://youtu.be/IG5CpFJRnOk
 | **2015-12-27:**
-  `Presentation <http://bygone.clairexen.net/papers/2015/icestorm-flow/>`__
+  `Presentation <_static/slides.pdf>`__
   of the IceStorm flow at 32C3 (`Video on
   Youtube <https://www.youtube.com/watch?v=SOn0g3k0FlE>`__).
 | **2015-07-19:** Released support for 8k chips. Moved IceStorm source
