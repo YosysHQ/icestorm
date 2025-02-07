@@ -6,7 +6,9 @@ build:
         python: '3.11'
     jobs:
       pre_build:
-        - python3 icebox/icebox_html.py  -3 -d docs/source/_static/bitdocs-384
+        - python3 icebox/icebox_html.py -3 -d docs/source/_static/bitdocs-384
+        - python3 icebox/icebox_html.py -d docs/source/_static/bitdocs-1k
+        - python3 icebox/icebox_html.py -8 -d docs/source/_static/bitdocs-8k
 
 sphinx:
   configuration: docs/source/conf.py
