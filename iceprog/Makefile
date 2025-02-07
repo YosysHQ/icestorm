@@ -9,21 +9,28 @@ LDLIBS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors
 CFLAGS += $(shell for pkg in libftdi1 libftdi; do $(PKG_CONFIG) --silence-errors --cflags $$pkg && exit; done; )
 endif
 
-all: $(PROGRAM_PREFIX)iceprog$(EXE)
+all: $(PROGRAM_PREFIX)iceprog$(EXE) $(PROGRAM_PREFIX)icebin2nvcm$(EXE)
 
 $(PROGRAM_PREFIX)iceprog$(EXE): iceprog.o mpsse.o
+	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
+
+$(PROGRAM_PREFIX)icebin2nvcm$(EXE): icebin2nvcm.o
 	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp $(PROGRAM_PREFIX)iceprog$(EXE) $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)iceprog$(EXE)
+	cp $(PROGRAM_PREFIX)icebin2nvcm$(EXE) $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebin2nvcm$(EXE)
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)iceprog$(EXE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icebin2nvcm$(EXE)
 
 clean:
 	rm -f $(PROGRAM_PREFIX)iceprog
 	rm -f $(PROGRAM_PREFIX)iceprog.exe
+	rm -f $(PROGRAM_PREFIX)icebin2nvcm
+	rm -f $(PROGRAM_PREFIX)icebin2nvcm.exe
 	rm -f *.o *.d
 
 -include *.d
