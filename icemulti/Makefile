@@ -9,6 +9,9 @@ all: $(PROGRAM_PREFIX)icemulti$(EXE)
 $(PROGRAM_PREFIX)icemulti$(EXE): icemulti.o
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
+check: all
+	cd tests; ./run-tests
+
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp $(PROGRAM_PREFIX)icemulti$(EXE) $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icemulti$(EXE)
@@ -23,5 +26,5 @@ clean:
 
 -include *.d
 
-.PHONY: all install uninstall clean
+.PHONY: all check install uninstall clean
 
