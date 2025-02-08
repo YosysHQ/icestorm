@@ -94,7 +94,7 @@ for o, a in opts:
     elif o in ("-p", "-P"):
         with open(a, "r") as f:
             for line in f:
-                if o == "-P" and not re_search_cached(" # ICE_(GB_)?IO", line):
+                if o == "-P" and not re_search_cached(r" # ICE_(GB_)?IO", line):
                     continue
                 line = re_sub_cached(r"#.*", "", line.strip()).split()
                 if "--warn-no-port" in line:
