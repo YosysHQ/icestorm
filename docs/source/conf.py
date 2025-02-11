@@ -13,7 +13,9 @@ author = 'YosysHQ'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['sphinx_rtd_theme']
+extensions = ['sphinx_rtd_theme',
+              'sphinxcontrib.rsvgconverter'
+              ]
 
 templates_path = ['_templates']
 exclude_patterns = []
@@ -31,3 +33,5 @@ html_theme_options = {
     "titles_only": False
 }
 html_static_path = ['_static']
+
+latex_engine = 'lualatex'
