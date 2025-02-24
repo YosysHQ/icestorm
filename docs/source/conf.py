@@ -17,6 +17,7 @@ extensions = ['sphinx_rtd_theme']
 
 templates_path = ['_templates']
 exclude_patterns = []
+smartquotes = False
 
 
 # -- Options for HTML output -------------------------------------------------
