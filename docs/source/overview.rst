@@ -353,6 +353,12 @@ and `yosys-git <https://aur.archlinux.org/packages/yosys-git/>`__ from
 the Arch User Repository (no need to follow the install instructions
 above).
 
+**Notes for Guix:** just install
+`icestorm <https://hpc.guix.info/package/icestorm/>`__,
+`nextpnr-ice40 <https://hpc.guix.info/package/nextpnr-ice40/>`__
+and `yosys <https://hpc.guix.info/package/yosys>`__
+(no need to follow the install instructions above).
+
 **Notes for OSX:** Please follow the `additional instructions for
 OSX <notes_osx.html>`__ to install on OSX.
 
