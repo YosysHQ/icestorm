@@ -69,6 +69,9 @@ void help(const char *cmd)
 	printf("    -m\n");
 	printf("        Save PLL configuration as Verilog module (May use with -f)\n");
 	printf("\n");
+	printf("    -r\n");
+	printf("        Include reset input in verilog module\n");
+	printf("\n");
 	printf("    -n <module name>\n");
 	printf("        Specify different Verilog module name than the default 'pll'\n");
 	printf("\n");
@@ -213,12 +216,13 @@ int main(int argc, char **argv)
 	bool file_stdout = false;
 	const char* module_name = NULL;
 	bool save_as_module = false;
+	bool reset_signal = false;
 	bool best_mode = false;
 	const char* freqfile = NULL;
 	bool quiet = false;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "i:o:pSmf:n:bB:q")) != -1)
+	while ((opt = getopt(argc, argv, "i:o:pSmrf:n:bB:q")) != -1)
 	{
 		switch (opt)
 		{
@@ -236,6 +240,9 @@ int main(int argc, char **argv)
 			break;
 		case 'm':
 			save_as_module = true;
+			break;
+		case 'r':
+			reset_signal = true;
 			break;
 		case 'f':
 			filename = optarg;
@@ -396,9 +403,12 @@ int main(int argc, char **argv)
 			// generate Verilog module
 			fprintf(f,  "module %s(\n"
 						"\tinput  clock_in,\n"
+						"%s"
 						"\toutput clock_out,\n"
 						"\toutput locked\n"
-						"\t);\n\n", (module_name ? module_name : "pll")
+						"\t);\n\n",
+						(module_name ? module_name : "pll"),
+						(reset_signal ? "\tinput  reset,\n" : "")
 					);
 
 			// save iCE40 PLL tile configuration
@@ -410,11 +420,13 @@ int main(int argc, char **argv)
 			fprintf(f, "\t\t.FILTER_RANGE(3'b%s)\t" "// FILTER_RANGE = %d\n", binstr(filter_range, 3), filter_range);
 			fprintf(f, "\t) uut (\n"
 						"\t\t.LOCK(locked),\n"
-						"\t\t.RESETB(1'b1),\n"
+						"\t\t.RESETB(%s),\n"
 						"\t\t.BYPASS(1'b0),\n"
 						"\t\t.%s(clock_in),\n"
 						"\t\t.PLLOUTCORE(clock_out)\n"
-						"\t\t);\n\n", (pad ? "PACKAGEPIN":"REFERENCECLK")
+						"\t\t);\n\n",
+						(reset_signal ? "reset":"1'b1"),
+						(pad ? "PACKAGEPIN":"REFERENCECLK")
 					);
 
 			fprintf(f, "endmodule\n");
