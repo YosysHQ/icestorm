@@ -413,7 +413,15 @@ int main(int argc, char **argv)
 						"\t\t.RESETB(1'b1),\n"
 						"\t\t.BYPASS(1'b0),\n"
 						"\t\t.%s(clock_in),\n"
-						"\t\t.PLLOUTCORE(clock_out)\n"
+						"\t\t.PLLOUTCORE(clock_out),\n\n"
+						"\t\t/* Unused */\n"
+						"\t\t.PLLOUTGLOBAL(),\n"
+						"\t\t.EXTFEEDBACK(),\n"
+						"\t\t.LATCHINPUTVALUE(),\n"
+						"\t\t.SDO(),\n"
+						"\t\t.SDI(),\n"
+						"\t\t.SCLK(),\n"
+						"\t\t.DYNAMICDELAY()\n"
 						"\t\t);\n\n", (pad ? "PACKAGEPIN":"REFERENCECLK")
 					);
 
