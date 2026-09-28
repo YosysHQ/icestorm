@@ -122,7 +122,7 @@ struct FpgaConfig
 	void write_bits(std::ostream &ofs) const;
 
 	// icebox i/o
-	void read_ascii(std::istream &ifs, bool nosleep);
+	void read_ascii(std::istream &ifs, bool nosleep, const std::string& freqrange);
 	void write_ascii(std::ostream &ofs) const;
 
 	// netpbm i/o
@@ -612,7 +612,7 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 	write_byte(ofs, crc_value, file_offset, 0x00);
 }
 
-void FpgaConfig::read_ascii(std::istream &ifs, bool nosleep)
+void FpgaConfig::read_ascii(std::istream &ifs, bool nosleep, const std::string& freqrange)
 {
 	debug("## %s\n", __PRETTY_FUNCTION__);
 	info("Parsing ascii file..\n");
@@ -620,7 +620,7 @@ void FpgaConfig::read_ascii(std::istream &ifs, bool nosleep)
 	bool got_device = false;
 	this->cram.clear();
 	this->bram.clear();
-	this->freqrange = "low";
+	this->freqrange = freqrange;
 	this->warmboot = "enabled";
 
 	bool reuse_line = true;
@@ -1361,6 +1361,9 @@ void usage(const char *cmd)
 	log("    -B0, -B1, -B2, -B3\n");
 	log("        only include the specified bank in the netpbm file\n");
 	log("\n");
+	log("    -Fl, -Fm, -Fh\n");
+	log("        set the frequency range of the internal oscillator (low, medium, high)\n");
+	log("\n");
 	log("    -n\n");
 	log("        skip initializing BRAM\n");
 	log("\n");
@@ -1391,6 +1394,7 @@ int main(int argc, char **argv)
         bool skip_bram_initialization = false;
 	int netpbm_banknum = -1;
 	int checkerboard_m = 1;
+	std::string freqrange = "low";
 
 	for (int i = 0; argv[0][i]; i++)
 		if (string(argv[0]+i) == "iceunpack")
@@ -1425,6 +1429,16 @@ int main(int argc, char **argv)
 					log_level++;
 				} else if (arg[i] == 'n') {
 					skip_bram_initialization = true;
+				} else if (arg[i] == 'F') {
+					char speed = arg[++i];
+					if (speed == 'l')
+						freqrange = "low";
+					else if (speed == 'm')
+						freqrange = "medium";
+					else if (speed == 'h')
+						freqrange = "high";
+					else
+						usage(argv[0]);
 				} else
 					usage(argv[0]);
 			continue;
@@ -1462,14 +1476,14 @@ int main(int argc, char **argv)
 
 	FpgaConfig fpga_config;
         
-        fpga_config.skip_bram_initialization = skip_bram_initialization;
+	fpga_config.skip_bram_initialization = skip_bram_initialization;
 
 	if (unpack_mode) {
 		fpga_config.read_bits(*isp);
 		if (!netpbm_mode)
 			fpga_config.write_ascii(*osp);
 	} else {
-		fpga_config.read_ascii(*isp, nosleep_mode);
+		fpga_config.read_ascii(*isp, nosleep_mode, freqrange);
 		if (!netpbm_mode)
 			fpga_config.write_bits(*osp);
 	}
