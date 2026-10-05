@@ -5793,6 +5793,20 @@ extra_cells_db = {
             "PU_ENB":                (25, 27, "lutff_7/in_0"),
             "WEAK_PU_ENB":           (25, 27, "lutff_5/in_0"),
             "PACKAGE_PIN":           (19, 31, 1)
+        },
+        ("FILTER_50NS", (25, 31, 2)): {
+            "FILTERIN":              (25, 27, "lutff_1/in_0"),
+            "FILTEROUT":             (25, 27, "slf_op_2"),
+            "ENABLE_0":              (25, 30, "CBIT_2"),
+            "ENABLE_1":              (25, 30, "CBIT_3"),
+            "ENABLE_2":              (25, 30, "CBIT_4"),
+        },
+        ("FILTER_50NS", (25, 31, 3)): {
+            "FILTERIN":              (25, 27, "lutff_0/in_0"),
+            "FILTEROUT":             (25, 27, "slf_op_1"),
+            "ENABLE_0":              (25, 30, "CBIT_5"),
+            "ENABLE_1":              (25, 30, "CBIT_6"),
+            "ENABLE_2":              (25, 30, "CBIT_7"),
         }
     },
 
