@@ -159,20 +159,20 @@ std::string find_chipdb(std::string config_device)
 #else
 		homepath += getenv("HOME");
 #endif
-		homepath += std::string(&PREFIX[1]) + "/" CHIPDB_SUBDIR "/chipdb-" + config_device + ".txt";
+		homepath += std::string(&PREFIX[1]) + "/" CHIPDB_SUBDIR "/chipdb-" + config_device + ".txt.gz";
 		if (verbose)
 			fprintf(stderr, "Looking for chipdb '%s' at %s\n", config_device.c_str(), homepath.c_str());
 		if (file_test_open(homepath))
 			return homepath;
 	}
 
-	std::string prefixpath = PREFIX "/share/" CHIPDB_SUBDIR "/chipdb-" + config_device + ".txt";
+	std::string prefixpath = PREFIX "/share/" CHIPDB_SUBDIR "/chipdb-" + config_device + ".txt.gz";
 	if (verbose)
 		fprintf(stderr, "Looking for chipdb '%s' at %s\n", config_device.c_str(), prefixpath.c_str());
 	if (file_test_open(prefixpath))
 		return prefixpath;
 
-	std::string relbinarypath = proc_self_dirname() + "../share/" CHIPDB_SUBDIR "/chipdb-" + config_device + ".txt";
+	std::string relbinarypath = proc_self_dirname() + "../share/" CHIPDB_SUBDIR "/chipdb-" + config_device + ".txt.gz";
 	if (verbose)
 		fprintf(stderr, "Looking for chipdb '%s' at %s\n", config_device.c_str(), relbinarypath.c_str());
 	if (file_test_open(relbinarypath))
