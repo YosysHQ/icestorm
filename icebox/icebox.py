@@ -1258,21 +1258,21 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                 n = sp4h_normalize(netname, "l")
                 if n is not None:
                     if direction == "l" or is_ultra:
-                        n = re_sub_cached("_l_", "_r_", n)
+                        n = re_sub_cached(r"_l_", "_r_", n)
                         n = sp4h_normalize(n)
                     else:
-                        n = re_sub_cached("_l_", "_", n)
-                        n = re_sub_cached("sp4_h_", "span4_horz_", n)
+                        n = re_sub_cached(r"_l_", "_", n)
+                        n = re_sub_cached(r"sp4_h_", "span4_horz_", n)
                     return n
             if m and direction in ("r", "R"):
                 n = sp4h_normalize(netname, "r")
                 if n is not None:
                     if direction == "r" or is_ultra:
-                        n = re_sub_cached("_r_", "_l_", n)
+                        n = re_sub_cached(r"_r_", "_l_", n)
                         n = sp4h_normalize(n)
                     else:
-                        n = re_sub_cached("_r_", "_", n)
-                        n = re_sub_cached("sp4_h_", "span4_horz_", n)
+                        n = re_sub_cached(r"_r_", "_", n)
+                        n = re_sub_cached(r"sp4_h_", "span4_horz_", n)
                     return n
 
             m = re_match_cached(r"sp4_v_[tb]_(\d+)$", netname)
@@ -1280,25 +1280,25 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                 n = sp4v_normalize(netname, "t")
                 if n is not None:
                     if is_ultra and direction == "T" and pos in ("l", "r"):
-                        return re_sub_cached("sp4_v_", "span4_vert_", n)
+                        return re_sub_cached(r"sp4_v_", "span4_vert_", n)
                     elif direction == "t":
-                        n = re_sub_cached("_t_", "_b_", n)
+                        n = re_sub_cached(r"_t_", "_b_", n)
                         n = sp4v_normalize(n)
                     else:
-                        n = re_sub_cached("_t_", "_", n)
-                        n = re_sub_cached("sp4_v_", "span4_vert_", n)
+                        n = re_sub_cached(r"_t_", "_", n)
+                        n = re_sub_cached(r"sp4_v_", "span4_vert_", n)
                     return n
             if m and direction in ("b", "B"):
                 n = sp4v_normalize(netname, "b")
                 if n is not None:
                     if is_ultra and direction == "B" and pos in ("l", "r"):
-                        return re_sub_cached("sp4_v_", "span4_vert_", n)
+                        return re_sub_cached(r"sp4_v_", "span4_vert_", n)
                     elif direction == "b":
-                        n = re_sub_cached("_b_", "_t_", n)
+                        n = re_sub_cached(r"_b_", "_t_", n)
                         n = sp4v_normalize(n)
                     else:
-                        n = re_sub_cached("_b_", "_", n)
-                        n = re_sub_cached("sp4_v_", "span4_vert_", n)
+                        n = re_sub_cached(r"_b_", "_", n)
+                        n = re_sub_cached(r"sp4_v_", "span4_vert_", n)
                     return n
 
             m = re_match_cached(r"sp12_h_[lr]_(\d+)$", netname)
@@ -1306,21 +1306,21 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                 n = sp12h_normalize(netname, "l")
                 if n is not None:
                     if direction == "l" or is_ultra:
-                        n = re_sub_cached("_l_", "_r_", n)
+                        n = re_sub_cached(r"_l_", "_r_", n)
                         n = sp12h_normalize(n)
                     else:
-                        n = re_sub_cached("_l_", "_", n)
-                        n = re_sub_cached("sp12_h_", "span12_horz_", n)
+                        n = re_sub_cached(r"_l_", "_", n)
+                        n = re_sub_cached(r"sp12_h_", "span12_horz_", n)
                     return n
             if m and direction in ("r", "R"):
                 n = sp12h_normalize(netname, "r")
                 if n is not None:
                     if direction == "r" or is_ultra:
-                        n = re_sub_cached("_r_", "_l_", n)
+                        n = re_sub_cached(r"_r_", "_l_", n)
                         n = sp12h_normalize(n)
                     else:
-                        n = re_sub_cached("_r_", "_", n)
-                        n = re_sub_cached("sp12_h_", "span12_horz_", n)
+                        n = re_sub_cached(r"_r_", "_", n)
+                        n = re_sub_cached(r"sp12_h_", "span12_horz_", n)
                     return n
 
             m = re_match_cached(r"sp12_v_[tb]_(\d+)$", netname)
@@ -1328,25 +1328,25 @@ def pos_follow_net(pos, direction, netname, is_ultra):
                 n = sp12v_normalize(netname, "t")
                 if n is not None:
                     if direction == "t":
-                        n = re_sub_cached("_t_", "_b_", n)
+                        n = re_sub_cached(r"_t_", "_b_", n)
                         n = sp12v_normalize(n)
                     elif direction == "T" and pos in ("l", "r"):
                         pass
                     else:
-                        n = re_sub_cached("_t_", "_", n)
-                        n = re_sub_cached("sp12_v_", "span12_vert_", n)
+                        n = re_sub_cached(r"_t_", "_", n)
+                        n = re_sub_cached(r"sp12_v_", "span12_vert_", n)
                     return n
             if m and direction in ("b", "B"):
                 n = sp12v_normalize(netname, "b")
                 if n is not None:
                     if direction == "b":
-                        n = re_sub_cached("_b_", "_t_", n)
+                        n = re_sub_cached(r"_b_", "_t_", n)
                         n = sp12v_normalize(n)
                     elif direction == "B" and pos in ("l", "r"):
                         pass
                     else:
-                        n = re_sub_cached("_b_", "_", n)
-                        n = re_sub_cached("sp12_v_", "span12_vert_", n)
+                        n = re_sub_cached(r"_b_", "_", n)
+                        n = re_sub_cached(r"sp12_v_", "span12_vert_", n)
                     return n
 
     if (pos in ("l", "r" )) and (not is_ultra):
