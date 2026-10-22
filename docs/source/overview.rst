@@ -429,14 +429,15 @@ synthesis and place&route.
 ChipDB
 ~~~~~~
 
-The IceStorm Makefile builds and installs two files: chipdb-1k.txt and
-chipdb-8k.txt. This files contain all the relevant information for
-arachne-pnr to place&route a design and create an IceStorm ASCII file
+The IceStorm Makefile builds and installs several files: chipdb-1k.txt.gz,
+chipdb-384.txt.gz, chipdb-5k.txt.gz, chipdb-8k.txt.gz, chipdb-lm4k.txt.gz,
+and chipdb-u4k.txt.gz. This files contain all the relevant information for
+nextpnr-pnr to place&route a design and create an IceStorm ASCII file
 for the placed and routed design.
 
-*IcePack/IceUnpack, IceBox, IceProg, IceTime, and IcePLL are written by
-Claire Wolf. IcePack/IceUnpack is based on a reference implementation
-provided by Mathias Lasser. IceMulti is written by Marcus Comstedt.*
+*IcePack/IceUnpack, IceBox, IceProg, IceTime, and IcePLL were originally
+written by Claire Wolf. IcePack/IceUnpack is based on a reference implementation
+provided by Mathias Lasser. IceMulti was created by Marcus Comstedt.*
 
 Where do I get support or meet other IceStorm users?
 ----------------------------------------------------
@@ -449,13 +450,13 @@ stackoverflow <http://stackoverflow.com/questions/tagged/verilog>`__
 instead.
 
 For general discussions go to the `Yosys
-Subreddit <https://www.reddit.com/r/yosys/>`__ or `#yosys on freenode
-IRC <http://webchat.freenode.net/?channels=yosys>`__.
+Subreddit <https://www.reddit.com/r/yosys/>`__ or `#yosys on the Libera.Chat
+IRC <https://web.libera.chat/?channels=#yosys>`__.
 
 If you have a bug report please file an issue on github. (`IceStorm
 Issue Tracker <https://github.com/YosysHQ/icestorm/issues>`__, `Yosys
-Issue Tracker <https://github.com/YosysHQ/yosys/issues>`__, `Arachne-PNR
-Issue Tracker <https://github.com/YosysHQ/arachne-pnr/issues>`__)
+Issue Tracker <https://github.com/YosysHQ/yosys/issues>`__, `nextpnr
+Issue Tracker <https://github.com/YosysHQ/nextpnr/issues>`__)
 
 .. _docs:
 
