@@ -509,7 +509,7 @@ def parse_verilog_bitvector_to_bits(in_str):
     #replace x with 0
     in_str = re_sub_cached('[xX]', '0', in_str)
 
-    m = re_match_cached("([0-9]+)'([hdob])([0-9a-fA-F]+)", in_str)
+    m = re_match_cached(r"([0-9]+)'([hdob])([0-9a-fA-F]+)", in_str)
     if m:
         num_bits = int(m.group(1))
         prefix = m.group(2)
@@ -879,7 +879,7 @@ class LogicCell:
         if fields[0] == 'lut' and len(fields) == 2:
             self.lut_bits = fields[1]
         elif fields[0] == 'out' and len(fields) >= 3 and fields[1] == '=':
-            m = re_match_cached("([0-9]+)'b([01]+)", fields[2])
+            m = re_match_cached(r"([0-9]+)'b([01]+)", fields[2])
             if m:
                 lut_bits = parse_verilog_bitvector_to_bits(fields[2])
                 # Verilog 16'bXXXX is MSB first but the bitstream wants LSB.
