@@ -28,7 +28,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
+#include <limits.h>
+#include <errno.h>
 
 #include "mpsse.h"
 
@@ -127,6 +130,137 @@ enum mpsse_cmd
 #define MC_DATA_ICN  (0x04) /* When set receive data on negative clock edge */
 #define MC_DATA_BITS (0x02) /* When set count bits not bytes */
 #define MC_DATA_OCN  (0x01) /* When set update data on negative clock edge */
+
+// ---------------------------------------------------------
+// USB device discovery from /dev/ttyX symlinks
+// ---------------------------------------------------------
+
+static bool resolve_usb_device(const char *devpath, char *devstr_out, size_t devstr_size)
+{
+	char resolved_dev[PATH_MAX];
+	char link[PATH_MAX];
+	char resolved[PATH_MAX];
+	char *ptr;
+	char bus_id[16];
+	int busnum = 0;
+	int devnum = 0;
+
+	/* Check if this is a /dev/ path */
+	if (strncmp(devpath, "/dev/", 5) != 0)
+		return false;
+
+	/* Resolve the /dev/ path to find the actual tty node. */
+	if (realpath(devpath, resolved_dev) == NULL) {
+		fprintf(stderr, "Warning: cannot resolve '%s': %s\n", devpath, strerror(errno));
+		return false;
+	}
+
+	/* Get the tty name from the resolved device path. */
+	const char *tty_name = resolved_dev + 5; /* skip "/dev/" */
+
+	/* Build the /sys path: /sys/class/tty/ttyUSB1 */
+	snprintf(link, sizeof(link), "/sys/class/tty/%s", tty_name);
+
+	/* Resolve the symlink to get the real device path */
+	ssize_t len = readlink(link, resolved, sizeof(resolved) - 1);
+	if (len < 0) {
+		fprintf(stderr, "Warning: cannot resolve '%s': %s\n", link, strerror(errno));
+		return false;
+	}
+	resolved[len] = '\0';
+
+	/* Extract the USB bus number from the path.
+	 * The path contains "/usbN/" where N is the bus number.
+	 * Also extract the port chain and read devnum from sysfs.
+	 */
+
+	/* Find the "usb" bus marker */
+	ptr = strstr(resolved, "/usb");
+	if (ptr == NULL) {
+		fprintf(stderr, "Warning: no USB bus found in '%s'\n", resolved);
+		return false;
+	}
+	ptr += 4; /* skip past "/usb" */
+
+	/* Read the bus number */
+	if (*ptr < '0' || *ptr > '9') {
+		fprintf(stderr, "Warning: invalid USB bus number in '%s'\n", resolved);
+		return false;
+	}
+	int bus_len = 0;
+	while (*ptr >= '0' && *ptr <= '9') {
+		bus_id[bus_len++] = *ptr++;
+	}
+	bus_id[bus_len] = '\0';
+	busnum = atoi(bus_id);
+
+	if (*ptr != '/') {
+		fprintf(stderr, "Warning: invalid USB bus path in '%s'\n", resolved);
+		return false;
+	}
+	ptr++; /* skip the '/' after bus number */
+
+	/* Find the port chain (up to :IFACE or /tty) */
+	char port_chain[PATH_MAX];
+	size_t port_len = 0;
+	const char *end_marker = strstr(ptr, "/tty");
+	const char *colon = strstr(ptr, ":");
+	if (colon && (!end_marker || colon < end_marker))
+		end_marker = colon;
+	if (!end_marker)
+		end_marker = ptr + strlen(ptr);
+
+	while (ptr < end_marker && (size_t)(ptr - resolved) < sizeof(resolved)) {
+		if (port_len < sizeof(port_chain) - 1)
+			port_chain[port_len++] = *ptr;
+		ptr++;
+		if (*ptr == '\0')
+			break;
+	}
+	port_chain[port_len] = '\0';
+
+	/* Now find the devnum. The port chain looks like "1-6/1-6.4/1-6.4.1/1-6.4.1.1".
+	 * The last component is the device:port identifier.
+	 * We need to find /sys/bus/usb/devices/<port_chain>:<interface>/devnum */
+
+	/* Use the last component of the port chain as the device identifier */
+	/* Find the last '/' in port_chain to get the device number */
+	char *last_slash = strrchr(port_chain, '/');
+	if (last_slash) {
+		/* Move back one more to find the actual device (e.g., from 1-6.4.1.1:1.1 to 1-6.4.1.1) */
+		/* The port_chain is like 1-6/1-6.4/1-6.4.1/1-6.4.1.1, we need 1-6.4.1.1 */
+		char dev_path[PATH_MAX];
+		snprintf(dev_path, sizeof(dev_path), "/sys/bus/usb/devices/%s/devnum", last_slash + 1);
+
+		/* Read devnum from sysfs */
+		FILE *f = fopen(dev_path, "r");
+		if (f) {
+			if (fscanf(f, "%d", &devnum) != 1)
+				devnum = 0;
+			fclose(f);
+		}
+	}
+
+	/* If we couldn't get devnum from the device directory, try the full port chain */
+	if (devnum == 0) {
+		char dev_path[PATH_MAX];
+		snprintf(dev_path, sizeof(dev_path), "/sys/bus/usb/devices/%s/devnum", port_chain);
+		FILE *f = fopen(dev_path, "r");
+		if (f) {
+			if (fscanf(f, "%d", &devnum) != 1)
+				devnum = 0;
+			fclose(f);
+		}
+	}
+
+	if (busnum > 0 && devnum > 0) {
+		/* Construct libftdi device string: d:busnum/devnum */
+		snprintf(devstr_out, devstr_size, "d:%03d/%03d", busnum, devnum);
+		return true;
+	}
+
+	return false;
+}
 
 // ---------------------------------------------------------
 // MPSSE / FTDI function implementations
@@ -296,6 +430,11 @@ void mpsse_init(int ifnum, const char *devstr, bool slow_clock)
 	ftdi_set_interface(&mpsse_ftdic, ftdi_ifnum);
 
 	if (devstr != NULL) {
+		char resolved_devstr[PATH_MAX];
+		if (resolve_usb_device(devstr, resolved_devstr, sizeof(resolved_devstr))) {
+			fprintf(stderr, "discovered USB device: %s\n", resolved_devstr);
+			devstr = resolved_devstr;
+		}
 		if (ftdi_usb_open_string(&mpsse_ftdic, devstr)) {
 			fprintf(stderr, "Can't find iCE FTDI USB device (device string %s).\n", devstr);
 			mpsse_error(2);
