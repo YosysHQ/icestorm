@@ -1,0 +1,7 @@
+*
+!.gitignore
+!example.v
+!ice4pi.pcf
+!Makefile
+!README
+!ice4pi_prog
