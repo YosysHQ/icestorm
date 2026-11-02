@@ -122,7 +122,7 @@ struct FpgaConfig
 	void write_bits(std::ostream &ofs) const;
 
 	// icebox i/o
-	void read_ascii(std::istream &ifs, bool nosleep);
+	void read_ascii(std::istream &ifs, bool nosleep, int freqrange_num);
 	void write_ascii(std::ostream &ofs) const;
 
 	// netpbm i/o
@@ -612,7 +612,7 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 	write_byte(ofs, crc_value, file_offset, 0x00);
 }
 
-void FpgaConfig::read_ascii(std::istream &ifs, bool nosleep)
+void FpgaConfig::read_ascii(std::istream &ifs, bool nosleep, int freqrange_num)
 {
 	debug("## %s\n", __PRETTY_FUNCTION__);
 	info("Parsing ascii file..\n");
@@ -620,7 +620,14 @@ void FpgaConfig::read_ascii(std::istream &ifs, bool nosleep)
 	bool got_device = false;
 	this->cram.clear();
 	this->bram.clear();
-	this->freqrange = "low";
+	if (freqrange_num == 0)
+		this->freqrange = "low";
+	else if (freqrange_num == 1)
+		this->freqrange = "medium";
+	else if (freqrange_num == 2)
+		this->freqrange = "high";
+	else
+		error("Unknown freqrange number; use -m0, -m1, or -m2\n");
 	this->warmboot = "enabled";
 
 	bool reuse_line = true;
@@ -1342,6 +1349,9 @@ void usage(const char *cmd)
 	log("    -v\n");
 	log("        verbose (repeat to increase verbosity)\n");
 	log("\n");
+	log("    -m0, -m1, -m2\n");
+	log("        master SPI configuration MCLK frequency range (0=low, 1=medium, 2=high)\n");
+	log("\n");
 	log("    -s\n");
 	log("        disable final deep-sleep SPI flash command after bitstream is loaded\n");
 	log("\n");
@@ -1391,6 +1401,7 @@ int main(int argc, char **argv)
         bool skip_bram_initialization = false;
 	int netpbm_banknum = -1;
 	int checkerboard_m = 1;
+	int freqrange_num = 0;
 
 	for (int i = 0; argv[0][i]; i++)
 		if (string(argv[0]+i) == "iceunpack")
@@ -1419,6 +1430,8 @@ int main(int argc, char **argv)
 				} else if (arg[i] == 'B') {
 					netpbm_mode = true;
 					netpbm_banknum = arg[++i] - '0';
+				} else if (arg[i] == 'm') {
+					freqrange_num = arg[++i] - '0';
 				} else if (arg[i] == 's') {
 					nosleep_mode = true;
 				} else if (arg[i] == 'v') {
@@ -1469,7 +1482,7 @@ int main(int argc, char **argv)
 		if (!netpbm_mode)
 			fpga_config.write_ascii(*osp);
 	} else {
-		fpga_config.read_ascii(*isp, nosleep_mode);
+		fpga_config.read_ascii(*isp, nosleep_mode, freqrange_num);
 		if (!netpbm_mode)
 			fpga_config.write_bits(*osp);
 	}
