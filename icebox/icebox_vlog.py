@@ -18,6 +18,7 @@
 import icebox
 from icebox import re_match_cached, re_sub_cached, re_search_cached
 import getopt, sys, re, os
+import zlib
 
 strip_comments = False
 strip_interconn = False
@@ -386,10 +387,11 @@ def seg_to_net(seg, default=None):
 
 if lookup_symbols:
     text_func.append("// Debug Symbols")
-    with open("/usr/local/share/icebox/chipdb-%s.txt" % ic.device, "r") as f:
+    with open("/usr/local/share/icebox/chipdb-%s.txt.gz" % ic.device, "rb") as f:
+        lines = zlib.decompress(f.read()).decode('utf-8').splitlines()
         current_net = -1
         exported_names = dict()
-        for line in f:
+        for line in lines:
             line = line.split()
             if len(line) == 0:
                 pass

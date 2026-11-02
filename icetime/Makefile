@@ -11,18 +11,18 @@ all: $(PROGRAM_PREFIX)icetime$(EXE)
 CHIPS=lp384 lp1k lp8k hx1k hx8k up5k u4k
 
 ifeq ($(EXE),.js)
-$(PROGRAM_PREFIX)icetime$(EXE): | share/$(CHIPDB_SUBDIR)/chipdb-384.txt share/$(CHIPDB_SUBDIR)/chipdb-1k.txt share/$(CHIPDB_SUBDIR)/chipdb-8k.txt share/$(CHIPDB_SUBDIR)/chipdb-5k.txt
+$(PROGRAM_PREFIX)icetime$(EXE): | share/$(CHIPDB_SUBDIR)/chipdb-384.txt.gz share/$(CHIPDB_SUBDIR)/chipdb-1k.txt.gz share/$(CHIPDB_SUBDIR)/chipdb-8k.txt.gz share/$(CHIPDB_SUBDIR)/chipdb-5k.txt.gz
 
-share/$(CHIPDB_SUBDIR)/chipdb-384.txt: ../icebox/chipdb-384.txt
+share/$(CHIPDB_SUBDIR)/chipdb-384.txt.gz: ../icebox/chipdb-384.txt.gz
 	mkdir -p share/$(CHIPDB_SUBDIR)
 	cp $< $@
-share/$(CHIPDB_SUBDIR)/chipdb-1k.txt: ../icebox/chipdb-1k.txt
+share/$(CHIPDB_SUBDIR)/chipdb-1k.txt.gz: ../icebox/chipdb-1k.txt.gz
 	mkdir -p share/$(CHIPDB_SUBDIR)
 	cp $< $@
-share/$(CHIPDB_SUBDIR)/chipdb-8k.txt: ../icebox/chipdb-8k.txt
+share/$(CHIPDB_SUBDIR)/chipdb-8k.txt.gz: ../icebox/chipdb-8k.txt.gz
 	mkdir -p share/$(CHIPDB_SUBDIR)
 	cp $< $@
-share/$(CHIPDB_SUBDIR)/chipdb-5k.txt: ../icebox/chipdb-5k.txt
+share/$(CHIPDB_SUBDIR)/chipdb-5k.txt.gz: ../icebox/chipdb-5k.txt.gz
 	mkdir -p share/$(CHIPDB_SUBDIR)
 	cp $< $@
 override LDFLAGS += --embed-file share
@@ -31,7 +31,7 @@ endif
 $(PROGRAM_PREFIX)icetime$(EXE): icetime.o iceutil.o $(addsuffix .o, $(addprefix timings-, $(CHIPS)))
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
-timings-%.cc: timings.py ../icefuzz/timings_%.txt
+timings-%.cc: timings.py ../icefuzz/timings_%.txt.gz
 	$(PYTHON3) timings.py $* > $@
 
 .PRECIOUS: timings-%.cc
@@ -40,7 +40,7 @@ install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	mkdir -p $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox
 	cp $(PROGRAM_PREFIX)icetime$(EXE) $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icetime$(EXE)
-	cp ../icefuzz/timings_*.txt $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/
+	cp ../icefuzz/timings_*.txt.gz $(DESTDIR)$(PREFIX)/share/$(PROGRAM_PREFIX)icebox/
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/$(PROGRAM_PREFIX)icetime$(EXE)
