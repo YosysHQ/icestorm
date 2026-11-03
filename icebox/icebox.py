@@ -1538,15 +1538,17 @@ extra_bits_db = {
         (0, 691, 335): ("padin_glb_netwk", "7"), # good
     },
     "u4k": {
-        (0, 691, 175): ("padin_glb_netwk", "0"),   # good
-        (1, 690, 175): ("padin_glb_netwk", "1"),   # good
-        (0, 690, 175): ("padin_glb_netwk", "2"),   # made up
-        (0, 690, 174): ("padin_glb_netwk", "3"),   # good
-        (1, 690, 174): ("padin_glb_netwk", "4"),   # HFOSC, good
-        (1, 691, 174): ("padin_glb_netwk", "5"),   # LFOSC, good
-        (0, 691, 174): ("padin_glb_netwk", "6"),   # good
-        (1, 691, 175): ("padin_glb_netwk", "7"),   # made up
-        },
+        # Native/fabric mux controls, measured on iCE5LP4K-SG48.
+        # These indices are internal global networks, not package G-pin names.
+        (0, 690, 174): ("padin_glb_netwk", "0"),
+        (0, 691, 174): ("padin_glb_netwk", "1"),
+        (1, 690, 175): ("padin_glb_netwk", "2"),
+        (1, 691, 175): ("padin_glb_netwk", "3"),
+        (1, 690, 174): ("padin_glb_netwk", "4"),
+        (1, 691, 174): ("padin_glb_netwk", "5"),
+        (0, 690, 175): ("padin_glb_netwk", "6"),
+        (0, 691, 175): ("padin_glb_netwk", "7"),
+    },
     "8k": {
         (0, 870, 270): ("padin_glb_netwk", "0"),
         (0, 871, 270): ("padin_glb_netwk", "1"),
