@@ -494,6 +494,7 @@ static void help(const char *progname)
 	fprintf(stderr, "\n");
 	fprintf(stderr, "General options:\n");
 	fprintf(stderr, "  -d <device string>    use the specified USB device [default: i:0x0403:0x6010 or i:0x0403:0x6014]\n");
+	fprintf(stderr, "                          /dev/ttyUSBx                 (e.g. /dev/ttyUSB0)\n");
 	fprintf(stderr, "                          d:<devicenode>               (e.g. d:002/005)\n");
 	fprintf(stderr, "                          i:<vendor>:<product>         (e.g. i:0x0403:0x6010)\n");
 	fprintf(stderr, "                          i:<vendor>:<product>:<index> (e.g. i:0x0403:0x6010:0)\n");
