@@ -137,11 +137,21 @@ enum mpsse_cmd
 
 static bool resolve_usb_device(const char *devpath, char *devstr_out, size_t devstr_size)
 {
+	/*
+	 * All pointers below are derived from realpath() or readlink(), so the
+	 * kernel guarantees they are at most PATH_MAX bytes.  However the prefix
+	 * strings appended by snprintf are long enough that the total can
+	 * theoretically exceed PATH_MAX (e.g. tty_name can be ~4091 chars and
+	 * the prefix "/sys/class/tty/" is 15 bytes -> 4106 > PATH_MAX).  We add
+	 * an explicit length check before every snprintf to satisfy the compiler
+	 * and to reject pathological paths defensively.
+	 */
 	char resolved_dev[PATH_MAX];
 	char link[PATH_MAX];
 	char resolved[PATH_MAX];
 	char *ptr;
 	char bus_id[16];
+	char dev_serial[64] = { 0 };
 	int busnum = 0;
 	int devnum = 0;
 
@@ -159,6 +169,8 @@ static bool resolve_usb_device(const char *devpath, char *devstr_out, size_t dev
 	const char *tty_name = resolved_dev + 5; /* skip "/dev/" */
 
 	/* Build the /sys path: /sys/class/tty/ttyUSB1 */
+	if (strlen(tty_name) >= sizeof(link) - sizeof("/sys/class/tty/"))
+		return false;
 	snprintf(link, sizeof(link), "/sys/class/tty/%s", tty_name);
 
 	/* Resolve the symlink to get the real device path */
@@ -188,7 +200,7 @@ static bool resolve_usb_device(const char *devpath, char *devstr_out, size_t dev
 		return false;
 	}
 	int bus_len = 0;
-	while (*ptr >= '0' && *ptr <= '9') {
+	while (*ptr >= '0' && *ptr <= '9' && bus_len < (int)sizeof(bus_id) - 1) {
 		bus_id[bus_len++] = *ptr++;
 	}
 	bus_id[bus_len] = '\0';
@@ -223,39 +235,86 @@ static bool resolve_usb_device(const char *devpath, char *devstr_out, size_t dev
 	 * The last component is the device:port identifier.
 	 * We need to find /sys/bus/usb/devices/<port_chain>:<interface>/devnum */
 
-	/* Use the last component of the port chain as the device identifier */
-	/* Find the last '/' in port_chain to get the device number */
+	/* Use the last component of the port chain as the device identifier.
+	 * Find the last '/' in port_chain to get the device number.
+	 * Example port_chain: 1-6/1-6.4/1-6.4.1/1-6.4.1.1, device: 1-6.4.1.1
+	 */
 	char *last_slash = strrchr(port_chain, '/');
 	if (last_slash) {
-		/* Move back one more to find the actual device (e.g., from 1-6.4.1.1:1.1 to 1-6.4.1.1) */
-		/* The port_chain is like 1-6/1-6.4/1-6.4.1/1-6.4.1.1, we need 1-6.4.1.1 */
 		char dev_path[PATH_MAX];
+		if (strlen(last_slash + 1) >= sizeof(dev_path) - sizeof("/sys/bus/usb/devices//devnum"))
+			return false;
 		snprintf(dev_path, sizeof(dev_path), "/sys/bus/usb/devices/%s/devnum", last_slash + 1);
 
-		/* Read devnum from sysfs */
 		FILE *f = fopen(dev_path, "r");
 		if (f) {
 			if (fscanf(f, "%d", &devnum) != 1)
 				devnum = 0;
 			fclose(f);
+		} else if (errno == ENOENT) {
+			fprintf(stderr,
+				"Warning: USB device '%s' unplugged or gone (sysfs devnum)\n",
+				devpath);
+			return false;
 		}
 	}
 
-	/* If we couldn't get devnum from the device directory, try the full port chain */
+	/* If devnum is still zero, try the full port chain. */
 	if (devnum == 0) {
 		char dev_path[PATH_MAX];
+		if (strlen(port_chain) >= sizeof(dev_path) - sizeof("/sys/bus/usb/devices//devnum"))
+			return false;
 		snprintf(dev_path, sizeof(dev_path), "/sys/bus/usb/devices/%s/devnum", port_chain);
 		FILE *f = fopen(dev_path, "r");
 		if (f) {
 			if (fscanf(f, "%d", &devnum) != 1)
 				devnum = 0;
 			fclose(f);
+		} else if (errno == ENOENT) {
+			fprintf(stderr,
+				"Warning: USB device '%s' unplugged or gone (sysfs devnum)\n",
+				devpath);
+			return false;
 		}
 	}
 
 	if (busnum > 0 && devnum > 0) {
-		/* Construct libftdi device string: d:busnum/devnum */
-		snprintf(devstr_out, devstr_size, "d:%03d/%03d", busnum, devnum);
+		/* Try to read the device serial for disambiguation on
+		 * multi-interface FTDI devices (FT2232H, FT4232H, etc.).
+		 * Multiple interfaces share the same bus/devnum, so the
+		 * serial lets libftdi pinpoint the exact chip.
+		 */
+		char dev_serial_path[PATH_MAX];
+		char *serial_src = last_slash ? last_slash + 1 : port_chain;
+		if (strlen(serial_src) >= sizeof(dev_serial_path) - sizeof("/sys/bus/usb/devices//serial"))
+			return false;
+		snprintf(dev_serial_path, sizeof(dev_serial_path),
+			 "/sys/bus/usb/devices/%s/serial", serial_src);
+		FILE *sf = fopen(dev_serial_path, "r");
+		if (sf) {
+			if (fgets(dev_serial, sizeof(dev_serial), sf) != NULL) {
+				/* Strip trailing newline */
+				dev_serial[strcspn(dev_serial, "\r\n")] = '\0';
+			}
+			fclose(sf);
+		}
+
+		if (dev_serial[0] != '\0') {
+			/* dev_serial is a 64-byte buffer, so strlen <= 63. */
+			if (strlen(dev_serial) > 63)
+				return false;
+
+			/* d:busnum/devnum:serial - unambiguous across chips */
+			snprintf(devstr_out, devstr_size,
+				 "d:%03d/%03d:%s", busnum, devnum, dev_serial);
+			fprintf(stderr, "Resolved '%s' -> %s (serial %s)\n",
+				devpath, devstr_out, dev_serial);
+		} else {
+			/* d:busnum/devnum - fine when only one device per bus slot */
+			snprintf(devstr_out, devstr_size,
+				 "d:%03d/%03d", busnum, devnum);
+			fprintf(stderr, "Resolved '%s' -> %s\n", devpath, devstr_out);
+		}
 		return true;
 	}
 
