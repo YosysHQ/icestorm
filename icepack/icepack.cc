@@ -638,6 +638,7 @@ void FpgaConfig::read_ascii(std::istream &ifs, bool nosleep, int freqrange_num)
 		reuse_line = false;
 
 		std::istringstream is(line);
+		command = "";
 		is >> command;
 
 		if (command.empty())
